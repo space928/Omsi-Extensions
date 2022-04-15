@@ -18,6 +18,10 @@ namespace OmsiHook
         /// </summary>
         public OmsiRoadVehicleInst PlayerVehicle => GetRoadVehicleInst(PlayerVehicleIndex);
         public int PlayerVehicleIndex => omsiMemory.ReadMemory<int>(0x00861740);
+        public OmsiWeather Weather => new(omsiMemory, omsiMemory.ReadMemory<int>(0x008617D0));
+        public OmsiMap Map => new(omsiMemory, omsiMemory.ReadMemory<int>(0x861588));
+        public OmsiTicketPack TicketPack => omsiMemory.MarshalStruct<OmsiTicketPack, OmsiTicketPackInternal>(
+            omsiMemory.ReadMemory<OmsiTicketPackInternal>(0x008611fc));
 
         /// <summary>
         /// Attaches the hooking application to OMSI.exe.

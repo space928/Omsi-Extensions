@@ -1,8 +1,9 @@
-﻿namespace OmsiHook
+namespace OmsiHook
 {
     public class OmsiRoadVehicleInst : OmsiVehicleInst
     {
         internal OmsiRoadVehicleInst(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
+        internal OmsiRoadVehicleInst() : base() { }
         /* TODO:
         public OmsiCriticalSection CS_Ticket_Items
         {
@@ -439,6 +440,5 @@
             get => omsiMemory.ReadMemory<bool>(baseAddress + 0x8ec);
             set => omsiMemory.WriteMemory(baseAddress + 0x8ec, value);
         }
-
     }
 }

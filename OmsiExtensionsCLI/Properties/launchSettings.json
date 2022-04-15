@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "OmsiExtensionsCLI": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

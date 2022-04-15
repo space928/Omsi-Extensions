@@ -3,6 +3,7 @@
     public class OmsiChrono : OmsiObject
     {
         internal OmsiChrono(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
+        internal OmsiChrono() : base() { }
 
         /*
         TODO: public Array? Timeline
@@ -13,14 +14,14 @@
 
         public int Curr_TimelinePos
         {
-            get => omsiMemory.ReadMemory<int>(baseAddress + 0x8);
-            set => omsiMemory.WriteMemory(baseAddress + 0x8, value);
+            get => Memory.ReadMemory<int>(Address + 0x8);
+            set => Memory.WriteMemory(Address + 0x8, value);
         }
 
         public bool Scenario_Changed
         {
-            get => omsiMemory.ReadMemory<bool>(baseAddress + 0xc);
-            set => omsiMemory.WriteMemory(baseAddress + 0xc, value);
+            get => Memory.ReadMemory<bool>(Address + 0xc);
+            set => Memory.WriteMemory(Address + 0xc, value);
         }
 
         /*
@@ -32,8 +33,8 @@
 
         public bool Prev_Timeline_StillValid
         {
-            get => omsiMemory.ReadMemory<bool>(baseAddress + 0x14);
-            set => omsiMemory.WriteMemory(baseAddress + 0x14, value);
+            get => Memory.ReadMemory<bool>(Address + 0x14);
+            set => Memory.WriteMemory(Address + 0x14, value);
         }
     }
 }
