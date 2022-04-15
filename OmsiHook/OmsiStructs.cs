@@ -10,6 +10,10 @@ namespace OmsiHook
 	{
 		public float x, y, z;
 	}
+	public struct D3DXVector2
+	{
+		public float x, y;
+	}
 
 	/// <summary>
 	/// Defines a 4x4 float matrix.

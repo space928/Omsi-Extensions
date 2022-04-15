@@ -300,8 +300,145 @@
         }
         public uint PAI_LastHorn
         {
-            get => omsiMemory.ReadMemory<uint>(baseAddress + 0x868);
-            set => omsiMemory.WriteMemory(baseAddress + 0x868, value);
+            get => omsiMemory.ReadMemory<uint>(baseAddress + 0x86c);
+            set => omsiMemory.WriteMemory(baseAddress + 0x86c, value);
         }
+        public float PAI_WaitTime
+        {
+            get => omsiMemory.ReadMemory<float>(baseAddress + 0x870);
+            set => omsiMemory.WriteMemory(baseAddress + 0x870, value);
+        }
+        public uint PAI_LastBrake
+        {
+            get => omsiMemory.ReadMemory<uint>(baseAddress + 0x874);
+            set => omsiMemory.WriteMemory(baseAddress + 0x874, value);
+        }
+        public bool PAI_Approaching_Busstop
+        {
+            get => omsiMemory.ReadMemory<bool>(baseAddress + 0x878);
+            set => omsiMemory.WriteMemory(baseAddress + 0x878, value);
+        }
+        public float PAI_CrashSum
+        {
+            get => omsiMemory.ReadMemory<float>(baseAddress + 0x87c);
+            set => omsiMemory.WriteMemory(baseAddress + 0x87c, value);
+        }
+        public float FreeDist
+        {
+            get => omsiMemory.ReadMemory<float>(baseAddress + 0x880);
+            set => omsiMemory.WriteMemory(baseAddress + 0x880, value);
+        }
+        public int KollType
+        {
+            get => omsiMemory.ReadMemory<int>(baseAddress + 0x884);
+            set => omsiMemory.WriteMemory(baseAddress + 0x884, value);
+        }
+        public float CoupleForce // TODO: Check DataType
+        {
+            get => omsiMemory.ReadMemory<float>(baseAddress + 0x888);
+            set => omsiMemory.WriteMemory(baseAddress + 0x888, value);
+        }
+        public int Unknown_A // TODO: Check Value
+        {
+            get => omsiMemory.ReadMemory<int>(baseAddress + 0x88c);
+            set => omsiMemory.WriteMemory(baseAddress + 0x88c, value);
+        }
+        public int Unknown_B // TODO: Check Value
+        {
+            get => omsiMemory.ReadMemory<int>(baseAddress + 0x890);
+            set => omsiMemory.WriteMemory(baseAddress + 0x890, value);
+        }
+        public int Unknown_C // TODO: Check Value
+        {
+            get => omsiMemory.ReadMemory<int>(baseAddress + 0x894);
+            set => omsiMemory.WriteMemory(baseAddress + 0x894, value);
+        }
+        public int Unknown_D // TODO: Check Value
+        {
+            get => omsiMemory.ReadMemory<int>(baseAddress + 0x898);
+            set => omsiMemory.WriteMemory(baseAddress + 0x898, value);
+        }
+        public int Unknown_E // TODO: Check Value
+        {
+            get => omsiMemory.ReadMemory<int>(baseAddress + 0x89c);
+            set => omsiMemory.WriteMemory(baseAddress + 0x89c, value);
+        }
+        public float CoupleMomentTorsion // TODO: Check DataType
+        {
+            get => omsiMemory.ReadMemory<float>(baseAddress + 0x8a0);
+            set => omsiMemory.WriteMemory(baseAddress + 0x8a0, value);
+        }
+        public float Unknown_F // TODO: Check Value
+        {
+            get => omsiMemory.ReadMemory<float>(baseAddress + 0x8a4);
+            set => omsiMemory.WriteMemory(baseAddress + 0x8a4, value);
+        }
+        public float Couple_Alpha
+        {
+            get => omsiMemory.ReadMemory<float>(baseAddress + 0x8a8);
+            set => omsiMemory.WriteMemory(baseAddress + 0x8a8, value);
+        }
+        public float Couple_Beta
+        {
+            get => omsiMemory.ReadMemory<float>(baseAddress + 0x8ac);
+            set => omsiMemory.WriteMemory(baseAddress + 0x8ac, value);
+        }
+        public bool SetAlphaBeta
+        {
+            get => omsiMemory.ReadMemory<bool>(baseAddress + 0x8b0);
+            set => omsiMemory.WriteMemory(baseAddress + 0x8b0, value);
+        }
+        public float VB_Var_FrontCoupling
+        {
+            get => omsiMemory.ReadMemory<float>(baseAddress + 0x8b4);
+            set => omsiMemory.WriteMemory(baseAddress + 0x8b4, value);
+        }
+        public float VB_Var_BackCoupling
+        {
+            get => omsiMemory.ReadMemory<float>(baseAddress + 0x8b8);
+            set => omsiMemory.WriteMemory(baseAddress + 0x8b8, value);
+        }
+        public float VB_Var_Me_Reverse
+        {
+            get => omsiMemory.ReadMemory<float>(baseAddress + 0x8bc);
+            set => omsiMemory.WriteMemory(baseAddress + 0x8bc, value);
+        }
+        /* TODO:
+        public OmsiRoadVehicleInst ScriptParent
+        {
+            get => omsiMemory.ReadMemory<OmsiRoadVehicleInst>(baseAddress + 0x8c0);
+            //set => omsiMemory.WriteMemory(baseAddress + 0x8c0, value);
+        }*/
+        public D3DXVector2 Wagenkasten_RotZPhys
+        {
+            get => omsiMemory.ReadMemory<D3DXVector2>(baseAddress + 0x8c4);
+            set => omsiMemory.WriteMemory(baseAddress + 0x8c4, value);
+        }
+        public D3DXVector2 Wagenkasten_RotXPhys
+        {
+            get => omsiMemory.ReadMemory<D3DXVector2>(baseAddress + 0x8cc);
+            set => omsiMemory.WriteMemory(baseAddress + 0x8cc, value);
+        }
+        public D3DXVector2 Wagenkasten_TransZPhys
+        {
+            get => omsiMemory.ReadMemory<D3DXVector2>(baseAddress + 0x8d4);
+            set => omsiMemory.WriteMemory(baseAddress + 0x8d4, value);
+        }
+        public D3DVector Euler
+        {
+            get => omsiMemory.ReadMemory<D3DVector>(baseAddress + 0x8dc);
+            set => omsiMemory.WriteMemory(baseAddress + 0x8dc, value);
+        }
+        public float DistToCam_Render
+        {
+            get => omsiMemory.ReadMemory<float>(baseAddress + 0x8e8);
+            set => omsiMemory.WriteMemory(baseAddress + 0x8e8, value);
+        }
+        public bool Debug_B
+        {
+            get => omsiMemory.ReadMemory<bool>(baseAddress + 0x8ec);
+            set => omsiMemory.WriteMemory(baseAddress + 0x8ec, value);
+        }
+
     }
 }
