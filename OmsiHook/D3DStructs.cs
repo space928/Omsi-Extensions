@@ -24,4 +24,8 @@ namespace OmsiHook
     {
 		public int x, y;
     }
+	public struct D3DXPlane
+    {
+		public float a, b, c, d;
+    }
 }
