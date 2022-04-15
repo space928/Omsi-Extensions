@@ -163,4 +163,54 @@ namespace OmsiHook
 		public float angle_hgt;
 		public float dist;
     }
+
+	public struct OmsiWeatherProp
+    {
+		public string name;
+		public string description;
+		public float fogDensity;
+		public float lightness;
+		public float windSpeed;
+		public float windDirection;
+		public float temperature;
+		public float dewPoint;
+		public float pressure;
+		public byte percipitation;
+		public byte percipRate;
+		public D3DVector percipVec;
+		public string cloudType; // ANSI STRING
+		public float cloudHeight;
+		public int cloudTexture;
+		/// <summary>
+		/// Ground Moisture
+		/// </summary>
+		public float bodenfeuchte;
+		/// <summary>
+		/// Ground Moisture Coverage
+		/// </summary>
+		public float bodenfeuchte_bedeckung;
+		/// <summary>
+		/// Ground Wet?
+		/// </summary>
+		public float bodennaesse;
+		/// <summary>
+		/// Snow
+		/// </summary>
+		public bool schnee;
+		/// <summary>
+		/// Snow On Roads
+		/// </summary>
+		public bool schneeAufStrassen;
+    }
+
+	public struct CloudType
+    {
+		public string name; // ANSI String
+		public string texFile; // ANSI String
+		public float texSize;
+		/// <summary>
+		/// Overcast?
+		/// </summary>
+		public bool ovc;
+    }
 }
