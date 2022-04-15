@@ -10,6 +10,10 @@ namespace OmsiHook
 	{
 		public float x, y, z;
 	}
+	public struct D3DXVector2
+	{
+		public float x, y;
+	}
 
 	/// <summary>
 	/// Defines a 4x4 float matrix.
@@ -53,6 +57,14 @@ namespace OmsiHook
     {
 		public D3DColorValue diffuse, ambient, specular, emissive;
 		public float power;
+    }
+	
+	public struct D3DOBB
+	{
+		// TODO: Check Axis Data Type
+		public int Axis;
+		public D3DVector Depth;
+		public D3DVector Center;
     }
 
 	/// <summary>
