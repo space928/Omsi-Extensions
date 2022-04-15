@@ -182,6 +182,26 @@ namespace OmsiHook
             return buffer;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="OutStruct"></typeparam>
+        /// <typeparam name="InStruct"></typeparam>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public OutStruct MarshalStruct<OutStruct, InStruct>(InStruct obj) 
+            where OutStruct : struct 
+            where InStruct : struct
+        {
+            OutStruct ret = new();
+            foreach (var field in obj.GetType().GetFields())
+            {
+                OutStruct[field.Name].GetType() === String
+            }
+
+            return ret;
+        }
+
         #region Other
 
         internal struct Flags

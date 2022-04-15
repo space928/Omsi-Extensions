@@ -166,8 +166,8 @@ namespace OmsiHook
 
 	public struct OmsiWeatherProp
     {
-		public string name;
-		public string description;
+		public int name; // STRING
+		public int description; // STRING
 		public float fogDensity;
 		public float lightness;
 		public float windSpeed;
@@ -178,7 +178,7 @@ namespace OmsiHook
 		public byte percipitation;
 		public byte percipRate;
 		public D3DVector percipVec;
-		public string cloudType; // ANSI STRING
+		public int cloudType; // ANSI STRING
 		public float cloudHeight;
 		public int cloudTexture;
 		/// <summary>
