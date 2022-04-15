@@ -18,6 +18,7 @@ namespace OmsiExtensionsCLI
                 var pos = omsi.PlayerVehicle.Position;
                 var map = omsi.Map;
                 var weather = omsi.Weather;
+                var water = map.Water_Matl;
 
                 Console.WriteLine($"Read data: x:{pos.x:F3}\ty:{pos.y:F3}\tz:{pos.z:F3}\t\t" +
                     $"tile:{0}\trow45:{0:F3}\trow47:{0:F3}");

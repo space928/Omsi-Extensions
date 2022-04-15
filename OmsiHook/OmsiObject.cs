@@ -2,13 +2,19 @@
 {
     public class OmsiObject
     {
-        internal readonly Memory omsiMemory;
-        internal readonly int baseAddress;
+        internal Memory Memory { get; private set; }
+        internal int Address { get; private set; }
 
-        internal OmsiObject(Memory omsiMemory, int baseAddress)
+        internal OmsiObject() { }
+        internal OmsiObject(Memory memory, int address) 
         {
-            this.omsiMemory = omsiMemory;
-            this.baseAddress = baseAddress;
+            InitObject(memory, address);
+        }
+
+        internal void InitObject(Memory memory, int address)
+        {
+            this.Memory = memory;
+            this.Address = address;
         }
     }
 }
