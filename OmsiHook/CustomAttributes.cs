@@ -31,4 +31,88 @@ namespace OmsiHook
     {
 
     }
+
+    /// <summary>
+    /// Marks a field to be converted from an int to an OmsiObject.<para/>
+    /// Used by Memory.MarshalStruct()
+    /// </summary>
+    [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+    sealed class OmsiObjPtrAttribute : Attribute
+    {
+        // See the attribute guidelines at 
+        //  http://go.microsoft.com/fwlink/?LinkId=85236
+        readonly Type objType;
+
+        // This is a positional argument
+        public OmsiObjPtrAttribute(Type objType)
+        {
+            if (!objType.IsSubclassOf(typeof(OmsiObject)))
+                throw new ArgumentException("OmsiObjPtr must be a pointer to an object deriving from " + nameof(OmsiObject) + "!");
+
+            this.objType = objType;
+        }
+
+        public Type ObjType => objType;
+    }
+
+    /// <summary>
+    /// Marks a field to be converted from an int to an OmsiObject[].<para/>
+    /// Used by Memory.MarshalStruct()
+    /// </summary>
+    [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+    sealed class OmsiObjArrayPtrAttribute : Attribute
+    {
+        // See the attribute guidelines at 
+        //  http://go.microsoft.com/fwlink/?LinkId=85236
+        readonly Type objType;
+
+        // This is a positional argument
+        public OmsiObjArrayPtrAttribute(Type objType)
+        {
+            if (objType.IsSubclassOf(typeof(OmsiObject)))
+                throw new ArgumentException("OmsiObjArrayPtr must be a pointer to an object deriving from " + nameof(OmsiObject) + "!");
+
+            this.objType = objType;
+        }
+
+        public Type ObjType => objType;
+    }
+
+    /// <summary>
+    /// Marks a field to be converted from an int to an OmsiObject[].<para/>
+    /// Used by Memory.MarshalStruct()
+    /// </summary>
+    [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+    sealed class OmsiStructArrayPtrAttribute : Attribute
+    {
+        // See the attribute guidelines at 
+        //  http://go.microsoft.com/fwlink/?LinkId=85236
+        readonly Type objType;
+        readonly Type internalType;
+        readonly bool requiresExtraMarshalling;
+
+        // This is a positional argument
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="objType">The type of the object to convert to</param>
+        /// <param name="internalType">The intermidiate type to convert through 
+        /// (in case Marshal.PtrToStruct doesn't support all the fields in objType).
+        /// Leave null to default to objType</param>
+        public OmsiStructArrayPtrAttribute(Type objType, Type internalType = null)
+        {
+            if (!objType.IsValueType)
+                throw new ArgumentException("OmsiStructArrayPtr must be a pointer to a struct/value!");
+            if ((!internalType?.IsValueType) ?? false)
+                throw new ArgumentException("OmsiStructArrayPtr must be a pointer to a struct/value!");
+
+            this.objType = objType;
+            this.requiresExtraMarshalling = internalType != null;
+            this.internalType = internalType ?? objType;
+        }
+
+        public Type ObjType => objType;
+        public Type InternalType => internalType;
+        public bool RequiresExtraMarshalling => requiresExtraMarshalling;
+    }
 }

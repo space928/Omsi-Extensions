@@ -267,6 +267,22 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x184, value);
         }
 
-        //TODO: Many more...
+        public int GridTexture
+        {
+            get => Memory.ReadMemory<int>(Address + 0x188);
+            set => Memory.WriteMemory(Address + 0x188, value);
+        }
+
+        public float WellenAnimation
+        {
+            get => Memory.ReadMemory<float>(Address + 0x18c);
+            set => Memory.WriteMemory(Address + 0x18c, value);
+        }
+
+        /*public float[] WellenAnimation_P
+        {
+            get => Memory.ReadMemoryStructArray<float>(Address + 0x184);
+            set => Memory.WriteMemory(Address + 0x184, value);
+        }*/
     }
 }

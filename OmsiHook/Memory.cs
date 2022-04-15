@@ -223,19 +223,45 @@ namespace OmsiHook
             foreach (var field in obj.GetType().GetFields())
             {
                 object val = field.GetValue(obj);
-                foreach (var attr in field.CustomAttributes)
+                foreach (var attr in field.GetCustomAttributes(false))
                 {
-                    switch (attr.AttributeType.Name)
+                    // Based on which kind of attribute the field has, perform special marshalling operations
+                    switch (attr)
                     {
-                        case nameof(OmsiStrPtrAttribute):
-                            val = ReadMemoryString((int)val, (bool)attr.ConstructorArguments[0].Value);
+                        case OmsiStrPtrAttribute a:
+                            val = ReadMemoryString((int)val, a.Wide);
                             break;
-                        case nameof(OmsiPtrAttribute):
+
+                        case OmsiPtrAttribute:
                             val = new IntPtr((int)val);
+                            break;
+
+                        case OmsiObjPtrAttribute a:
+                            int addr = (int)val;
+                            val = Activator.CreateInstance(a.ObjType, true);
+                            ((OmsiObject)val).InitObject(this, addr);
+                            break;
+
+                        case OmsiStructArrayPtrAttribute a:
+                            val = typeof(Memory).GetMethod(nameof(ReadMemoryStructArray))
+                                .MakeGenericMethod(a.InternalType)
+                                .Invoke(this, new object[] { val });
+                            // Perform extra marshalling if needed
+                            if(a.RequiresExtraMarshalling)
+                                val = typeof(Memory).GetMethod(nameof(MarshalStructs))
+                                .MakeGenericMethod(a.ObjType, a.InternalType)
+                                .Invoke(this, new object[] { val });
+                            break;
+
+                        case OmsiObjArrayPtrAttribute a:
+                            val = typeof(Memory).GetMethod(nameof(ReadMemoryObjArray))
+                                .MakeGenericMethod(a.ObjType)
+                                .Invoke(this, new object[] { val });
                             break;
                     }
                 }
 
+                // Match fields by name, setting the destination fields to the corresponding source fields
                 typeof(OutStruct).GetField(field.Name).SetValue(ret, val);
             }
 
