@@ -279,7 +279,7 @@ namespace OmsiHook
 		public bool schneeAufStrassen;
 	}
 
-	internal struct CloudTypeInternal
+	internal struct OmsiCloudTypeInternal
 	{
 		[OmsiStrPtr] public int name; // ANSI String
 		[OmsiStrPtr] public int texFile; // ANSI String
@@ -287,7 +287,7 @@ namespace OmsiHook
 		public bool ovc;
 	}
 
-	public struct CloudType
+	public struct OmsiCloudType
     {
 		public string name; // ANSI String
 		public string texFile; // ANSI String
@@ -296,5 +296,53 @@ namespace OmsiHook
 		/// Overcast?
 		/// </summary>
 		public bool ovc;
+    }
+
+	public struct OmsiTicketPackInternal
+	{
+		[OmsiStrPtr] public int filename;
+		[OmsiStrPtr(true)] public int voicepath;
+		[OmsiStructArrayPtr(typeof(OmsiTicket), typeof(OmsiTicketInternal))] 
+		public int tickets;
+		public float stamper_prop;
+		public float ticketBuy_prop;
+		public float chattiness;
+		public float whinge_prop;
+	}
+
+	public struct OmsiTicketPack
+    {
+		public string filename;
+		public string voicepath;
+		public OmsiTicket[] tickets;
+		public float stamper_prop;
+		public float ticketBuy_prop;
+		public float chattiness;
+		public float whinge_prop;
+    }
+
+	public struct OmsiTicketInternal
+	{
+		//TODO: I don't think these are decoding correctly (I saw nothing when I looked), check this actually works.
+		[OmsiStrPtr] public int name, name_english, name_display;
+		public int max_stations;
+		public int age_min, age_max;
+		public float value;
+		public bool dayTicket;
+		public float propability;
+		[OmsiObjPtr(typeof(D3DMeshFileObject))] public int mesh_block;
+		[OmsiObjPtr(typeof(D3DMeshFileObject))] public int mesh_single;
+	}
+
+	public struct OmsiTicket
+    {
+		public string name, name_english, name_display;
+		public int max_stations;
+		public int age_min, age_max;
+		public float value;
+		public bool dayTicket;
+		public float propability;
+		public D3DMeshFileObject mesh_block;
+		public D3DMeshFileObject mesh_single;
     }
 }
