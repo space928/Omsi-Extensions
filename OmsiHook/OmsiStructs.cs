@@ -54,6 +54,14 @@ namespace OmsiHook
 		public D3DColorValue diffuse, ambient, specular, emissive;
 		public float power;
     }
+	
+	public struct D3DOBB
+	{
+		// TODO: Check Axis Data Type
+		public int Axis;
+		public D3DVector Depth;
+		public D3DVector Center;
+    }
 
 	/// <summary>
 	/// Defines a 2 dimensional int vector
