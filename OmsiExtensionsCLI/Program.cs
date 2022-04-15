@@ -10,7 +10,7 @@ namespace OmsiExtensionsCLI
         {
             Console.WriteLine("#=#=#=#=#=# OmsiExtensions Testing #=#=#=#=#=#");
 
-            OmsiHook.OmsiHook omsi = new OmsiHook.OmsiHook();
+            OmsiHook.OmsiHook omsi = new();
             omsi.AttachToOMSI();
 
             while (true)

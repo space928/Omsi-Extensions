@@ -18,13 +18,13 @@ namespace OmsiHook
         /// <summary>
         /// Attempts to attach to a given process as a debugger.
         /// </summary>
-        /// <param name="ProcName">The name of the process to attach to eg: "OMSI.exe"</param>
+        /// <param name="procName">The name of the process to attach to eg: "OMSI.exe"</param>
         /// <returns>A tuple containing whether or not the process attached successfully and the Process instance</returns>
-        public (bool, Process proc) Attach(string ProcName)
+        public (bool, Process proc) Attach(string procName)
         {
-            if (Process.GetProcessesByName(ProcName).Length > 0)
+            if (Process.GetProcessesByName(procName).Length > 0)
             {
-                m_iProcess = Process.GetProcessesByName(ProcName)[0];
+                m_iProcess = Process.GetProcessesByName(procName)[0];
                 try
                 {
                     Process.EnterDebugMode();
@@ -43,20 +43,58 @@ namespace OmsiHook
             return (false, null);
         }
 
-        public void WriteMemory<T>(int Address, T Value)
+        /// <summary>
+        /// Sets the value of a struct at a given address.
+        /// </summary>
+        /// <typeparam name="T">The managed type of the struct to set. 
+        /// This must have a one to one mapping with the unmanaged data.</typeparam>
+        /// <param name="address">The address of the data to set</param>
+        /// <param name="value">The new value to set; this must be of the 
+        /// correct data type to avoid memory corruption</param>
+        public void WriteMemory<T>(int address, T value) where T : struct
         {
-            var buffer = StructureToByteArray(Value);
+            var buffer = StructureToByteArray(value);
 
-            Imports.WriteProcessMemory((int)m_iProcessHandle, Address, buffer, buffer.Length, out _);
+            Imports.WriteProcessMemory((int)m_iProcessHandle, address, buffer, buffer.Length, out _);
         }
 
-        public void WriteMemory<T>(int Adress, char[] Value)
+        /// <summary>
+        /// Sets the value of a string at a given address.<para/>
+        /// WARNING: This method will NOT allocate new memory, ensure that there is enough space before 
+        /// writing to the string.
+        /// </summary>
+        /// <param name="Address">The address of the data to set</param>
+        /// <param name="value">The new value of the string to set; this must be of the 
+        /// correct encoding to avoid memory corruption</param>
+        /// <param name="wide">Chooses which encoding to convert the </param>
+        public void WriteMemory(int address, string value, bool wide = false)
         {
-            var buffer = Encoding.UTF8.GetBytes(Value);
+            byte[] buffer;
+            if(wide)
+                buffer = Encoding.Unicode.GetBytes(value);
+            else
+                buffer = Encoding.ASCII.GetBytes(value);
 
-            Imports.WriteProcessMemory((int)m_iProcessHandle, Adress, buffer, buffer.Length, out _);
+            Imports.WriteProcessMemory((int)m_iProcessHandle, address, buffer, buffer.Length, out _);
         }
 
+        /// <summary>
+        /// Reads a struct/value from unmanaged memory and returns it.
+        /// </summary>
+        /// <typeparam name="T">The type of the value/struct to read</typeparam>
+        /// <param name="address">The address to read from</param>
+        /// <returns>The value of the struct/value at the given address.</returns>
+        public T ReadMemory<T>(IntPtr address) where T : struct
+        {
+            return ReadMemory<T>(address.ToInt32());
+        }
+
+        /// <summary>
+        /// Reads a struct/value from unmanaged memory and returns it.
+        /// </summary>
+        /// <typeparam name="T">The type of the value/struct to read</typeparam>
+        /// <param name="address">The address to read from</param>
+        /// <returns>The value of the struct/value at the given address.</returns>
         public T ReadMemory<T>(int address) where T : struct
         {
             var ByteSize = Marshal.SizeOf(typeof(T));
@@ -71,8 +109,8 @@ namespace OmsiHook
         /// <summary>
         /// Returns the value of a null terminated string at a given address.
         /// </summary>
-        /// <param name="address"></param>
-        /// <returns></returns>
+        /// <param name="address">The address to read from</param>
+        /// <returns>The value of the string at the given address.</returns>
         public string ReadMemoryString(int address, bool wide = false)
         {
             var sb = new StringBuilder();
@@ -95,6 +133,46 @@ namespace OmsiHook
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Reads an array of OmsiObjects from unmanaged memory at a given address.
+        /// </summary>
+        /// <typeparam name="T">The type of the OmsiObject to return</typeparam>
+        /// <param name="address">The address of the array to read from</param>
+        /// <returns>The parsed array of OmsiObjects.</returns>
+        public T[] ReadMemoryObjArray<T>(int address) where T : OmsiObject
+        {
+            int arr = ReadMemory<int>(address);
+            int len = ReadMemory<int>(arr - 4);
+            T[] ret = new T[len];
+            for (int i = 0; i < len; i++)
+                ret[i] = new OmsiObject(this, ReadMemory<int>(arr + i * 4)) as T;
+
+            return ret;
+        }
+
+        /// <summary>
+        /// Reads an array of structs from unmanaged memory at a given address.
+        /// </summary>
+        /// <typeparam name="T">The type of the struct to return</typeparam>
+        /// <param name="address">The address of the array to read from</param>
+        /// <returns>The parsed array of structs.</returns>
+        public T[] ReadMemoryStructArray<T>(int address) where T : struct
+        {
+            int arr = ReadMemory<int>(address);
+            int len = ReadMemory<int>(arr - 4);
+            T[] ret = new T[len];
+            for (int i = 0; i < len; i++)
+                ret[i] = ReadMemory<T>(arr + i * 4);
+
+            return ret;
+        }
+
+        /// <summary>
+        /// Reads raw bytes from unmanaged memory at a given address.
+        /// </summary>
+        /// <param name="offset">The address to start reading from</param>
+        /// <param name="size">The number of bytes to read</param>
+        /// <returns></returns>
         public byte[] ReadMemory(int offset, int size)
         {
             var buffer = new byte[size];
@@ -102,34 +180,6 @@ namespace OmsiHook
             Imports.ReadProcessMemory((int)m_iProcessHandle, offset, buffer, size, ref m_iBytesRead);
 
             return buffer;
-        }
-
-        public float[] ReadMatrix<T>(int address, int MatrixSize) where T : struct
-        {
-            var ByteSize = Marshal.SizeOf(typeof(T));
-            var buffer = new byte[ByteSize * MatrixSize];
-            Imports.ReadProcessMemory((int)m_iProcessHandle, address, buffer, buffer.Length, ref m_iBytesRead);
-
-            return ConvertToFloatArray(buffer);
-        }
-
-        public int GetModuleAddress(string Name)
-        {
-            try
-            {
-                foreach (ProcessModule ProcMod in m_iProcess.Modules)
-                    if (Name == ProcMod.ModuleName)
-                        return (int)ProcMod.BaseAddress;
-            }
-            catch
-            {
-            }
-
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("ERROR: Cannot find - " + Name + " | Check file extension.");
-            Console.ResetColor();
-
-            return -1;
         }
 
         #region Other
@@ -144,19 +194,6 @@ namespace OmsiHook
         #endregion
 
         #region Conversion
-
-        public static float[] ConvertToFloatArray(byte[] bytes)
-        {
-            if (bytes.Length % 4 != 0)
-                throw new ArgumentException();
-
-            var floats = new float[bytes.Length / 4];
-
-            for (var i = 0; i < floats.Length; i++)
-                floats[i] = BitConverter.ToSingle(bytes, i * 4);
-
-            return floats;
-        }
 
         private static T ByteArrayToStructure<T>(byte[] bytes) where T : struct
         {
