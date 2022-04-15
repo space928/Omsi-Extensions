@@ -70,7 +70,7 @@ namespace OmsiHook
         public void WriteMemory(int address, string value, bool wide = false)
         {
             byte[] buffer;
-            if(wide)
+            if (wide)
                 buffer = Encoding.Unicode.GetBytes(value);
             else
                 buffer = Encoding.ASCII.GetBytes(value);
@@ -139,13 +139,17 @@ namespace OmsiHook
         /// <typeparam name="T">The type of the OmsiObject to return</typeparam>
         /// <param name="address">The address of the array to read from</param>
         /// <returns>The parsed array of OmsiObjects.</returns>
-        public T[] ReadMemoryObjArray<T>(int address) where T : OmsiObject
+        public T[] ReadMemoryObjArray<T>(int address) where T : OmsiObject, new()
         {
             int arr = ReadMemory<int>(address);
             int len = ReadMemory<int>(arr - 4);
             T[] ret = new T[len];
             for (int i = 0; i < len; i++)
-                ret[i] = new OmsiObject(this, ReadMemory<int>(arr + i * 4)) as T;
+            {
+                var n = new T();
+                n.InitObject(this, ReadMemory<int>(arr + i * 4));
+                ret[i] = n;
+            }
 
             return ret;
         }
@@ -162,7 +166,7 @@ namespace OmsiHook
             int len = ReadMemory<int>(arr - 4);
             T[] ret = new T[len];
             for (int i = 0; i < len; i++)
-                ret[i] = ReadMemory<T>(arr + i * 4);
+                ret[i] = ReadMemory<T>(arr + i * Marshal.SizeOf<T>());
 
             return ret;
         }
@@ -180,6 +184,62 @@ namespace OmsiHook
             Imports.ReadProcessMemory((int)m_iProcessHandle, offset, buffer, size, ref m_iBytesRead);
 
             return buffer;
+        }
+
+        /// <summary>
+        /// Marshals any data in a struct which couldn't be automatically marshalled by Marshal.PtrToStruct.
+        /// This method uses reflection and as such isn't very fast.
+        /// </summary>
+        /// <typeparam name="OutStruct">The type of the struct to output; MUST have corresponding 
+        /// field names to InStruct</typeparam>
+        /// <typeparam name="InStruct">The type of the struct to marshal</typeparam>
+        /// <param name="obj">The structs as marshaled by Marshal.PtrToStruct</param>
+        /// <returns>The fully marshalled structs.</returns>
+        public OutStruct[] MarshalStructs<OutStruct, InStruct>(InStruct[] obj)
+           where OutStruct : struct
+           where InStruct : struct
+        {
+            OutStruct[] ret = new OutStruct[obj.Length];
+            for (int i = 0; i < obj.Length; i++)
+                ret[i] = MarshalStruct<OutStruct, InStruct>(obj[i]);
+
+            return ret;
+        }
+
+        /// <summary>
+        /// Marshals any data in a struct which couldn't be automatically marshalled by Marshal.PtrToStruct.
+        /// This method uses reflection and as such isn't very fast.
+        /// </summary>
+        /// <typeparam name="OutStruct">The type of the struct to output; MUST have corresponding 
+        /// field names to InStruct</typeparam>
+        /// <typeparam name="InStruct">The type of the struct to marshal</typeparam>
+        /// <param name="obj">The struct as marshaled by Marshal.PtrToStruct</param>
+        /// <returns>The fully marshalled struct.</returns>
+        public OutStruct MarshalStruct<OutStruct, InStruct>(InStruct obj) 
+            where OutStruct : struct 
+            where InStruct : struct
+        {
+            object ret = new OutStruct();
+            foreach (var field in obj.GetType().GetFields())
+            {
+                object val = field.GetValue(obj);
+                foreach (var attr in field.CustomAttributes)
+                {
+                    switch (attr.AttributeType.Name)
+                    {
+                        case nameof(OmsiStrPtrAttribute):
+                            val = ReadMemoryString((int)val, (bool)attr.ConstructorArguments[0].Value);
+                            break;
+                        case nameof(OmsiPtrAttribute):
+                            val = new IntPtr((int)val);
+                            break;
+                    }
+                }
+
+                typeof(OutStruct).GetField(field.Name).SetValue(ret, val);
+            }
+
+            return (OutStruct)ret;
         }
 
         #region Other
