@@ -357,4 +357,38 @@ namespace OmsiHook
 		public D3DMeshFileObject mesh_block;
 		public D3DMeshFileObject mesh_single;
     }
+
+	public struct OmsiSeat
+	{
+		public D3DVector position;
+		public D3DXQuaternion rotation;
+		public byte flag;
+		public float height;
+		public int getInteriorLights; // TODO: Check Data Type
+    }
+	public struct OmsiEntryProp
+	{
+		public bool noTicketSale;
+		public bool withButton;
+    }
+	public struct OmsiPassCabinStamper
+	{
+		public OmsiPathPoint point;
+		public D3DVector stamperPos;
+		public bool valid;
+    }
+	public struct OmsiPassCabinTicketSale
+	{
+		public OmsiPathPoint point;
+		public D3DVector ticketPos;
+		public D3DVector moneyPos;
+		public D3DVector moneyPos_var;
+		public int moneyPos_parent_idx;
+		public string moneyPos_parent_str; // ANSIString
+		public D3DVector changePos;
+		public D3DVector changePos_var;
+		public int changePos_parent_idx;
+		public string changePos_parent_str; // ANSIString
+		public bool valid;
+    }
 }
