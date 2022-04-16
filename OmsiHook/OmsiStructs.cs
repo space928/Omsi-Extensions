@@ -310,7 +310,7 @@ namespace OmsiHook
 		public bool ovc;
     }
 
-	public struct OmsiTicketPackInternal
+	internal struct OmsiTicketPackInternal
 	{
 		[OmsiStrPtr] public int filename;
 		[OmsiStrPtr(true)] public int voicepath;
@@ -333,7 +333,7 @@ namespace OmsiHook
 		public float whinge_prop;
     }
 
-	public struct OmsiTicketInternal
+	internal struct OmsiTicketInternal
 	{
 		//TODO: I don't think these are decoding correctly (I saw nothing when I looked), check this actually works.
 		[OmsiStrPtr] public int name, name_english, name_display;
@@ -357,4 +357,153 @@ namespace OmsiHook
 		public D3DMeshFileObject mesh_block;
 		public D3DMeshFileObject mesh_single;
     }
+
+    public struct OmsiVector3Double
+    {
+		public double x, y, z;
+	}
+
+	/// <summary>
+	/// Omsi axel instance
+	/// </summary>
+	public struct OmsiAchseInstance
+    {
+		//TODO: Translate field names
+		public double phi; //TODO: Verify all double types
+		public float alpha;
+		public double drehzahl;
+		public double federung;
+		public OmsiVector3Double anpress; //TODO: Verify type
+		public float contact;
+		public float antrieb;
+		public double brems;
+		public double schlupf;
+		public float bremShaft;
+		public double mue_str_gl;
+		public double mue_str_hft;
+		public double puddle_depth;
+		public double surface;
+		public double surface_var;
+		public double springFactor;
+		public double brakeForce;
+		public double ph_Wheel;
+		public double ph_wheel_geom;
+		public double ph_joint;
+		public int lastSchiene;
+	}
+
+	internal struct OmsiUnschedVehGroupInternal
+	{
+		[OmsiStrPtr] public int aiList;
+		public int aiList_index;
+		public int defaultDensity;
+		public float densityFactor;
+		public float act_trafficDensity;
+		[OmsiPtr] public int func_trafficDensity_weekday;
+		[OmsiPtr] public int func_trafficDensity_saturday;
+		[OmsiPtr] public int func_trafficDensity_sunday;
+	}
+
+	public struct OmsiUnschedVehGroup
+    {
+		public string aiList;
+		public int aiList_index;
+		public int defaultDensity;
+		public float densityFactor;
+		public float act_trafficDensity;
+		public IntPtr func_trafficDensity_weekday;
+		public IntPtr func_trafficDensity_saturday;
+		public IntPtr func_trafficDensity_sunday;
+    }
+
+	internal struct OmsiAIListInternal
+    {
+		[OmsiStrArrayPtr] public int allVeh;
+		public int randomGroup;
+		[OmsiStructArrayPtr(typeof(OmsiAIGroup), typeof(OmsiAIGroupInternal))] 
+		public int groups;
+    }
+
+	public struct OmsiAIList
+	{
+		public string[] allVeh;
+		public int randomGroup;
+		public OmsiAIGroup[] groups;
+	}
+
+	internal struct OmsiAIGroupInternal
+    {
+		[OmsiStrPtr] public int ident;
+		[OmsiStructArrayPtr(typeof(OmsiAIGroupType), typeof(OmsiAIGroupTypeInternal))]
+		public int typeEntries;
+		[OmsiStrPtr] public int hof;
+		public bool fixedList;
+		public int nonUsed_count;
+	}
+
+	public struct OmsiAIGroup
+	{
+		public string ident;
+		public OmsiAIGroupType[] typeEntries;
+		public string hof;
+		public bool fixedList;
+		public int nonUsed_count;
+	}
+
+	internal struct OmsiAIGroupTypeInternal
+	{
+		public int veh;
+		public int nonUsed_count;
+		[OmsiStructArrayPtr(typeof(OmsiAIGroupTypeNumber), typeof(OmsiAIGroupTypeNumberInternal))] 
+		public int numbers;
+	}
+
+	public struct OmsiAIGroupType
+    {
+		public int veh;
+		public int nonUsed_count;
+		public OmsiAIGroupTypeNumber[] numbers;
+    }
+
+	internal struct OmsiAIGroupTypeNumberInternal
+	{
+		[OmsiStrPtr] public int num, reg, werbung;
+		public bool used;
+	}
+
+	public struct OmsiAIGroupTypeNumber
+    {
+		public string num, reg, werbung;
+		public bool used;
+    }
+
+	internal struct OmsiHolidayInternal
+    {
+		public int date;
+		[OmsiStrPtr] public int name;
+    }
+
+    public struct OmsiHoliday
+    {
+		public int date;
+		public string name;
+	}
+
+	internal struct OmsiHolidaysInternal
+    {
+		public int start, ende;
+		[OmsiStrPtr] public int name;
+    }
+
+	public struct OmsiHolidays
+    {
+		public int start, ende;
+		public string name;
+    }
+
+    public struct OmsiDST
+    {
+		public int start_day, ende_day;
+		public float start_time, ende_time, diff;
+	}
 }

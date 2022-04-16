@@ -13,7 +13,6 @@ namespace OmsiHook
         //  http://go.microsoft.com/fwlink/?LinkId=85236
         readonly bool wide;
 
-        // This is a positional argument
         public OmsiStrPtrAttribute(bool wide = false)
         {
             this.wide = wide;
@@ -43,7 +42,6 @@ namespace OmsiHook
         //  http://go.microsoft.com/fwlink/?LinkId=85236
         readonly Type objType;
 
-        // This is a positional argument
         public OmsiObjPtrAttribute(Type objType)
         {
             if (!objType.IsSubclassOf(typeof(OmsiObject)))
@@ -66,7 +64,6 @@ namespace OmsiHook
         //  http://go.microsoft.com/fwlink/?LinkId=85236
         readonly Type objType;
 
-        // This is a positional argument
         public OmsiObjArrayPtrAttribute(Type objType)
         {
             if (objType.IsSubclassOf(typeof(OmsiObject)))
@@ -91,7 +88,6 @@ namespace OmsiHook
         readonly Type internalType;
         readonly bool requiresExtraMarshalling;
 
-        // This is a positional argument
         /// <summary>
         /// 
         /// </summary>
@@ -114,5 +110,24 @@ namespace OmsiHook
         public Type ObjType => objType;
         public Type InternalType => internalType;
         public bool RequiresExtraMarshalling => requiresExtraMarshalling;
+    }
+
+    /// <summary>
+    /// Marks a field to be converted from an int to an array of strings.<para/>
+    /// Used by Memory.MarshalStruct()
+    /// </summary>
+    [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+    sealed class OmsiStrArrayPtrAttribute : Attribute
+    {
+        // See the attribute guidelines at 
+        //  http://go.microsoft.com/fwlink/?LinkId=85236
+        readonly bool wide;
+
+        public OmsiStrArrayPtrAttribute(bool wide = false)
+        {
+            this.wide = wide;
+        }
+
+        public bool Wide => wide;
     }
 }

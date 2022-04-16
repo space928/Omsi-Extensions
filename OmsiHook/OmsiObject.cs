@@ -11,6 +11,11 @@
             InitObject(memory, address);
         }
 
+        /// <summary>
+        /// Call this method to initialise an OmsiObject if the two-parameter constructor wasn't used.
+        /// </summary>
+        /// <param name="memory"></param>
+        /// <param name="address"></param>
         internal void InitObject(Memory memory, int address)
         {
             this.Memory = memory;
