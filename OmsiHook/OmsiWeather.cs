@@ -89,13 +89,8 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0xb8, value);
         }
 
-        /* TODO:
-        public CloudType[] CloudTypes
-        {
-            get => omsiMemory.ReadMemory<CloudType[]>(baseAddress + 0xbc);
-            set => omsiMemory.WriteMemory(baseAddress + 0xbc, value);
-        }
-        */
+        public OmsiCloudType[] CloudTypes => Memory.MarshalStructs<OmsiCloudType, OmsiCloudTypeInternal>(
+            Memory.ReadMemoryStructArray<OmsiCloudTypeInternal>(Address + 0xbc));
 
         public D3DVector CloudPos
         {
