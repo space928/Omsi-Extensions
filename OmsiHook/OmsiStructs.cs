@@ -197,6 +197,32 @@ namespace OmsiHook
 		SsnSummerDry
     }
 
+	public enum OmsiFileObjectSpecial : byte
+    {
+		FOS_Normal,
+		FOS_Busstop,
+		FOS_PeopleStandingRandom,
+		FOS_EntryPoint,
+		FOS_TrafficLight,
+		FOS_Signal,
+		FOS_Tree,
+		FOS_CarPark_P,
+		FOS_HelpArrow,
+		FOS_Switch,
+		FOS_Invalid
+    }
+
+	public enum OmsiMapRenderPriority : byte
+    {
+		TMRP_PreSurfaces,
+		TMRP_Surfaces,
+		TMRP_OnSurfaces,
+		TMRP_1,
+		TMRP_2,
+		TMRP_3,
+		TMRP_4
+    }
+
 	internal struct OmsiGroundTypeInternal
     {
 		[OmsiStrPtr] public int texture;
@@ -390,5 +416,18 @@ namespace OmsiHook
 		public int changePos_parent_idx;
 		public string changePos_parent_str; // ANSIString
 		public bool valid;
+    }
+	public struct OmsiTreeInfo
+    {
+		public string texture;
+		public float min_height;
+		public float max_height;
+		public float min_ratio;
+		public float max_ratio;
+    }
+	public struct OmsiMapLight
+    {
+		public D3DVector position;
+		public float r, g, b, radius;
     }
 }
