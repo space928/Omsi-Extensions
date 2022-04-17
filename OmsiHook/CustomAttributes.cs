@@ -3,6 +3,43 @@
 namespace OmsiHook
 {
     /// <summary>
+    /// Marks a field to be converted from an internal struct to a struct.<para/>
+    /// Used by Memory.MarshalStruct()
+    /// </summary>
+    [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+    sealed class OmsiStructAttribute : Attribute
+    {
+        // See the attribute guidelines at 
+        //  http://go.microsoft.com/fwlink/?LinkId=85236
+        readonly Type objType;
+        readonly Type internalType;
+        readonly bool requiresExtraMarshalling;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="objType">The type of the object to convert to</param>
+        /// <param name="internalType">The intermidiate type to convert through 
+        /// (in case Marshal.PtrToStruct doesn't support all the fields in objType).
+        /// Leave null to default to objType</param>
+        public OmsiStructAttribute(Type objType, Type internalType = null)
+        {
+            if (!objType.IsValueType)
+                throw new ArgumentException("OmsiStructPtr must be a pointer to a struct/value!");
+            if ((!internalType?.IsValueType) ?? false)
+                throw new ArgumentException("OmsiStructPtr must be a pointer to a struct/value!");
+
+            this.objType = objType;
+            this.requiresExtraMarshalling = internalType != null;
+            this.internalType = internalType ?? objType;
+        }
+
+        public Type ObjType => objType;
+        public Type InternalType => internalType;
+        public bool RequiresExtraMarshalling => requiresExtraMarshalling;
+    }
+
+    /// <summary>
     /// Marks a field to be converted from an int to a string.<para/>
     /// Used by Memory.MarshalStruct()
     /// </summary>
@@ -29,6 +66,43 @@ namespace OmsiHook
     sealed class OmsiPtrAttribute : Attribute
     {
 
+    }
+
+    /// <summary>
+    /// Marks a field to be converted from an int to a struct.<para/>
+    /// Used by Memory.MarshalStruct()
+    /// </summary>
+    [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+    sealed class OmsiStructPtrAttribute : Attribute
+    {
+        // See the attribute guidelines at 
+        //  http://go.microsoft.com/fwlink/?LinkId=85236
+        readonly Type objType;
+        readonly Type internalType;
+        readonly bool requiresExtraMarshalling;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="objType">The type of the object to convert to</param>
+        /// <param name="internalType">The intermidiate type to convert through 
+        /// (in case Marshal.PtrToStruct doesn't support all the fields in objType).
+        /// Leave null to default to objType</param>
+        public OmsiStructPtrAttribute(Type objType, Type internalType = null)
+        {
+            if (!objType.IsValueType)
+                throw new ArgumentException("OmsiStructPtr must be a pointer to a struct/value!");
+            if ((!internalType?.IsValueType) ?? false)
+                throw new ArgumentException("OmsiStructPtr must be a pointer to a struct/value!");
+
+            this.objType = objType;
+            this.requiresExtraMarshalling = internalType != null;
+            this.internalType = internalType ?? objType;
+        }
+
+        public Type ObjType => objType;
+        public Type InternalType => internalType;
+        public bool RequiresExtraMarshalling => requiresExtraMarshalling;
     }
 
     /// <summary>
@@ -76,7 +150,7 @@ namespace OmsiHook
     }
 
     /// <summary>
-    /// Marks a field to be converted from an int to an OmsiObject[].<para/>
+    /// Marks a field to be converted from an int to a struct[].<para/>
     /// Used by Memory.MarshalStruct()
     /// </summary>
     [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]

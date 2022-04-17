@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
+#pragma warning disable CS0649
+
 namespace OmsiHook
 {
 	/// <summary>
@@ -506,4 +508,308 @@ namespace OmsiHook
 		public int start_day, ende_day;
 		public float start_time, ende_time, diff;
 	}
+
+	public struct OmsiPathID
+    {
+		public int kachel, path;
+    }
+
+	internal struct OmsiPathBelegungInternal
+	{
+		public float xmin, xmax, zmin, zmax;
+		[OmsiStructPtr(typeof(OmsiPathInfo), typeof(OmsiPathInfoInternal))]
+		public int pathInfoPntr;
+		public uint idCode;
+	}
+
+	/// <summary>
+	/// Path assignment?
+	/// </summary>
+	public struct OmsiPathBelegung
+    {
+		public float xmin, xmax, zmin, zmax;
+		public OmsiPathInfo pathInfoPntr;
+		public uint idCode;
+    }
+
+	//TODO: Bug when dereferencing this
+	internal struct OmsiPathInfoInternal
+	{
+		public byte veh_type;
+		public byte uvg;
+		public bool railroad;
+		public bool freeOrLarge;
+		public D3DVector pathPos;
+		public OmsiPathID path;
+		public int subPath;
+		public bool reverse;
+		public float hdg;
+		[OmsiStructPtr(typeof(uint))] public int idCode;
+		[OmsiObjPtr(typeof(OmsiObject))] public int vehicle;
+		public float veloc;
+		public float x_L, x_R, z_B, z_F;
+		public float radius;
+		public float drehpunkt;
+		[OmsiStructPtr(typeof(D3DMatrix))] public int absPosition;
+		public byte waitMode;
+		public int reserveGroup;
+		public byte blinker;
+		public byte einOrdnen;//TODO: Check data type
+		public bool prevVisible_logical;
+		//TODO: Determine actual type
+		public int nextPath_a, nextPath_b, nextPath_c, nextPath_d, nextPath_e;
+		public OmsiNextPathSegment nextPathSeg; 
+		public OmsiNextPathID nextPathID;
+		[OmsiStructArrayPtr(typeof(OmsiPathID))]
+		public int reservePaths;
+		public int spurwechsel; //TODO: Check data type
+		public uint spurwechselTime;
+		public bool spurwechselAuto;
+		public bool noScheduledSpurwechsel;
+		public bool on_crossing;
+		public float leftFree, rightFree;
+		public byte relPosError; //TODO: Check data type
+		public bool setPosOnNearTile;
+		public float rowdy_factor;
+		public bool eilig;
+		public bool einSatzFahrzeug;
+		public float martinshorn;
+		public float getrieben_von_einSatz;
+		public uint getrieben_von_einSatz_time;
+		public byte setSoll;
+		public int track;
+		public int trackEntry;
+		public int stnLink;
+		public int next_stnLink;
+		public bool zwangsEinsetzen;
+		public bool allowHupen;
+		[OmsiStrPtr] public int debug_aiData_limit;
+	}
+
+	public struct OmsiPathInfo
+    {
+		public byte veh_type;
+		public byte uvg;
+		public bool railroad;
+		public bool freeOrLarge;
+		public D3DVector pathPos;
+		public OmsiPathID path;
+		public int subPath;
+		public bool reverse;
+		public float hdg;
+		public uint idCode;
+		public OmsiObject vehicle;
+		/// <summary>
+		/// Vehicle location
+		/// </summary>
+		public float veloc;
+		public float x_L, x_R, z_B, z_F;
+		public float radius;
+		/// <summary>
+		/// Pivot point
+		/// </summary>
+		public float drehpunkt;
+		public D3DMatrix absPosition;
+		public byte waitMode;
+		public int reserveGroup;
+		public byte blinker;
+		/// <summary>
+		/// Order
+		/// </summary>
+		public byte einordnen;//TODO: Check data type
+		public bool prevVisible_logical;
+		//TODO: Determine actual type
+		public int nextPath_a, nextPath_b, nextPath_c, nextPath_d, nextPath_e;
+		public OmsiNextPathSegment nextPathSeg;
+		public OmsiNextPathID nextPathID;
+		public OmsiPathID[] reservePaths;
+		/// <summary>
+		/// Lane change
+		/// </summary>
+		public int spurwechsel; //TODO: Check data type
+		/// <summary>
+		/// Lane change time
+		/// </summary>
+		public uint spurwechselTime;
+		/// <summary>
+		/// Lane change auto
+		/// </summary>
+		public bool spurwechselAuto;
+		/// <summary>
+		/// No scheduled lane change
+		/// </summary>
+		public bool noScheduledSpurwechsel;
+		public bool on_crossing;
+		public float leftFree, rightFree;
+		public byte relPosError; //TODO: Check data type
+		public bool setPosOnNearTile;
+		public float rowdy_factor;
+		/// <summary>
+		/// Hurried
+		/// </summary>
+		public bool eilig;
+		/// <summary>
+		/// Emergency vehicles
+		/// </summary>
+		public bool einsatzfahrzeug;
+		/// <summary>
+		/// Siren
+		/// </summary>
+		public float martinshorn;
+		/// <summary>
+		/// Driven by emergency?
+		/// </summary>
+		public float getrieben_von_einsatz;
+		/// <summary>
+		/// Driven by emergency time?
+		/// </summary>
+		public uint getrieben_von_einSatz_time;
+		/// <summary>
+		/// Set target
+		/// </summary>
+		public byte setSoll;
+		public int track;
+		public int trackEntry;
+		public int stnLink;
+		public int next_stnLink;
+		/// <summary>
+		/// Forced insertion?
+		/// </summary>
+		public bool zwangsEinsetzen;
+		/// <summary>
+		/// Allow horns
+		/// </summary>
+		public bool allowHupen;
+		public string debug_aiData_limit;
+	}
+
+	/// <summary>
+	/// Temporary struct to store unknown data type in OmsiPathInfo.nextPathSeg
+	/// </summary>
+	public struct OmsiNextPathSegment
+    {
+		public int a, b, c, d, e, f, g, h, i, j;
+    }
+
+	/// <summary>
+	/// Temporary struct to store unkown data type in OmsiPathInfo.nextPathID
+	/// </summary>
+	public struct OmsiNextPathID
+    {
+		public OmsiPathID a, b, c, d, e;
+    }
+
+	internal struct OmsiPathGroupReservInternal
+	{
+		[OmsiStruct(typeof(OmsiPathInfo), typeof(OmsiPathInfoInternal))] 
+		public OmsiPathInfoInternal pathInfo;
+	}
+
+	public struct OmsiPathGroupReserv
+    {
+		public OmsiPathInfo pathInfo;
+    }
+
+	public struct OmsiPathGroupBlocking
+    {
+		public OmsiPathID blockingPath;
+		public int blockedPathRel;
+		public byte param;
+		public byte active;
+    }
+
+	internal struct OmsiAmpelGroupInternal
+	{
+		[OmsiStructArrayPtr(typeof(OmsiAmpel))]
+		public int ampeln;
+		[OmsiStructArrayPtr(typeof(OmsiAmpelStop))]
+		public int stops;
+		public float zyklus;
+		public bool running;
+		public float ampelTime;
+	}
+
+	/// <summary>
+	/// Traffic light group
+	/// </summary>
+	public struct OmsiAmpelGroup
+    {
+		/// <summary>
+		/// Traffic lights
+		/// </summary>
+		public OmsiAmpel[] ampeln;
+		public OmsiAmpelStop[] stops;
+		/// <summary>
+		/// Cycle
+		/// </summary>
+		public float zyklus;
+		public bool running;
+		public float ampelTime;
+    }
+
+	public struct OmsiAmpelInternal
+	{
+		[OmsiStrPtr] public int name;
+		[OmsiStructArrayPtr(typeof(OmsiAmpelPhase))] 
+		public int phasen;
+		public float actPhase;
+		public byte blockingPhase;
+		public float anforderung;
+		public uint anforderung_frame;
+		public float approachDist;
+	}
+
+	/// <summary>
+	/// Traffic light
+	/// </summary>
+	public struct OmsiAmpel
+    {
+		public string name;
+		/// <summary>
+		/// Phases
+		/// </summary>
+		public OmsiAmpelPhase[] phasen;
+		public float actPhase;
+		public byte blockingPhase;
+		/// <summary>
+		/// Requirement?
+		/// </summary>
+		public float anforderung;
+		/// <summary>
+		/// Requirement frame?
+		/// </summary>
+		public uint anforderung_frame;
+		public float approachDist;
+    }
+
+	/// <summary>
+	/// Traffic light phase
+	/// </summary>
+	public struct OmsiAmpelPhase
+    {
+		public float time;
+		public byte phase;
+    }
+
+	public struct OmsiAmpelStop
+    {
+		public int ampel;
+		public float time;
+		public float jumpTime;
+		public bool ifAnf;
+    }
+
+	public struct OmsiTree
+    {
+		public D3DVector position;
+		public float rotation;
+		public OmsiTreeTextureSet texture;
+		public D3DMatrix matrix;
+		public float width, height;
+    }
+
+	public struct OmsiTreeTextureSet
+    {
+		public int main, winterSnow;
+    }
 }

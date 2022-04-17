@@ -5,7 +5,7 @@
         internal Memory Memory { get; private set; }
         internal int Address { get; private set; }
 
-        internal OmsiObject() { }
+        public OmsiObject() { }
         internal OmsiObject(Memory memory, int address) 
         {
             InitObject(memory, address);
