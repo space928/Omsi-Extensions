@@ -6,7 +6,7 @@
           "files": [
             "**.csproj"
           ],
-          "src": "D:\\Users\\Thoma\\OneDrive\\Computer Sync\\visual studio 2015\\Projects\\Omsi-Extensions\\OmsiHook"
+          "src": ""
         }
       ],
       "dest": "api",
