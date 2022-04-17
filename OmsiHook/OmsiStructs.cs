@@ -885,4 +885,80 @@ public struct OmsiVector3Double
     {
 		public int main, winterSnow;
     }
+
+	public struct OmsiObjectPathInfo
+    {
+		public D3DVector position;
+		public float hdg;
+		public float invradius;
+		public float laenge;
+		public float grdnt_strt;
+		public float grdnt_end;
+		public float neigung_strt;
+		public float neigung_end;
+		public float deltaHeight;
+		public bool use_deltaHeight;
+		public byte typ;
+		public float width;
+		public byte reverse;
+		public byte blinker;
+		public int ampel;
+		public OmsiObjectPathInfo[] blockings;
+		public bool crossingProblem;
+		public short switchDir;
+		[OmsiStructArrayPtr(typeof(OmsiPathInfoRailEnh))] public int rail_enh;
+		public OmsiThirdRail[] third_rails;
+    }
+
+	public struct OmsiThirdRail
+    {
+		public float pos_x;
+		public float pos_z;
+		public byte flags;
+		public float volt;
+		public float freq;
+		public float sigA;
+	}
+	
+	public struct OmsiPathInfoRailEnh
+    {
+		public float schienenlaenge;
+		public bool stoesse;
+		public float Gleislage_Wellenlaenge;
+		public float Gleislage_Amp;
+		public int Gleislage_Pot;
+		public float Gleislage_Wellenlaenge_Z;
+		public float Gleislage_Amp_Z;
+		public int Gleislage_Pot_Z;
+	}
+
+	public struct OmsiSnapPosition
+    {
+		public D3DVector position;
+		public float hdg;
+		public float steigung;
+		public float cant;
+		[OmsiPtr] public int parent_obj;
+		[OmsiPtr] public int parent_spl;
+		public int kachel;
+		public float offsetSpline;
+		public float offsetSplineY;
+    }
+
+	public struct OmsiCameraSettings
+    {
+		public float angle_hdg_norm;
+		public float angle_hgt_norm;
+		public bool constDist;
+		public D3DVector pos;
+		public float dist;
+		public float sichtwinkel;
+		public float radius;
+    }
+	
+	public struct OmsiSplineHelper
+    {
+		public OmsiSnapPosition pos;
+		public string splineType;
+    }
 }
