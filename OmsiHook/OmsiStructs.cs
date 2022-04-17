@@ -199,6 +199,32 @@ namespace OmsiHook
 		SsnSummerDry
     }
 
+	public enum OmsiFileObjectSpecial : byte
+    {
+		FOS_Normal,
+		FOS_Busstop,
+		FOS_PeopleStandingRandom,
+		FOS_EntryPoint,
+		FOS_TrafficLight,
+		FOS_Signal,
+		FOS_Tree,
+		FOS_CarPark_P,
+		FOS_HelpArrow,
+		FOS_Switch,
+		FOS_Invalid
+    }
+
+	public enum OmsiMapRenderPriority : byte
+    {
+		TMRP_PreSurfaces,
+		TMRP_Surfaces,
+		TMRP_OnSurfaces,
+		TMRP_1,
+		TMRP_2,
+		TMRP_3,
+		TMRP_4
+    }
+
 	internal struct OmsiGroundTypeInternal
     {
 		[OmsiStrPtr] public int texture;
@@ -359,8 +385,55 @@ namespace OmsiHook
 		public D3DMeshFileObject mesh_block;
 		public D3DMeshFileObject mesh_single;
     }
-
-    public struct OmsiVector3Double
+public struct OmsiSeat
+	{
+		public D3DVector position;
+		public D3DXQuaternion rotation;
+		public byte flag;
+		public float height;
+		public int getInteriorLights; // TODO: Check Data Type
+    }
+	public struct OmsiEntryProp
+	{
+		public bool noTicketSale;
+		public bool withButton;
+    }
+	public struct OmsiPassCabinStamper
+	{
+		public OmsiPathPoint point;
+		public D3DVector stamperPos;
+		public bool valid;
+    }
+	public struct OmsiPassCabinTicketSale
+	{
+		public OmsiPathPoint point;
+		public D3DVector ticketPos;
+		public D3DVector moneyPos;
+		public D3DVector moneyPos_var;
+		public int moneyPos_parent_idx;
+		public string moneyPos_parent_str; // ANSIString
+		public D3DVector changePos;
+		public D3DVector changePos_var;
+		public int changePos_parent_idx;
+		public string changePos_parent_str; // ANSIString
+		public bool valid;
+    }
+	public struct OmsiTreeInfo
+    {
+		public string texture;
+		public float min_height;
+		public float max_height;
+		public float min_ratio;
+		public float max_ratio;
+    }
+  	public struct OmsiMapLight
+    {
+		public D3DVector position;
+		public float r, g, b, radius;
+      
+		public double x, y, z;
+    }
+public struct OmsiVector3Double
     {
 		public double x, y, z;
 	}
