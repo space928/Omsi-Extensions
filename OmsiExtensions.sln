@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31205.134
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32407.343
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmsiHook", "OmsiHook\OmsiHook.csproj", "{2E750CBE-F868-4AB7-96C2-27560F53E06B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OmsiHook", "OmsiHook\OmsiHook.csproj", "{2E750CBE-F868-4AB7-96C2-27560F53E06B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmsiExtensionsUI", "OmsiExtensionsUI\OmsiExtensionsUI.csproj", "{28DA0165-EAA7-4171-A065-319409682BD1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OmsiExtensionsUI", "OmsiExtensionsUI\OmsiExtensionsUI.csproj", "{28DA0165-EAA7-4171-A065-319409682BD1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmsiExtensionsCLI", "OmsiExtensionsCLI\OmsiExtensionsCLI.csproj", "{FDA9A525-9722-46D3-B80C-8D2A76ABCA2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OmsiExtensionsCLI", "OmsiExtensionsCLI\OmsiExtensionsCLI.csproj", "{FDA9A525-9722-46D3-B80C-8D2A76ABCA2D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

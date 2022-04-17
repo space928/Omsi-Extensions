@@ -149,7 +149,7 @@ namespace OmsiHook
         /*TODO: public OmsiThreadTileLoadAndRefresh ThreadTileLoadAndRefresh 
             => omsiMemory.ReadMemory<OmsiThreadTileLoadAndRefresh>(baseAddress + 0x114);*/
 
-        public OmsiKacheln[] Kacheln => Memory.ReadMemoryObjArray<OmsiKacheln>(Address + 0x118);
+        public OmsiMapKachel[] Kacheln => Memory.ReadMemoryObjArray<OmsiMapKachel>(Address + 0x118);
 
         public OmsiMapKachelInfo[] KachelInfos 
             => Memory.MarshalStructs<OmsiMapKachelInfo, OmsiMapKachelInfoInternal>(
@@ -173,9 +173,9 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x144, value);
         }
 
-        public OmsiPoint CenterKachelNum
+        public int CenterKachelNum
         {
-            get => Memory.ReadMemory<OmsiPoint>(Address + 0x14c);
+            get => Memory.ReadMemory<int>(Address + 0x14c);
             set => Memory.WriteMemory(Address + 0x14c, value);
         }
 

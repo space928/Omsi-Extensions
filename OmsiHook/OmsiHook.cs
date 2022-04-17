@@ -11,7 +11,6 @@ namespace OmsiHook
     {
         private Memory omsiMemory;
         private Process process;
-        private int baseOffset = 0;
 
         /// <summary>
         /// Gets the vehicle instance being driven by the player.
@@ -38,12 +37,10 @@ namespace OmsiHook
             {
                 await Task.Delay(250);
                 (found, process) = omsiMemory.Attach("omsi");
+                Console.WriteLine("Waiting for OMSI.exe...");
             }
 
-            Console.WriteLine("Connected succesfully! Logging data:");
-            int baseAddr = 0x461500;
-            int moduleBase = GetModuleOffset("Omsi.exe");
-            baseOffset = omsiMemory.ReadMemory<int>(baseAddr + moduleBase);
+            Console.WriteLine("Connected succesfully!");
         }
 
         public OmsiRoadVehicleInst GetRoadVehicleInst(int index)
@@ -64,23 +61,14 @@ namespace OmsiHook
             return omsiMemory.ReadMemory<int>(omsiMemory.ReadMemory<int>(omsiMemory.ReadMemory<int>(omsiMemory.ReadMemory<int>(addr) + 0x28) + 0x4) + index * 4);
         }
 
-        private int GetModuleOffset(string name)
-        {
-            foreach (ProcessModule m in process.Modules)
-            {
-                if (m.ModuleName == name)
-                    return m.BaseAddress.ToInt32();
-            }
-            return -1;
-        }
-
         /// <summary>
         /// Finds and returns the value of a named float variable.
         /// </summary>
         /// <param name="varName">Name of variable to look for</param>
         /// <param name="baseAddr">Value of *(baseAddr + moduleBase)</param>
         /// <returns></returns>
-        private float FindVar(string varName, int baseAddr)
+        [Obsolete("This API is going to be moved into the OmsiRoadVehicleInst class in future!")] 
+        public float FindVar(string varName, int baseAddr)
         {
             //Offsets used in these lookups are derived from the dissassembly of omsi at 0x642205
             int varNameAddr = omsiMemory.ReadMemory<int>(omsiMemory.ReadMemory<int>(baseAddr + 0x710) + 0x1ec);
@@ -100,7 +88,8 @@ namespace OmsiHook
         /// <param name="varName">Name of variable to look for</param>
         /// <param name="baseAddr">Value of *(baseAddr + moduleBase)</param>
         /// <returns></returns>
-        private string FindStringVar(string varName, int baseAddr)
+        [Obsolete("This API is going to be moved into the OmsiRoadVehicleInst class in future!")]
+        public string FindStringVar(string varName, int baseAddr)
         {
             //Offsets used in these lookups are derived from the dissassembly of omsi at 0x642205
             int varNameAddr = omsiMemory.ReadMemory<int>(omsiMemory.ReadMemory<int>(baseAddr + 0x710) + 0x1f0);
@@ -119,6 +108,7 @@ namespace OmsiHook
         /// </summary>
         /// <param name="addr"></param>
         /// <returns></returns>
+        [Obsolete("Use `Memory.ReadMemoryString()` instead")] 
         private string ReadString(int addr, bool wide = false)
         {
             var sb = new StringBuilder();

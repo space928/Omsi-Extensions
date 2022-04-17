@@ -244,12 +244,30 @@ namespace OmsiHook
                     // Based on which kind of attribute the field has, perform special marshalling operations
                     switch (attr)
                     {
+                        case OmsiStructAttribute a:
+                            if (a.RequiresExtraMarshalling)
+                                val = typeof(Memory).GetMethod(nameof(MarshalStruct))
+                                .MakeGenericMethod(a.ObjType, a.InternalType)
+                                .Invoke(this, new object[] { val });
+                            break;
+
                         case OmsiStrPtrAttribute a:
                             val = ReadMemoryString((int)val, a.Wide);
                             break;
 
                         case OmsiPtrAttribute:
                             val = new IntPtr((int)val);
+                            break;
+
+                        case OmsiStructPtrAttribute a:
+                            val = typeof(Memory).GetMethod(nameof(ReadMemory))
+                                .MakeGenericMethod(a.InternalType)
+                                .Invoke(this, new object[] { val });
+                            // Perform extra marshalling if needed
+                            if (a.RequiresExtraMarshalling)
+                                val = typeof(Memory).GetMethod(nameof(MarshalStruct))
+                                .MakeGenericMethod(a.ObjType, a.InternalType)
+                                .Invoke(this, new object[] { val });
                             break;
 
                         case OmsiObjPtrAttribute a:
