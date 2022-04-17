@@ -1,7 +1,23 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Authors>Thomas Mathieson et al</Authors>
+    <Copyright>Copyright Thomas Mathieson 2022 all rights reserved</Copyright>
+    <PackageProjectUrl>https://github.com/space928/Omsi-Extensions</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/space928/Omsi-Extensions</RepositoryUrl>
+    <PackageLicenseFile></PackageLicenseFile>
+    <Description>OmsiHook is a simple library for hooking into Omsi's memory for modding.</Description>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AssemblyVersion>1.0.1.0</AssemblyVersion>
+    <FileVersion>1.0.1.0</FileVersion>
+    <Version>1.0.1</Version>
+    <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
 
 </Project>

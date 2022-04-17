@@ -98,7 +98,7 @@ namespace OmsiHook
         {
             get => Memory.MarshalStruct<OmsiMaterialProp, OmsiMaterialPropInternal>(
                 Memory.ReadMemory<OmsiMaterialPropInternal>(Address + 0x3c));
-            set => Memory.WriteMemory(Address + 0x3c, value);
+            //TODO: set => Memory.WriteMemory(Address + 0x3c, value);
         }
 
         public int LoadedKacheln
@@ -119,12 +119,8 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0xfd, value);
         }
 
-        /*
-        TODO:public OmsiUnsechdVehGroup[] UnschedVehGroups
-        {
-            get => omsiMemory.ReadMemory<OmsiUnsechdVehGroup[]>(baseAddress + 0x100);
-            set => omsiMemory.WriteMemory(baseAddress + 0x100, value);
-        }*/
+        public OmsiUnschedVehGroup[] UnschedVehGroups => Memory.MarshalStructs<OmsiUnschedVehGroup, OmsiUnschedVehGroupInternal>(
+            Memory.ReadMemoryStructArray<OmsiUnschedVehGroupInternal>(Address + 0x100));
 
         /*public void Func_TrafficDensity_Passenger //TFuncClass
         {
@@ -153,7 +149,7 @@ namespace OmsiHook
         /*TODO: public OmsiThreadTileLoadAndRefresh ThreadTileLoadAndRefresh 
             => omsiMemory.ReadMemory<OmsiThreadTileLoadAndRefresh>(baseAddress + 0x114);*/
 
-        public OmsiKacheln[] Kacheln => Memory.ReadMemoryObjArray<OmsiKacheln>(Address + 0x118);
+        public OmsiMapKachel[] Kacheln => Memory.ReadMemoryObjArray<OmsiMapKachel>(Address + 0x118);
 
         public OmsiMapKachelInfo[] KachelInfos 
             => Memory.MarshalStructs<OmsiMapKachelInfo, OmsiMapKachelInfoInternal>(
@@ -177,9 +173,9 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x144, value);
         }
 
-        public OmsiPoint CenterKachelNum
+        public int CenterKachelNum
         {
-            get => Memory.ReadMemory<OmsiPoint>(Address + 0x14c);
+            get => Memory.ReadMemory<int>(Address + 0x14c);
             set => Memory.WriteMemory(Address + 0x14c, value);
         }
 
@@ -279,10 +275,85 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x18c, value);
         }
 
-        /*public float[] WellenAnimation_P
+        //TODO: This is meant to be an array of pointers to floats, which can't be marshalled yet
+        //public float[] WellenAnimation_P => Memory.ReadMemoryStructArray<float>(Address + 0x190);
+
+        public OmsiStringList Registers => new(Memory, Memory.ReadMemory<int>(Address + 0x194));
+
+        public OmsiStringList[] CarsParked_Array => Memory.ReadMemoryObjArray<OmsiStringList>(Address + 0x198);
+
+        public OmsiStringList Humans => new(Memory, Memory.ReadMemory<int>(Address + 0x19c));
+
+        public OmsiStringList Drivers => new(Memory, Memory.ReadMemory<int>(Address + 0x1a0));
+
+        /*TODO: There's a bug when dereferencing this 
+        public OmsiAIList AIList
         {
-            get => Memory.ReadMemoryStructArray<float>(Address + 0x184);
-            set => Memory.WriteMemory(Address + 0x184, value);
+            get => Memory.MarshalStruct<OmsiAIList, OmsiAIListInternal>(
+                Memory.ReadMemory<OmsiAIListInternal>(Address + 0x1a4));
+            //TODO: set => Memory.WriteMemory(Address + 0x1a4, value);
+        }*/
+
+        public float MaxSpeed
+        {
+            get => Memory.ReadMemory<float>(Address + 0x1b0);
+            set => Memory.WriteMemory(Address + 0x1b0, value);
+        }
+
+        public string Currency_Path
+        {
+            get => Memory.ReadMemoryString(Address + 0x1b4);
+            set => Memory.WriteMemory(Address + 0x1b4, value);
+        }
+
+        public string TicketPack_Path
+        {
+            get => Memory.ReadMemoryString(Address + 0x1b8);
+            set => Memory.WriteMemory(Address + 0x1b8, value);
+        }
+
+        public int Year_Start
+        {
+            get => Memory.ReadMemory<int>(Address + 0x1bc);
+            set => Memory.WriteMemory(Address + 0x1bc, value);
+        }
+
+        public int Year_Ende
+        {
+            get => Memory.ReadMemory<int>(Address + 0x1c0);
+            set => Memory.WriteMemory(Address + 0x1c0, value);
+        }
+
+        public int RealYearOffset
+        {
+            get => Memory.ReadMemory<int>(Address + 0x1c4);
+            set => Memory.WriteMemory(Address + 0x1c4, value);
+        }
+
+        public OmsiHoliday[] Holiday => Memory.MarshalStructs<OmsiHoliday, OmsiHolidayInternal>(
+            Memory.ReadMemoryStructArray<OmsiHolidayInternal>(Address + 0x1c8));
+
+        public OmsiHolidays[] Holidays => Memory.MarshalStructs<OmsiHolidays, OmsiHolidaysInternal>(
+            Memory.ReadMemoryStructArray<OmsiHolidaysInternal>(Address + 0x1cc));
+
+        public OmsiDST[] DaylightSavingTimes => Memory.ReadMemoryStructArray<OmsiDST>(Address + 0x1d0);
+
+        public D3DMatrix TexMatrix_Main
+        {
+            get => Memory.ReadMemory<D3DMatrix>(Address + 0x1d4);
+            set => Memory.WriteMemory(Address + 0x1d4, value);
+        }
+
+        public D3DMatrix TexMatrix_LM
+        {
+            get => Memory.ReadMemory<D3DMatrix>(Address + 0x214);
+            set => Memory.WriteMemory(Address + 0x214, value);
+        }
+
+        /*TODO: public OmsiCriticalSection CriticalSection_SetKachelMatrizen
+        {
+            get => Memory.ReadMemory<D3DMatrix>(Address + 0x254);
+            set => Memory.WriteMemory(Address + 0x254, value);
         }*/
     }
 }

@@ -66,7 +66,7 @@ namespace OmsiHook
         /// <param name="Address">The address of the data to set</param>
         /// <param name="value">The new value of the string to set; this must be of the 
         /// correct encoding to avoid memory corruption</param>
-        /// <param name="wide">Chooses which encoding to convert the </param>
+        /// <param name="wide">Chooses which encoding to convert the string to</param>
         public void WriteMemory(int address, string value, bool wide = false)
         {
             byte[] buffer;
@@ -172,6 +172,22 @@ namespace OmsiHook
         }
 
         /// <summary>
+        /// Reads an array of strings from unmanaged memory at a given address.
+        /// </summary>
+        /// <param name="address">The address of the array to read from</param>
+        /// <returns>The parsed array of strings.</returns>
+        public string[] ReadMemoryStringArray(int address, bool wide = false)
+        {
+            int arr = ReadMemory<int>(address);
+            int len = ReadMemory<int>(arr - 4);
+            string[] ret = new string[len];
+            for (int i = 0; i < len; i++)
+                ret[i] = ReadMemoryString(arr + i * 4, wide);
+
+            return ret;
+        }
+
+        /// <summary>
         /// Reads raw bytes from unmanaged memory at a given address.
         /// </summary>
         /// <param name="offset">The address to start reading from</param>
@@ -228,12 +244,30 @@ namespace OmsiHook
                     // Based on which kind of attribute the field has, perform special marshalling operations
                     switch (attr)
                     {
+                        case OmsiStructAttribute a:
+                            if (a.RequiresExtraMarshalling)
+                                val = typeof(Memory).GetMethod(nameof(MarshalStruct))
+                                .MakeGenericMethod(a.ObjType, a.InternalType)
+                                .Invoke(this, new object[] { val });
+                            break;
+
                         case OmsiStrPtrAttribute a:
                             val = ReadMemoryString((int)val, a.Wide);
                             break;
 
                         case OmsiPtrAttribute:
                             val = new IntPtr((int)val);
+                            break;
+
+                        case OmsiStructPtrAttribute a:
+                            val = typeof(Memory).GetMethod(nameof(ReadMemory))
+                                .MakeGenericMethod(a.InternalType)
+                                .Invoke(this, new object[] { val });
+                            // Perform extra marshalling if needed
+                            if (a.RequiresExtraMarshalling)
+                                val = typeof(Memory).GetMethod(nameof(MarshalStruct))
+                                .MakeGenericMethod(a.ObjType, a.InternalType)
+                                .Invoke(this, new object[] { val });
                             break;
 
                         case OmsiObjPtrAttribute a:
@@ -257,6 +291,10 @@ namespace OmsiHook
                             val = typeof(Memory).GetMethod(nameof(ReadMemoryObjArray))
                                 .MakeGenericMethod(a.ObjType)
                                 .Invoke(this, new object[] { val });
+                            break;
+
+                        case OmsiStrArrayPtrAttribute a:
+                            val = ReadMemoryStringArray((int)val, a.Wide);
                             break;
                     }
                 }
