@@ -24,27 +24,27 @@
             get => Memory.ReadMemory<float>(Address + 0x1f0);
             set => Memory.WriteMemory(Address + 0x1f0, value);
         }
-        public float Unknown_A // TODO: Check Data Name
+        public float Unknown_OCMOI_A // TODO: Check Data Name
         {
             get => Memory.ReadMemory<float>(Address + 0x1f4);
             set => Memory.WriteMemory(Address + 0x1f4, value);
         }
-        public float Unknown_B // TODO: Check Data Name
+        public float Unknown_OCMOI_B // TODO: Check Data Name
         {
             get => Memory.ReadMemory<float>(Address + 0x1f8);
             set => Memory.WriteMemory(Address + 0x1f8, value);
         }
-        public float Unknown_C // TODO: Check Data Name
+        public float Unknown_OCMOI_C // TODO: Check Data Name
         {
             get => Memory.ReadMemory<float>(Address + 0x1fc);
             set => Memory.WriteMemory(Address + 0x1fc, value);
         }
-        public float Unknown_D // TODO: Check Data Name
+        public float UUnknown_OCMOI_D // TODO: Check Data Name
         {
             get => Memory.ReadMemory<float>(Address + 0x200);
             set => Memory.WriteMemory(Address + 0x200, value);
         }
-        public float Unknown_E // TODO: Check Data Name
+        public float Unknown_OCMOI_E // TODO: Check Data Name
         {
             get => Memory.ReadMemory<float>(Address + 0x204);
             set => Memory.WriteMemory(Address + 0x204, value);
