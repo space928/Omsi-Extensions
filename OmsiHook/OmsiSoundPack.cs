@@ -40,10 +40,9 @@
             set => Memory.WriteMemory(Address + 0x1c, value);
         }
         /* TODO:
-        public OmsiSingleVarsPnter[] Vars
+        public floatptr[] Vars
         {
-            get => Memory.ReadMemory<OmsiSingleVarsPnter>(Address + 0x20);
-            set => Memory.WriteMemory(Address + 0x20, value);
+            get => Memory.ReadMemoryStructArray<floatptr>(Address + 0x20);
         }*/
         public D3DMatrix KoordSystem
         {

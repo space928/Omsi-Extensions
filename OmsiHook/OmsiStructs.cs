@@ -885,4 +885,10 @@ public struct OmsiVector3Double
     {
 		public int main, winterSnow;
     }
+
+	public struct OmsiCollFeedback
+    {
+		public D3DVector position;
+		public float energie;
+    }
 }
