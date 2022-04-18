@@ -22,6 +22,12 @@ namespace OmsiHook
         public OmsiTicketPack TicketPack => omsiMemory.MarshalStruct<OmsiTicketPack, OmsiTicketPackInternal>(
             omsiMemory.ReadMemory<OmsiTicketPackInternal>(0x008611fc));
 
+        [Obsolete]
+        public int ReadMemory(int address)
+        {
+            return omsiMemory.ReadMemory<int>(address);
+        }
+
         /// <summary>
         /// Attaches the hooking application to OMSI.exe.
         /// Always call this at some point before trying to read and write data.

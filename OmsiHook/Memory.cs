@@ -59,11 +59,24 @@ namespace OmsiHook
         }
 
         /// <summary>
+        /// Writes the value of a struct to an array of structs at a given address.
+        /// </summary>
+        /// <typeparam name="T">The type of the struct to write</typeparam>
+        /// <param name="address">The address of the array to write to</param>
+        /// <param name="value">The value of the new element</param>
+        /// <param name="index">The index of the element to write to</param>
+        internal void WriteMemoryArrayItem<T>(int address, T value, int index) where T : struct
+        {
+            int arr = ReadMemory<int>(address);
+            WriteMemory(arr + index * Marshal.SizeOf<T>(), value);
+        }
+
+        /// <summary>
         /// Sets the value of a string at a given address.<para/>
         /// WARNING: This method will NOT allocate new memory, ensure that there is enough space before 
         /// writing to the string.
         /// </summary>
-        /// <param name="Address">The address of the data to set</param>
+        /// <param name="address">The address of the data to set</param>
         /// <param name="value">The new value of the string to set; this must be of the 
         /// correct encoding to avoid memory corruption</param>
         /// <param name="wide">Chooses which encoding to convert the string to</param>
@@ -75,7 +88,28 @@ namespace OmsiHook
             else
                 buffer = Encoding.ASCII.GetBytes(value);
 
-            Imports.WriteProcessMemory((int)m_iProcessHandle, address, buffer, buffer.Length, out _);
+            //TODO: Test this
+            var ptr = Marshal.AllocCoTaskMem(buffer.Length);
+            Marshal.Copy(buffer, 0, ptr, buffer.Length);
+
+            WriteMemory(address, ptr.ToInt32());
+            //Imports.WriteProcessMemory((int)m_iProcessHandle, address, buffer, buffer.Length, out _);
+        }
+
+        /// <summary>
+        /// Writes the value of a string to an array of strings at a given address.<para/>
+        /// WARNING: This method will NOT allocate new memory, ensure that there is enough space before 
+        /// writing to the string.
+        /// </summary>
+        /// <param name="address">The address of the data to set</param>
+        /// <param name="value">The new value of the string to set; this must be of the 
+        /// correct encoding to avoid memory corruption</param>
+        /// <param name="index">The index of the element to write to</param>
+        /// <param name="wide">Chooses which encoding to convert the string to</param>
+        internal void WriteMemoryArrayItem(int address, string value, int index, bool wide = false)
+        {
+            int arr = ReadMemory<int>(address);
+            WriteMemory(arr + index * 4, value, wide);
         }
 
         /// <summary>
@@ -114,7 +148,7 @@ namespace OmsiHook
         public string ReadMemoryString(int address, bool wide = false)
         {
             var sb = new StringBuilder();
-            int i = address;
+            int i = ReadMemory<int>(address);
             while (true)
             {
                 var bytes = ReadMemory(i, wide ? 2 : 1);
@@ -157,10 +191,14 @@ namespace OmsiHook
         /// <summary>
         /// Reads an array of structs from unmanaged memory at a given address.
         /// </summary>
+        /// <remarks>
+        /// This method shouldn't be used in property getters, rather an instance of MemArray should 
+        /// be constructed and returned instead to maintain editability of the array.
+        /// </remarks>
         /// <typeparam name="T">The type of the struct to return</typeparam>
         /// <param name="address">The address of the array to read from</param>
         /// <returns>The parsed array of structs.</returns>
-        public T[] ReadMemoryStructArray<T>(int address) where T : struct
+        internal T[] ReadMemoryStructArray<T>(int address) where T : struct
         {
             int arr = ReadMemory<int>(address);
             int len = ReadMemory<int>(arr - 4);
@@ -176,7 +214,7 @@ namespace OmsiHook
         /// </summary>
         /// <param name="address">The address of the array to read from</param>
         /// <returns>The parsed array of strings.</returns>
-        public string[] ReadMemoryStringArray(int address, bool wide = false)
+        internal string[] ReadMemoryStringArray(int address, bool wide = false)
         {
             int arr = ReadMemory<int>(address);
             int len = ReadMemory<int>(arr - 4);
@@ -211,7 +249,7 @@ namespace OmsiHook
         /// <typeparam name="InStruct">The type of the struct to marshal</typeparam>
         /// <param name="obj">The structs as marshaled by Marshal.PtrToStruct</param>
         /// <returns>The fully marshalled structs.</returns>
-        public OutStruct[] MarshalStructs<OutStruct, InStruct>(InStruct[] obj)
+        internal OutStruct[] MarshalStructs<OutStruct, InStruct>(InStruct[] obj)
            where OutStruct : struct
            where InStruct : struct
         {
@@ -314,7 +352,6 @@ namespace OmsiHook
             public const int PROCESS_VM_READ = 0x0010;
             public const int PROCESS_VM_WRITE = 0x0020;
         }
-
         #endregion
 
         #region Conversion
@@ -362,6 +399,49 @@ namespace OmsiHook
 
         [DllImport("kernel32.dll")]
         public static extern bool WriteProcessMemory(int hProcess, int lpBaseAddress, byte[] buffer, int size, out int lpNumberOfBytesWritten);
+
+        /// <summary>
+        /// Allocates memory in a remote process's memory space.
+        /// </summary>
+        /// <param name="hProcess">The pointer to the process to allocate memory in</param>
+        /// <param name="lpAddress">The desired starting address to allocate memory at (leave at 0 for default)</param>
+        /// <param name="dwSize">How many bytes of memory to allocate</param>
+        /// <param name="flAllocationType">The type of allocation</param>
+        /// <param name="flProtect">The type of memory protection for the regions to be allocated</param>
+        /// <returns>The address of the allocated memory. Returns 0 if the allocation failed.</returns>
+        [DllImport("kernel32.dll")]
+        public static extern int VirtualAllocEx(int hProcess, int lpAddress, int dwSize, AllocationType flAllocationType, MemoryProtectionType flProtect);
         #endregion
+
+        internal enum AllocationType : int
+        {
+            MEM_COMMIT = 0x00001000,
+            MEM_RESERVE = 0x00002000,
+            MEM_RESET = 0x00080000,
+            MEM_RESET_UNDO = 0x10000000,
+            MEM_LARGE_PAGES = 0x20000000,
+            MEM_PHYSICAL = 0x00400000,
+            MEM_TOP_DOWN = 0x00100000,
+        }
+
+        [Flags]
+        internal enum MemoryProtectionType : int
+        {
+            PAGE_EXECUTE = 0x10,
+            PAGE_EXECUTE_READ = 0x20,
+            PAGE_EXECUTE_READWRITE = 0x40,
+            PAGE_EXECUTE_WRITECOPY = 0x80,
+            PAGE_NOACCESS = 0x01,
+            PAGE_READONLY = 0x02,
+            PAGE_READWRITE = 0x04,
+            PAGE_WRITECOPY = 0x08,
+            PAGE_TARGETS_INVALID = 0x40000000,
+#pragma warning disable CA1069 // Enums values should not be duplicated
+            PAGE_TARGETS_NO_UPDATE = 0x40000000,
+#pragma warning restore CA1069 // Enums values should not be duplicated
+            PAGE_GUARD = 0x100,
+            PAGE_NOCACHE = 0x200,
+            PAGE_WRITECOMBINE = 0x400,
+        }
     }
 }

@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OmsiExtensionsUI", "OmsiExt
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OmsiExtensionsCLI", "OmsiExtensionsCLI\OmsiExtensionsCLI.csproj", "{FDA9A525-9722-46D3-B80C-8D2A76ABCA2D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmsiHookPlugin", "OmsiHookPlugin\OmsiHookPlugin.csproj", "{D5CA6EEA-D436-456E-BCA5-34C3DFD5BFC7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{FDA9A525-9722-46D3-B80C-8D2A76ABCA2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FDA9A525-9722-46D3-B80C-8D2A76ABCA2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FDA9A525-9722-46D3-B80C-8D2A76ABCA2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5CA6EEA-D436-456E-BCA5-34C3DFD5BFC7}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{D5CA6EEA-D436-456E-BCA5-34C3DFD5BFC7}.Debug|Any CPU.Build.0 = Debug|x86
+		{D5CA6EEA-D436-456E-BCA5-34C3DFD5BFC7}.Release|Any CPU.ActiveCfg = Release|x86
+		{D5CA6EEA-D436-456E-BCA5-34C3DFD5BFC7}.Release|Any CPU.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
