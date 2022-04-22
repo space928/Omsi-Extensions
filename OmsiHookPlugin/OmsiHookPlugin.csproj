@@ -89,8 +89,9 @@
         file and deps.json file. The user must also copy the appropriate runtime binaries to create a
         valid self-contained install environment. -->
 		<DnneSelfContained_Experimental>false</DnneSelfContained_Experimental>
+		<BaseOutputPath></BaseOutputPath>
 	</PropertyGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Command="xcopy &quot;$(OutDir)&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y" />
+	  <Exec Command="xcopy &quot;$(SolutionDir)Debug\*.dll&quot; &quot;$(OutDir)&quot; /y&#xD;&#xA;xcopy &quot;$(SolutionDir)Release\*.dll&quot; &quot;$(OutDir)&quot; /y&#xD;&#xA;xcopy &quot;$(OutDir)&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y" />
 	</Target>
 </Project>

@@ -36,9 +36,9 @@ __declspec(naked) int _cdecl BorlandFastCall(int funcPtr, int nRegArgs, ...)
         * | *old stack frames*
         * | argN
         * | ...
-        * | arg0            <= ESP-0xc
-        * | nRegArgs        <= ESP-0x8
-        * | funcPtr         <= ESP-0x4
+        * | arg0            <= ESP+0xc
+        * | nRegArgs        <= ESP+0x8
+        * | funcPtr         <= ESP+0x4
         * | returnAddress   <= ESP
         * | *empty stack*
         * 
@@ -51,42 +51,55 @@ __declspec(naked) int _cdecl BorlandFastCall(int funcPtr, int nRegArgs, ...)
         * finished shuffling.
         */
         
-        mov ecx, esp-0x8
+        mov ecx, [esp+0x8]  // Load nRegArgs
 
         cmp ecx, 0x1        // If there is at least 1 argument, move it to eax
         jl FIXSTACK_PARTIAL
-        mov eax, esp-0xc
+        mov eax, [esp+0xc]
 
         cmp ecx, 0x2        // If there are at least 2 arguments, move it to edx
         jl FIXSTACK_PARTIAL
-        mov edx, esp-0x10
+        mov edx, [esp+0x10]
 
         cmp ecx, 0x3        // If there are at least 3 arguments, move it to ecx
         jl FIXSTACK_PARTIAL
-        mov ecx, esp-0x14
+        mov ecx, [esp+0x14]
         jmp FIXSTACK_FULL   // All three args had to be moved, as such ecx no longer
                             // contains nRegArgs
 
+
         FIXSTACK_PARTIAL:   // When this is called the number of args that were moved 
                             // is in ecx
-        imul ecx, -0x4        // Make ecx point just after the first argument on the stack:
-        lea ecx, [esp+ecx]    //      ecx = ESP - (nRegArgs*0x4) - 0x8
-        sub ecx, 0x8        // Subtract funcPtr and nRegArgs from the pointer
+        imul ecx, 0x4       // Make ecx point just after the first argument on the stack:
+        lea ecx, [esp+ecx]  //      ecx = ESP - (nRegArgs*0x4) - 0x8
+        add ecx, 0x8        // Subtract funcPtr and nRegArgs from the pointer
 
-        mov ecx, esp        // Move the return address to just before the 
+        mov [ecx-0x18], ebx // Save EBX to a part of the stack we are certain is free
+
+        mov ebx, [esp]
+        mov [ecx], ebx      // Move the return address to just before the 
                             // first argument on the stack
-        add ecx, 0x4
-        mov ecx, [esp-0x4]    // Move the function address to just after that
-        lea esp, [ecx-0x4]    // Set the stack pointer to point to the return address
+        sub ecx, 0x4
+        mov ebx, [esp+0x4]
+        mov [ecx], ebx      // Move the function address to just after that
+        lea esp, [ecx+0x4]  // Set the stack pointer to point to the return address
+
+        mov ebx, [esp-0x18] // Restore EBX
         jmp END
+
 
         FIXSTACK_FULL:      // When this is called the number of args that were moved 
                             // is exactly 0x3
-        sub esp, 0x10       // Move the stack pointer to just after the new location
+        mov [esp-0x4], ebx  // Save EBX to a part of the stack we are certain is free
+        add esp, 0x10       // Move the stack pointer to just after the new location
                             // of the return address on the stack
-        mov esp, [esp+0xc]    // Move the function pointer
-        sub esp, 0x4        // Move the stack pointer to just after the first argument
-        mov esp, [esp+0x14]   // Move the return address 
+        mov ebx, [esp-0xc]  // Move the function pointer
+        mov [esp], ebx 
+        add esp, 0x4        // Move the stack pointer to just after the first argument
+        mov ebx, [esp-0x14] // Move the return address 
+        mov [esp], ebx
+
+        mov ebx, [esp-0x18] // Restore EBX
 
 
         END:
@@ -95,14 +108,16 @@ __declspec(naked) int _cdecl BorlandFastCall(int funcPtr, int nRegArgs, ...)
         * | *old stack frames*
         * | (argN)
         * | (...)
-        * | (arg3)          <= ESP-0x4
+        * | (arg3)          <= ESP+0x4
         * | returnAddress   <= ESP
-        * | funcPtr         <= ESP+0x4
+        * | funcPtr         <= ESP-0x4
+        * | saved EBX       <= ESP-0x8
         * | *empty stack*
         */
 
-        call [esp+0x4]        // Called the Borland Fastcall function
-        ret
+        jmp [esp-0x4]       // Called the Borland Fastcall function
+        ret                 // Technically superfluous, since we set the return address to
+                            // the return of the calling method
     }
 }
 

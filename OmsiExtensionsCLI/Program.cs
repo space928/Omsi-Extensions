@@ -12,7 +12,6 @@ namespace OmsiExtensionsCLI
 
             OmsiHook.OmsiHook omsi = new();
             omsi.AttachToOMSI();
-            bool doit = false;
 
             while (true)
             {
@@ -22,12 +21,6 @@ namespace OmsiExtensionsCLI
 
                 Console.WriteLine($"Read data: x:{pos.x:F3}\ty:{pos.y:F3}\tz:{pos.z:F3}\t\t" +
                     $"tile:{0}\trow45:{0:F3}\trow47:{0:F3}");
-                
-                if(doit)
-                {
-                    doit = false;
-                    omsi.TestInvoke();
-                }
 
                 Console.WriteLine($"Read data: map:{map.Name}\tpath:{map.Filename}\tfriendly:{map.FriendlyName}");
                 Console.WriteLine($"Read data: act w name:{weather.ActWeather.name}");

@@ -49,7 +49,7 @@ namespace OmsiHookPlugin
         public static void SpawnBusTest()
         {
            // Marshal.GetDelegateForFunctionPointer<MakeVehicle>(new IntPtr(0x0070a250))
-            callConventionFixup(0x0070a250, hook.ReadMemory(0x00862f28), hook.ReadMemory(0x0086150C), 
+            TProgManMakeVehicle(hook.ReadMemory(0x00862f28), hook.ReadMemory(hook.ReadMemory(0x0086150C)), 
                 hook.ReadMemory(0x008615A8), false, false,
               0, false, false, true, false,
               -1, true, 0, (byte)3, false,
@@ -132,5 +132,11 @@ namespace OmsiHookPlugin
 
         [DllImport("kernel32.dll")]
         private static extern bool VirtualProtectEx(IntPtr hProcess, IntPtr lpAddress, UIntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);
+        [DllImport("OmsiHookInvoker.dll")]
+        private static extern int TProgManMakeVehicle(int progMan, int vehList, int _RoadVehicleTypes, bool onlyvehlist, bool CS,
+            float TTtime, bool situationload, bool dialog, bool setdriver, bool thread,
+            int kennzeichen_index, bool initcall, int startday, byte trainbuilddir, bool reverse,
+            int grouphof, int typ, int tour, int line, int farbschema, bool Scheduled,
+            bool AIRoadVehicle, bool kennzeichen_random, bool farbschema_random, int filename);
     }
 }
