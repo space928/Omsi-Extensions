@@ -118,11 +118,16 @@ __declspec(naked) int _cdecl BorlandFastCall(int funcPtr, int nRegArgs, ...)
         jmp [esp-0x4]       // Called the Borland Fastcall function
         ret                 // Technically superfluous, since we set the return address to
                             // the return of the calling method
+        // OK so here's the issue, cdecl expects the caller to pop used args off the stack after calling, but BorlandFastcall does it in the callee.
+        // This means the stack is cleaned twice which is bad. We have to use cdecl on this method to support varargs and currently doing things
+        // after jumping to the external function is difficult (since we jump instead of call, because this method doesn't set up it's own stack frame)
     }
 }
 
 // Warning function signature types have little meaning, they are chosen specifically to 
 // ensure the correct argument size is used!
+// NOTE: For float params, the compiler likes to extend them to doubles sometimes, just make 
+// them ints in the function signature to avoid weirdness
 extern "C" __declspec(dllexport) int TProgManMakeVehicle(int progMan, int vehList, int _RoadVehicleTypes, bool onlyvehlist, bool CS,
     int TTtime, bool situationload, bool dialog, bool setdriver, bool thread,
     int kennzeichen_index, bool initcall, int startday, UINT8 trainbuilddir, bool reverse,
@@ -135,4 +140,19 @@ extern "C" __declspec(dllexport) int TProgManMakeVehicle(int progMan, int vehLis
         kennzeichen_index, initcall, startday, trainbuilddir, reverse,
         grouphof, typ, tour, line, farbschema, Scheduled,
         AIRoadVehicle, kennzeichen_random, farbschema_random, filename);
+}
+
+extern "C" __declspec(dllexport) int TTempRVListCreate(int classAddr, int capacity)
+{
+    return BorlandFastCall(0x0074a0e0, 2,
+        classAddr, capacity);
+}
+
+extern "C" __declspec(dllexport) int TProgManPlaceRandomBus(int progMan, int aityp, 
+    int group, int TTtime, bool thread, bool instantCopy, int _typ,
+    bool scheduled, int startDay, int tour, int line)
+{
+    return BorlandFastCall(0x00708f8c, 3,
+        progMan, aityp, group, TTtime, thread, instantCopy, _typ,
+        scheduled, startDay, tour, line);
 }

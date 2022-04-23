@@ -48,13 +48,16 @@ namespace OmsiHookPlugin
               bool AIRoadVehicle, bool kennzeichen_random, bool farbschema_random, int filename);
         public static void SpawnBusTest()
         {
-           // Marshal.GetDelegateForFunctionPointer<MakeVehicle>(new IntPtr(0x0070a250))
-            TProgManMakeVehicle(hook.ReadMemory(0x00862f28), hook.ReadMemory(hook.ReadMemory(0x0086150C)), 
+            // Marshal.GetDelegateForFunctionPointer<MakeVehicle>(new IntPtr(0x0070a250))
+            /*int vehList = TTempRVListCreate(0x0074802C, 1);
+            TProgManMakeVehicle(hook.ReadMemory(0x00862f28), vehList,//hook.ReadMemory(hook.ReadMemory(0x0086171C)),//hook.ReadMemory(hook.ReadMemory(0x0086150C)), 
                 hook.ReadMemory(0x008615A8), false, false,
-              0, false, false, true, false,
+              0, false, false, false, false,
               -1, true, 0, (byte)3, false,
               0, 0, 0, 0, 0, false,
-              true, true, true, 0);
+              false, true, true, 0);*/
+            TProgManPlaceRandomBus(hook.ReadMemory(0x00862f28), 0, 0, 0, false, false, 0,
+                false, 0, 0, 0);
         }
 
         [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) }, EntryPoint = nameof(PluginStart))]
@@ -64,15 +67,6 @@ namespace OmsiHookPlugin
             Log("Loading OmsiHook...");
             hook = new();
             hook.AttachToOMSI();
-            Log("Creating call convention fixer...");
-            try
-            {
-                CreateCallConventionFixup();
-            } catch (Exception ex)
-            {
-                Log(ex.ToString());
-            }
-
             Log("Didn't crash!");
         }
 
@@ -138,5 +132,11 @@ namespace OmsiHookPlugin
             int kennzeichen_index, bool initcall, int startday, byte trainbuilddir, bool reverse,
             int grouphof, int typ, int tour, int line, int farbschema, bool Scheduled,
             bool AIRoadVehicle, bool kennzeichen_random, bool farbschema_random, int filename);
+        [DllImport("OmsiHookInvoker.dll")]
+        private static extern int TTempRVListCreate(int classAddr, int capacity);
+        [DllImport("OmsiHookInvoker.dll")]
+        private static extern int TProgManPlaceRandomBus(int progMan, int aityp,
+    int group, float TTtime, bool thread, bool instantCopy, int _typ,
+    bool scheduled, int startDay, int tour, int line);
     }
 }
