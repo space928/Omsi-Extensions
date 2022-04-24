@@ -56,7 +56,7 @@ namespace OmsiHookPlugin
               -1, true, 0, (byte)3, false,
               0, 0, 0, 0, 0, false,
               false, true, true, 0);*/
-            TProgManPlaceRandomBus(hook.ReadMemory(0x00862f28), 0, 0, 0, false, false, 0,
+            TProgManPlaceRandomBus(hook.ReadMemory(0x00862f28), 0, 1, 0, false, true, -1,
                 false, 0, 0, 0);
         }
 
