@@ -92,6 +92,6 @@
 		<BaseOutputPath></BaseOutputPath>
 	</PropertyGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Command="xcopy &quot;$(SolutionDir)Debug\*.dll&quot; &quot;$(OutDir)&quot; /y&#xD;&#xA;xcopy &quot;$(SolutionDir)Release\*.dll&quot; &quot;$(OutDir)&quot; /y&#xD;&#xA;xcopy &quot;$(OutDir)&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y" />
+	  <Exec Command="xcopy &quot;$(SolutionDir)Debug\*.dll&quot; &quot;$(OutDir)&quot; /y&#xD;&#xA;xcopy &quot;$(SolutionDir)Release\*.dll&quot; &quot;$(OutDir)&quot; /y&#xD;&#xA;xcopy &quot;$(OutDir)*.dll&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y&#xD;&#xA;xcopy &quot;$(OutDir)*.opl&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y&#xD;&#xA;xcopy &quot;$(OutDir)*.json&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y" />
 	</Target>
 </Project>

@@ -11,6 +11,7 @@ namespace OmsiHook
     {
         private Memory omsiMemory;
         private Process process;
+        private OmsiRemoteMethods remoteMethods;
 
         /// <summary>
         /// Gets the vehicle instance being driven by the player.
@@ -21,12 +22,7 @@ namespace OmsiHook
         public OmsiMap Map => new(omsiMemory, omsiMemory.ReadMemory<int>(0x861588));
         public OmsiTicketPack TicketPack => omsiMemory.MarshalStruct<OmsiTicketPack, OmsiTicketPackInternal>(
             omsiMemory.ReadMemory<OmsiTicketPackInternal>(0x008611fc));
-
-        [Obsolete]
-        public int ReadMemory(int address)
-        {
-            return omsiMemory.ReadMemory<int>(address);
-        }
+        public OmsiRemoteMethods RemoteMethods => remoteMethods ??= new(omsiMemory, 0);
 
         /// <summary>
         /// Attaches the hooking application to OMSI.exe.

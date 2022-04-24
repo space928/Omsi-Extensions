@@ -14,55 +14,12 @@ namespace OmsiHookPlugin
         private static OmsiHook.OmsiHook hook;
         private static bool spawned = false;
 
-        private static readonly byte[] CALL_CONVENTION_FIXUP = { 0x5B, 0x5F, 0x58, 0x5A, 0x59, 0x53, 0xFF, 0xD7, 0xBF, 0xFF, 0xFF, 0xFF, 0xFF, 0xC3 };
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        delegate int CallConventionFixup(int address, int progMan, int vehList, int _RoadVehicleTypes, bool onlyvehlist, bool CS,
-              float TTtime, bool situationload, bool dialog, bool setdriver, bool thread,
-              int kennzeichen_index, bool initcall, int startday, byte trainbuilddir, bool reverse,
-              int grouphof, int typ, int tour, int line, int farbschema, bool Scheduled,
-              bool AIRoadVehicle, bool kennzeichen_random, bool farbschema_random, int filename);
-        private static CallConventionFixup callConventionFixup;
-        private static void CreateCallConventionFixup()
-        {
-            var ptr = Marshal.AllocHGlobal(CALL_CONVENTION_FIXUP.Length);
-            Marshal.Copy(CALL_CONVENTION_FIXUP, 0, ptr, CALL_CONVENTION_FIXUP.Length);
-            VirtualProtectEx(Process.GetCurrentProcess().Handle, ptr,
-                (UIntPtr)CALL_CONVENTION_FIXUP.Length, 0x40, out uint _);
-            callConventionFixup = Marshal.GetDelegateForFunctionPointer<CallConventionFixup>(ptr);
-        }
-
         private static void Log(string msg) => File.AppendAllText("omsiHookPluginLog.txt", $"[{DateTime.Now:dd/MM/yy HH:mm:ss:ff}] {msg}\n");
-
-        delegate void testInvoke(int thisObj, int param2);
-        public static void TestInvoke()
-        {
-            Marshal.GetDelegateForFunctionPointer<testInvoke>(new IntPtr(0x0083b824))
-                .DynamicInvoke(hook.ReadMemory(0x008591e8), 0);
-        }
-
-        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-        delegate int MakeVehicle(int progMan, int vehList, int _RoadVehicleTypes, bool onlyvehlist, bool CS,
-              float TTtime, bool situationload, bool dialog, bool setdriver, bool thread,
-              int kennzeichen_index, bool initcall, int startday, byte trainbuilddir, bool reverse,
-              int grouphof, int typ, int tour, int line, int farbschema, bool Scheduled,
-              bool AIRoadVehicle, bool kennzeichen_random, bool farbschema_random, int filename);
-        public static void SpawnBusTest()
-        {
-            // Marshal.GetDelegateForFunctionPointer<MakeVehicle>(new IntPtr(0x0070a250))
-            /*int vehList = TTempRVListCreate(0x0074802C, 1);
-            TProgManMakeVehicle(hook.ReadMemory(0x00862f28), vehList,//hook.ReadMemory(hook.ReadMemory(0x0086171C)),//hook.ReadMemory(hook.ReadMemory(0x0086150C)), 
-                hook.ReadMemory(0x008615A8), false, false,
-              0, false, false, false, false,
-              -1, true, 0, (byte)3, false,
-              0, 0, 0, 0, 0, false,
-              false, true, true, 0);*/
-            TProgManPlaceRandomBus(hook.ReadMemory(0x00862f28), 0, 1, 0, false, true, -1,
-                false, 0, 0, 0);
-        }
 
         [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) }, EntryPoint = nameof(PluginStart))]
         public static void PluginStart(IntPtr aOwner)
         {
+            File.Delete("omsiHookPluginLog.txt");
             Log("PluginStart()");
             Log("Loading OmsiHook...");
             hook = new();
@@ -92,7 +49,7 @@ namespace OmsiHookPlugin
                 Log("Spawning bus!");
                 try
                 {
-                    SpawnBusTest();
+                    hook.RemoteMethods.MakeVehicle();
                 } catch (Exception e)
                 {
                     Log("Uh oh:");
@@ -120,12 +77,6 @@ namespace OmsiHookPlugin
             
         }
 
-        [SuppressUnmanagedCodeSecurity]
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate int AssemblyAddFunction(int x, int y);
-
-        [DllImport("kernel32.dll")]
-        private static extern bool VirtualProtectEx(IntPtr hProcess, IntPtr lpAddress, UIntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);
         [DllImport("OmsiHookInvoker.dll")]
         private static extern int TProgManMakeVehicle(int progMan, int vehList, int _RoadVehicleTypes, bool onlyvehlist, bool CS,
             float TTtime, bool situationload, bool dialog, bool setdriver, bool thread,

@@ -72,27 +72,73 @@ namespace OmsiHook
         }
 
         /// <summary>
-        /// Sets the value of a string at a given address.<para/>
-        /// WARNING: This method will NOT allocate new memory, ensure that there is enough space before 
-        /// writing to the string.
+        /// Allocates shared memory for a string and copies it accross.
         /// </summary>
-        /// <param name="address">The address of the data to set</param>
-        /// <param name="value">The new value of the string to set; this must be of the 
-        /// correct encoding to avoid memory corruption</param>
+        /// <param name="value">The string to copy</param>
         /// <param name="wide">Chooses which encoding to convert the string to</param>
-        public void WriteMemory(int address, string value, bool wide = false)
+        /// <param name="references">Allows the number of references to the string to be specified. 
+        /// Used when overwriting existing strings to prevent the GC from clearing a string referenced 
+        /// by multiple objects when one is destroyed.</param>
+        /// <returns>The pointer to the newly allocated string</returns>
+        public int AllocateString(string value, bool wide = false, int references = 1)
         {
+            /*
+             * AnsiString/UnicodeString struct layout:
+             * 0 - / Code page (short)
+             * 1 - \ 
+             * 2 - / Maximum character size (short)
+             * 3 - \
+             * 4 - / NReferences (int)
+             * 5 - |
+             * 6 - |
+             * 7 - \
+             * 8 - / StrLength (bytes) (int)
+             * 9 - |
+             * a - |
+             * b - \
+             * 0 - / String
+             * ... |
+             * ... \
+             * ... - Null
+             */
+
             byte[] buffer;
             if (wide)
                 buffer = Encoding.Unicode.GetBytes(value);
             else
                 buffer = Encoding.ASCII.GetBytes(value);
 
-            //TODO: Test this
-            var ptr = Marshal.AllocCoTaskMem(buffer.Length);
-            Marshal.Copy(buffer, 0, ptr, buffer.Length);
+            var ptr = Marshal.AllocCoTaskMem(buffer.Length + 13).ToInt32();
+            var strStart = new IntPtr(ptr+12);
+            Marshal.Copy(buffer, 0, strStart, buffer.Length);
+            // Write the string metadata
+            WriteMemory(ptr, (short)1252);
+            WriteMemory(ptr + 0x2, (short)(wide?2:1));
+            WriteMemory(ptr + 0x4, references);
+            WriteMemory(ptr + 0x8, value.Length);
+            // Write null terminator
+            WriteMemory(strStart.ToInt32() + buffer.Length, (byte)0);
 
-            WriteMemory(address, ptr.ToInt32());
+            return strStart.ToInt32();
+        }
+
+        /// <summary>
+        /// Sets the value of a string at a given address.
+        /// </summary>
+        /// <param name="address">The address of the data to set</param>
+        /// <param name="value">The new value of the string to set; this must be of the 
+        /// correct encoding to avoid memory corruption</param>
+        /// <param name="wide">Chooses which encoding to convert the string to</param>
+        /// <param name="copyReferences">Copy the number of references from the string 
+        /// at the address given. Used when overwriting existing strings to prevent the 
+        /// GC from clearing a string referenced by multiple objects when one is destroyed.</param>
+        public void WriteMemory(int address, string value, bool wide = false, bool copyReferences = true)
+        {
+            int refs = 1;
+            if(copyReferences)
+                refs = ReadMemory<int>(ReadMemory<int>(address) - 0x8);
+
+            WriteMemory(address, AllocateString(value, wide, refs));
             //Imports.WriteProcessMemory((int)m_iProcessHandle, address, buffer, buffer.Length, out _);
         }
 
