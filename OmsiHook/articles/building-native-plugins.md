@@ -104,8 +104,8 @@ that they get exported correctly later when we include the native export library
 [DNNE Requirements](https://github.com/AaronRobinsonMSFT/DNNE#requirements).
 1. Download [Dnne.Attributes.cs](https://github.com/AaronRobinsonMSFT/DNNE/blob/master/test/ExportingAssembly/Dnne.Attributes.cs)
 and add it to your project.
-1. Create your main plugin file and add all the needed exported methods (see [DLL Files] for an example).
-1. Create an `.opl` file (see [OPL Files] for an example); The default name of the exported DLL will be 
+1. Create your main plugin file and add all the needed exported methods (see [DLL Files](#dll-files) for an example).
+1. Create an `.opl` file (see [OPL Files](#opl-files) for an example); The default name of the exported DLL will be 
 `<ProjectName>NE.dll` ie: for a project called `OmsiHookPlugin`, the DLL will be `OmsiHookPluginNE.dll`. This can
 be customised using the DNNE project properties.
 1. Build your project! If everything was done correctly your Omsi plugins folder should now contain at least:

@@ -9,6 +9,8 @@ data from Omsi in real time, but currently doesn't allow for anything that requi
 The library makes use of C# properties and classes to wrap native Omsi objects making them simple to interact 
 with in a managed environment.
 
+See the [documentation](https://space928.github.io/Omsi-Extensions/index.html) for details on the API.
+
 ## Usage Example
 Here's a quick example of how to use it.
 ```cs
