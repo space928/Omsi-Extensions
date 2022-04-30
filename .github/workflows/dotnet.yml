@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-2019
 
     steps:
     - uses: actions/checkout@v3
@@ -17,6 +17,8 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 5.0.x
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
     - name: Setup Windows 10 SDK
       uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.4
     - name: Restore dependencies
