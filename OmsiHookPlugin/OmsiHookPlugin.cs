@@ -14,7 +14,7 @@ namespace OmsiHookPlugin
         private static OmsiHook.OmsiHook hook;
         private static bool spawned = false;
 
-        private static void Log(string msg) => File.AppendAllText("omsiHookPluginLog.txt", $"[{DateTime.Now:dd/MM/yy HH:mm:ss:ff}] {msg}\n");
+        private static void Log(object msg) => File.AppendAllText("omsiHookPluginLog.txt", $"[{DateTime.Now:dd/MM/yy HH:mm:ss:ff}] {msg}\n");
 
         [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) }, EntryPoint = nameof(PluginStart))]
         public static void PluginStart(IntPtr aOwner)
@@ -31,12 +31,6 @@ namespace OmsiHookPlugin
         public static void PluginFinalize()
         {
             Log("PluginFinalize()");
-        }
-
-        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) }, EntryPoint = nameof(AccessTrigger))]
-        public static void AccessTrigger(ushort variableIndex, [C99Type("__crt_bool*")] IntPtr triggerScript)
-        {
-
         }
 
         [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) }, EntryPoint = nameof(AccessVariable))]
@@ -65,29 +59,13 @@ namespace OmsiHookPlugin
             }
         }
 
-        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
-        public static void AccessStringVariable(ushort variableIndex, [C99Type("char*")] IntPtr firstCharacterAddress, [C99Type("__crt_bool*")] IntPtr writeValue)
-        {
-
-        }
+        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) }, EntryPoint = nameof(AccessTrigger))]
+        public static void AccessTrigger(ushort variableIndex, [C99Type("__crt_bool*")] IntPtr triggerScript) { }
 
         [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
-        public static void AccessSystemVariable(ushort variableIndex, [C99Type("float*")] IntPtr value, [C99Type("__crt_bool*")] IntPtr writeValue)
-        {
-            
-        }
+        public static void AccessStringVariable(ushort variableIndex, [C99Type("char*")] IntPtr firstCharacterAddress, [C99Type("__crt_bool*")] IntPtr writeValue) { }
 
-        [DllImport("OmsiHookInvoker.dll")]
-        private static extern int TProgManMakeVehicle(int progMan, int vehList, int _RoadVehicleTypes, bool onlyvehlist, bool CS,
-            float TTtime, bool situationload, bool dialog, bool setdriver, bool thread,
-            int kennzeichen_index, bool initcall, int startday, byte trainbuilddir, bool reverse,
-            int grouphof, int typ, int tour, int line, int farbschema, bool Scheduled,
-            bool AIRoadVehicle, bool kennzeichen_random, bool farbschema_random, int filename);
-        [DllImport("OmsiHookInvoker.dll")]
-        private static extern int TTempRVListCreate(int classAddr, int capacity);
-        [DllImport("OmsiHookInvoker.dll")]
-        private static extern int TProgManPlaceRandomBus(int progMan, int aityp,
-    int group, float TTtime, bool thread, bool instantCopy, int _typ,
-    bool scheduled, int startDay, int tour, int line);
+        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
+        public static void AccessSystemVariable(ushort variableIndex, [C99Type("float*")] IntPtr value, [C99Type("__crt_bool*")] IntPtr writeValue) { }
     }
 }

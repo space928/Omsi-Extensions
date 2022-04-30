@@ -3,12 +3,17 @@ using System.Runtime.InteropServices;
 
 namespace OmsiHook
 {
+    /// <summary>
+    /// All of these methods will only work if called from a native Omsi plugin.
+    /// These methods also rely on OmsiHookInvoker.dll which must be in the Omsi plugins folder.
+    /// </summary>
 	public class OmsiRemoteMethods : OmsiObject
 	{
         public OmsiRemoteMethods() : base() { }
 
         internal OmsiRemoteMethods(Memory memory, int address) : base(memory, address) { }
 
+        [Obsolete]
         public int MakeVehicle()
         {
             int vehList = TTempRVListCreate(0x0074802C, 1);
@@ -25,11 +30,18 @@ namespace OmsiHook
 
         /// <summary>
         /// Spawns a random bus in the map at one of the entry points.
+        /// EXPERIMENTAL: The parameters of this method default to known working values, changing them may result in game crashes.
         /// </summary>
-        /// <returns>Honestly who knows... TODO: Find out</returns>
-        public int PlaceRandomBus()
+        /// <param name="aiType"></param>
+        /// <param name="group"></param>
+        /// <param name="type"></param>
+        /// <param name="scheduled"></param>
+        /// <param name="tour"></param>
+        /// <param name="line"></param>
+        /// <returns>The index of the vehicle that was placed.</returns>
+        public int PlaceRandomBus(int aiType = 0, int group = 1, int type = -1, bool scheduled = false, int tour = 0, int line = 0)
         {
-            return TProgManPlaceRandomBus(Memory.ReadMemory<int>(0x00862f28), 0, 1, 0, false, true, -1, false, 0, 0, 0);
+            return TProgManPlaceRandomBus(Memory.ReadMemory<int>(0x00862f28), aiType, group, 0, false, true, type, scheduled, 0, tour, line);
         }
 
         [DllImport("OmsiHookInvoker.dll")]
