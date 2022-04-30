@@ -1,6 +1,11 @@
 # Omsi-Extensions
 Omsi hooking and modding sdk.
 
+[![.NET](https://github.com/space928/Omsi-Extensions/actions/workflows/dotnet.yml/badge.svg)](https://github.com/space928/Omsi-Extensions/actions/workflows/dotnet.yml)
+[![DocFX](https://github.com/space928/Omsi-Extensions/actions/workflows/docs.yml/badge.svg)](https://github.com/space928/Omsi-Extensions/actions/workflows/docs.yml)
+![Nuget](https://img.shields.io/nuget/v/omsihook)
+![OMSI Version](https://img.shields.io/badge/OMSI%20Version-2.3.004-orange)
+
 The dead simple way to hook into Omsi and fiddle with it's memory. In it's current state we only have 
 mappings for a limited number of Omsi objects, but it's easy to extend. Allows both reading and writing 
 data from Omsi in real time, but currently doesn't allow for anything that requires memory allocation 
