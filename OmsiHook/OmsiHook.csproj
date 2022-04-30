@@ -45,4 +45,10 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+	  <ProjectReference Include="..\OmsiHookInvoker\OmsiHookInvoker.vcxproj">
+		  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+	  </ProjectReference>
+  </ItemGroup>
+
 </Project>
