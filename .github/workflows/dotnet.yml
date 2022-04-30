@@ -24,7 +24,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: msbuild D:\a\Omsi-Extensions\Omsi-Extensions\OmsiHook\OmsiHook.csproj -t:rebuild -property:Configuration=Release
+      run: msbuild D:\a\Omsi-Extensions\Omsi-Extensions\OmsiExtensions.sln -t:rebuild -property:Configuration=Release
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Generate docs
