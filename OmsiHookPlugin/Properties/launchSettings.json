@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "OmsiHookPlugin": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
