@@ -191,11 +191,7 @@
             set => Memory.WriteMemory(Address + 0x244, value);
         }
         public OmsiTriggerBox[] TriggerBoxes => Memory.ReadMemoryStructArray<OmsiTriggerBox>(Address + 0x248);
-        /* TODO:
-        public OmsiTriggerBox[] TriggerBoxes
-        {
-            get => Memory.ReadMemoryStructArray<OmsiTriggerBox>(Address + 0x248);
-        }*/
+        
         /* TODO:
         public OmsiComplObjPtr ComplObj
         {
