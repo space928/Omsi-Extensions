@@ -893,4 +893,10 @@ public struct OmsiVector3Double
 		public float reverb_time;
 		public float reverb_dist;
     }
+
+	public struct OmsiCollFeedback
+    {
+		public D3DVector position;
+		public float energie;
+    }
 }
