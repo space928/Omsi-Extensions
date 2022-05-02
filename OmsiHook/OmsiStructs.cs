@@ -886,6 +886,14 @@ public struct OmsiVector3Double
 		public int main, winterSnow;
     }
 
+	public struct OmsiTriggerBox
+    {
+		public D3DOBB box;
+		public bool reverb;
+		public float reverb_time;
+		public float reverb_dist;
+    }
+
 	public struct OmsiCollFeedback
     {
 		public D3DVector position;

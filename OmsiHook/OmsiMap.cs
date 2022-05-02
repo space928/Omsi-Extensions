@@ -181,25 +181,25 @@ namespace OmsiHook
 
         public string Name
         {
-            get => Memory.ReadMemoryString(Memory.ReadMemory<int>(Address + 0x150), true);
+            get => Memory.ReadMemoryString(Address + 0x150, true);
             set => Memory.WriteMemory(Address + 0x150, value);
         }
 
         public string Filename
         {
-            get => Memory.ReadMemoryString(Memory.ReadMemory<int>(Address + 0x154));
+            get => Memory.ReadMemoryString(Address + 0x154);
             set => Memory.WriteMemory(Address + 0x154, value);
         }
         
         public string FriendlyName
         {
-            get => Memory.ReadMemoryString(Memory.ReadMemory<int>(Address + 0x158), true);
+            get => Memory.ReadMemoryString(Address + 0x158, true);
             set => Memory.WriteMemory(Address + 0x158, value);
         }
         
         public string Description
         {
-            get => Memory.ReadMemoryString(Memory.ReadMemory<int>(Address + 0x15c), true);
+            get => Memory.ReadMemoryString(Address + 0x15c, true);
             set => Memory.WriteMemory(Address + 0x15c, value);
         }
 
