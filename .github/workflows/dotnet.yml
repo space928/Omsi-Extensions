@@ -9,7 +9,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-2019
 
     steps:
     - uses: actions/checkout@v3
@@ -17,20 +17,11 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 5.0.x
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
+    - name: Setup Windows 10 SDK
+      uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.4
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
-    - name: Generate docs
-      uses: nikeee/docfx-action@v1.0.0
-      with:
-        args: OmsiHook/docfx.json
-
-    # Publish generated site using GitHub Pages
-    - uses: maxheld83/ghpages@master
-      name: Publish Documentation on GitHub Pages
-      env:
-        BUILD_DIR: OmsiHook/_site # docfx's default output directory is _site
-        GH_PAT: ${{ secrets.GH_PAT }} # See https://github.com/maxheld83/ghpages
+      run: msbuild D:\a\Omsi-Extensions\Omsi-Extensions\OmsiExtensions.sln -t:rebuild -property:Configuration=Release

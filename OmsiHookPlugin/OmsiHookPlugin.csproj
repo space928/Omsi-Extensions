@@ -1,0 +1,97 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <Platforms>AnyCPU;x86</Platforms>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="DNNE" Version="1.0.30" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OmsiHook\OmsiHook.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="OmsiHookPlugin.opl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+	<PropertyGroup>
+		<EnableDynamicLoading>true</EnableDynamicLoading>
+		<DnneGenerateExports>true</DnneGenerateExports>
+
+		<!-- If the build is disabled, the generated source is considered the output
+        and emitted in the output directory as if it were a binary. -->
+		<DnneBuildExports>true</DnneBuildExports>
+
+		<!-- The name of the resulting native binary. This should be the name of the binary
+        without an extension (e.g. 'MyName'). The extension will be computed based on the
+        current platform. If overridden, uniqueness of this name with extension is required
+        as the generated binary and the existing managed assembly will collide on Windows
+        since managed and native binaries share the same extension (i.e. '.dll').
+        If this property is left blank, the previous behavior of using '$(TargetName)NE'
+        will occur on all platforms. -->
+		<DnneNativeBinaryName></DnneNativeBinaryName>
+
+		<!-- Logging level passed to output from the DNNE build process. -->
+		<DnneMSBuildLogging>low</DnneMSBuildLogging>
+
+		<!-- Add the generated binary to the project contents -->
+		<DnneAddGeneratedBinaryToProject>false</DnneAddGeneratedBinaryToProject>
+
+		<!-- Enable a workaround for https://github.com/dotnet/sdk/issues/1675 -->
+		<DnneWorkAroundSdk1675>true</DnneWorkAroundSdk1675>
+
+		<!-- Set to override the computed native compiler command.
+        This value will be placed in double quotes (e.g. "command") and passed
+        the computed compiler arguments. -->
+		<DnneCompilerCommand></DnneCompilerCommand>
+
+		<!-- Set to add compiler flags.
+        This value will be placed immediately prior to the source passed to the compiler. -->
+		<DnneCompilerUserFlags></DnneCompilerUserFlags>
+
+		<!-- Set to add linker flags.
+        This value will be placed after all other flags passed to the compiler. -->
+		<DnneLinkerUserFlags></DnneLinkerUserFlags>
+
+		<!-- Provide a .def file to pass to the Windows Linker for controlling
+        how exports are handled. This is only passed to the linker on
+        the Windows platform.
+        See https://docs.microsoft.com/cpp/build/exporting-from-a-dll-using-def-files -->
+		<DnneWindowsExportsDef></DnneWindowsExportsDef>
+
+		<!-- Set to add additional include paths to use during the native build.
+        The directories should be semicolon (e.g., C:\Foo;D:\Bar) delimited.
+        These additional directories are appended to the end of the compiler
+        search paths. -->
+		<DnneAdditionalIncludeDirectories></DnneAdditionalIncludeDirectories>
+
+		<!-- Set the Runtime ID (RID) and nethost library directory.
+        These can be useful for cross-architecture compilation.
+        It is recommended to set both as it helps to keep the
+        system in a consistent state. Note, computing a nethost library
+        location will typically require defining a RID. -->
+		<DnneRuntimeIdentifier>win-x86</DnneRuntimeIdentifier>
+		<DnneNetHostDir></DnneNetHostDir>
+
+		<!-- Indicate the dnne-gen tool's roll forward policy. -->
+		<DnneGenRollForward></DnneGenRollForward>
+
+		<!-- EXPERIMENTAL: The native hosting should assume it is in a self-contained scenario.
+        When setting this flag to true, the only change in output will be the generated hosting
+        layer will call an API that will permit self-contained runtime activation. In order for this
+        option to work as desired the user must have manually configured the assembly's runtimeconfig.json
+        file and deps.json file. The user must also copy the appropriate runtime binaries to create a
+        valid self-contained install environment. -->
+		<DnneSelfContained_Experimental>false</DnneSelfContained_Experimental>
+		<BaseOutputPath></BaseOutputPath>
+	</PropertyGroup>
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <Exec Command="xcopy &quot;$(SolutionDir)Debug\*.dll&quot; &quot;$(OutDir)&quot; /y&#xD;&#xA;xcopy &quot;$(SolutionDir)Release\*.dll&quot; &quot;$(OutDir)&quot; /y&#xD;&#xA;xcopy &quot;$(OutDir)*.dll&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y&#xD;&#xA;xcopy &quot;$(OutDir)*.opl&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y&#xD;&#xA;xcopy &quot;$(OutDir)*.runtimeconfig.json&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y" />
+	</Target>
+</Project>

@@ -3,36 +3,18 @@
     public class OmsiComplMapObj : OmsiPhysObj
     {
         internal OmsiComplMapObj(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
-        internal OmsiComplMapObj() : base() { }
-        /* TODO:
-        public string[] Scripts_Int
-        {
-            get => Memory.ReadMemoryStructArray<string>(Address + 0x17c);
-        }*/
-        /* TODO:
-        public string[] Vars_Int
-        {
-            get => Memory.ReadMemoryStructArray<string>(Address + 0x180);
-        }*/
-        /* TODO:
-        public string[] SVars_Int
-        {
-            get => Memory.ReadMemoryStructArray<string>(Address + 0x184);
-        }*/
-        /* TODO:
-        public string[] ConstFiles_Int
-        {
-            get => Memory.ReadMemoryStructArray<string>(Address + 0x188);
-        }*/
+        public OmsiComplMapObj() : base() { }
+
+        public string[] Scripts_Int => Memory.ReadMemoryStringArray(Address + 0x17c);
+        public string[] Vars_Int => Memory.ReadMemoryStringArray(Address + 0x180);
+        public string[] SVars_Int => Memory.ReadMemoryStringArray(Address + 0x184);
+        public string[] ConstFiles_Int => Memory.ReadMemoryStringArray(Address + 0x188);
         public string Model_Int
         {
-            get => Memory.ReadMemoryString(Memory.ReadMemory<int>(Address + 0x18c));
+            get => Memory.ReadMemoryString(Address + 0x18c);
             set => Memory.WriteMemory(Address + 0x18c, value);
         }
-        public OmsiPassengerCabin PassengerCabin
-        {
-            get => new OmsiPassengerCabin(Memory, Address + 0x190);
-        }
+        public OmsiPassengerCabin PassengerCabin => new(Memory, Address + 0x190);
         public bool AbsHeight
         {
             get => Memory.ReadMemory<bool>(Address + 0x194);
@@ -48,39 +30,35 @@
             get => Memory.ReadMemory<bool>(Address + 0x196);
             set => Memory.WriteMemory(Address + 0x196, value);
         }
-        /* TODO:
-        public string[] Groups
-        {
-            get => Memory.ReadMemoryStructArray<string>(Address + 0x198);
-        }*/
+        public string[] Groups => Memory.ReadMemoryStringArray(Address + 0x198);
         public string FriendlyName
         {
-            get => Memory.ReadMemoryString(Memory.ReadMemory<int>(Address + 0x19c));
+            get => Memory.ReadMemoryString(Address + 0x19c);
             set => Memory.WriteMemory(Address + 0x19c, value);
         }
         public string StdColorScheme
         {
-            get => Memory.ReadMemoryString(Memory.ReadMemory<int>(Address + 0x1a0));
+            get => Memory.ReadMemoryString(Address + 0x1a0);
             set => Memory.WriteMemory(Address + 0x1a0, value);
         }
         public string Model
         {
-            get => Memory.ReadMemoryString(Memory.ReadMemory<int>(Address + 0x1a4));
+            get => Memory.ReadMemoryString(Address + 0x1a4);
             set => Memory.WriteMemory(Address + 0x1a4, value);
         }
         public string MyPath
         {
-            get => Memory.ReadMemoryString(Memory.ReadMemory<int>(Address + 0x1a8));
+            get => Memory.ReadMemoryString(Address + 0x1a8);
             set => Memory.WriteMemory(Address + 0x1a8, value);
         }
         public string Sound
         {
-            get => Memory.ReadMemoryString(Memory.ReadMemory<int>(Address + 0x1ac));
+            get => Memory.ReadMemoryString(Address + 0x1ac);
             set => Memory.WriteMemory(Address + 0x1ac, value);
         }
         public string Sound_AI
         {
-            get => Memory.ReadMemoryString(Memory.ReadMemory<int>(Address + 0x1b0));
+            get => Memory.ReadMemoryString(Address + 0x1b0);
             set => Memory.WriteMemory(Address + 0x1b0, value);
         }
         public float Pause
@@ -93,9 +71,9 @@
             get => Memory.ReadMemory<float>(Memory.ReadMemory<int>(Address + 0x1b8));
             set => Memory.WriteMemory(Memory.ReadMemory<int>(Address + 0x1b8), value);
         }
-        public int Complexity // Byte maybe?
+        public byte Complexity // Byte maybe?
         {
-            get => Memory.ReadMemory<int>(Address + 0x1bc);
+            get => Memory.ReadMemory<byte>(Address + 0x1bc);
             set => Memory.WriteMemory(Address + 0x1bc, value);
         }
         public bool Joinable
@@ -118,14 +96,10 @@
             get => Memory.ReadMemory<bool>(Address + 0x1c5);
             set => Memory.WriteMemory(Address + 0x1c5, value);
         }
-        public D3DMeshFileObject HeightDeform
-        {
-            get => new D3DMeshFileObject(Memory, Address + 0x1c8);
-            //TODO: set => Memory.WriteMemory(Address + 0x1c5, value);
-        }
+        public D3DMeshFileObject HeightDeform => new(Memory, Address + 0x1c8);
         public string HeightDeform_FileName
         {
-            get => Memory.ReadMemoryString(Memory.ReadMemory<int>(Address + 0x1cc));
+            get => Memory.ReadMemoryString(Address + 0x1cc);
             set => Memory.WriteMemory(Address + 0x1cc, value);
         }
         public int Switch_State_Count
@@ -148,31 +122,12 @@
             get => Memory.ReadMemory<OmsiMapRenderPriority>(Address + 0x1e9);
             set => Memory.WriteMemory(Address + 0x1e9, value);
         }
-        /* TODO:
-        public string[] VarStrings
-        {
-            get => Memory.ReadMemoryStructArray<string>(Address + 0x1ec);
-        }*/
-        /* TODO:
-        public string[] SVarStrings
-        {
-            get => Memory.ReadMemoryStructArray<string>(Address + 0x1f0);
-        }*/
-        /* TODO:
-        public string[] SysVarStrings
-        {
-            get => Memory.ReadMemoryStructArray<string>(Address + 0x1f4);
-        }*/
-        /* TODO:
-        public string[] CallBackStrings
-        {
-            get => Memory.ReadMemoryStructArray<string>(Address + 0x1f8);
-        }*/
-        /* TODO:
-        public float*[] SysVars
-        {
-            get => Memory.ReadMemoryStructArray<float*>(Address + 0x1fc);
-        }*/
+        public string[] VarStrings => Memory.ReadMemoryStringArray(Address + 0x1ec);
+        public string[] SVarStrings => Memory.ReadMemoryStringArray(Address + 0x1f0);
+        public string[] SysVarStrings => Memory.ReadMemoryStringArray(Address + 0x1f4);
+        public string[] CallBackStrings => Memory.ReadMemoryStringArray(Address + 0x1f8);
+        //TODO:
+        //public float*[] SysVars => Memory.ReadMemoryStructArray<float*>(Address + 0x1fc);
         public bool ScriptShare
         {
             get => Memory.ReadMemory<bool>(Address + 0x200);
@@ -223,17 +178,19 @@
             get => Memory.ReadMemory<int>(Address + 0x22e);
             set => Memory.WriteMemory(Address + 0x22e, value);
         }
-        /* TODO:
         public OmsiAmpelGroup AmpelGroup
         {
-            get => Memory.ReadMemory<OmsiAmpelGroup>(Address + 0x230);
-            set => Memory.WriteMemory(Address + 0x230, value);
-        }*/
+            get => Memory.MarshalStruct<OmsiAmpelGroup, OmsiAmpelGroupInternal>(
+                Memory.ReadMemory<OmsiAmpelGroupInternal>(Address + 0x230));
+            //TODO:
+            //set => Memory.WriteMemory(Address + 0x230, value);
+        }
         public int CTC_FarbSchema
         {
             get => Memory.ReadMemory<int>(Address + 0x244);
             set => Memory.WriteMemory(Address + 0x244, value);
         }
+        public OmsiTriggerBox[] TriggerBoxes => Memory.ReadMemoryStructArray<OmsiTriggerBox>(Address + 0x248);
         /* TODO:
         public OmsiTriggerBox[] TriggerBoxes
         {

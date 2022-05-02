@@ -961,4 +961,12 @@ public struct OmsiVector3Double
 		public OmsiSnapPosition pos;
 		public string splineType;
     }
+
+	public struct OmsiTriggerBox
+    {
+		public D3DOBB box;
+		public bool reverb;
+		public float reverb_time;
+		public float reverb_dist;
+    }
 }
