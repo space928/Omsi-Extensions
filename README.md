@@ -51,14 +51,14 @@ Here's a summary of the project structure:
 ```
 \Omsi-Extensions\
 ┃
-┠─▹ \OmsiHook\             -> Base library containing all the Omsi hooking code and 
+┠─► \OmsiHook\             -> Base library containing all the Omsi hooking code and 
 ┃                             exposing Omsi's internal data.
-┠─▹ \OmsiHookInvoker\      -> C++ plugin for invoking native Omsi methods from OmsiHook, 
+┠─► \OmsiHookInvoker\      -> C++ plugin for invoking native Omsi methods from OmsiHook, 
 ┃                             only used by OmsiHook.
-┠─▹ \OmsiExtensionsCLI\    -> Example command line application that uses OmsiHook; runs
+┠─► \OmsiExtensionsCLI\    -> Example command line application that uses OmsiHook; runs
 ┃                             outside of Omsi.
-┠─▹ \OmsiExtensionsUI\     -> Example Avalonia UI (similar to WPF) application that uses
+┠─► \OmsiExtensionsUI\     -> Example Avalonia UI (similar to WPF) application that uses
 ┃                             OmsiHook; runs outside of Omsi.
-┖─▹ \OmsiHookPlugin\       -> Example plugin that uses OmsiHook and compiles to a native
+┖─► \OmsiHookPlugin\       -> Example plugin that uses OmsiHook and compiles to a native
                                Omsi plugin by using DNNE.
 ```
