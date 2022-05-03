@@ -3,6 +3,31 @@
     public class D3DMeshFileObject : D3DMeshObject
     {
         internal D3DMeshFileObject(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
-        internal D3DMeshFileObject() : base() { }
+        public D3DMeshFileObject() : base() { }
+
+        public bool Loaded
+        {
+            get => Memory.ReadMemory<bool>(Address + 0x178);
+            set => Memory.WriteMemory(Address + 0x178, value);
+        }
+        public string Filename
+        {
+            get => Memory.ReadMemoryString(Address + 0x178);
+            set => Memory.WriteMemory(Address + 0x178, value);
+        }
+        public OmsiWeightData[] WeightData
+        {
+            get => Memory.MarshalStructs<OmsiWeightData, OmsiWeightDataInternal>(
+                Memory.ReadMemoryStructArray<OmsiWeightDataInternal>(Address + 0x180));
+        }
+        /*
+        public sbyte[] WeightData_Easy
+        {
+            get => Memory.ReadMemoryObjArray<sbyte>(Address + 0x184);
+        }
+        public string[] BoneNames
+        {
+            get => Memory.ReadMemoryObjArray<string>(Address + 0x188);
+        }*/
     }
 }

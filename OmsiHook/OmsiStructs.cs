@@ -899,4 +899,13 @@ public struct OmsiVector3Double
 		public D3DVector position;
 		public float energie;
     }
+
+	public struct OmsiWeightData
+    {
+		public float[] influences;
+    }
+	public struct OmsiWeightDataInternal
+    {
+		[OmsiObjArrayPtr(typeof(float))] public int influences;
+    }
 }
