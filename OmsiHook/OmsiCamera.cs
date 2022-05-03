@@ -3,7 +3,7 @@
     public class OmsiCamera : OmsiObject
     {
         internal OmsiCamera(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
-        internal OmsiCamera() : base() { }
+        public OmsiCamera() : base() { }
 
         public string Name
         {

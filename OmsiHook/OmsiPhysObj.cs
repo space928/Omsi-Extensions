@@ -3,7 +3,7 @@
     public class OmsiPhysObj : OmsiObject
     {
         internal OmsiPhysObj(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
-        internal OmsiPhysObj() : base() { }
+        public OmsiPhysObj() : base() { }
 
         public string FileName // ANSI String
         {

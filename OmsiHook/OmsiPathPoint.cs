@@ -3,6 +3,8 @@
     public class OmsiPathPoint : OmsiObject
     {
         internal OmsiPathPoint(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
-        internal OmsiPathPoint() : base() { }
+        public OmsiPathPoint() : base() { }
+
+        //TODO: Complete OmsiPathPoint
     }
 }

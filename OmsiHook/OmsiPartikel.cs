@@ -5,7 +5,7 @@ namespace OmsiHook
     public class OmsiPartikel : OmsiObject
     {
         internal OmsiPartikel(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
-        internal OmsiPartikel() : base() { }
+        public OmsiPartikel() : base() { }
 
         public D3DVector Position
         {
@@ -18,7 +18,7 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x10, value);
         }
         /// <summary>
-        /// Birthday?
+        /// Birth time
         /// </summary>
         public uint Geburtsdatum
         {
@@ -26,7 +26,7 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x1c, value);
         }
         /// <summary>
-        /// Death Day?
+        /// Death time
         /// </summary>
         public uint Sterbedatum
         {
@@ -114,6 +114,5 @@ namespace OmsiHook
             get => Memory.ReadMemory<float>(Address + 0x58);
             set => Memory.WriteMemory(Address + 0x58, value);
         }
-
     }
 }
