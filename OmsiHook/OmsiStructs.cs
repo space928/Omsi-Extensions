@@ -1076,4 +1076,9 @@ public struct OmsiVector3Double
 		[OmsiStrPtr] public int line; // ANSI String
 		[OmsiStrArrayPtr] public int busstops;
 	}
+	public struct OmsiCollFeedback
+    {
+		public D3DVector position;
+		public float energie;
+    }
 }
