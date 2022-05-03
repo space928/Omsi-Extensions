@@ -202,5 +202,66 @@
             get => Memory.ReadMemoryStructArray<OmsiContactShoe>(Address + 0x5c8);
             //set => Memory.ReadMemoryStructArray<OmsiContactShoe>(Address + 0x5c8);
         }
+        public D3DVector Front_Window_Vector
+        {
+            get => Memory.ReadMemory<D3DVector>(Address + 0x5cc);
+            set => Memory.WriteMemory(Address + 0x5cc, value);
+        }
+        /// <summary>
+        /// Manufacturer
+        /// </summary>
+        public string Hersteller
+        {
+            get => Memory.ReadMemoryString(Address + 0x5d8);
+            set => Memory.WriteMemory(Address + 0x5d8, value);
+        }
+        public int Var_HOF
+        {
+            get => Memory.ReadMemory<int>(Address + 0x5dc);
+            set => Memory.WriteMemory(Address + 0x5dc, value);
+        }
+        public int Var_File_Schedule
+        {
+            get => Memory.ReadMemory<int>(Address + 0x5e0);
+            set => Memory.WriteMemory(Address + 0x5e0, value);
+        }
+        /// <summary>
+        /// HOF Files?
+        /// </summary>
+        public OmsiHOF[] Hoefe
+        {
+            get => Memory.ReadMemoryObjArray<OmsiHOF>(Address + 0x5e4);
+            //set => Memory.WriteMemory(Address + 0x5e4, value);
+        }
+        public float FF_Zentr_Max
+        {
+            get => Memory.ReadMemory<float>(Address + 0x5e8);
+            set => Memory.WriteMemory(Address + 0x5e8, value);
+        }
+        public float FF_Znetr_MaxSpeed
+        {
+            get => Memory.ReadMemory<float>(Address + 0x5ec);
+            set => Memory.WriteMemory(Address + 0x5ec, value);
+        }
+        public float FF_Drag_Max
+        {
+            get => Memory.ReadMemory<float>(Address + 0x5f0);
+            set => Memory.WriteMemory(Address + 0x5f0, value);
+        }
+        public float FF_Drag_MaxSpeed
+        {
+            get => Memory.ReadMemory<float>(Address + 0x5f4);
+            set => Memory.WriteMemory(Address + 0x5f4, value);
+        }
+        public float FF_Vib_Period
+        {
+            get => Memory.ReadMemory<float>(Address + 0x5f8);
+            set => Memory.WriteMemory(Address + 0x5f8, value);
+        }
+        public float FF_Vib_Amp
+        {
+            get => Memory.ReadMemory<float>(Address + 0x5fc);
+            set => Memory.WriteMemory(Address + 0x5fc, value);
+        }
     }
 }

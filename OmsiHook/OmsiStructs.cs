@@ -1029,4 +1029,51 @@ public struct OmsiVector3Double
 		public int var_z;
 		public int var_index;
 	}
+
+	public struct OmsiHOFTarget
+    {
+		public int nummer;
+		public string name; // ANSI String
+		public string endstelle; // Terminus - ANSI String
+		public int texNummer;
+		public string[] strings;
+		public bool allExit;
+    }
+	public struct OmsiHOFTargetInternal
+    {
+		public int nummer;
+		[OmsiStrPtr] public int name; // ANSI String
+		[OmsiStrPtr] public int endstelle; // Terminus - ANSI String
+		public int texNummer;
+		[OmsiStrArrayPtr] public int strings;
+		public bool allExit;
+    }
+
+	public struct OmsiHofFISBusstop
+    {
+		public string ident; // ANSI String
+		public string[] strings;
+    }
+	public struct OmsiHofFISBusstopInternal
+    {
+		[OmsiStrPtr] public int ident; // ANSI String
+		[OmsiStrArrayPtr] public int strings;
+    }
+
+	public struct OmsiHofFISTrip
+	{
+		public int code;
+		public string name; // ANSI String
+		public int target;
+		public string line; // ANSI String
+		public string[] busstops;
+    }
+	public struct OmsiHofFISTripInternal
+	{
+		public int code;
+		[OmsiStrPtr] public int name; // ANSI String
+		public int target;
+		[OmsiStrPtr] public int line; // ANSI String
+		[OmsiStrArrayPtr] public int busstops;
+	}
 }
