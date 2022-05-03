@@ -913,4 +913,10 @@ public struct OmsiVector3Double
 		public D3DVector position;
 		public float energie;
     }
+
+	public struct OmsiPointPair
+    {
+		public float x;
+		public float y;
+    }
 }
