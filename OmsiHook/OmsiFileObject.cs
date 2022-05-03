@@ -101,5 +101,62 @@
             get => Memory.ReadMemory<byte>(Address + 0x49);
             set => Memory.WriteMemory(Address + 0x49, value);
         }
+        /*public string[] StringVars
+        {
+            get => Memory.ReadMemoryObjArray<string>(Address + 0x4c);
+            //set => Memory.WriteMemory(Address + 0x49, value);
+        }*/
+        public OmsiComplMapObjInst[] MyInstance
+        {
+            get => Memory.ReadMemoryObjArray<OmsiComplMapObjInst>(Address + 0x50);
+        }
+        public bool AlignTerrain
+        {
+            get => Memory.ReadMemory<bool>(Address + 0x54);
+            set => Memory.WriteMemory(Address + 0x54, value);
+        }
+        public uint MyVarParent_IDCode
+        {
+            get => Memory.ReadMemory<uint>(Address + 0x58);
+            set => Memory.WriteMemory(Address + 0x58, value);
+        }
+        public int MyVarParent_Katchel
+        {
+            get => Memory.ReadMemory<int>(Address + 0x5c);
+            set => Memory.WriteMemory(Address + 0x5c, value);
+        }
+        public int MyVarParent_Obj
+        {
+            get => Memory.ReadMemory<int>(Address + 0x60);
+            set => Memory.WriteMemory(Address + 0x60, value);
+        }
+        public OmsiFileObjectPathInfo[] Paths
+        {
+            get => Memory.ReadMemoryStructArray<OmsiFileObjectPathInfo>(Address + 0x64);
+        }
+        public int Chrono_Origin
+        {
+            get => Memory.ReadMemory<int>(Address + 0x68);
+            set => Memory.WriteMemory(Address + 0x68, value);
+        }
+        public OmsiChronoChange[] Chrono_Changes
+        {
+            get => Memory.ReadMemoryObjArray<OmsiChronoChange>(Address + 0x6c);
+        }
+        public OmsiObjChronoVars Chrono_Active
+        {
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x70));
+        }
+        public bool Chrono_Own
+        {
+            get => Memory.ReadMemory<bool>(Address + 0x74);
+            set => Memory.WriteMemory(Address + 0x74, value);
+        }
+        public int TempStation
+        {
+            get => Memory.ReadMemory<int>(Address + 0x78);
+            set => Memory.WriteMemory(Address + 0x78, value);
+        }
+
     }
 }
