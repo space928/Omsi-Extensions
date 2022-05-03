@@ -12,10 +12,12 @@
         public OmsiCameraSettings[] CameraSettingsDriver
         {
             get => Memory.ReadMemoryStructArray<OmsiCameraSettings>(Address + 0x268);
+            //set => Memory.WriteMemory(Address + 0x264, value);
         }
         public OmsiCameraSettings[] CameraSettingsPax
         {
             get => Memory.ReadMemoryStructArray<OmsiCameraSettings>(Address + 0x26c);
+            //set => Memory.WriteMemory(Address + 0x264, value);
         }
         public D3DVector OutsideCameraCenter
         {
@@ -37,11 +39,17 @@
             get => Memory.ReadMemory<byte>(Address + 0x284);
             set => Memory.WriteMemory(Address + 0x284, value);
         }
+        /// <summary>
+        /// Livery index?
+        /// </summary>
         public int Num_Werbung
         {
             get => Memory.ReadMemory<int>(Address + 0x288);
             set => Memory.WriteMemory(Address + 0x288, value);
         }
+        /// <summary>
+        /// ! Warn ! Listed as int in decompilation, but treated as byte due to following struct item
+        /// </summary>
         public byte AI_Veh_Type
         {
             get => Memory.ReadMemory<byte>(Address + 0x28c);
@@ -58,9 +66,9 @@
             set => Memory.WriteMemory(Address + 0x290, value);
         }
         /// <summary>
-        /// Focus Height?
+        /// Center of Gravity Height
         /// </summary>
-        public float Schwerpunkt_height
+        public float Schwerpunkt_Height
         {
             get => Memory.ReadMemory<float>(Address + 0x294);
             set => Memory.WriteMemory(Address + 0x294, value);
@@ -70,25 +78,25 @@
             get => Memory.ReadMemory<bool>(Address + 0x298);
             set => Memory.WriteMemory(Address + 0x298, value);
         }
-        public string REG_List
+        public string REG_List // ANSI String
         {
-            get => Memory.ReadMemoryString(Memory.ReadMemory<int>(Address + 0x29c));
-            set => Memory.WriteMemory(Memory.ReadMemory<int>(Address + 0x29c), value);
+            get => Memory.ReadMemoryString(Address + 0x29c);
+            set => Memory.WriteMemory(Address + 0x29c, value);
         }
-        public string REG_NumberFile
+        public string REG_NumberFile // ANSI String
         {
-            get => Memory.ReadMemoryString(Memory.ReadMemory<int>(Address + 0x2a0));
-            set => Memory.WriteMemory(Memory.ReadMemory<int>(Address + 0x2a0), value);
+            get => Memory.ReadMemoryString(Address + 0x2a0);
+            set => Memory.WriteMemory(Address + 0x20a, value);
         }
-        public string REG_Prefix
+        public string REG_Prefix // ANSI String
         {
-            get => Memory.ReadMemoryString(Memory.ReadMemory<int>(Address + 0x2a4));
-            set => Memory.WriteMemory(Memory.ReadMemory<int>(Address + 0x2a4), value);
+            get => Memory.ReadMemoryString(Address + 0x2a4);
+            set => Memory.WriteMemory(Address + 0x2a4, value);
         }
-        public string REG_Postfix
+        public string REG_Postfix // ANSI String
         {
-            get => Memory.ReadMemoryString(Memory.ReadMemory<int>(Address + 0x2a8));
-            set => Memory.WriteMemory(Memory.ReadMemory<int>(Address + 0x2a8), value);
+            get => Memory.ReadMemoryString(Address + 0x2a8);
+            set => Memory.WriteMemory(Address + 0x2a8, value);
         }
         public int Ident_Var
         {
