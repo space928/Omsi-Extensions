@@ -969,4 +969,64 @@ public struct OmsiVector3Double
 		public float reverb_time;
 		public float reverb_dist;
     }
+
+	public struct OmsiAchse
+    {
+		public float _long;
+		public float maxWidth;
+		public float minWidth;
+		public float feder;
+		public float maxForce;
+		public float daempfer;
+		public float rad_dia;
+		public bool angetrieben; // Driven? Powered?
+		public float omega_F;
+    }
+
+	public struct OmsiCoupling
+    {
+		public D3DVector position;
+		public OmsiCoupleCC[] cc;
+    }
+
+	public struct OmsiCoupleCC
+    {
+		public int read_var;
+		public int write_var;
+		public int couple_var;
+    }
+	public struct OmsiVehicleCoupleInternal
+    {
+		[OmsiStrPtr] public int filename;
+		public bool reverse;
+	}
+	public struct OmsiVehicleCouple
+    {
+		public string filename;
+		public bool reverse;
+	}
+
+	public struct OmsiVehicleCoupleChar
+    {
+		public float alpha_max;
+		public float beta_min;
+		public float beta_max;
+		public int type;
+	}
+
+	public struct OmsiContactShoe
+    {
+		public byte boogie;
+		public float x_min;
+		public float x_max;
+		public float z_min;
+		public float z_max;
+		public byte flags;
+		public int var_volt_veh;
+		public int var_volt_rail;
+		public int var_volt_freq;
+		public int var_x;
+		public int var_z;
+		public int var_index;
+	}
 }
