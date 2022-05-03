@@ -85,7 +85,8 @@
         }
         public OmsiCoupling[] Coupling
         {
-            get => Memory.ReadMemoryStructArray<OmsiCoupling>(Address + 0x538);
+            get => Memory.MarshalStructs<OmsiCoupling, OmsiCouplingInternal>(
+                Memory.ReadMemoryStructArray<OmsiCouplingInternal>(Address + 0x538));
             //set => Memory.WriteMemory(Address + 0x538, value);
         }
         public OmsiVehicleCouple[] Couple

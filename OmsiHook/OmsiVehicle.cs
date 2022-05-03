@@ -3,7 +3,7 @@
     public class OmsiVehicle : OmsiComplMapObj
     {
         internal OmsiVehicle(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
-        internal OmsiVehicle() : base() { }
+        public OmsiVehicle() : base() { }
         public int StdCamera
         {
             get => Memory.ReadMemory<int>(Address + 0x264);

@@ -906,8 +906,32 @@ public struct OmsiVector3Double
 		public OmsiObjectPathInfo[] blockings;
 		public bool crossingProblem;
 		public short switchDir;
-		[OmsiStructArrayPtr(typeof(OmsiPathInfoRailEnh))] public int rail_enh;
+		public OmsiPathInfoRailEnh[] rail_enh;
 		public OmsiThirdRail[] third_rails;
+    }
+
+	public struct OmsiObjectPathInfoInternal
+    {
+		public D3DVector position;
+		public float hdg;
+		public float invradius;
+		public float laenge;
+		public float grdnt_strt;
+		public float grdnt_end;
+		public float neigung_strt;
+		public float neigung_end;
+		public float deltaHeight;
+		public bool use_deltaHeight;
+		public byte typ;
+		public float width;
+		public byte reverse;
+		public byte blinker;
+		public int ampel;
+		[OmsiStructArrayPtr(typeof(OmsiObjectPathInfo))] public int blockings;
+		public bool crossingProblem;
+		public short switchDir;
+		[OmsiStructArrayPtr(typeof(OmsiPathInfoRailEnh))] public int rail_enh;
+		[OmsiStructArrayPtr(typeof(OmsiThirdRail))] public int third_rails;
     }
 
 	public struct OmsiThirdRail
@@ -938,8 +962,8 @@ public struct OmsiVector3Double
 		public float hdg;
 		public float steigung;
 		public float cant;
-		[OmsiPtr] public int parent_obj;
-		[OmsiPtr] public int parent_spl;
+		public int parent_obj; // Pointer
+		public int parent_spl; // Pointer
 		public int kachel;
 		public float offsetSpline;
 		public float offsetSplineY;
@@ -987,6 +1011,11 @@ public struct OmsiVector3Double
     {
 		public D3DVector position;
 		public OmsiCoupleCC[] cc;
+    }
+	public struct OmsiCouplingInternal
+    {
+		public D3DVector position;
+		[OmsiStructArrayPtr(typeof(OmsiCoupleCC))] public int cc;
     }
 
 	public struct OmsiCoupleCC
