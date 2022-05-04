@@ -886,6 +886,106 @@ public struct OmsiVector3Double
 		public int main, winterSnow;
     }
 
+	public struct OmsiObjectPathInfo
+    {
+		public D3DVector position;
+		public float hdg;
+		public float invradius;
+		public float laenge;
+		public float grdnt_strt;
+		public float grdnt_end;
+		public float neigung_strt;
+		public float neigung_end;
+		public float deltaHeight;
+		public bool use_deltaHeight;
+		public byte typ;
+		public float width;
+		public byte reverse;
+		public byte blinker;
+		public int ampel;
+		public OmsiObjectPathInfo[] blockings;
+		public bool crossingProblem;
+		public short switchDir;
+		public OmsiPathInfoRailEnh[] rail_enh;
+		public OmsiThirdRail[] third_rails;
+    }
+
+	public struct OmsiObjectPathInfoInternal
+    {
+		public D3DVector position;
+		public float hdg;
+		public float invradius;
+		public float laenge;
+		public float grdnt_strt;
+		public float grdnt_end;
+		public float neigung_strt;
+		public float neigung_end;
+		public float deltaHeight;
+		public bool use_deltaHeight;
+		public byte typ;
+		public float width;
+		public byte reverse;
+		public byte blinker;
+		public int ampel;
+		[OmsiStructArrayPtr(typeof(OmsiObjectPathInfo))] public int blockings;
+		public bool crossingProblem;
+		public short switchDir;
+		[OmsiStructArrayPtr(typeof(OmsiPathInfoRailEnh))] public int rail_enh;
+		[OmsiStructArrayPtr(typeof(OmsiThirdRail))] public int third_rails;
+    }
+
+	public struct OmsiThirdRail
+    {
+		public float pos_x;
+		public float pos_z;
+		public byte flags;
+		public float volt;
+		public float freq;
+		public float sigA;
+	}
+	
+	public struct OmsiPathInfoRailEnh
+    {
+		public float schienenlaenge;
+		public bool stoesse;
+		public float Gleislage_Wellenlaenge;
+		public float Gleislage_Amp;
+		public int Gleislage_Pot;
+		public float Gleislage_Wellenlaenge_Z;
+		public float Gleislage_Amp_Z;
+		public int Gleislage_Pot_Z;
+	}
+
+	public struct OmsiSnapPosition
+    {
+		public D3DVector position;
+		public float hdg;
+		public float steigung;
+		public float cant;
+		public int parent_obj; // Pointer
+		public int parent_spl; // Pointer
+		public int kachel;
+		public float offsetSpline;
+		public float offsetSplineY;
+    }
+
+	public struct OmsiCameraSettings
+    {
+		public float angle_hdg_norm;
+		public float angle_hgt_norm;
+		public bool constDist;
+		public D3DVector pos;
+		public float dist;
+		public float sichtwinkel;
+		public float radius;
+    }
+	
+	public struct OmsiSplineHelper
+    {
+		public OmsiSnapPosition pos;
+		public string splineType;
+    }
+
 	public struct OmsiTriggerBox
     {
 		public D3DOBB box;
@@ -894,6 +994,117 @@ public struct OmsiVector3Double
 		public float reverb_dist;
     }
 
+	public struct OmsiAchse
+    {
+		public float _long;
+		public float maxWidth;
+		public float minWidth;
+		public float feder;
+		public float maxForce;
+		public float daempfer;
+		public float rad_dia;
+		public bool angetrieben; // Driven? Powered?
+		public float omega_F;
+    }
+
+	public struct OmsiCoupling
+    {
+		public D3DVector position;
+		public OmsiCoupleCC[] cc;
+    }
+	public struct OmsiCouplingInternal
+    {
+		public D3DVector position;
+		[OmsiStructArrayPtr(typeof(OmsiCoupleCC))] public int cc;
+    }
+
+	public struct OmsiCoupleCC
+    {
+		public int read_var;
+		public int write_var;
+		public int couple_var;
+    }
+	public struct OmsiVehicleCoupleInternal
+    {
+		[OmsiStrPtr] public int filename;
+		public bool reverse;
+	}
+	public struct OmsiVehicleCouple
+    {
+		public string filename;
+		public bool reverse;
+	}
+
+	public struct OmsiVehicleCoupleChar
+    {
+		public float alpha_max;
+		public float beta_min;
+		public float beta_max;
+		public int type;
+	}
+
+	public struct OmsiContactShoe
+    {
+		public byte boogie;
+		public float x_min;
+		public float x_max;
+		public float z_min;
+		public float z_max;
+		public byte flags;
+		public int var_volt_veh;
+		public int var_volt_rail;
+		public int var_volt_freq;
+		public int var_x;
+		public int var_z;
+		public int var_index;
+	}
+
+	public struct OmsiHOFTarget
+    {
+		public int nummer;
+		public string name; // ANSI String
+		public string endstelle; // Terminus - ANSI String
+		public int texNummer;
+		public string[] strings;
+		public bool allExit;
+    }
+	public struct OmsiHOFTargetInternal
+    {
+		public int nummer;
+		[OmsiStrPtr] public int name; // ANSI String
+		[OmsiStrPtr] public int endstelle; // Terminus - ANSI String
+		public int texNummer;
+		[OmsiStrArrayPtr] public int strings;
+		public bool allExit;
+    }
+
+	public struct OmsiHofFISBusstop
+    {
+		public string ident; // ANSI String
+		public string[] strings;
+    }
+	public struct OmsiHofFISBusstopInternal
+    {
+		[OmsiStrPtr] public int ident; // ANSI String
+		[OmsiStrArrayPtr] public int strings;
+    }
+
+	public struct OmsiHofFISTrip
+	{
+		public int code;
+		public string name; // ANSI String
+		public int target;
+		public string line; // ANSI String
+		public string[] busstops;
+    }
+	public struct OmsiHofFISTripInternal
+	{
+		public int code;
+		[OmsiStrPtr] public int name; // ANSI String
+		public int target;
+		[OmsiStrPtr] public int line; // ANSI String
+		[OmsiStrArrayPtr] public int busstops;
+	}
 	public struct OmsiCollFeedback
     {
 		public D3DVector position;
