@@ -1131,7 +1131,7 @@ public struct OmsiVector3Double
     }
 	public struct OmsiFileObjectPathInfoInternal
     {
-		[OmsiStructArrayPtr(typeof(OmsiPathRule))] public int rules;
+		[OmsiStructArrayPtr(typeof(OmsiPathRule), typeof(OmsiPathRuleInternal))] public int rules;
     }
 
 	public struct OmsiPathRule
