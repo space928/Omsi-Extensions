@@ -418,6 +418,20 @@ public struct OmsiSeat
 		public string changePos_parent_str; // ANSIString
 		public bool valid;
     }
+	public struct OmsiPassCabinTicketSaleInternal
+	{
+		public OmsiPathPoint point;
+		public D3DVector ticketPos;
+		public D3DVector moneyPos;
+		public D3DVector moneyPos_var;
+		public int moneyPos_parent_idx;
+		[OmsiStrPtr] public int moneyPos_parent_str; // ANSIString
+		public D3DVector changePos;
+		public D3DVector changePos_var;
+		public int changePos_parent_idx;
+		[OmsiStrPtr] public int changePos_parent_str; // ANSIString
+		public bool valid;
+    }
 	public struct OmsiTreeInfo
     {
 		public string texture;
@@ -1109,5 +1123,11 @@ public struct OmsiVector3Double
     {
 		public D3DVector position;
 		public float energie;
+    }
+
+	public struct OmsiPointPair
+    {
+		public float x;
+		public float y;
     }
 }
