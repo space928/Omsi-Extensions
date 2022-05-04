@@ -1169,4 +1169,16 @@ namespace OmsiHook
         public int fstr;
         public int fstrentry;
     }
+
+	public struct OmsiStringItem
+    {
+		public string fstring;
+		public OmsiObject fobject;
+    }
+
+	public struct OmsiStringItemInternal
+    {
+		[OmsiStrPtr] public int fstring;
+		[OmsiObjPtr(typeof(OmsiObject))] public int fobject;
+    }
 }
