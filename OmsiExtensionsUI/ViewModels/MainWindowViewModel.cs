@@ -16,7 +16,10 @@ namespace OmsiExtensionsUI.ViewModels
 
         private Models.OmsiModel omsiModel;
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+        // Disabled warning given they are set in CreateCommands() and UpdateData().
         public MainWindowViewModel()
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             CreateCommands();
         }
