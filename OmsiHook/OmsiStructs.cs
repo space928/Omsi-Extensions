@@ -225,6 +225,13 @@ namespace OmsiHook
         TMRP_4
     }
 
+    public enum OmsiDuplicates : byte
+    {
+        dupIgnore,
+        dupAccept,
+        dupError
+    }
+
     internal struct OmsiGroundTypeInternal
     {
         [OmsiStrPtr] public int texture;
