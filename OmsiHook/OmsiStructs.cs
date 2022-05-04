@@ -224,6 +224,13 @@ namespace OmsiHook
 		TMRP_3,
 		TMRP_4
     }
+	
+	public enum OmsiDuplicates : byte
+    {
+		dupIgnore,
+		dupAccept,
+		dupError
+    }
 
 	internal struct OmsiGroundTypeInternal
     {
@@ -1129,5 +1136,17 @@ public struct OmsiVector3Double
     {
 		public float x;
 		public float y;
+    }
+
+	public struct OmsiStringItem
+    {
+		public string fstring;
+		public OmsiObject fobject;
+    }
+
+	public struct OmsiStringItemInternal
+    {
+		[OmsiStrPtr] public int fstring;
+		[OmsiObjPtr(typeof(OmsiObject))] public int fobject;
     }
 }
