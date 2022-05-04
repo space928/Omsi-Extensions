@@ -21,20 +21,20 @@ namespace OmsiHook
 	/// Defines a 4x4 float matrix.
 	/// </summary>
 	public struct D3DMatrix
-    {
+	{
 		public float _00, _01, _02, _03,
 					 _10, _11, _12, _13,
 					 _20, _21, _22, _23,
 					 _30, _31, _32, _33;
-    }
+	}
 
 	/// <summary>
 	/// Defines a 4 dimensional float vector.
 	/// </summary>
 	public struct D3DXQuaternion
-    {
+	{
 		public float x, y, z, w;
-    }
+	}
 
 	/// <summary>
 	/// Defines a plane with a normal vector and a distance.
@@ -48,34 +48,34 @@ namespace OmsiHook
 	/// Defines a colour in terms of r,g,b,a as floats.
 	/// </summary>
 	public struct D3DColorValue
-    {
+	{
 		public float r, g, b, a;
-    }
+	}
 
 	/// <summary>
 	/// Defines a standard DirectX9 material.
 	/// </summary>
 	public struct D3DMaterial9
-    {
+	{
 		public D3DColorValue diffuse, ambient, specular, emissive;
 		public float power;
-    }
-	
+	}
+
 	public struct D3DOBB
 	{
 		// TODO: Check Axis Data Type
 		public int Axis;
 		public D3DVector Depth;
 		public D3DVector Center;
-    }
+	}
 
 	/// <summary>
 	/// Defines a 2 dimensional int vector
 	/// </summary>
 	public struct OmsiPoint
-    {
+	{
 		public int x, y;
-    }
+	}
 
 	internal struct OmsiMaterialPropInternal
 	{
@@ -119,7 +119,7 @@ namespace OmsiHook
 	/// Stores all the properties of an Omsi material
 	/// </summary>
 	public struct OmsiMaterialProp
-    {
+	{
 		public int mainTexture;
 		public bool standard;
 		public bool useTexCoordTransX, useTexCoordTransY;
@@ -183,24 +183,24 @@ namespace OmsiHook
 	}
 
 	public struct OmsiMapSeason
-    {
+	{
 		public OmsiSeason season;
 		public short start_day;
 		public short end_day;
-    }
+	}
 
 	public enum OmsiSeason : short
-    {
+	{
 		SsnSummer,
 		SsnSpring,
 		SsnAutumn,
 		SsnWinter,
 		SsnWinterSnow,
 		SsnSummerDry
-    }
+	}
 
 	public enum OmsiFileObjectSpecial : byte
-    {
+	{
 		FOS_Normal,
 		FOS_Busstop,
 		FOS_PeopleStandingRandom,
@@ -212,10 +212,10 @@ namespace OmsiHook
 		FOS_HelpArrow,
 		FOS_Switch,
 		FOS_Invalid
-    }
+	}
 
 	public enum OmsiMapRenderPriority : byte
-    {
+	{
 		TMRP_PreSurfaces,
 		TMRP_Surfaces,
 		TMRP_OnSurfaces,
@@ -223,12 +223,12 @@ namespace OmsiHook
 		TMRP_2,
 		TMRP_3,
 		TMRP_4
-    }
+	}
 
 	internal struct OmsiGroundTypeInternal
-    {
+	{
 		[OmsiStrPtr] public int texture;
-		[OmsiStrPtr]public int det_texture;
+		[OmsiStrPtr] public int det_texture;
 		public int tex_id;
 		public int det_tex_id;
 		public byte resolution;
@@ -248,16 +248,16 @@ namespace OmsiHook
 	}
 
 	public struct OmsiStandardMapCam
-    {
+	{
 		public OmsiPoint centerKachel;
 		public D3DVector mapCamTargetPos;
 		public float angle_hdg;
 		public float angle_hgt;
 		public float dist;
-    }
+	}
 
 	internal struct OmsiWeatherPropInternal
-    {
+	{
 		[OmsiStrPtr(true)] public int name; // STRING
 		[OmsiStrPtr(true)] public int description; // STRING
 		public float fogDensity;
@@ -278,7 +278,7 @@ namespace OmsiHook
 		public float bodennaesse;
 		public bool schnee;
 		public bool schneeAufStrassen;
-    }
+	}
 
 	public struct OmsiWeatherProp
 	{
@@ -328,7 +328,7 @@ namespace OmsiHook
 	}
 
 	public struct OmsiCloudType
-    {
+	{
 		public string name; // ANSI String
 		public string texFile; // ANSI String
 		public float texSize;
@@ -336,13 +336,13 @@ namespace OmsiHook
 		/// Overcast?
 		/// </summary>
 		public bool ovc;
-    }
+	}
 
 	internal struct OmsiTicketPackInternal
 	{
 		[OmsiStrPtr] public int filename;
 		[OmsiStrPtr(true)] public int voicepath;
-		[OmsiStructArrayPtr(typeof(OmsiTicket), typeof(OmsiTicketInternal))] 
+		[OmsiStructArrayPtr(typeof(OmsiTicket), typeof(OmsiTicketInternal))]
 		public int tickets;
 		public float stamper_prop;
 		public float ticketBuy_prop;
@@ -351,7 +351,7 @@ namespace OmsiHook
 	}
 
 	public struct OmsiTicketPack
-    {
+	{
 		public string filename;
 		public string voicepath;
 		public OmsiTicket[] tickets;
@@ -359,7 +359,7 @@ namespace OmsiHook
 		public float ticketBuy_prop;
 		public float chattiness;
 		public float whinge_prop;
-    }
+	}
 
 	internal struct OmsiTicketInternal
 	{
@@ -375,7 +375,7 @@ namespace OmsiHook
 	}
 
 	public struct OmsiTicket
-    {
+	{
 		public string name, name_english, name_display;
 		public int max_stations;
 		public int age_min, age_max;
@@ -384,26 +384,26 @@ namespace OmsiHook
 		public float propability;
 		public D3DMeshFileObject mesh_block;
 		public D3DMeshFileObject mesh_single;
-    }
-public struct OmsiSeat
+	}
+	public struct OmsiSeat
 	{
 		public D3DVector position;
 		public D3DXQuaternion rotation;
 		public byte flag;
 		public float height;
 		public int getInteriorLights; // TODO: Check Data Type
-    }
+	}
 	public struct OmsiEntryProp
 	{
 		public bool noTicketSale;
 		public bool withButton;
-    }
+	}
 	public struct OmsiPassCabinStamper
 	{
 		public OmsiPathPoint point;
 		public D3DVector stamperPos;
 		public bool valid;
-    }
+	}
 	public struct OmsiPassCabinTicketSale
 	{
 		public OmsiPathPoint point;
@@ -417,7 +417,7 @@ public struct OmsiSeat
 		public int changePos_parent_idx;
 		public string changePos_parent_str; // ANSIString
 		public bool valid;
-    }
+	}
 	public struct OmsiPassCabinTicketSaleInternal
 	{
 		public OmsiPathPoint point;
@@ -431,24 +431,24 @@ public struct OmsiSeat
 		public int changePos_parent_idx;
 		[OmsiStrPtr] public int changePos_parent_str; // ANSIString
 		public bool valid;
-    }
+	}
 	public struct OmsiTreeInfo
-    {
+	{
 		public string texture;
 		public float min_height;
 		public float max_height;
 		public float min_ratio;
 		public float max_ratio;
-    }
-  	public struct OmsiMapLight
-    {
+	}
+	public struct OmsiMapLight
+	{
 		public D3DVector position;
 		public float r, g, b, radius;
-      
+
 		public double x, y, z;
-    }
-public struct OmsiVector3Double
-    {
+	}
+	public struct OmsiVector3Double
+	{
 		public double x, y, z;
 	}
 
@@ -456,7 +456,7 @@ public struct OmsiVector3Double
 	/// Omsi axel instance
 	/// </summary>
 	public struct OmsiAchseInstance
-    {
+	{
 		//TODO: Translate field names
 		public double phi; //TODO: Verify all double types
 		public float alpha;
@@ -494,7 +494,7 @@ public struct OmsiVector3Double
 	}
 
 	public struct OmsiUnschedVehGroup
-    {
+	{
 		public string aiList;
 		public int aiList_index;
 		public int defaultDensity;
@@ -503,15 +503,15 @@ public struct OmsiVector3Double
 		public IntPtr func_trafficDensity_weekday;
 		public IntPtr func_trafficDensity_saturday;
 		public IntPtr func_trafficDensity_sunday;
-    }
+	}
 
 	internal struct OmsiAIListInternal
-    {
+	{
 		[OmsiStrArrayPtr] public int allVeh;
 		public int randomGroup;
-		[OmsiStructArrayPtr(typeof(OmsiAIGroup), typeof(OmsiAIGroupInternal))] 
+		[OmsiStructArrayPtr(typeof(OmsiAIGroup), typeof(OmsiAIGroupInternal))]
 		public int groups;
-    }
+	}
 
 	public struct OmsiAIList
 	{
@@ -521,7 +521,7 @@ public struct OmsiVector3Double
 	}
 
 	internal struct OmsiAIGroupInternal
-    {
+	{
 		[OmsiStrPtr] public int ident;
 		[OmsiStructArrayPtr(typeof(OmsiAIGroupType), typeof(OmsiAIGroupTypeInternal))]
 		public int typeEntries;
@@ -543,16 +543,16 @@ public struct OmsiVector3Double
 	{
 		public int veh;
 		public int nonUsed_count;
-		[OmsiStructArrayPtr(typeof(OmsiAIGroupTypeNumber), typeof(OmsiAIGroupTypeNumberInternal))] 
+		[OmsiStructArrayPtr(typeof(OmsiAIGroupTypeNumber), typeof(OmsiAIGroupTypeNumberInternal))]
 		public int numbers;
 	}
 
 	public struct OmsiAIGroupType
-    {
+	{
 		public int veh;
 		public int nonUsed_count;
 		public OmsiAIGroupTypeNumber[] numbers;
-    }
+	}
 
 	internal struct OmsiAIGroupTypeNumberInternal
 	{
@@ -561,45 +561,45 @@ public struct OmsiVector3Double
 	}
 
 	public struct OmsiAIGroupTypeNumber
-    {
+	{
 		public string num, reg, werbung;
 		public bool used;
-    }
+	}
 
 	internal struct OmsiHolidayInternal
-    {
+	{
 		public int date;
 		[OmsiStrPtr] public int name;
-    }
+	}
 
-    public struct OmsiHoliday
-    {
+	public struct OmsiHoliday
+	{
 		public int date;
 		public string name;
 	}
 
 	internal struct OmsiHolidaysInternal
-    {
+	{
 		public int start, ende;
 		[OmsiStrPtr] public int name;
-    }
+	}
 
 	public struct OmsiHolidays
-    {
+	{
 		public int start, ende;
 		public string name;
-    }
+	}
 
-    public struct OmsiDST
-    {
+	public struct OmsiDST
+	{
 		public int start_day, ende_day;
 		public float start_time, ende_time, diff;
 	}
 
 	public struct OmsiPathID
-    {
+	{
 		public int kachel, path;
-    }
+	}
 
 	internal struct OmsiPathBelegungInternal
 	{
@@ -613,11 +613,11 @@ public struct OmsiVector3Double
 	/// Path assignment?
 	/// </summary>
 	public struct OmsiPathBelegung
-    {
+	{
 		public float xmin, xmax, zmin, zmax;
 		public OmsiPathInfo pathInfoPntr;
 		public uint idCode;
-    }
+	}
 
 	//TODO: Bug when dereferencing this
 	internal struct OmsiPathInfoInternal
@@ -645,7 +645,7 @@ public struct OmsiVector3Double
 		public bool prevVisible_logical;
 		//TODO: Determine actual type
 		public int nextPath_a, nextPath_b, nextPath_c, nextPath_d, nextPath_e;
-		public OmsiNextPathSegment nextPathSeg; 
+		public OmsiNextPathSegment nextPathSeg;
 		public OmsiNextPathID nextPathID;
 		[OmsiStructArrayPtr(typeof(OmsiPathID))]
 		public int reservePaths;
@@ -674,7 +674,7 @@ public struct OmsiVector3Double
 	}
 
 	public struct OmsiPathInfo
-    {
+	{
 		public byte veh_type;
 		public byte uvg;
 		public bool railroad;
@@ -774,36 +774,36 @@ public struct OmsiVector3Double
 	/// Temporary struct to store unknown data type in OmsiPathInfo.nextPathSeg
 	/// </summary>
 	public struct OmsiNextPathSegment
-    {
+	{
 		public int a, b, c, d, e, f, g, h, i, j;
-    }
+	}
 
 	/// <summary>
 	/// Temporary struct to store unkown data type in OmsiPathInfo.nextPathID
 	/// </summary>
 	public struct OmsiNextPathID
-    {
+	{
 		public OmsiPathID a, b, c, d, e;
-    }
+	}
 
 	internal struct OmsiPathGroupReservInternal
 	{
-		[OmsiStruct(typeof(OmsiPathInfo), typeof(OmsiPathInfoInternal))] 
+		[OmsiStruct(typeof(OmsiPathInfo), typeof(OmsiPathInfoInternal))]
 		public OmsiPathInfoInternal pathInfo;
 	}
 
 	public struct OmsiPathGroupReserv
-    {
+	{
 		public OmsiPathInfo pathInfo;
-    }
+	}
 
 	public struct OmsiPathGroupBlocking
-    {
+	{
 		public OmsiPathID blockingPath;
 		public int blockedPathRel;
 		public byte param;
 		public byte active;
-    }
+	}
 
 	internal struct OmsiAmpelGroupInternal
 	{
@@ -820,7 +820,7 @@ public struct OmsiVector3Double
 	/// Traffic light group
 	/// </summary>
 	public struct OmsiAmpelGroup
-    {
+	{
 		/// <summary>
 		/// Traffic lights
 		/// </summary>
@@ -832,12 +832,12 @@ public struct OmsiVector3Double
 		public float zyklus;
 		public bool running;
 		public float ampelTime;
-    }
+	}
 
 	public struct OmsiAmpelInternal
 	{
 		[OmsiStrPtr] public int name;
-		[OmsiStructArrayPtr(typeof(OmsiAmpelPhase))] 
+		[OmsiStructArrayPtr(typeof(OmsiAmpelPhase))]
 		public int phasen;
 		public float actPhase;
 		public byte blockingPhase;
@@ -850,7 +850,7 @@ public struct OmsiVector3Double
 	/// Traffic light
 	/// </summary>
 	public struct OmsiAmpel
-    {
+	{
 		public string name;
 		/// <summary>
 		/// Phases
@@ -867,41 +867,41 @@ public struct OmsiVector3Double
 		/// </summary>
 		public uint anforderung_frame;
 		public float approachDist;
-    }
+	}
 
 	/// <summary>
 	/// Traffic light phase
 	/// </summary>
 	public struct OmsiAmpelPhase
-    {
+	{
 		public float time;
 		public byte phase;
-    }
+	}
 
 	public struct OmsiAmpelStop
-    {
+	{
 		public int ampel;
 		public float time;
 		public float jumpTime;
 		public bool ifAnf;
-    }
+	}
 
 	public struct OmsiTree
-    {
+	{
 		public D3DVector position;
 		public float rotation;
 		public OmsiTreeTextureSet texture;
 		public D3DMatrix matrix;
 		public float width, height;
-    }
+	}
 
 	public struct OmsiTreeTextureSet
-    {
+	{
 		public int main, winterSnow;
-    }
+	}
 
 	public struct OmsiObjectPathInfo
-    {
+	{
 		public D3DVector position;
 		public float hdg;
 		public float invradius;
@@ -922,10 +922,10 @@ public struct OmsiVector3Double
 		public short switchDir;
 		public OmsiPathInfoRailEnh[] rail_enh;
 		public OmsiThirdRail[] third_rails;
-    }
+	}
 
 	public struct OmsiObjectPathInfoInternal
-    {
+	{
 		public D3DVector position;
 		public float hdg;
 		public float invradius;
@@ -946,10 +946,10 @@ public struct OmsiVector3Double
 		public short switchDir;
 		[OmsiStructArrayPtr(typeof(OmsiPathInfoRailEnh))] public int rail_enh;
 		[OmsiStructArrayPtr(typeof(OmsiThirdRail))] public int third_rails;
-    }
+	}
 
 	public struct OmsiThirdRail
-    {
+	{
 		public float pos_x;
 		public float pos_z;
 		public byte flags;
@@ -957,9 +957,9 @@ public struct OmsiVector3Double
 		public float freq;
 		public float sigA;
 	}
-	
+
 	public struct OmsiPathInfoRailEnh
-    {
+	{
 		public float schienenlaenge;
 		public bool stoesse;
 		public float Gleislage_Wellenlaenge;
@@ -971,7 +971,7 @@ public struct OmsiVector3Double
 	}
 
 	public struct OmsiSnapPosition
-    {
+	{
 		public D3DVector position;
 		public float hdg;
 		public float steigung;
@@ -981,10 +981,10 @@ public struct OmsiVector3Double
 		public int kachel;
 		public float offsetSpline;
 		public float offsetSplineY;
-    }
+	}
 
 	public struct OmsiCameraSettings
-    {
+	{
 		public float angle_hdg_norm;
 		public float angle_hgt_norm;
 		public bool constDist;
@@ -992,24 +992,24 @@ public struct OmsiVector3Double
 		public float dist;
 		public float sichtwinkel;
 		public float radius;
-    }
-	
+	}
+
 	public struct OmsiSplineHelper
-    {
+	{
 		public OmsiSnapPosition pos;
 		public string splineType;
-    }
+	}
 
 	public struct OmsiTriggerBox
-    {
+	{
 		public D3DOBB box;
 		public bool reverb;
 		public float reverb_time;
 		public float reverb_dist;
-    }
+	}
 
 	public struct OmsiAchse
-    {
+	{
 		public float _long;
 		public float maxWidth;
 		public float minWidth;
@@ -1019,38 +1019,38 @@ public struct OmsiVector3Double
 		public float rad_dia;
 		public bool angetrieben; // Driven? Powered?
 		public float omega_F;
-    }
+	}
 
 	public struct OmsiCoupling
-    {
+	{
 		public D3DVector position;
 		public OmsiCoupleCC[] cc;
-    }
+	}
 	public struct OmsiCouplingInternal
-    {
+	{
 		public D3DVector position;
 		[OmsiStructArrayPtr(typeof(OmsiCoupleCC))] public int cc;
-    }
+	}
 
 	public struct OmsiCoupleCC
-    {
+	{
 		public int read_var;
 		public int write_var;
 		public int couple_var;
-    }
+	}
 	public struct OmsiVehicleCoupleInternal
-    {
+	{
 		[OmsiStrPtr] public int filename;
 		public bool reverse;
 	}
 	public struct OmsiVehicleCouple
-    {
+	{
 		public string filename;
 		public bool reverse;
 	}
 
 	public struct OmsiVehicleCoupleChar
-    {
+	{
 		public float alpha_max;
 		public float beta_min;
 		public float beta_max;
@@ -1058,7 +1058,7 @@ public struct OmsiVector3Double
 	}
 
 	public struct OmsiContactShoe
-    {
+	{
 		public byte boogie;
 		public float x_min;
 		public float x_max;
@@ -1074,34 +1074,34 @@ public struct OmsiVector3Double
 	}
 
 	public struct OmsiHOFTarget
-    {
+	{
 		public int nummer;
 		public string name; // ANSI String
 		public string endstelle; // Terminus - ANSI String
 		public int texNummer;
 		public string[] strings;
 		public bool allExit;
-    }
+	}
 	public struct OmsiHOFTargetInternal
-    {
+	{
 		public int nummer;
 		[OmsiStrPtr] public int name; // ANSI String
 		[OmsiStrPtr] public int endstelle; // Terminus - ANSI String
 		public int texNummer;
 		[OmsiStrArrayPtr] public int strings;
 		public bool allExit;
-    }
+	}
 
 	public struct OmsiHofFISBusstop
-    {
+	{
 		public string ident; // ANSI String
 		public string[] strings;
-    }
+	}
 	public struct OmsiHofFISBusstopInternal
-    {
+	{
 		[OmsiStrPtr] public int ident; // ANSI String
 		[OmsiStrArrayPtr] public int strings;
-    }
+	}
 
 	public struct OmsiHofFISTrip
 	{
@@ -1110,7 +1110,7 @@ public struct OmsiVector3Double
 		public int target;
 		public string line; // ANSI String
 		public string[] busstops;
-    }
+	}
 	public struct OmsiHofFISTripInternal
 	{
 		public int code;
@@ -1120,14 +1120,53 @@ public struct OmsiVector3Double
 		[OmsiStrArrayPtr] public int busstops;
 	}
 	public struct OmsiCollFeedback
-    {
+	{
 		public D3DVector position;
 		public float energie;
-    }
+	}
 
 	public struct OmsiPointPair
-    {
+	{
 		public float x;
 		public float y;
+	}
+
+	public struct OmsiPathLink
+	{
+		public OmsiPathID nextPath;
+		public bool nextRev;
+	}
+	public struct OmsiPathLinkInternal
+	{
+		[OmsiStructPtr(typeof(OmsiPathID))] public int nextPath;
+		public bool nextRev;
+	}
+
+	public struct OmsiPathGroupID
+	{
+		public int kachel;
+		public int pathGroup;
+	}
+
+	public struct OmsiPathCrossing
+    {
+		public OmsiPathID other;
+		public bool parallel;
+	}
+	public struct OmsiPathReservation
+	{
+		public OmsiPathInfo pathInfo;
+		public byte typ;
+	}
+	public struct OmsiPathReservationInternal
+	{
+		[OmsiStructPtr(typeof(OmsiPathInfo))] public int pathInfo;
+		public byte typ;
+	}
+
+	public struct OmsiPathSegmentFStr
+    {
+		public int fstr;
+		public int fstrentry;
     }
 }
