@@ -906,6 +906,6 @@ public struct OmsiVector3Double
     }
 	public struct OmsiWeightDataInternal
     {
-		[OmsiObjArrayPtr(typeof(float))] public int influences;
+		[OmsiStructArrayPtrAttribute(typeof(float))] public int influences;
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace OmsiHook
+﻿using System;
+
+namespace OmsiHook
 {
     public class D3DMeshObject : D3DTransformObject
     {
@@ -13,10 +15,10 @@
         /// <summary>
         /// ! Warn ! Listed Data type: ID3DxMesh
         /// </summary>
-        public int Mesh // ID3DxMesh I guess read in as a ptr?
+        public IntPtr Mesh // ID3DxMesh I guess read in as a ptr?
         {
-            get => Memory.ReadMemory<int>(Address + 0xa0);
-            set => Memory.WriteMemory(Address + 0xa0, value);
+            get => new IntPtr(Memory.ReadMemory<int>(Address + 0xa0));
+            set => Memory.WriteMemory(Address + 0xa0, value.ToInt32());
         }
         public D3DOBB OBB
         {
@@ -26,37 +28,37 @@
         /// <summary>
         /// ! Warn ! Listed Data type: ID3DXBuffer
         /// </summary>
-        public int D3DXBuffer_Adja // ID3DXBuffer I guess read in as a ptr?
+        public IntPtr D3DXBuffer_Adja // ID3DXBuffer I guess read in as a ptr?
         {
-            get => Memory.ReadMemory<int>(Address + 0xa8);
-            set => Memory.WriteMemory(Address + 0xa8, value);
+            get => new IntPtr(Memory.ReadMemory<int>(Address + 0xa8));
+            set => Memory.WriteMemory(Address + 0xa8, value.ToInt32());
         }
         /// <summary>
         /// ! Warn ! Listed Data type: ID3DXBuffer
         /// </summary>
-        public int D3DXBuffer_Mtrl // ID3DXBuffer I guess read in as a ptr?
+        public IntPtr D3DXBuffer_Mtrl // ID3DXBuffer I guess read in as a ptr?
         {
-            get => Memory.ReadMemory<int>(Address + 0xac);
-            set => Memory.WriteMemory(Address + 0xac, value);
+            get => new IntPtr(Memory.ReadMemory<int>(Address + 0xac));
+            set => Memory.WriteMemory(Address + 0xac, value.ToInt32());
         }
         /// <summary>
         /// ! Warn ! Listed Data type: ID3DXBuffer
         /// </summary>
-        public int D3DXBuffer_Eff // ID3DXBuffer I guess read in as a ptr?
+        public IntPtr D3DXBuffer_Eff // ID3DXBuffer I guess read in as a ptr?
         {
-            get => Memory.ReadMemory<int>(Address + 0xb0);
-            set => Memory.WriteMemory(Address + 0xb0, value);
+            get => new IntPtr(Memory.ReadMemory<int>(Address + 0xb0));
+            set => Memory.WriteMemory(Address + 0xb0, value.ToInt32());
         }
         public OmsiMaterialProp[] Materials
         {
             get => Memory.MarshalStructs<OmsiMaterialProp, OmsiMaterialPropInternal>(
                 Memory.ReadMemoryStructArray<OmsiMaterialPropInternal>(Address + 0xec));
         }
-        /*
+        
         public string[] MaterialNames
         {
-            get => Memory.ReadMemoryObjArray<string>(Address + 0xf0);
-        }*/
+            get => Memory.ReadMemoryStringArray(Address + 0xf0);
+        }
         public bool UseCharMatrix
         {
             get => Memory.ReadMemory<bool>(Address + 0xf4);

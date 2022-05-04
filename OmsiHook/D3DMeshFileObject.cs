@@ -5,7 +5,7 @@
         internal D3DMeshFileObject(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
         public D3DMeshFileObject() : base() { }
 
-        public bool Loaded
+        public bool Loaded_MeshFileObject
         {
             get => Memory.ReadMemory<bool>(Address + 0x178);
             set => Memory.WriteMemory(Address + 0x178, value);
@@ -20,14 +20,14 @@
             get => Memory.MarshalStructs<OmsiWeightData, OmsiWeightDataInternal>(
                 Memory.ReadMemoryStructArray<OmsiWeightDataInternal>(Address + 0x180));
         }
-        /*
+        
         public sbyte[] WeightData_Easy
         {
-            get => Memory.ReadMemoryObjArray<sbyte>(Address + 0x184);
+            get => Memory.ReadMemoryStructArray<sbyte>(Address + 0x184);
         }
         public string[] BoneNames
         {
-            get => Memory.ReadMemoryObjArray<string>(Address + 0x188);
-        }*/
+            get => Memory.ReadMemoryStringArray(Address + 0x188);
+        }
     }
 }
