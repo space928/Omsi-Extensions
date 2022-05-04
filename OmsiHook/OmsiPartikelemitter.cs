@@ -5,7 +5,7 @@ namespace OmsiHook
     public class OmsiPartikelEmitter : OmsiObject
     {
         internal OmsiPartikelEmitter(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
-        internal OmsiPartikelEmitter() : base() { }
+        public OmsiPartikelEmitter() : base() { }
 
         public uint LastEmitTime
         {
@@ -106,12 +106,11 @@ namespace OmsiHook
             get => Memory.ReadMemory<bool>(Address + 0x60);
             set => Memory.WriteMemory(Address + 0x60, value);
         }
-        /* TODO:
         public OmsiPartikel[] Partikel
         {
-            get => omsiMemory.ReadMemory<OmsiPartikel[]>(baseAddress + 0x64);
+            get => Memory.ReadMemoryObjArray<OmsiPartikel>(Address + 0x64);
             //set => omsiMemory.WriteMemory(baseAddress + 0x64, value);
-        }*/
+        }
         public int Textur
         {
             get => Memory.ReadMemory<int>(Address + 0x68);

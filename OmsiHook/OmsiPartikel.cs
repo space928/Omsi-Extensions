@@ -5,7 +5,7 @@ namespace OmsiHook
     public class OmsiPartikel : OmsiObject
     {
         internal OmsiPartikel(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
-        internal OmsiPartikel() : base() { }
+        public OmsiPartikel() : base() { }
 
         public D3DVector Position
         {
