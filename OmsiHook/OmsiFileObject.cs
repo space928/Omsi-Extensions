@@ -101,11 +101,11 @@
             get => Memory.ReadMemory<byte>(Address + 0x49);
             set => Memory.WriteMemory(Address + 0x49, value);
         }
-        /*public string[] StringVars
+        public string[] StringVars
         {
-            get => Memory.ReadMemoryObjArray<string>(Address + 0x4c);
+            get => Memory.ReadMemoryStringArray(Address + 0x4c);
             //set => Memory.WriteMemory(Address + 0x49, value);
-        }*/
+        }
         public OmsiComplMapObjInst[] MyInstance
         {
             get => Memory.ReadMemoryObjArray<OmsiComplMapObjInst>(Address + 0x50);
@@ -132,7 +132,8 @@
         }
         public OmsiFileObjectPathInfo[] Paths
         {
-            get => Memory.ReadMemoryStructArray<OmsiFileObjectPathInfo>(Address + 0x64);
+            get => Memory.MarshalStructs<OmsiFileObjectPathInfo, OmsiFileObjectPathInfoInternal>(
+                Memory.ReadMemoryStructArray<OmsiFileObjectPathInfoInternal>(Address + 0x64));
         }
         public int Chrono_Origin
         {
