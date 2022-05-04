@@ -22,11 +22,10 @@ namespace OmsiHook
             get => Memory.ReadMemoryString(Address + 0x8);
             set => Memory.WriteMemory(Address + 0x8, value);
         }
-        /*
         public string[] StringsPnt
         {
-            get => Memory.ReadMemoryObjArray<string>(Memory.ReadMemory<int>(Address + 0xc));
-        }*/
+            get => Memory.ReadMemoryStringArray(Memory.ReadMemory<int>(Address + 0xc));
+        }
 
 
     }

@@ -12,10 +12,10 @@ namespace OmsiHook
 
         internal OmsiChronoChangeLabels(Memory memory, int address) : base(memory, address) { }
 
-        /*public string[] StringVars
+        public string[] StringVars
         {
-            get => Memory.ReadMemoryObjArray<string>(Address + 0x8);
-        }*/
+            get => Memory.ReadMemoryStringArray(Address + 0x8);
+        }
 
     }
 }
