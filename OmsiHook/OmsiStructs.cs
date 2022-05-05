@@ -1132,6 +1132,16 @@ public struct OmsiVector3Double
 		public float energie;
     }
 
+	public struct OmsiWeightData
+    {
+		public float[] influences;
+    }
+  
+	public struct OmsiWeightDataInternal
+    {
+		[OmsiStructArrayPtrAttribute(typeof(float))] public int influences;
+    }
+  
 	public struct OmsiFileObjectPathInfo
     {
 		public OmsiPathRule[] rules;
@@ -1157,6 +1167,7 @@ public struct OmsiVector3Double
 		public byte priority;
     }
     
+
 	public struct OmsiPointPair
     {
 		public float x;
