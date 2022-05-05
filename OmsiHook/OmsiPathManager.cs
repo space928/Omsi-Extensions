@@ -3,7 +3,7 @@
     public class OmsiPathManager : OmsiObject
     {
         internal OmsiPathManager(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
-        internal OmsiPathManager() : base() { }
+        public OmsiPathManager() : base() { }
 
         public int StepSoundPacks
         {

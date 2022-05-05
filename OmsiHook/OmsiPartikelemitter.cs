@@ -106,11 +106,7 @@ namespace OmsiHook
             get => Memory.ReadMemory<bool>(Address + 0x60);
             set => Memory.WriteMemory(Address + 0x60, value);
         }
-        public OmsiPartikel[] Partikel
-        {
-            get => Memory.ReadMemoryObjArray<OmsiPartikel>(Address + 0x64);
-            //set => omsiMemory.WriteMemory(baseAddress + 0x64, value);
-        }
+        public OmsiPartikel[] Partikel => Memory.ReadMemoryObjArray<OmsiPartikel>(Address + 0x64);
         public int Textur
         {
             get => Memory.ReadMemory<int>(Address + 0x68);
@@ -121,6 +117,5 @@ namespace OmsiHook
             get => Memory.ReadMemory<D3DVector>(Address + 0x6c);
             set => Memory.WriteMemory(Address + 0x6c, value);
         }
-
     }
 }

@@ -28,7 +28,7 @@ namespace OmsiHook
         /// Attaches the hooking application to OMSI.exe.
         /// Always call this at some point before trying to read and write data.
         /// </summary>
-        public async void AttachToOMSI()
+        public async Task AttachToOMSI()
         {
             Console.WriteLine("Attaching to OMSI.exe...");
 

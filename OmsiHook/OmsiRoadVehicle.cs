@@ -4,12 +4,12 @@
     {
         internal OmsiRoadVehicle(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
         public OmsiRoadVehicle() : base() { }
+        
         /*public OMSIScriptVarIndizes ScriptVarIndizes
         {
             get => Memory.ReadMemory<OMSIScriptVarIndizes>(Address + 0x2b8);
             set => Memory.WriteMemory(Address + 0x2b8, value);
         }*/
-
         public bool Show_Dialog
         {
             get => Memory.ReadMemory<bool>(Address + 0x500);

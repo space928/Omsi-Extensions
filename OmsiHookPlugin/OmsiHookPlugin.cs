@@ -23,7 +23,7 @@ namespace OmsiHookPlugin
             Log("PluginStart()");
             Log("Loading OmsiHook...");
             hook = new();
-            hook.AttachToOMSI();
+            _ = hook.AttachToOMSI();
             Log("Didn't crash!");
         }
 

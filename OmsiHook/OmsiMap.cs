@@ -5,7 +5,7 @@ namespace OmsiHook
     public class OmsiMap : OmsiObject
     {
         internal OmsiMap(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
-        internal OmsiMap() : base() { }
+        public OmsiMap() : base() { }
 
         public OmsiPoint NW_Corner
         {

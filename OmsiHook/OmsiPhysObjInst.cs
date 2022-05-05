@@ -3,10 +3,10 @@
     public class OmsiPhysObjInst : OmsiMapObjInst
     {
         internal OmsiPhysObjInst(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
-        internal OmsiPhysObjInst() : base() { }
+        public OmsiPhysObjInst() : base() { }
 
         /*
-         * Unimplemented fields:
+         * TODO:Unimplemented fields:
          * PdxBody PH_Body; 0x138
          * PdxGeom PH_MainGeomTrafo; 0x13c
          * PdxGeom PH_MainGeom; 0x140
