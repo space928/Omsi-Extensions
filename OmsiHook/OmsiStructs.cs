@@ -1171,6 +1171,41 @@ namespace OmsiHook
         public byte typ;
     }
 
+	public struct OmsiWeightData
+    {
+		public float[] influences;
+    }
+  
+	public struct OmsiWeightDataInternal
+    {
+		[OmsiStructArrayPtrAttribute(typeof(float))] public int influences;
+    }
+  
+	public struct OmsiFileObjectPathInfo
+    {
+		public OmsiPathRule[] rules;
+    }
+	public struct OmsiFileObjectPathInfoInternal
+    {
+		[OmsiStructArrayPtr(typeof(OmsiPathRule), typeof(OmsiPathRuleInternal))] public int rules;
+    }
+
+	public struct OmsiPathRule
+    {
+		public short[] trafficDensity_act;
+		public float[] trafficDensity;
+		public short priority_act;
+		public byte priority;
+    }
+
+	public struct OmsiPathRuleInternal
+    {
+		[OmsiObjArrayPtr(typeof(short))] public int trafficDensity_act;
+		[OmsiObjArrayPtr(typeof(float))] public int trafficDensity;
+		public short priority_act;
+		public byte priority;
+    }
+  
     public struct OmsiPathSegmentFStr
     {
         public int fstr;
