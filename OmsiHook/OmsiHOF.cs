@@ -16,12 +16,11 @@ namespace OmsiHook
             get => Memory.ReadMemoryString(Address + 0x4);
             set => Memory.WriteMemory(Address + 0x4, value);
         }
-        /*
         public string[] GlobalStrings
         {
-            get => Memory.ReadMemoryObjArray<string>(Address + 0x8);
+            get => Memory.ReadMemoryStringArray(Address + 0x8);
             //set => Memory.WriteMemory(Address + 0x8, value);
-        }*/
+        }
         public string ServiceTrip
         {
             get => Memory.ReadMemoryString(Address + 0xc);
