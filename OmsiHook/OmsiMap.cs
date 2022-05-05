@@ -122,17 +122,15 @@ namespace OmsiHook
         public OmsiUnschedVehGroup[] UnschedVehGroups => Memory.MarshalStructs<OmsiUnschedVehGroup, OmsiUnschedVehGroupInternal>(
             Memory.ReadMemoryStructArray<OmsiUnschedVehGroupInternal>(Address + 0x100));
 
-        /*public void Func_TrafficDensity_Passenger //TFuncClass
+        public OmsiFuncClass Func_TrafficDensity_Passenger
         {
-            get => omsiMemory.ReadMemory<void>(baseAddress + 0x104);
-            set => omsiMemory.WriteMemory(baseAddress + 0x104, value);
-        }*/
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x104));
+        }
 
-        /*public void Func_TrafficDensity_Road //TFuncClass
+        public OmsiFuncClass Func_TrafficDensity_Road
         {
-            get => omsiMemory.ReadMemory<void>(baseAddress + 0x108);
-            set => omsiMemory.WriteMemory(baseAddress + 0x108, value);
-        }*/
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x108));
+        }
 
         public float Acct_TrafficDensity_Passenger
         {

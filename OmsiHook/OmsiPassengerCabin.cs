@@ -19,9 +19,10 @@
         {
             get => Memory.ReadMemory<OmsiPassCabinStamper>(Address + 0x14);
         }
-        public OmsiPassCabinStamper TicketSale // TODO: Make Strings work
+        public OmsiPassCabinTicketSale TicketSale
         {
-            get => Memory.ReadMemory<OmsiPassCabinStamper>(Address + 0x28);
+            get => Memory.MarshalStruct<OmsiPassCabinTicketSale, OmsiPassCabinTicketSaleInternal>(
+                Memory.ReadMemory<OmsiPassCabinTicketSaleInternal>(Address + 0x28));
         }
         public OmsiPathPoint[] LinkToOtherVehicle => Memory.ReadMemoryObjArray<OmsiPathPoint>(Address + 0x7c);
     }

@@ -117,6 +117,5 @@ namespace OmsiHook
             get => Memory.ReadMemory<D3DVector>(Address + 0x6c);
             set => Memory.WriteMemory(Address + 0x6c, value);
         }
-
     }
 }

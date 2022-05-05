@@ -22,6 +22,7 @@ namespace OmsiExtensionsCLI
                 var vel = omsi.PlayerVehicle.Velocity;
                 var map = omsi.Map;
                 var weather = omsi.Weather;
+                var tickets = omsi.TicketPack;
 
                 Console.SetCursorPosition(0, 0);
                 Console.WriteLine(($"Read data: x:{pos.x:F3}   y:{pos.y:F3}   z:{pos.z:F3}      " +

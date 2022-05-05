@@ -191,5 +191,33 @@
             set => Memory.WriteMemory(Address + 0x244, value);
         }
         public OmsiTriggerBox[] TriggerBoxes => Memory.ReadMemoryStructArray<OmsiTriggerBox>(Address + 0x248);
+        
+        /* TODO:
+        public OmsiComplObjPtr ComplObj
+        {
+            get => Memory.ReadMemory<OmsiComplObjPtr>(Address + 0x24c);
+            set => Memory.WriteMemory(Address + 0x24c, value);
+        }*/
+        public OmsiPathManager ComplObj
+        {
+            get => new OmsiPathManager(Memory, Memory.ReadMemory<int>(Address + 0x250));
+        }
+        public OmsiObjectPathInfo[] Paths
+        {
+            get => Memory.ReadMemoryStructArray<OmsiObjectPathInfo>(Address + 0x254);
+        }
+        public OmsiSnapPosition[] SnapPoints
+        {
+            get => Memory.ReadMemoryStructArray<OmsiSnapPosition>(Address + 0x258);
+        }
+        public OmsiCameraSettings[] ReflCameraSettings
+        {
+            get => Memory.ReadMemoryStructArray<OmsiCameraSettings>(Address + 0x25c);
+        }
+        public OmsiSplineHelper[] OmsiSplineHelpers
+        {
+            get => Memory.ReadMemoryStructArray<OmsiSplineHelper>(Address + 0x260);
+        }
+
     }
 }
