@@ -118,8 +118,8 @@
             Memory.ReadMemoryObjArray<OmsiComplMapObjInst>(Address + 0x5c);
         public OmsiPathGroup[] PathGroups => 
             Memory.ReadMemoryObjArray<OmsiPathGroup>(Address + 0x60);
-        /*TODO: public OmsiPathSegment[] PathSegments =>
-            Memory.ReadMemoryStructArray<OmsiPathSegment>(Address + 0x64);*/
+        public OmsiPathSegment[] PathSegments =>
+            Memory.ReadMemoryObjArray<OmsiPathSegment>(Address + 0x64);
         public bool PathsLinkedWithFstrn
         {
             get => Memory.ReadMemory<bool>(Address + 0x68);
