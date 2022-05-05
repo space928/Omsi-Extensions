@@ -65,7 +65,7 @@ namespace OmsiHook
         /// <param name="address">The address of the array to write to</param>
         /// <param name="value">The value of the new element</param>
         /// <param name="index">The index of the element to write to</param>
-        internal void WriteMemoryArrayItem<T>(int address, T value, int index) where T : struct
+        public void WriteMemoryArrayItem<T>(int address, T value, int index) where T : struct
         {
             int arr = ReadMemory<int>(address);
             WriteMemory(arr + index * Marshal.SizeOf<T>(), value);
@@ -152,7 +152,7 @@ namespace OmsiHook
         /// correct encoding to avoid memory corruption</param>
         /// <param name="index">The index of the element to write to</param>
         /// <param name="wide">Chooses which encoding to convert the string to</param>
-        internal void WriteMemoryArrayItem(int address, string value, int index, bool wide = false)
+        public void WriteMemoryArrayItem(int address, string value, int index, bool wide = false)
         {
             int arr = ReadMemory<int>(address);
             WriteMemory(arr + index * 4, value, wide);
@@ -244,7 +244,7 @@ namespace OmsiHook
         /// <typeparam name="T">The type of the struct to return</typeparam>
         /// <param name="address">The address of the array to read from</param>
         /// <returns>The parsed array of structs.</returns>
-        internal T[] ReadMemoryStructArray<T>(int address) where T : struct
+        public T[] ReadMemoryStructArray<T>(int address) where T : struct
         {
             int arr = ReadMemory<int>(address);
             int len = ReadMemory<int>(arr - 4);
@@ -260,7 +260,7 @@ namespace OmsiHook
         /// </summary>
         /// <param name="address">The address of the array to read from</param>
         /// <returns>The parsed array of strings.</returns>
-        internal string[] ReadMemoryStringArray(int address, bool wide = false)
+        public string[] ReadMemoryStringArray(int address, bool wide = false)
         {
             int arr = ReadMemory<int>(address);
             int len = ReadMemory<int>(arr - 4);
@@ -295,7 +295,7 @@ namespace OmsiHook
         /// <typeparam name="InStruct">The type of the struct to marshal</typeparam>
         /// <param name="obj">The structs as marshaled by Marshal.PtrToStruct</param>
         /// <returns>The fully marshalled structs.</returns>
-        internal OutStruct[] MarshalStructs<OutStruct, InStruct>(InStruct[] obj)
+        public OutStruct[] MarshalStructs<OutStruct, InStruct>(InStruct[] obj)
            where OutStruct : struct
            where InStruct : struct
         {

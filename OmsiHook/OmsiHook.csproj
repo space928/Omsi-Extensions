@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
-    <None Include="..\Logo.png">
+    <None Include="..\Logo.png" Link="images\Logo.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
@@ -43,12 +43,17 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="memberpage" Version="2.59.2" />
   </ItemGroup>
 
   <ItemGroup>
 	  <ProjectReference Include="..\OmsiHookInvoker\OmsiHookInvoker.vcxproj">
 		  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
 	  </ProjectReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="plugins\" />
   </ItemGroup>
 
 </Project>
