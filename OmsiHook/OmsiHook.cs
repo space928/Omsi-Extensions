@@ -23,6 +23,7 @@ namespace OmsiHook
         public OmsiTicketPack TicketPack => omsiMemory.MarshalStruct<OmsiTicketPack, OmsiTicketPackInternal>(
             omsiMemory.ReadMemory<OmsiTicketPackInternal>(0x008611fc));
         public OmsiRemoteMethods RemoteMethods => remoteMethods ??= new(omsiMemory, 0);
+        public OmsiTime Time => new(omsiMemory, 0);
 
         /// <summary>
         /// Attaches the hooking application to OMSI.exe.
