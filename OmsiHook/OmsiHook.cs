@@ -36,7 +36,7 @@ namespace OmsiHook
         }
         public float Time_Second
         {
-            get => omsiMemory.ReadMemory<byte>(0x00861770);
+            get => omsiMemory.ReadMemory<float>(0x00861770);
             set => omsiMemory.WriteMemory(0x00861770, value);
         }
         public int Date_Day
