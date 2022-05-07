@@ -24,6 +24,37 @@ namespace OmsiHook
             omsiMemory.ReadMemory<OmsiTicketPackInternal>(0x008611fc));
         public OmsiRemoteMethods RemoteMethods => remoteMethods ??= new(omsiMemory, 0);
 
+        public byte Time_Hour
+        {
+            get => omsiMemory.ReadMemory<byte>(0x0086176c);
+            set => omsiMemory.WriteMemory(0x0086176c, value);
+        }
+        public byte Time_Minute
+        {
+            get => omsiMemory.ReadMemory<byte>(0x0086176d);
+            set => omsiMemory.WriteMemory(0x0086176d, value);
+        }
+        public float Time_Second
+        {
+            get => omsiMemory.ReadMemory<byte>(0x00861770);
+            set => omsiMemory.WriteMemory(0x00861770, value);
+        }
+        public int Date_Day
+        {
+            get => omsiMemory.ReadMemory<int>(0x00861778);
+            set => omsiMemory.WriteMemory(0x00861778, value);
+        }
+        public int Date_Month
+        {
+            get => omsiMemory.ReadMemory<int>(0x0086178c);
+            set => omsiMemory.WriteMemory(0x0086178c, value);
+        }
+        public int Date_Year
+        {
+            get => omsiMemory.ReadMemory<int>(0x00861790);
+            set => omsiMemory.WriteMemory(0x00861790, value);
+        }
+
         /// <summary>
         /// Attaches the hooking application to OMSI.exe.
         /// Always call this at some point before trying to read and write data.
