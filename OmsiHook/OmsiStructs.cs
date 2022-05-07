@@ -1223,4 +1223,24 @@ namespace OmsiHook
 		[OmsiStrPtr] public int fstring;
 		[OmsiObjPtr(typeof(OmsiObject))] public int fobject;
     }
+
+    public struct OmsiScriptTexture
+    {
+        public IntPtr tex; // IDirect3DTexture9 - No Marshaling implemented
+        public uint[] TexPn;
+        public uint color;
+    }
+
+    public struct OmsiScriptTextureInternal
+    {
+        [OmsiPtr] public int tex; // IDirect3DTexture9 - No Marshaling implemented
+        [OmsiStructArrayPtr(typeof(uint))] public int TexPn;
+        public uint color;
+    }
+
+    public struct OmsiFreeTex
+    {
+        public int orgTex;
+        public int stringVar;
+    }
 }
