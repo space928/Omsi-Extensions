@@ -425,7 +425,7 @@ namespace OmsiHook
         public string changePos_parent_str; // ANSIString
         public bool valid;
     }
-    public struct OmsiPassCabinTicketSaleInternal
+    internal struct OmsiPassCabinTicketSaleInternal
     {
         public OmsiPathPoint point;
         public D3DVector ticketPos;
@@ -841,7 +841,7 @@ namespace OmsiHook
         public float ampelTime;
     }
 
-    public struct OmsiAmpelInternal
+    internal struct OmsiAmpelInternal
     {
         [OmsiStrPtr] public int name;
         [OmsiStructArrayPtr(typeof(OmsiAmpelPhase))]
@@ -931,7 +931,7 @@ namespace OmsiHook
         public OmsiThirdRail[] third_rails;
     }
 
-    public struct OmsiObjectPathInfoInternal
+    internal struct OmsiObjectPathInfoInternal
     {
         public D3DVector position;
         public float hdg;
@@ -1033,7 +1033,7 @@ namespace OmsiHook
         public D3DVector position;
         public OmsiCoupleCC[] cc;
     }
-    public struct OmsiCouplingInternal
+    internal struct OmsiCouplingInternal
     {
         public D3DVector position;
         [OmsiStructArrayPtr(typeof(OmsiCoupleCC))] public int cc;
@@ -1045,7 +1045,7 @@ namespace OmsiHook
         public int write_var;
         public int couple_var;
     }
-    public struct OmsiVehicleCoupleInternal
+    internal struct OmsiVehicleCoupleInternal
     {
         [OmsiStrPtr] public int filename;
         public bool reverse;
@@ -1089,7 +1089,7 @@ namespace OmsiHook
         public string[] strings;
         public bool allExit;
     }
-    public struct OmsiHOFTargetInternal
+    internal struct OmsiHOFTargetInternal
     {
         public int nummer;
         [OmsiStrPtr] public int name; // ANSI String
@@ -1104,7 +1104,7 @@ namespace OmsiHook
         public string ident; // ANSI String
         public string[] strings;
     }
-    public struct OmsiHofFISBusstopInternal
+    internal struct OmsiHofFISBusstopInternal
     {
         [OmsiStrPtr] public int ident; // ANSI String
         [OmsiStrArrayPtr] public int strings;
@@ -1118,7 +1118,7 @@ namespace OmsiHook
         public string line; // ANSI String
         public string[] busstops;
     }
-    public struct OmsiHofFISTripInternal
+    internal struct OmsiHofFISTripInternal
     {
         public int code;
         [OmsiStrPtr] public int name; // ANSI String
@@ -1143,7 +1143,7 @@ namespace OmsiHook
         public OmsiPathID nextPath;
         public bool nextRev;
     }
-    public struct OmsiPathLinkInternal
+    internal struct OmsiPathLinkInternal
     {
         [OmsiStructPtr(typeof(OmsiPathID))] public int nextPath;
         public bool nextRev;
@@ -1165,7 +1165,7 @@ namespace OmsiHook
         public OmsiPathInfo pathInfo;
         public byte typ;
     }
-    public struct OmsiPathReservationInternal
+    internal struct OmsiPathReservationInternal
     {
         [OmsiStructPtr(typeof(OmsiPathInfo))] public int pathInfo;
         public byte typ;
@@ -1175,8 +1175,8 @@ namespace OmsiHook
     {
 		public float[] influences;
     }
-  
-	public struct OmsiWeightDataInternal
+
+    internal struct OmsiWeightDataInternal
     {
 		[OmsiStructArrayPtrAttribute(typeof(float))] public int influences;
     }
@@ -1185,7 +1185,7 @@ namespace OmsiHook
     {
 		public OmsiPathRule[] rules;
     }
-	public struct OmsiFileObjectPathInfoInternal
+    internal struct OmsiFileObjectPathInfoInternal
     {
 		[OmsiStructArrayPtr(typeof(OmsiPathRule), typeof(OmsiPathRuleInternal))] public int rules;
     }
@@ -1198,7 +1198,7 @@ namespace OmsiHook
 		public byte priority;
     }
 
-	public struct OmsiPathRuleInternal
+    internal struct OmsiPathRuleInternal
     {
 		[OmsiObjArrayPtr(typeof(short))] public int trafficDensity_act;
 		[OmsiObjArrayPtr(typeof(float))] public int trafficDensity;
@@ -1218,7 +1218,7 @@ namespace OmsiHook
 		public OmsiObject fobject;
     }
 
-	public struct OmsiStringItemInternal
+    internal struct OmsiStringItemInternal
     {
 		[OmsiStrPtr] public int fstring;
 		[OmsiObjPtr(typeof(OmsiObject))] public int fobject;
@@ -1231,7 +1231,7 @@ namespace OmsiHook
         public uint color;
     }
 
-    public struct OmsiScriptTextureInternal
+    internal struct OmsiScriptTextureInternal
     {
         [OmsiPtr] public int tex; // IDirect3DTexture9 - No Marshaling implemented
         [OmsiStructArrayPtr(typeof(uint))] public int TexPn;
