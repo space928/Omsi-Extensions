@@ -33,9 +33,9 @@ namespace OmsiHook
             get => Memory.ReadMemory<int>(0x00861778);
             set => Memory.WriteMemory(0x00861778, value);
         }
-        public int Month
+        public byte Month
         {
-            get => Memory.ReadMemory<int>(0x0086178c);
+            get => Memory.ReadMemory<byte>(0x0086178c);
             set => Memory.WriteMemory(0x0086178c, value);
         }
         public int Year
