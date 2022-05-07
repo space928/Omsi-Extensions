@@ -32,7 +32,7 @@ namespace OmsiExtensionsCLI
 
                 Console.WriteLine($"Read data: map:{map.Name}   path:{map.Filename}   friendly:{map.FriendlyName}".PadRight(Console.WindowWidth-1));
                 Console.WriteLine($"{omsi.PlayerVehicle.PAI_LastBrake} {omsi.PlayerVehicle.Bremspedal}".PadRight(Console.WindowWidth - 1));
-                Console.WriteLine($"{omsi.Date_Day}/{omsi.Date_Month}/{omsi.Date_Year} - {omsi.Time_Hour}:{omsi.Time_Minute}:{omsi.Time_Second:F2}");
+                Console.WriteLine($"{omsi.Time.Day}/{omsi.Time.Month}/{omsi.Time.Year} - {omsi.Time.Hour}:{omsi.Time.Minute}:{omsi.Time.Second:F2}");
                 Console.WriteLine("".PadRight(Console.WindowWidth-1));
                 //omsi.PlayerVehicle.Velocity = new D3DVector { x=0, y=0, z=5 };
                 //omsi.PlayerVehicle.Bremspedal = 0;
