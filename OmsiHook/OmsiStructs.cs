@@ -1270,7 +1270,7 @@ namespace OmsiHook
         public uint cnt_hitandrun;
         public uint cnt_hitandrun_heavy;
         public uint crashes_ped;
-        public double bew_fahrstill;
+        public double bew_fahrstill; // These look like driver raitings
         public uint bew_passcomfort;
         public uint bew_ticket_count;
         public uint bew_ticket_points;
@@ -1295,7 +1295,7 @@ namespace OmsiHook
         public uint cnt_hitandrun;
         public uint cnt_hitandrun_heavy;
         public uint crashes_ped;
-        public double bew_fahrstill;
+        public double bew_fahrstill; // These look like driver raitings
         public uint bew_passcomfort;
         public uint bew_ticket_count;
         public uint bew_ticket_points;
