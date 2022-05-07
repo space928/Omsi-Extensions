@@ -24,6 +24,7 @@ namespace OmsiHook
             omsiMemory.ReadMemory<OmsiTicketPackInternal>(0x008611fc));
         public OmsiRemoteMethods RemoteMethods => remoteMethods ??= new(omsiMemory, 0);
         public OmsiTime Time => new(omsiMemory, 0);
+        public OmsiHumanBeingInst[] Humans => omsiMemory.ReadMemoryObjArray<OmsiHumanBeingInst>(0x0086172c);
 
         /// <summary>
         /// Attaches the hooking application to OMSI.exe.
