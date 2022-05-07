@@ -1226,14 +1226,14 @@ namespace OmsiHook
 
     public struct OmsiScriptTexture
     {
-        public int tex; // IDirect3DTexture9 - No Marshaling implemented
+        public IntPtr tex; // IDirect3DTexture9 - No Marshaling implemented
         public uint[] TexPn;
         public uint color;
     }
 
     public struct OmsiScriptTextureInternal
     {
-        public int tex; // IDirect3DTexture9 - No Marshaling implemented
+        [OmsiPtr] public int tex; // IDirect3DTexture9 - No Marshaling implemented
         [OmsiStructArrayPtr(typeof(uint))] public int TexPn;
         public uint color;
     }
