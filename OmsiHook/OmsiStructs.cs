@@ -1334,4 +1334,355 @@ namespace OmsiHook
         public bool left;
         public bool right;
     }
+
+    public struct OmsiTTTrackEntry
+    {
+        public uint idCode;
+        public int pathIndexOnObject;
+        public OmsiPathID pathIndex;
+        public float relDist;
+        public float dist;
+        public bool valid;
+        public byte pathOrderCheck;
+        public int[] fstrn_allowed;
+        public int chronon_origin;
+        public string[] chronos_bad;
+    }
+    internal struct OmsiTTTrackEntryInternal
+    {
+        public uint idCode;
+        public int pathIndexOnObject;
+        [OmsiStructPtr(typeof(OmsiPathID))] public int pathIndex;
+        public float relDist;
+        public float dist;
+        public bool valid;
+        public byte pathOrderCheck;
+        [OmsiStructArrayPtr(typeof(int))] public int fstrn_allowed;
+        public int chronon_origin;
+        [OmsiStrArrayPtr] public int chronos_bad;
+    }
+
+    public struct OmsiTTTrack
+    {
+        public string filename;
+        public string filepath;
+        public OmsiTTTrackEntry[] TrackEntrys;
+        public float laenge; // Length
+    }
+    internal struct OmsiTTTrackInternal
+    {
+        [OmsiStrPtr] public int filename;
+        [OmsiStrPtr] public int filepath;
+        [OmsiStructArrayPtr(typeof(OmsiTTTrackEntry), typeof(OmsiTTTrackEntryInternal))] public int TrackEntrys;
+        public float laenge; // Length
+    }
+    
+    public struct OmsiTTBusstop
+    {
+        public string name;
+        public string name_zusatz; // Supliment / Addition
+        public int kachel;
+        public uint IDCode_formal;
+        public uint IDCode_real;
+        public int index;
+        public int index_ownList;
+        public int[] index_alternatives;
+        public float preset_Aussteiger; // Dropouts?
+        public OmsiPathID pathIndex;
+        public int trackEntry;
+        public bool invalid;
+        public float x_path;
+        public float dist_relPath;
+        public float dist;
+    }
+    internal struct OmsiTTBusstopInternal
+    {
+        [OmsiStrPtr] public int name;
+        [OmsiStrPtr] public int name_zusatz; // Supliment / Addition
+        public int kachel;
+        public uint IDCode_formal;
+        public uint IDCode_real;
+        public int index;
+        public int index_ownList;
+        [OmsiStructArrayPtr(typeof(int))] public int index_alternatives;
+        public float preset_Aussteiger; // Dropouts?
+        [OmsiStructPtr(typeof(OmsiPathID))] public int pathIndex;
+        public int trackEntry;
+        public bool invalid;
+        public float x_path;
+        public float dist_relPath;
+        public float dist;
+    }
+
+    public struct OmsiTTStopTime
+    {
+        public float arr_time;
+        public float dep_time;
+        public bool arr_time_man;
+        public bool dep_time_man;
+        public byte stopping;
+    }
+
+    public struct OmsiTTProfile
+    {
+        public string name;
+        public float time_all;
+        public OmsiTTStopTime[] stop_times;
+        public float[] TrackEntryTime;
+        public bool serviceTrip;
+    }
+    internal struct OmsiTTProfileInternal
+    {
+        [OmsiStrPtr] public int name;
+        public float time_all;
+        [OmsiStructArrayPtr(typeof(OmsiTTStopTime))] public int stop_times;
+        [OmsiStructArrayPtr(typeof(float))] public int TrackEntryTime;
+        public bool serviceTrip;
+    }
+
+    public struct OmsiTTTrip
+    {
+        public string filename;
+        public int chrono_origin;
+        public string target;
+        public string linie;
+        public bool trainRev;
+        public byte invalide;
+        public OmsiTTProfile[] profiles;
+        public OmsiTTBusstop[] busstops;
+        public string trackName;
+        public int trackIndex;
+        public int[][] stnLinkList;
+    }
+    internal struct OmsiTTTripInternal
+    {
+        [OmsiStrPtr] public int filename;
+        public int chrono_origin;
+        [OmsiStrPtr] public int target;
+        [OmsiStrPtr] public int linie;
+        public bool trainRev;
+        public byte invalide;
+        [OmsiStructArrayPtr(typeof(OmsiTTProfile), typeof(OmsiTTProfileInternal))] public int profiles;
+        [OmsiStructArrayPtr(typeof(OmsiTTBusstop), typeof(OmsiTTBusstopInternal))] public int busstops;
+        [OmsiStrPtr] public int trackName;
+        public int trackIndex;
+        [OmsiStructArrayPtr(typeof(int[]))] public int stnLinkList;
+    }
+
+    public struct OmsiTTBusstopListEntryChronoRename
+    {
+        public string name;
+        public string name_zustatz; // Supliment / Addition
+        public float aussteiger; // Dropouts?
+        public int chrono_origin;
+    }
+    internal struct OmsiTTBusstopListEntryChronoRenameInternal
+    {
+        [OmsiStrPtr] public int name;
+        [OmsiStrPtr] public int name_zustatz; // Supliment / Addition
+        public float aussteiger; // Dropouts?
+        public int chrono_origin;
+    }
+    public struct OmsiTTBusstopListEntry
+    {
+        public string name_zustatz; // Supliment / Addition
+        public string name;
+        public int kachel;
+        public uint IDCode;
+        public uint parent_IDCode;
+        public float preset_aussteiger; // Dropouts?
+        public string[] chronos_bad;
+        public int index;
+        public int[] stnlinks_starting;
+        public int[] stnlinks_ending;
+        public int chrono_origin;
+        public OmsiTTBusstopListEntryChronoRename[] chrono_rename;
+    }
+    internal struct OmsiTTBusstopListEntryInternal
+    {
+        [OmsiStrPtr] public int name_zustatz; // Supliment / Addition
+        [OmsiStrPtr] public int name;
+        public int kachel;
+        public uint IDCode;
+        public uint parent_IDCode;
+        public float preset_aussteiger; // Dropouts?
+        [OmsiStrArrayPtr] public int chronos_bad;
+        public int index;
+        [OmsiStructArrayPtr(typeof(int))] public int stnlinks_starting;
+        [OmsiStructArrayPtr(typeof(int))] public int stnlinks_ending;
+        public int chrono_origin;
+        [OmsiStructArrayPtr(typeof(OmsiTTBusstopListEntryChronoRename), typeof(OmsiTTBusstopListEntryChronoRenameInternal))] public int chrono_rename;
+    }
+
+    public struct OmsiTTStnLink
+    {
+        public OmsiTTTrackEntry[] trackEntrys;
+        public float laenge; // Length
+        public uint busstop_start_IDCode;
+        public uint busstop_end_IDCode;
+        public float x_path_Start;
+        public float x_path_end;
+        public int[] chronos_needed;
+        public int[] chronos_bad;
+        public int busstop_start;
+        public int busstop_end;
+        public int chrono_origin;
+        public byte valid;
+        public int busstop_start_trackentry;
+        public int busstop_end_trackentry;
+        public float dist_relPath_start;
+        public float dist_relPath_end;
+        public bool visible;
+    }
+    internal struct OmsiTTStnLinkInternal
+    {
+        [OmsiStructArrayPtr(typeof(OmsiTTTrackEntry), typeof(OmsiTTTrackEntryInternal))] public int trackEntrys;
+        public float laenge; // Length
+        public uint busstop_start_IDCode;
+        public uint busstop_end_IDCode;
+        public float x_path_Start;
+        public float x_path_end;
+        [OmsiStructArrayPtr(typeof(int))] public int chronos_needed;
+        [OmsiStructArrayPtr(typeof(int))] public int chronos_bad;
+        public int busstop_start;
+        public int busstop_end;
+        public int chrono_origin;
+        public byte valid;
+        public int busstop_start_trackentry;
+        public int busstop_end_trackentry;
+        public float dist_relPath_start;
+        public float dist_relPath_end;
+        public bool visible;
+    }
+
+    public struct OmsiTTTourEntry
+    {
+        public string trip;
+        public int tripIndex;
+        public int profile;
+        public float startTime;
+        public float endTime;
+        public bool smoothTrans;
+    }
+    internal struct OmsiTTTourEntryInternal
+    {
+        [OmsiStrPtr] public int trip;
+        public int tripIndex;
+        public int profile;
+        public float startTime;
+        public float endTime;
+        public bool smoothTrans;
+    }
+
+    public struct OmsiTTTourValid
+    {
+        public bool mon;
+        public bool tue;
+        public bool wed;
+        public bool thu;
+        public bool fri;
+        public bool sat;
+        public bool sun;
+        public bool hol;
+        public bool hols;
+        public bool noHols;
+    }
+
+    public struct OmsiTTTour
+    {
+        public string name;
+        public string aiGroup;
+        public int aiType;
+        public int aiGroupIndex;
+        public string vehicle_nr_reservations;
+        public int[] vehical_indizes;
+        public bool hasNormalVeh;
+        public int TagErledigt; // day done? (Day of week maybe? - OmsiTTTourValid?)
+        public OmsiTTTourValid validOn;
+        public bool invalide;
+        public OmsiTTTourEntry[] entrys;
+    }
+    internal struct OmsiTTTourInternal
+    {
+        [OmsiStrPtr] public int name;
+        [OmsiStrPtr] public int aiGroup;
+        public int aiType;
+        public int aiGroupIndex;
+        [OmsiStrPtr] public int vehicle_nr_reservations;
+        [OmsiStructArrayPtr(typeof(int))] public int vehical_indizes;
+        public bool hasNormalVeh;
+        public int TagErledigt; // day done? (Day of week maybe? - OmsiTTTourValid?)
+        [OmsiStruct(typeof(OmsiTTTourValid))] public int validOn;
+        public bool invalide;
+        [OmsiStructArrayPtr(typeof(OmsiTTTourEntry), typeof(OmsiTTTourEntryInternal))] public int entrys;
+    }
+
+    public struct OmsiTTLine
+    {
+        public string name;
+        public bool userAllowed;
+        public byte priority;
+        public OmsiTTTour[] tours;
+        public int chrono_origin;
+    }
+    internal struct OmsiTTLineInternal
+    {
+        [OmsiStrPtr] public int name;
+        public bool userAllowed;
+        public byte priority;
+        [OmsiStructArrayPtr(typeof(OmsiTTTour), typeof(OmsiTTTourInternal))] public int tours;
+        public int chrono_origin;
+    }
+
+    public struct OmsiRVNumTour
+    {
+        public string number;
+        public string tourName;
+    }
+    internal struct OmsiRVNumTourInternal
+    {
+        [OmsiStrPtr] public int number;
+        [OmsiStrPtr] public int tourName;
+    }
+
+    public struct OmsiRVTypeTour
+    {
+        public string filename;
+        public string tourName;
+    }
+    internal struct OmsiRVTypeTourInternal
+    {
+        [OmsiStrPtr] public int filename;
+        [OmsiStrPtr] public int tourName;
+    }
+
+    public struct OmsiRVTypesLine
+    {
+        public string[] filenames;
+        public float probability;
+    }
+    internal struct OmsiRVTypesLineInternal
+    {
+        [OmsiStrArrayPtr] public int filnames;
+        public float probability;
+    }
+    
+    public struct OmsiRVFile
+    {
+        public int startDateRel2000;
+        public int endDateRel2000;
+        public string line;
+        public OmsiRVNumTour[] list_number_tour;
+        public OmsiRVTypeTour[] list_type_tour;
+        public OmsiRVTypesLine list_types_line;
+    }
+    internal struct OmsiRVFileInternal
+    {
+        public int startDateRel2000;
+        public int endDateRel2000;
+        [OmsiStrPtr] public int line;
+        [OmsiStructArrayPtr(typeof(OmsiRVNumTour), typeof(OmsiRVNumTourInternal))] public int list_number_tour;
+        [OmsiStructArrayPtr(typeof(OmsiRVTypeTour), typeof(OmsiRVTypeTourInternal))] public int list_type_tour;
+        [OmsiStruct(typeof(OmsiRVTypesLine))] public int list_types_line;
+    }
 }
