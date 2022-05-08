@@ -395,22 +395,22 @@ namespace OmsiHook
         }
         public OmsiHumanAIMode AIMode
         {
-            get => Memory.ReadMemory<OmsiHumanAIMode>(Address + 0x6c4);
+            get => (OmsiHumanAIMode) Memory.ReadMemory<byte>(Address + 0x6c4);
             set => Memory.WriteMemory(Address + 0x6c4, value);
         }
         public OmsiHumanAIModeEX AIModeEx
         {
-            get => Memory.ReadMemory<OmsiHumanAIModeEX>(Address + 0x6c5);
+            get => (OmsiHumanAIModeEX) Memory.ReadMemory<byte>(Address + 0x6c5);
             set => Memory.WriteMemory(Address + 0x6c5, value);
         }
         public OmsiHumanAISubMode AISubMode
         {
-            get => Memory.ReadMemory<OmsiHumanAISubMode>(Address + 0x6c6);
+            get => (OmsiHumanAISubMode) Memory.ReadMemory<byte>(Address + 0x6c6);
             set => Memory.WriteMemory(Address + 0x6c6, value);
         }
         public OmsiHumanKollision KollisionState
         {
-            get => Memory.ReadMemory<OmsiHumanKollision>(Address + 0x6c7);
+            get => (OmsiHumanKollision) Memory.ReadMemory<byte>(Address + 0x6c7);
             set => Memory.WriteMemory(Address + 0x6c7, value);
         }
         public OmsiHumanKollisionFreeSide KollisionFreeSide
