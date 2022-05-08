@@ -9,21 +9,22 @@
         {
             get => Memory.ReadMemoryStructArray<OmsiSeat>(Address + 0x4);
         }
-        public OmsiPathPoint[] Entries => Memory.ReadMemoryObjArray<OmsiPathPoint>(Address + 0x8);
+        public OmsiPathPointBasic[] Entries => Memory.ReadMemoryObjArray<OmsiPathPointBasic>(Address + 0x8);
         public OmsiEntryProp[] EntriesProp
         {
             get => Memory.ReadMemoryStructArray<OmsiEntryProp>(Address + 0xc);
         }
-        public OmsiPathPoint[] Exits => Memory.ReadMemoryObjArray<OmsiPathPoint>(Address + 0x10);
+        public OmsiPathPointBasic[] Exits => Memory.ReadMemoryObjArray<OmsiPathPointBasic>(Address + 0x10);
         public OmsiPassCabinStamper Stamper
         {
-            get => Memory.ReadMemory<OmsiPassCabinStamper>(Address + 0x14);
+            get => Memory.MarshalStruct<OmsiPassCabinStamper, OmsiPassCabinStamperInternal>(
+                Memory.ReadMemory<OmsiPassCabinStamperInternal>(Address + 0x14));
         }
         public OmsiPassCabinTicketSale TicketSale
         {
             get => Memory.MarshalStruct<OmsiPassCabinTicketSale, OmsiPassCabinTicketSaleInternal>(
                 Memory.ReadMemory<OmsiPassCabinTicketSaleInternal>(Address + 0x28));
         }
-        public OmsiPathPoint[] LinkToOtherVehicle => Memory.ReadMemoryObjArray<OmsiPathPoint>(Address + 0x7c);
+        public OmsiPathPointBasic[] LinkToOtherVehicle => Memory.ReadMemoryObjArray<OmsiPathPointBasic>(Address + 0x7c);
     }
 }

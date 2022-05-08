@@ -407,13 +407,19 @@ namespace OmsiHook
     }
     public struct OmsiPassCabinStamper
     {
-        public OmsiPathPoint point;
+        public OmsiPathPointBasic point;
+        public D3DVector stamperPos;
+        public bool valid;
+    }
+    internal struct OmsiPassCabinStamperInternal
+    {
+        [OmsiObjPtr(typeof(OmsiPathPointBasic))] public int point;
         public D3DVector stamperPos;
         public bool valid;
     }
     public struct OmsiPassCabinTicketSale
     {
-        public OmsiPathPoint point;
+        public OmsiPathPointBasic point;
         public D3DVector ticketPos;
         public D3DVector moneyPos;
         public D3DVector moneyPos_var;
@@ -427,7 +433,7 @@ namespace OmsiHook
     }
     internal struct OmsiPassCabinTicketSaleInternal
     {
-        public OmsiPathPoint point;
+        [OmsiObjPtr(typeof(OmsiPathPointBasic))] public int point;
         public D3DVector ticketPos;
         public D3DVector moneyPos;
         public D3DVector moneyPos_var;
@@ -1325,5 +1331,28 @@ namespace OmsiHook
         public int atd;
         public byte arr_ok;
         public byte dep_ok;
+    }
+
+    public enum OmsiHumanAIMode : byte
+    {
+        THAM_Stop, THAM_WalkToTarget, THAM_WaitBeforeTarget, THAM_AtTarget, THAM_TooFar, THAM_WalkToPathTarget, THAM_WaitOnPath, THAM_AtPathTarget, THAM_WalkStreet, THAM_Stand
+    }
+    public enum OmsiHumanAIModeEX : byte
+    {
+        THAME_DoNothing, THAME_WaitingForBus, THAME_WalkingToBusPre, THAME_WalkingToBus, THAME_WalkingInBusToPlace, THAME_WalkingInBusToExit, THAME_WalkingToBusstop, THAME_SittingInBus, THAME_WalkStreet, THAME_DrivingBus
+    }
+    public enum OmsiHumanAISubMode : byte
+    {
+        None, WaitForStamper, Stamp, WaitForTicketBuy, WaitForGeldabwurf, WaitForTicketAndChange, WaitForTakingTicket, WaitForChange, FinishedBuyingTicket
+    }
+    public enum OmsiHumanKollision : byte
+    {
+        THK_Free, THK_TooClose, THK_TooCloseFrontFront, THK_TooCloseFront, THK_TooCloseInside
+    }
+    
+    public struct OmsiHumanKollisionFreeSide
+    {
+        public bool left;
+        public bool right;
     }
 }

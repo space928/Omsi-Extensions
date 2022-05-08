@@ -58,6 +58,12 @@ namespace OmsiHook
             omsiMemory.ReadMemoryStructArray<OmsiTTLogDetailedInternal>(0x00861750));
 
         /// <summary>
+        /// Current real weather config
+        /// </summary>
+        public OmsiActuWeather ActuWeather => new(omsiMemory, omsiMemory.ReadMemory<int>(0x00861278));
+        public OmsiHumanBeingInst[] Humans => omsiMemory.ReadMemoryObjArray<OmsiHumanBeingInst>(0x0086172c);
+
+        /// <summary>
         /// Attaches the hooking application to OMSI.exe.
         /// Always call this at some point before trying to read and write data.
         /// </summary>
