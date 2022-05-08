@@ -43,7 +43,7 @@ namespace OmsiHookPlugin
                 Log("Spawning bus!");
                 try
                 {
-                    hook.RemoteMethods.PlaceRandomBus();
+                    hook.Globals.RemoteMethods.PlaceRandomBus();
                 } catch (Exception e)
                 {
                     Log("Uh oh:");
