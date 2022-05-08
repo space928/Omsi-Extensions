@@ -1311,7 +1311,9 @@ namespace OmsiHook
         [OmsiStructPtr(typeof(OmsiPerbus),typeof(OmsiPerbusInternal))] public int perbus;
 
     }
-
+	///<summary>
+	///Busstop, estimated arrival and departure, actual arrival and departure, arrived on time, departed on time
+	///</summary>
     public struct OmsiTTLogDetailed
     {
         public string busstop_name;
