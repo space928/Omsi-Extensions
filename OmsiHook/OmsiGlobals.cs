@@ -63,5 +63,10 @@ namespace OmsiHook
         /// </summary>
         public OmsiActuWeather ActuWeather => new(Memory, Memory.ReadMemory<int>(0x00861278));
         public OmsiHumanBeingInst[] Humans => Memory.ReadMemoryObjArray<OmsiHumanBeingInst>(0x0086172c);
+
+        /// <summary>
+        /// Timetable manager for current session
+        /// </summary>
+        public OmsiTimeTableMan TimeTableManager => new(Memory, Memory.ReadMemory<int>(0x008614e8));
     }
 }
