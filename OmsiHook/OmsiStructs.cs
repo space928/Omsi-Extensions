@@ -1244,6 +1244,68 @@ namespace OmsiHook
         public int stringVar;
     }
 
+    public struct OmsiPerbus
+    {
+        public string busname;
+        public uint hektometer;
+    }
+    internal struct OmsiPerbusInternal
+    {
+        [OmsiStrPtr] public int busname;
+        public uint hektometer;
+    }
+
+    public struct OmsiDriver
+    {
+        public string filename;
+        public string name;
+        public bool gender;
+        public double birthday;
+        public double dateOfHire;
+        public uint cnt_busstop_all;
+        public uint cnt_busstop_late;
+        public uint cnt_busstop_early;
+        public uint hektometer_all;
+        public uint cnt_crashs;
+        public uint cnt_hitandrun;
+        public uint cnt_hitandrun_heavy;
+        public uint crashes_ped;
+        public double bew_fahrstill; // These look like driver raitings
+        public uint bew_passcomfort;
+        public uint bew_ticket_count;
+        public uint bew_ticket_points;
+        public uint passCount;
+        public uint ticket_cnt;
+        public float tickets_cash;
+        public OmsiPerbus[] perbus;
+    }
+
+    internal struct OmsiDriverInternal
+    {
+        [OmsiStrPtr] public int filename;
+        [OmsiStrPtr] public int name;
+        public bool gender;
+        public double birthday;
+        public double dateOfHire;
+        public uint cnt_busstop_all;
+        public uint cnt_busstop_late;
+        public uint cnt_busstop_early;
+        public uint hektometer_all;
+        public uint cnt_crashs;
+        public uint cnt_hitandrun;
+        public uint cnt_hitandrun_heavy;
+        public uint crashes_ped;
+        public double bew_fahrstill; // These look like driver raitings
+        public uint bew_passcomfort;
+        public uint bew_ticket_count;
+        public uint bew_ticket_points;
+        public uint passCount;
+        public uint ticket_cnt;
+        public float tickets_cash;
+        [OmsiStructPtr(typeof(OmsiPerbus),typeof(OmsiPerbusInternal))] public int perbus;
+
+    }
+
     public enum OmsiHumanAIMode : byte
     {
         THAM_Stop, THAM_WalkToTarget, THAM_WaitBeforeTarget, THAM_AtTarget, THAM_TooFar, THAM_WalkToPathTarget, THAM_WaitOnPath, THAM_AtPathTarget, THAM_WalkStreet, THAM_Stand
