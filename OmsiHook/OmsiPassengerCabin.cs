@@ -17,7 +17,8 @@
         public OmsiPathPointBasic[] Exits => Memory.ReadMemoryObjArray<OmsiPathPointBasic>(Address + 0x10);
         public OmsiPassCabinStamper Stamper
         {
-            get => Memory.ReadMemory<OmsiPassCabinStamper>(Address + 0x14);
+            get => Memory.MarshalStruct<OmsiPassCabinStamper, OmsiPassCabinStamperInternal>(
+                Memory.ReadMemory<OmsiPassCabinStamperInternal>(Address + 0x14));
         }
         public OmsiPassCabinTicketSale TicketSale
         {

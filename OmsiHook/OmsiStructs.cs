@@ -411,6 +411,12 @@ namespace OmsiHook
         public D3DVector stamperPos;
         public bool valid;
     }
+    internal struct OmsiPassCabinStamperInternal
+    {
+        [OmsiObjPtr(typeof(OmsiPathPointBasic))] public int point;
+        public D3DVector stamperPos;
+        public bool valid;
+    }
     public struct OmsiPassCabinTicketSale
     {
         public OmsiPathPointBasic point;
@@ -427,7 +433,7 @@ namespace OmsiHook
     }
     internal struct OmsiPassCabinTicketSaleInternal
     {
-        public OmsiPathPointBasic point;
+        [OmsiObjPtr(typeof(OmsiPathPointBasic))] public int point;
         public D3DVector ticketPos;
         public D3DVector moneyPos;
         public D3DVector moneyPos_var;
@@ -1316,7 +1322,7 @@ namespace OmsiHook
     }
     public enum OmsiHumanAISubMode : byte
     {
-        none, waitForStamper, stamp, waitForTicketBuy, waitForGeldabwurf, waitForTicketAndChange, waitForTakingTicket, waitForChange, finishedBuyingTicket
+        None, WaitForStamper, Stamp, WaitForTicketBuy, WaitForGeldabwurf, WaitForTicketAndChange, WaitForTakingTicket, WaitForChange, FinishedBuyingTicket
     }
     public enum OmsiHumanKollision : byte
     {
