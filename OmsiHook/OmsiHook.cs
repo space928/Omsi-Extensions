@@ -13,6 +13,9 @@ namespace OmsiHook
         private Process process;
         private OmsiRemoteMethods remoteMethods;
 
+        public OmsiGlobals Globals => new(omsiMemory, 0, this);
+
+
         /// <summary>
         /// Gets the vehicle instance being driven by the player.
         /// </summary>
