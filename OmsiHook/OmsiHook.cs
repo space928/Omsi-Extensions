@@ -26,6 +26,8 @@ namespace OmsiHook
         public OmsiTime Time => new(omsiMemory, 0);
         public OmsiDriver[] Drivers => omsiMemory.MarshalStructs<OmsiDriver, OmsiDriverInternal>(omsiMemory.ReadMemoryStructArray<OmsiDriverInternal>(0x008614F8));
         public int SelectedDriver => omsiMemory.ReadMemory<int>(0x008614FC);
+        public OmsiHumanBeingInst[] Humans => omsiMemory.ReadMemoryObjArray<OmsiHumanBeingInst>(0x0086172c);
+
         /// <summary>
         /// Attaches the hooking application to OMSI.exe.
         /// Always call this at some point before trying to read and write data.
