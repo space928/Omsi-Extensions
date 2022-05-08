@@ -23,6 +23,7 @@ namespace OmsiExtensionsCLI
                 var map = omsi.Map;
                 var weather = omsi.Weather;
                 var tickets = omsi.TicketPack;
+                var humans = omsi.Humans;
 
                 Console.SetCursorPosition(0, 0);
                 Console.WriteLine(($"Read data: x:{pos.x:F3}   y:{pos.y:F3}   z:{pos.z:F3}      " +

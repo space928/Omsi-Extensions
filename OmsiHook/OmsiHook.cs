@@ -26,12 +26,11 @@ namespace OmsiHook
         public OmsiTime Time => new(omsiMemory, 0);
         public OmsiDriver[] Drivers => omsiMemory.MarshalStructs<OmsiDriver, OmsiDriverInternal>(omsiMemory.ReadMemoryStructArray<OmsiDriverInternal>(0x008614F8));
         public int SelectedDriver => omsiMemory.ReadMemory<int>(0x008614FC);
-
         /// <summary>
         /// Current real weather config
         /// </summary>
         public OmsiActuWeather ActuWeather => new(omsiMemory, omsiMemory.ReadMemory<int>(0x00861278));
-
+        public OmsiHumanBeingInst[] Humans => omsiMemory.ReadMemoryObjArray<OmsiHumanBeingInst>(0x0086172c);
 
         /// <summary>
         /// Attaches the hooking application to OMSI.exe.
