@@ -21,14 +21,45 @@ namespace OmsiHook
         /// </summary>
         public OmsiRoadVehicleInst PlayerVehicle => GetRoadVehicleInst(PlayerVehicleIndex);
         public int PlayerVehicleIndex => omsiMemory.ReadMemory<int>(0x00861740);
+
+        /// <summary>
+        /// Current Weather
+        /// </summary>
         public OmsiWeather Weather => new(omsiMemory, omsiMemory.ReadMemory<int>(0x008617D0));
+
+        /// <summary>
+        /// Current Map
+        /// </summary>
         public OmsiMap Map => new(omsiMemory, omsiMemory.ReadMemory<int>(0x861588));
+
+        /// <summary>
+        /// In game TicketPack List
+        /// </summary>
         public OmsiTicketPack TicketPack => omsiMemory.MarshalStruct<OmsiTicketPack, OmsiTicketPackInternal>(
             omsiMemory.ReadMemory<OmsiTicketPackInternal>(0x008611fc));
+
+        /// <summary>
+        /// Access to RemoteMethods
+        /// </summary>
         public OmsiRemoteMethods RemoteMethods => remoteMethods ??= new(omsiMemory, 0);
+
+        /// <summary>
+        /// Current in game Date / Time
+        /// </summary>
         public OmsiTime Time => new(omsiMemory, 0);
+
+        /// <summary>
+        /// In game Driver List
+        /// </summary>
         public OmsiDriver[] Drivers => omsiMemory.MarshalStructs<OmsiDriver, OmsiDriverInternal>(omsiMemory.ReadMemoryStructArray<OmsiDriverInternal>(0x008614F8));
         public int SelectedDriver => omsiMemory.ReadMemory<int>(0x008614FC);
+
+        /// <summary>
+        /// Current Service logs
+        /// </summary>
+        public OmsiTTLogDetailed[] OmsiTTLogs => omsiMemory.MarshalStructs<OmsiTTLogDetailed, OmsiTTLogDetailedInternal>(
+            omsiMemory.ReadMemoryStructArray<OmsiTTLogDetailedInternal>(0x00861750));
+
         /// <summary>
         /// Current real weather config
         /// </summary>

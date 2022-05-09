@@ -1311,6 +1311,29 @@ namespace OmsiHook
         [OmsiStructPtr(typeof(OmsiPerbus),typeof(OmsiPerbusInternal))] public int perbus;
 
     }
+	///<summary>
+	///Busstop, estimated arrival and departure, actual arrival and departure, arrived on time, departed on time
+	///</summary>
+    public struct OmsiTTLogDetailed
+    {
+        public string busstop_name;
+        public int eta;
+        public int etd;
+        public int ata;
+        public int atd;
+        public byte arr_ok;
+        public byte dep_ok;
+    }
+    internal struct OmsiTTLogDetailedInternal
+    {
+        [OmsiStrPtr] public int busstop_name;
+        public int eta;
+        public int etd;
+        public int ata;
+        public int atd;
+        public byte arr_ok;
+        public byte dep_ok;
+    }
 
     public enum OmsiHumanAIMode : byte
     {
