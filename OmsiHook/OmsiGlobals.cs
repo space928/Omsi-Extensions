@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace OmsiHook
 {
+    /// <summary>
+    /// All recoginised Globals in OMSI
+    /// </summary>
     public class OmsiGlobals : OmsiObject
     {
         internal OmsiGlobals(Memory omsiMemory, int baseAddress, OmsiHook hook) : base(omsiMemory, baseAddress) { this.hook = hook; }
