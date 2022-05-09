@@ -6,6 +6,9 @@ Omsi hooking and modding sdk.
 [![Nuget](https://img.shields.io/nuget/v/omsihook)](https://www.nuget.org/packages/OmsiHook/)
 [![OMSI Version](https://img.shields.io/badge/OMSI%20Version-2.3.004-orange)](https://store.steampowered.com/app/252530/OMSI_2_Steam_Edition/)
 
+> :warning: **Deprecation Notice** - All OMSI Globals are being moved to the OmsiHook.Globals property, existing code is still functional in this version,
+> but may break in upcoming versions, a transition to the new property is recommended.
+
 The dead simple way to hook into Omsi and fiddle with it's memory. In it's current state we only have 
 mappings for a limited number of Omsi objects, but it's easy to extend. Allows both reading and writing 
 data from Omsi in real time, but currently doesn't allow for anything that requires memory allocation 
@@ -32,7 +35,7 @@ class Program
         while (true)
         {
             // Get the PlayerVehicle and get its position
-            var pos = omsi.PlayerVehicle.Position;
+            var pos = omsi.Globals.PlayerVehicle.Position;
             
             // Print the position to the console
             Console.WriteLine($"Player vehicle pos: x:{pos.x:F3}\ty:{pos.y:F3}\tz:{pos.z:F3}");
