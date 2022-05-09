@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// Data about a tile's water content - similar to <seealso cref="OmsiFileTerrain">OmsiFileTerrain</seealso>
+    /// </summary>
     public class OmsiFileWater : OmsiObject
     {
         public OmsiFileWater() : base() { }

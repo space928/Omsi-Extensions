@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// Vehicle base class - used for road and rail
+    /// </summary>
     public class OmsiVehicle : OmsiComplMapObj
     {
         internal OmsiVehicle(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

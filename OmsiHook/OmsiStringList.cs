@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// List of strings
+    /// </summary>
     public class OmsiStringList : OmsiObject
     {
         public OmsiStringList() : base() { }

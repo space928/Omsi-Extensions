@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// Simple Path Point
+    /// </summary>
     public class OmsiPathPointBasic : OmsiObject
     {
         internal OmsiPathPointBasic(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

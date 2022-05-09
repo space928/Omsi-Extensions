@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace OmsiHook
 {
+    /// <summary>
+    /// Defines a curve - used in const files and similar configuration files
+    /// </summary>
     public class OmsiFuncClass : OmsiObject
     {
         public OmsiFuncClass() : base() { }

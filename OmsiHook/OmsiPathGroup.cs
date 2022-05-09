@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// A Group of Paths - used in <seealso cref="OmsiMapKachel">Map Tiles</seealso>
+    /// </summary>
     public class OmsiPathGroup :OmsiObject
     {
         public OmsiPathGroup() : base() { }

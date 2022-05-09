@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// Defines a passenger cabin (as per the passenger cabin file)
+    /// </summary>
     public class OmsiPassengerCabin : OmsiObject
     {
         internal OmsiPassengerCabin(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

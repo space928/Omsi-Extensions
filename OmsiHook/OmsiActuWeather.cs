@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace OmsiHook
 {
+    /// <summary>
+    /// Settings relating to the real world weather in OMSI
+    /// </summary>
     public class OmsiActuWeather : OmsiObject
     {
         internal OmsiActuWeather(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

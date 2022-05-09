@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace OmsiHook
 {
+    /// <summary>
+    /// Base class for Chrone Changes
+    /// </summary>
     public class OmsiChronoChange : OmsiObject
     {
         public OmsiChronoChange() : base() { }

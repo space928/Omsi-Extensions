@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// Segment of spline in a tile
+    /// </summary>
     public class OmsiSplineSegment : D3DMeshObject
     {
         public OmsiSplineSegment() { }

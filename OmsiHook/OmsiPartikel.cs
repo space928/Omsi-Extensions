@@ -2,6 +2,9 @@
 
 namespace OmsiHook
 {
+    /// <summary>
+    /// Defines a particle
+    /// </summary>
     public class OmsiPartikel : OmsiObject
     {
         internal OmsiPartikel(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

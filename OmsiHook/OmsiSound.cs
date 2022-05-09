@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// Sound that is playable by OMSI
+    /// </summary>
     public class OmsiSound : OmsiObject
     {
         internal OmsiSound(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

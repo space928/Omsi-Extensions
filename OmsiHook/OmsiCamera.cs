@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// In game camera object
+    /// </summary>
     public class OmsiCamera : OmsiObject
     {
         internal OmsiCamera(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

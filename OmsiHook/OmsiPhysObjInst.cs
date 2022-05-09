@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// Instance of <seealso cref="OmsiPhysObj"/>
+    /// </summary>
     public class OmsiPhysObjInst : OmsiMapObjInst
     {
         internal OmsiPhysObjInst(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

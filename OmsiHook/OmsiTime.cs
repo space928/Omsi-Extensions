@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace OmsiHook
 {
+    /// <summary>
+    /// Class that decodes the date and time in game in OMSI
+    /// </summary>
     public class OmsiTime : OmsiObject
     {
 

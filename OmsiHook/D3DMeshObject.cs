@@ -2,6 +2,9 @@
 
 namespace OmsiHook
 {
+    /// <summary>
+    /// Direct 3D Mesh object
+    /// </summary>
     public class D3DMeshObject : D3DTransformObject
     {
         internal D3DMeshObject(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace OmsiHook
 {
+    /// <summary>
+    /// Wrapper for Arrays / Lists in OMSI's Memory
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class MemArray<T> : OmsiObject, IEnumerable<T>, ICollection<T>, IList<T> where T : struct
     {
         private T[] arrayCache;

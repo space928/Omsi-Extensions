@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// Base class for objects created from files
+    /// </summary>
     public class OmsiFileObject : OmsiObject
     {
         public OmsiFileObject() : base() { }

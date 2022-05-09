@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// Base class for transformable Direct 3D objects
+    /// </summary>
     public class D3DTransformObject : D3DObject
     {
         internal D3DTransformObject(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

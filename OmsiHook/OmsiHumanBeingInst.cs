@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace OmsiHook
 {
+    /// <summary>
+    /// Instance of a <seealso cref="OmsiHumanBeing">Human Being</seealso>
+    /// </summary>
     public class OmsiHumanBeingInst : OmsiMovingMapObjInst
     {
         internal OmsiHumanBeingInst(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

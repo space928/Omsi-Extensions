@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// Base class for instances of a Map Objects
+    /// </summary>
     public class OmsiMapObjInst : OmsiObject
     {
         internal OmsiMapObjInst(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
