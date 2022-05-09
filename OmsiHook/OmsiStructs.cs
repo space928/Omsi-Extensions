@@ -1706,6 +1706,6 @@ namespace OmsiHook
         [OmsiStrPtr] public int line;
         [OmsiStructArrayPtr(typeof(OmsiRVNumTour), typeof(OmsiRVNumTourInternal))] public int list_number_tour;
         [OmsiStructArrayPtr(typeof(OmsiRVTypeTour), typeof(OmsiRVTypeTourInternal))] public int list_type_tour;
-        [OmsiStruct(typeof(OmsiRVTypesLine), typeof(OmsiRVTypesLineInternal)] public int list_types_line;
+        [OmsiStruct(typeof(OmsiRVTypesLine), typeof(OmsiRVTypesLineInternal))] public int list_types_line;
     }
 }
