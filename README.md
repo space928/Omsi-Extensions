@@ -32,7 +32,7 @@ class Program
         while (true)
         {
             // Get the PlayerVehicle and get its position
-            var pos = omsi.PlayerVehicle.Position;
+            var pos = omsi.Globals.PlayerVehicle.Position;
             
             // Print the position to the console
             Console.WriteLine($"Player vehicle pos: x:{pos.x:F3}\ty:{pos.y:F3}\tz:{pos.z:F3}");
