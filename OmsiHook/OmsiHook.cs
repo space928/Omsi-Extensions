@@ -11,9 +11,10 @@ namespace OmsiHook
     {
         private Memory omsiMemory;
         private Process process;
+        private OmsiGlobals globals;
         private OmsiRemoteMethods remoteMethods;
 
-        public OmsiGlobals Globals => new(omsiMemory, 0, this);
+        public OmsiGlobals Globals => globals ??= new(omsiMemory, 0, this);
 
 
         /// <summary>

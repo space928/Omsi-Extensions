@@ -27,7 +27,7 @@ namespace OmsiExtensionsCLI
 
                 Console.SetCursorPosition(0, 0);
                 Console.WriteLine(($"Read data: x:{pos.x:F3}   y:{pos.y:F3}   z:{pos.z:F3}      " +
-                    $"tile:{omsi.PlayerVehicle.Kachel}").PadRight(Console.WindowWidth - 1));
+                    $"tile:{omsi.Globals.PlayerVehicle.Kachel}").PadRight(Console.WindowWidth - 1));
                 Console.WriteLine($"Read data: vx:{vel.x:F3}   vy:{vel.y:F3}   vz:{vel.z:F3}".PadRight(Console.WindowWidth-1));
                 Console.WriteLine($"Read data: ax:{posa._30:F3}   ay:{posa._31:F3}   az:{posa._32:F3}".PadRight(Console.WindowWidth-1));
 

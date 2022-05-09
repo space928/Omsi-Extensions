@@ -1635,7 +1635,7 @@ namespace OmsiHook
         [OmsiStructArrayPtr(typeof(int))] public int vehical_indizes;
         public bool hasNormalVeh;
         public int TagErledigt; // day done? (Day of week maybe? - OmsiTTTourValid?)
-        [OmsiStruct(typeof(OmsiTTTourValid))] public int validOn;
+        [OmsiStruct(typeof(OmsiTTTourValid), typeof(OmsiTTTourValid))] public int validOn;
         public bool invalide;
         [OmsiStructArrayPtr(typeof(OmsiTTTourEntry), typeof(OmsiTTTourEntryInternal))] public int entrys;
     }
@@ -1706,6 +1706,6 @@ namespace OmsiHook
         [OmsiStrPtr] public int line;
         [OmsiStructArrayPtr(typeof(OmsiRVNumTour), typeof(OmsiRVNumTourInternal))] public int list_number_tour;
         [OmsiStructArrayPtr(typeof(OmsiRVTypeTour), typeof(OmsiRVTypeTourInternal))] public int list_type_tour;
-        [OmsiStruct(typeof(OmsiRVTypesLine))] public int list_types_line;
+        [OmsiStruct(typeof(OmsiRVTypesLine), typeof(OmsiRVTypesLineInternal)] public int list_types_line;
     }
 }
