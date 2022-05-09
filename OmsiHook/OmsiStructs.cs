@@ -1489,7 +1489,7 @@ namespace OmsiHook
         [OmsiStructArrayPtr(typeof(OmsiTTBusstop), typeof(OmsiTTBusstopInternal))] public int busstops;
         [OmsiStrPtr] public int trackName;
         public int trackIndex;
-        [OmsiStructArrayPtr(typeof(int[]))] public int stnLinkList;
+        [OmsiPtr] public int stnLinkList;
     }
 
     public struct OmsiTTBusstopListEntryChronoRename
