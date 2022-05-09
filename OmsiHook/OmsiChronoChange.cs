@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace OmsiHook
 {
     /// <summary>
-    /// Base class for Chrone Changes
+    /// Base class for Chrono Changes, chrono changes / events, these are planned events that a map maker can add to make a map feel more dynamic over time.
     /// </summary>
     public class OmsiChronoChange : OmsiObject
     {

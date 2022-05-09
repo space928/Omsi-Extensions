@@ -1,7 +1,7 @@
 ﻿namespace OmsiHook
 {
     /// <summary>
-    /// Base class for all objects processed by the physics system
+    /// Base class for all objects processed by the physics system, all data is read from disk
     /// </summary>
     public class OmsiPhysObj : OmsiObject
     {

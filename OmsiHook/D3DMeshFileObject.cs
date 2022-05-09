@@ -1,7 +1,7 @@
 ﻿namespace OmsiHook
 {
     /// <summary>
-    /// Direct 3D Mesh File
+    /// Direct 3D Mesh File, all the metadata relating to a loaded mesh file
     /// </summary>
     public class D3DMeshFileObject : D3DMeshObject
     {

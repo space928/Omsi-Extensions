@@ -1,7 +1,7 @@
 ﻿namespace OmsiHook
 {
     /// <summary>
-    /// Base class for instances of a Map Objects
+    /// Base class for instances of Map Objects
     /// </summary>
     public class OmsiMapObjInst : OmsiObject
     {

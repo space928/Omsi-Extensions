@@ -1,7 +1,7 @@
 ﻿namespace OmsiHook
 {
     /// <summary>
-    /// A Tile on a Map
+    /// A Tile in a Map
     /// </summary>
     public class OmsiMapKachel : OmsiObject
     {

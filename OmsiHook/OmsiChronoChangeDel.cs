@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace OmsiHook
 {
     /// <summary>
-    /// ChronoChangeDel - *no properites defined*
+    /// ChronoChangeDel - <i>no properites defined</i>
     /// </summary>
     public class OmsiChronoChangeDel : OmsiChronoChange
     {

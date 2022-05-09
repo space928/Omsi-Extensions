@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace OmsiHook
 {
     /// <summary>
-    /// Represntation of a HOF File
+    /// Representation of a HOF / yard / depot File
     /// </summary>
     public class OmsiHOF : OmsiObject
     {

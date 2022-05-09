@@ -3,7 +3,7 @@
 namespace OmsiHook
 {
     /// <summary>
-    /// Map object - many of the global settings can be found here relating to the map.
+    /// Map object - many global settings can be found here relating to the currently loaded map.
     /// </summary>
     public class OmsiMap : OmsiObject
     {
