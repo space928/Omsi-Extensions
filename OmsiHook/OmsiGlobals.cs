@@ -21,6 +21,9 @@ namespace OmsiHook
         /// Gets the vehicle instance being driven by the player.
         /// </summary>
         public OmsiRoadVehicleInst PlayerVehicle => hook.GetRoadVehicleInst(PlayerVehicleIndex);
+        /// <summary>
+        /// Gets the current vehicle index driven by the player.
+        /// </summary>
         public int PlayerVehicleIndex => Memory.ReadMemory<int>(0x00861740);
 
         /// <summary>
@@ -53,6 +56,9 @@ namespace OmsiHook
         /// In game Driver List
         /// </summary>
         public OmsiDriver[] Drivers => Memory.MarshalStructs<OmsiDriver, OmsiDriverInternal>(Memory.ReadMemoryStructArray<OmsiDriverInternal>(0x008614F8));
+        /// <summary>
+        /// Currently active driver profile index
+        /// </summary>
         public int SelectedDriver => Memory.ReadMemory<int>(0x008614FC);
 
         /// <summary>
@@ -65,6 +71,9 @@ namespace OmsiHook
         /// Current real weather config
         /// </summary>
         public OmsiActuWeather ActuWeather => new(Memory, Memory.ReadMemory<int>(0x00861278));
+        /// <summary>
+        /// List of Humans present on the scene
+        /// </summary>
         public OmsiHumanBeingInst[] Humans => Memory.ReadMemoryObjArray<OmsiHumanBeingInst>(0x0086172c);
 
         /// <summary>
