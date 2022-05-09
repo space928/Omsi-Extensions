@@ -19,51 +19,63 @@ namespace OmsiHook
         /// <summary>
         /// Gets the vehicle instance being driven by the player.
         /// </summary>
+        [Obsolete("This property has been moved to the Globals Property.")]
         public OmsiRoadVehicleInst PlayerVehicle => GetRoadVehicleInst(PlayerVehicleIndex);
+        [Obsolete("This property has been moved to the Globals Property.")]
         public int PlayerVehicleIndex => omsiMemory.ReadMemory<int>(0x00861740);
 
         /// <summary>
         /// Current Weather
         /// </summary>
+        [Obsolete("This property has been moved to the Globals Property.")]
         public OmsiWeather Weather => new(omsiMemory, omsiMemory.ReadMemory<int>(0x008617D0));
 
         /// <summary>
         /// Current Map
         /// </summary>
+        [Obsolete("This property has been moved to the Globals Property.")]
         public OmsiMap Map => new(omsiMemory, omsiMemory.ReadMemory<int>(0x861588));
 
         /// <summary>
         /// In game TicketPack List
         /// </summary>
+        [Obsolete("This property has been moved to the Globals Property.")]
         public OmsiTicketPack TicketPack => omsiMemory.MarshalStruct<OmsiTicketPack, OmsiTicketPackInternal>(
             omsiMemory.ReadMemory<OmsiTicketPackInternal>(0x008611fc));
 
         /// <summary>
         /// Access to RemoteMethods
         /// </summary>
+        [Obsolete("This property has been moved to the Globals Property.")]
         public OmsiRemoteMethods RemoteMethods => remoteMethods ??= new(omsiMemory, 0);
 
         /// <summary>
         /// Current in game Date / Time
         /// </summary>
+        [Obsolete("This property has been moved to the Globals Property.")]
         public OmsiTime Time => new(omsiMemory, 0);
 
         /// <summary>
         /// In game Driver List
         /// </summary>
+        [Obsolete("This property has been moved to the Globals Property.")]
         public OmsiDriver[] Drivers => omsiMemory.MarshalStructs<OmsiDriver, OmsiDriverInternal>(omsiMemory.ReadMemoryStructArray<OmsiDriverInternal>(0x008614F8));
+        [Obsolete("This property has been moved to the Globals Property.")]
         public int SelectedDriver => omsiMemory.ReadMemory<int>(0x008614FC);
 
         /// <summary>
         /// Current Service logs
         /// </summary>
+        [Obsolete("This property has been moved to the Globals Property.")]
         public OmsiTTLogDetailed[] OmsiTTLogs => omsiMemory.MarshalStructs<OmsiTTLogDetailed, OmsiTTLogDetailedInternal>(
             omsiMemory.ReadMemoryStructArray<OmsiTTLogDetailedInternal>(0x00861750));
 
         /// <summary>
         /// Current real weather config
         /// </summary>
+        [Obsolete("This property has been moved to the Globals Property.")]
         public OmsiActuWeather ActuWeather => new(omsiMemory, omsiMemory.ReadMemory<int>(0x00861278));
+        [Obsolete("This property has been moved to the Globals Property.")]
         public OmsiHumanBeingInst[] Humans => omsiMemory.ReadMemoryObjArray<OmsiHumanBeingInst>(0x0086172c);
 
         /// <summary>
