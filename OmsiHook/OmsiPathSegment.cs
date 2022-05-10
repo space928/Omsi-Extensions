@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace OmsiHook
 {
     /// <summary>
-    /// Segment between path points
+    /// Segment between Path Points
     /// </summary>
     public class OmsiPathSegment : OmsiMapObjInst
     {
