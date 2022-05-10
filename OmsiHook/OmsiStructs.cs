@@ -1030,7 +1030,10 @@ namespace OmsiHook
         public float maxForce;
         public float daempfer;
         public float rad_dia;
-        public bool angetrieben; // Driven? Powered?
+        /// <summary>
+        /// Driven? Powered?
+        /// </summary>
+        public bool angetrieben;
         public float omega_F;
     }
 
@@ -1090,7 +1093,10 @@ namespace OmsiHook
     {
         public int nummer;
         public string name; // ANSI String
-        public string endstelle; // Terminus - ANSI String
+        /// <summary>
+        /// Terminus
+        /// </summary>
+        public string endstelle; // ANSI String
         public int texNummer;
         public string[] strings;
         public bool allExit;
@@ -1099,7 +1105,10 @@ namespace OmsiHook
     {
         public int nummer;
         [OmsiStrPtr] public int name; // ANSI String
-        [OmsiStrPtr] public int endstelle; // Terminus - ANSI String
+        /// <summary>
+        /// Terminus
+        /// </summary>
+        [OmsiStrPtr] public int endstelle; // ANSI String
         public int texNummer;
         [OmsiStrArrayPtr] public int strings;
         public bool allExit;
@@ -1232,7 +1241,10 @@ namespace OmsiHook
 
     public struct OmsiScriptTexture
     {
-        public IntPtr tex; // IDirect3DTexture9 - No Marshaling implemented
+        /// <summary>
+        /// IDirect3DTexture9 - No Marshaling implemented
+        /// </summary>
+        public IntPtr tex;
         public uint[] TexPn;
         public uint color;
     }
@@ -1276,7 +1288,7 @@ namespace OmsiHook
         public uint cnt_hitandrun;
         public uint cnt_hitandrun_heavy;
         public uint crashes_ped;
-        public double bew_fahrstill; // These look like driver raitings
+        public double bew_fahrstill; // These look like driver ratings
         public uint bew_passcomfort;
         public uint bew_ticket_count;
         public uint bew_ticket_points;
@@ -1311,17 +1323,35 @@ namespace OmsiHook
         [OmsiStructPtr(typeof(OmsiPerbus),typeof(OmsiPerbusInternal))] public int perbus;
 
     }
-	///<summary>
-	///Busstop, estimated arrival and departure, actual arrival and departure, arrived on time, departed on time
-	///</summary>
     public struct OmsiTTLogDetailed
     {
+        /// <summary>
+        /// Busstop
+        /// </summary>
         public string busstop_name;
+        /// <summary>
+        /// estimated arrival
+        /// </summary>
         public int eta;
+        /// <summary>
+        /// estimated departure
+        /// </summary>
         public int etd;
+        /// <summary>
+        /// actual arrival
+        /// </summary>
         public int ata;
+        /// <summary>
+        /// actual departure
+        /// </summary>
         public int atd;
+        /// <summary>
+        /// arrived on time
+        /// </summary>
         public byte arr_ok;
+        /// <summary>
+        /// departed on time
+        /// </summary>
         public byte dep_ok;
     }
     internal struct OmsiTTLogDetailedInternal
@@ -1390,7 +1420,10 @@ namespace OmsiHook
         public string filename;
         public string filepath;
         public OmsiTTTrackEntry[] TrackEntrys;
-        public float laenge; // Length
+        /// <summary>
+        /// Length
+        /// </summary>
+        public float laenge;
     }
     internal struct OmsiTTTrackInternal
     {
@@ -1403,14 +1436,20 @@ namespace OmsiHook
     public struct OmsiTTBusstop
     {
         public string name;
-        public string name_zusatz; // Supliment / Addition
+        /// <summary>
+        /// Supliment / Addition
+        /// </summary>
+        public string name_zusatz;
         public int kachel;
         public uint IDCode_formal;
         public uint IDCode_real;
         public int index;
         public int index_ownList;
         public int[] index_alternatives;
-        public float preset_Aussteiger; // Dropouts?
+        /// <summary>
+        /// Dropouts?
+        /// </summary>
+        public float preset_Aussteiger;
         public OmsiPathID pathIndex;
         public int trackEntry;
         public bool invalid;
@@ -1495,8 +1534,14 @@ namespace OmsiHook
     public struct OmsiTTBusstopListEntryChronoRename
     {
         public string name;
-        public string name_zustatz; // Supliment / Addition
-        public float aussteiger; // Dropouts?
+        /// <summary>
+        /// Supliment / Addition
+        /// </summary>
+        public string name_zustatz;
+        /// <summary>
+        /// Dropouts?
+        /// </summary>
+        public float aussteiger;
         public int chrono_origin;
     }
     internal struct OmsiTTBusstopListEntryChronoRenameInternal
@@ -1508,12 +1553,18 @@ namespace OmsiHook
     }
     public struct OmsiTTBusstopListEntry
     {
-        public string name_zustatz; // Supliment / Addition
+        /// <summary>
+        /// Supliment / Addition
+        /// </summary>
+        public string name_zustatz;
         public string name;
         public int kachel;
         public uint IDCode;
         public uint parent_IDCode;
-        public float preset_aussteiger; // Dropouts?
+        /// <summary>
+        /// Dropouts?
+        /// </summary>
+        public float preset_aussteiger;
         public string[] chronos_bad;
         public int index;
         public int[] stnlinks_starting;
@@ -1540,7 +1591,10 @@ namespace OmsiHook
     public struct OmsiTTStnLink
     {
         public OmsiTTTrackEntry[] trackEntrys;
-        public float laenge; // Length
+        /// <summary>
+        /// Length
+        /// </summary>
+        public float laenge;
         public uint busstop_start_IDCode;
         public uint busstop_end_IDCode;
         public float x_path_Start;
@@ -1620,7 +1674,10 @@ namespace OmsiHook
         public string vehicle_nr_reservations;
         public int[] vehical_indizes;
         public bool hasNormalVeh;
-        public int TagErledigt; // day done? (Day of week maybe? - OmsiTTTourValid?)
+        /// <summary>
+        /// day done? (Day of week maybe? - OmsiTTTourValid?)
+        /// </summary>
+        public int TagErledigt;
         public OmsiTTTourValid validOn;
         public bool invalide;
         public OmsiTTTourEntry[] entrys;
