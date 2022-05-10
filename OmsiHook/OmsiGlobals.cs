@@ -72,7 +72,7 @@ namespace OmsiHook
         /// </summary>
         public OmsiActuWeather ActuWeather => new(Memory, Memory.ReadMemory<int>(0x00861278));
         /// <summary>
-        /// List of Humans present on the scene
+        /// List of Humans present in the scene
         /// </summary>
         public OmsiHumanBeingInst[] Humans => Memory.ReadMemoryObjArray<OmsiHumanBeingInst>(0x0086172c);
 
