@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace OmsiHook
 {
     /// <summary>
-    /// Instance of a <seealso cref="OmsiHumanBeing">Human Being</seealso>, instance version store the data that is current (runtime data), wheras the regular <seealso cref="OmsiHumanBeing"/> stores the data that has been pulled from disk
+    /// Instance of a <seealso cref="OmsiHumanBeing">Human Being</seealso>. Instance version store the data that is current (runtime data),
+    /// wheras the regular <seealso cref="OmsiHumanBeing"/> stores the data that has been pulled from disk.
     /// </summary>
     public class OmsiHumanBeingInst : OmsiMovingMapObjInst
     {
