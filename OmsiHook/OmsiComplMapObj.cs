@@ -1,7 +1,7 @@
 ﻿namespace OmsiHook
 {
     /// <summary>
-    /// Base class for complex map objects - used in vehicles and humans
+    /// Base class for complex map objects - used by vehicles and humans
     /// </summary>
     public class OmsiComplMapObj : OmsiPhysObj
     {
