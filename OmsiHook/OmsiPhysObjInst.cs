@@ -1,7 +1,7 @@
-﻿namespace OmsiHook
+namespace OmsiHook
 {
     /// <summary>
-    /// Instance of <seealso cref="OmsiPhysObj"/>, all the runtime realtime data
+    /// Instance of <seealso cref="OmsiPhysObj"/>, all the runtime data for a <seealso cref="OmsiPhysObj"/>
     /// </summary>
     public class OmsiPhysObjInst : OmsiMapObjInst
     {
