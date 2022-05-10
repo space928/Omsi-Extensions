@@ -1,7 +1,8 @@
-﻿namespace OmsiHook
+namespace OmsiHook
 {
     /// <summary>
-    /// Segment of spline in a tile - splines are a type of mesh that has geometry, in comparisent to <seealso cref="OmsiPathSegment"/> which defines a track that a vehicle or human can follow, a spline or object can have several paths.
+    /// Segment of spline in a tile - splines are a type of mesh that has geometry, in comparison to <seealso cref="OmsiPathSegment"/>
+    /// which defines a track that a vehicle or human can follow, a spline or object can have several paths.
     /// </summary>
     public class OmsiSplineSegment : D3DMeshObject
     {
