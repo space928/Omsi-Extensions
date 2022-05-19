@@ -148,7 +148,7 @@ namespace OmsiHook
             if (index < this.PublicVars.Length && index >= 0)
                 return this.PublicVars[index];
             else
-                throw new Exception("Variable '" + VarName + "' not found in object.");
+                throw new Exception("Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
         }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace OmsiHook
             if (index < this.PublicVars.Length && index >= 0)
                 this.PublicVars[index] = Value;
             else
-                throw new Exception("Variable '" + VarName + "' not found in object.");
+                throw new Exception("Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace OmsiHook
             if (index < this.ComplObjInst.StringVars.Length && index >= 0)
                 return this.ComplObjInst.StringVars[index];
             else
-                throw new Exception("String Variable '" + VarName + "' not found in object.");
+                throw new Exception("String Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace OmsiHook
             if (index < this.ComplObjInst.StringVars.Length && index >= 0)
                 this.ComplObjInst.StringVars[index] = Value;
             else
-                throw new Exception("String Variable '" + VarName + "' not found in object.");
+                throw new Exception("String Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
         }
     }
 }
