@@ -1,4 +1,6 @@
-﻿namespace OmsiHook
+﻿using System;
+
+namespace OmsiHook
 {
     /// <summary>
     /// Base class for complex map object instances - such as vehicle instances and human instances
@@ -65,7 +67,13 @@
         {
             get => new(Memory, Address + 0x210);
         }
+
+        [Obsolete("This was an error in the translation - please use ComplObjInst")]
         public OmsiComplMapObjInst ComplMapObjInst
+        {
+            get => null;
+        }
+        public OmsiComplObjInst ComplObjInst
         {
             get => new(Memory, Address + 0x214);
         }
@@ -152,8 +160,8 @@
         /// <exception cref="System.Exception"/>
         public void SetVariable(string VarName, float Value)
         {
-            int index = this.ComplMapObj.GetVarIndex(VarName);
-            if (index < this.PublicVars.length && index >= 0)
+            int index = this.ComplMapObj.GetStringVarIndex(VarName);
+            if (index < this.ComplMapObjInst..length && index >= 0)
                 this.PublicVars[index] = Value;
             else
                 throw new System.Exception("Variable '" + VarName + "' not found in object.");

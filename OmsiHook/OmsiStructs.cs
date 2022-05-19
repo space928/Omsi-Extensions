@@ -1765,4 +1765,47 @@ namespace OmsiHook
         [OmsiStructArrayPtr(typeof(OmsiRVTypeTour), typeof(OmsiRVTypeTourInternal))] public int list_type_tour;
         [OmsiStruct(typeof(OmsiRVTypesLine), typeof(OmsiRVTypesLineInternal))] public int list_types_line;
     }
+
+    public struct OmsiLOD
+    {
+        public float minSize;
+    }
+
+    public struct OmsiSpot
+    {
+        public D3DVector pos;
+        public D3DVector dir;
+        public float r;
+        public float g;
+        public float b;
+        public float range;
+        public float innerCone;
+        public float outerCoune;
+    }
+
+    public struct OmsiOFTTex
+    {
+        public int source;
+        public string font;
+        public OmsiPoint size;
+        public byte fullColor;
+        public uint color;
+        public byte orientation;
+        public char grid;
+    }
+    internal struct OmsiOFTTexInternal
+    {
+        public int source;
+        [OmsiStrPtr] public int font;
+        public OmsiPoint size;
+        public byte fullColor;
+        public uint color;
+        public byte orientation;
+        public char grid;
+    }
+
+    public struct OmsiScriptTex
+    {
+        public OmsiPoint size;
+    }
 }
