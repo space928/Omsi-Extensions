@@ -1,4 +1,6 @@
-﻿namespace OmsiHook
+﻿using System;
+
+namespace OmsiHook
 {
     /// <summary>
     /// Base class for complex map objects - used by vehicles and humans
@@ -129,8 +131,7 @@
         public string[] SVarStrings => Memory.ReadMemoryStringArray(Address + 0x1f0);
         public string[] SysVarStrings => Memory.ReadMemoryStringArray(Address + 0x1f4);
         public string[] CallBackStrings => Memory.ReadMemoryStringArray(Address + 0x1f8);
-        //TODO:
-        //public float*[] SysVars => Memory.ReadMemoryStructArray<float*>(Address + 0x1fc);
+        public float[] SysVars => Memory.ReadMemoryStructPtrArray<float>(Address + 0x1fc);
         public bool ScriptShare
         {
             get => Memory.ReadMemory<bool>(Address + 0x200);
@@ -222,5 +223,20 @@
             get => Memory.ReadMemoryStructArray<OmsiSplineHelper>(Address + 0x260);
         }
 
+
+        public int GetVarIndex(string VarName)
+        {
+            for (int i = 0; i < this.VarStrings.Length; i++)
+                if (this.VarStrings[i] == VarName)
+                    return i;
+            throw new Exception("Variable '" + VarName + "' not found in object.");
+        }
+        public int GetStringVarIndex(string VarName)
+        {
+            for (int i = 0; i < this.SVarStrings.Length; i++)
+                if (this.SVarStrings[i] == VarName)
+                    return i;
+            throw new Exception("String Variable '" + VarName + "' not found in object.");
+        }
     }
 }

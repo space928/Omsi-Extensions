@@ -100,15 +100,14 @@ namespace OmsiHook
             get => Memory.ReadMemory<D3DColorValue>(Address + 0x225);
             set => Memory.WriteMemory(Address + 0x225, value);
         }
-        /* TODO:
-        public floatptr[] PublicVars_Int
+        public float[] PublicVars_Int
         {
-            get => Memory.ReadMemoryStructArray<floatptr>(Address + 0x238);
+            get => Memory.ReadMemoryStructPtrArray<float>(Address + 0x238);
         }
-        public floatptr[] PublicVars
+        public float[] PublicVars
         {
-            get => Memory.ReadMemoryStructArray<floatptr>(Address + 0x23c);
-        }*/
+            get => Memory.ReadMemoryStructPtrArray<float>(Address + 0x23c);
+        }
         public OmsiComplMapObjInst ScriptShareParent
         {
             get => new(Memory, Address + 0x240);
@@ -146,10 +145,10 @@ namespace OmsiHook
         public float GetVariable(string VarName)
         {
             int index = this.ComplMapObj.GetVarIndex(VarName);
-            if (index < this.PublicVars.length && index >= 0)
+            if (index < this.PublicVars.Length && index >= 0)
                 return this.PublicVars[index];
             else
-                throw new System.Exception("Variable '" + VarName + "' not found in object.");
+                throw new Exception("Variable '" + VarName + "' not found in object.");
         }
 
         /// <summary>
@@ -160,11 +159,41 @@ namespace OmsiHook
         /// <exception cref="System.Exception"/>
         public void SetVariable(string VarName, float Value)
         {
-            int index = this.ComplMapObj.GetStringVarIndex(VarName);
-            if (index < this.ComplMapObjInst..length && index >= 0)
+            int index = this.ComplMapObj.GetVarIndex(VarName);
+            if (index < this.PublicVars.Length && index >= 0)
                 this.PublicVars[index] = Value;
             else
-                throw new System.Exception("Variable '" + VarName + "' not found in object.");
+                throw new Exception("Variable '" + VarName + "' not found in object.");
+        }
+
+        /// <summary>
+        /// Get a string variable for an object from its name.
+        /// </summary>
+        /// <param name="VarName">Variable Name</param>
+        /// <returns>requested float value</returns>
+        /// <exception cref="System.Exception"/>
+        public string GetStringVariable(string VarName)
+        {
+            int index = this.ComplMapObj.GetStringVarIndex(VarName);
+            if (index < this.ComplObjInst.StringVars.Length && index >= 0)
+                return this.ComplObjInst.StringVars[index];
+            else
+                throw new Exception("String Variable '" + VarName + "' not found in object.");
+        }
+
+        /// <summary>
+        /// Set a string variable for an object to a value from its name.
+        /// </summary>
+        /// <param name="VarName">Variable Name</param>
+        /// <param name="Value">Desired Value</param>
+        /// <exception cref="System.Exception"/>
+        public void SetStringVariable(string VarName, string Value)
+        {
+            int index = this.ComplMapObj.GetStringVarIndex(VarName);
+            if (index < this.ComplObjInst.StringVars.Length && index >= 0)
+                this.ComplObjInst.StringVars[index] = Value;
+            else
+                throw new Exception("String Variable '" + VarName + "' not found in object.");
         }
     }
 }
