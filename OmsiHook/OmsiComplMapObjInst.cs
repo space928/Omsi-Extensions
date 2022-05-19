@@ -128,5 +128,35 @@
         {
             get => Memory.ReadMemoryStructArray<OmsiCollFeedback>(Address + 0x254);
         }
+
+        /// <summary>
+        /// Get a float variable for an object from its name.
+        /// </summary>
+        /// <param name="VarName">Variable Name</param>
+        /// <returns>requested float value</returns>
+        /// <exception cref="System.Exception"/>
+        public float GetVariable(string VarName)
+        {
+            int index = this.ComplMapObj.GetVarIndex(VarName);
+            if (index < this.PublicVars.length && index >= 0)
+                return this.PublicVars[index];
+            else
+                throw new System.Exception("Variable '" + VarName + "' not found in object.");
+        }
+
+        /// <summary>
+        /// Set a float variable for an object to a value from its name.
+        /// </summary>
+        /// <param name="VarName">Variable Name</param>
+        /// <param name="Value">Desired Value</param>
+        /// <exception cref="System.Exception"/>
+        public void SetVariable(string VarName, float Value)
+        {
+            int index = this.ComplMapObj.GetVarIndex(VarName);
+            if (index < this.PublicVars.length && index >= 0)
+                this.PublicVars[index] = Value;
+            else
+                throw new System.Exception("Variable '" + VarName + "' not found in object.");
+        }
     }
 }
