@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace OmsiHook
 {
+    /// <summary>
+    /// More advanced data for complex map objects, such as terrain holes and freetextures
+    /// </summary>
     public class OmsiComplObj : OmsiObject
     {
         internal OmsiComplObj(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

@@ -63,5 +63,119 @@ namespace OmsiHook
         {
             get => new(Memory, Address + 0x20);
         }
+        public byte ViewPoint_Opt
+        {
+            get => Memory.ReadMemory<byte>(Address + 0x24);
+            set => Memory.WriteMemory(Address + 0x24, value);
+        }
+        public byte ViewPoint_Snd
+        {
+            get => Memory.ReadMemory<byte>(Address + 0x25);
+            set => Memory.WriteMemory(Address + 0x25, value);
+        }
+        public float[] PublicVars
+        {
+            get => Memory.ReadMemoryStructPtrArray<float>(Address + 0x28);
+        }
+        public string[] StringVars
+        {
+            get => Memory.ReadMemoryStringArray(Address + 0x2c);
+        }
+        /* TODO:
+        public OmsiChangeTex[] ChangeTexs
+        {
+            get => Memory.ReadMemoryObjArray<OmsiChangeTex>(Address + 0x30);
+        }*/
+        /* TODO:
+        public OmsiChangeMatl[] ChangeMatls
+        {
+            get => Memory.ReadMemoryObjArray<OmsiChangeMatl>(Address + 0x34);
+        }*/
+        public OmsiFreeTexInst[] FreeTexInsts
+        {
+            get => Memory.ReadMemoryObjArray<OmsiFreeTexInst>(Address + 0x38);
+        }
+        /* TODO:
+        /// <summary>
+        /// Array of Smoke Instances
+        /// </summary>
+        public OmsiRauchInst[] RauchInsts
+        {
+            get => Memory.ReadMemoryObjArray<OmsiRauchInst>(Address + 0x3c);
+        }*/
+        /// <summary>
+        /// ! Warning Data Type Mismatch! - Official Data Type: PIDirect3DTexture9
+        /// </summary>
+        public int[] ReflectionTexs
+        {
+            get => Memory.ReadMemoryStructArray<int>(Address + 0x40);
+        }
+        public bool OFTTexturesLoaded
+        {
+            get => Memory.ReadMemory<bool>(Address + 0x44);
+            set => Memory.WriteMemory(Address + 0x44, value);
+        }
+        /* TODO:
+        public iDirect3DTexture9[] OFTTextures
+        {
+            get => Memory.ReadMemoryObjArray<iDirect3DTexture9>(Address + 0x48);
+        }*/
+        public string[] OFT_LastString
+        {
+            get => Memory.ReadMemoryStringArray(Address + 0x4c);
+        }
+        public OmsiScriptTexture[] ScriptTextures
+        {
+            get => Memory.MarshalStructs<OmsiScriptTexture, OmsiScriptTextureInternal>(Memory.ReadMemoryStructArray<OmsiScriptTextureInternal>(Address + 0x50));
+        }
+        public OmsiScriptTexture[] UseScriptTextures
+        {
+            get => Memory.MarshalStructs<OmsiScriptTexture, OmsiScriptTextureInternal>(Memory.ReadMemoryStructArray<OmsiScriptTextureInternal>(Memory.ReadMemory<int>(Address + 0x54)));
+        }
+        public float Spot_Select
+        {
+            get => Memory.ReadMemory<float>(Address + 0x58);
+            set => Memory.WriteMemory(Address + 0x58, value);
+        }
+        public D3DMatrix Position
+        {
+            get => Memory.ReadMemory<D3DMatrix>(Address + 0x5c);
+            set => Memory.WriteMemory(Address + 0x5c, value);
+        }
+        public bool RemderMe
+        {
+            get => Memory.ReadMemory<bool>(Address + 0x9c);
+            set => Memory.WriteMemory(Address + 0x9c, value);
+        }
+        public D3DMatrix Shadow_Matrix
+        {
+            get => Memory.ReadMemory<D3DMatrix>(Address + 0x9d);
+            set => Memory.WriteMemory(Address + 0x9d, value);
+        }
+        /* TODO:
+        public OmsiAnimSubMeshInst[] AnimSubMeshInsts
+        {
+            get => Memory.ReadMemoryObjArray<OmsiAnimSubMeshInst>(Address + 0xe0);
+        }*/
+        /* TODO:
+        public OmsiInteriorLightInst[] AnimSubMeshInsts
+        {
+            get => Memory.ReadMemoryObjArray<OmsiInteriorLightInst>(Address + 0xe4);
+        }*/
+        public uint LastSkinCalc
+        {
+            get => Memory.ReadMemory<uint>(Address + 0xe8);
+            set => Memory.WriteMemory(Address + 0xe8, value);
+        }
+        public D3DMatrix[] AnimMatrixes
+        {
+            get => Memory.ReadMemoryStructArray<D3DMatrix>(Address + 0xec);
+        }
+        public bool Simple_Translated
+        {
+            get => Memory.ReadMemory<bool>(Address + 0xf0);
+            set => Memory.WriteMemory(Address + 0xf0, value);
+        }
+
     }
 }

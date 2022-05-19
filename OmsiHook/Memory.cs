@@ -259,6 +259,23 @@ namespace OmsiHook
         }
 
         /// <summary>
+        /// Reads an array of pointers to structs from unmanaged memory at a given address.
+        /// </summary>
+        /// <typeparam name="T">The type of the struct to return</typeparam>
+        /// <param name="address">The address of the array to read from</param>
+        /// <returns>The parsed array of structs.</returns>
+        public T[] ReadMemoryStructPtrArray<T>(int address) where T : struct
+        {
+            int[] ptrs = ReadMemoryStructArray<int>(address);
+
+            T[] ret = new T[ptrs.Length];
+            for (int i = 0; i < ptrs.Length; i++)
+                ret[i] = ReadMemory<T>(ptrs[i]);
+
+            return ret;
+        }
+
+        /// <summary>
         /// Reads an array of strings from unmanaged memory at a given address.
         /// </summary>
         /// <param name="address">The address of the array to read from</param>
