@@ -2,6 +2,9 @@
 
 namespace OmsiHook
 {
+    /// <summary>
+    /// Map object - many global settings can be found here relating to the currently loaded map.
+    /// </summary>
     public class OmsiMap : OmsiObject
     {
         internal OmsiMap(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

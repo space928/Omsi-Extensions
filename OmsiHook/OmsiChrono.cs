@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// Data store for a map's Chrono Events
+    /// </summary>
     public class OmsiChrono : OmsiObject
     {
         internal OmsiChrono(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

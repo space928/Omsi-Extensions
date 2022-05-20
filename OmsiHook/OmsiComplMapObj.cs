@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// Base class for complex map objects - used by vehicles and humans
+    /// </summary>
     public class OmsiComplMapObj : OmsiPhysObj
     {
         internal OmsiComplMapObj(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

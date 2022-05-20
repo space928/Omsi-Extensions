@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// Base class for all OmsiHook objects - handles some of the memory managment for objects.
+    /// </summary>
     public class OmsiObject
     {
         internal Memory Memory { get; private set; }

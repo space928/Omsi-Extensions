@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace OmsiHook
 {
+    /// <summary>
+    /// Stringvars relating to a chrono event?
+    /// </summary>
     public class OmsiObjChronoVars : OmsiObject
     {
         public OmsiObjChronoVars() : base() { }

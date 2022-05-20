@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// Defines a Road Vehicle - most data is in the .bus/.ovh files
+    /// </summary>
     public class OmsiRoadVehicle : OmsiVehicle
     {
         internal OmsiRoadVehicle(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// Path Manager - used to keep track of paths mostly used by <seealso cref="OmsiHumanBeingInst">Humans</seealso>
+    /// </summary>
     public class OmsiPathManager : OmsiObject
     {
         internal OmsiPathManager(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

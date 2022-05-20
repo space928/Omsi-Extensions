@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace OmsiHook
 {
+    /// <summary>
+    /// Defines the shape of a spline in a map
+    /// </summary>
     public class OmsiCoordSystem : OmsiObject
     {
         public OmsiCoordSystem() : base() { }

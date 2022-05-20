@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// Defines a forest on a tile
+    /// </summary>
     public class OmsiKachelForest : OmsiObject
     {
         public OmsiKachelForest() : base() { }

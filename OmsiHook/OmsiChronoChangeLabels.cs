@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace OmsiHook
 {
+    /// <summary>
+    /// List of stringvars relating to a <seealso cref="OmsiChronoChange"/>
+    /// </summary>
     public class OmsiChronoChangeLabels : OmsiChronoChange
     {
         public OmsiChronoChangeLabels() : base() { }

@@ -2,6 +2,9 @@
 
 namespace OmsiHook
 {
+    /// <summary>
+    /// Particle emitter - emits <seealso cref="OmsiPartikel">Particles</seealso>
+    /// </summary>
     public class OmsiPartikelEmitter : OmsiObject
     {
         internal OmsiPartikelEmitter(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

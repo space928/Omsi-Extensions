@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// Defines a tile from a file - including heightmap and sizing
+    /// </summary>
     public class OmsiFileTerrain : OmsiObject
     {
         public OmsiFileTerrain() : base() { }

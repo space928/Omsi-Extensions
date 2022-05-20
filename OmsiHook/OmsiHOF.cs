@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace OmsiHook
 {
+    /// <summary>
+    /// Representation of a HOF / yard / depot File
+    /// </summary>
     public class OmsiHOF : OmsiObject
     {
         internal OmsiHOF(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

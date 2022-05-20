@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// Pack of sounds used by both humans and vehicles
+    /// </summary>
     public class OmsiSoundPack : OmsiObject
     {
         internal OmsiSoundPack(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

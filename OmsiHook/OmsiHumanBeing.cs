@@ -2,6 +2,9 @@
 
 namespace OmsiHook
 {
+    /// <summary>
+    /// Defines a human being.
+    /// </summary>
     public class OmsiHumanBeing : OmsiComplMapObj
     {
         internal OmsiHumanBeing(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

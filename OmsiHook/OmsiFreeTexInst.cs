@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace OmsiHook
 {
+    /// <summary>
+    /// Defines a FreeTex instance
+    /// </summary>
     public class OmsiFreeTexInst : OmsiObject
     {
         public OmsiFreeTexInst() : base() { }

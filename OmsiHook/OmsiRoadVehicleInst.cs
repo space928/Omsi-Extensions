@@ -1,5 +1,8 @@
 namespace OmsiHook
 {
+    /// <summary>
+    /// Instance of <seealso cref="OmsiRoadVehicle"/>
+    /// </summary>
     public class OmsiRoadVehicleInst : OmsiVehicleInst
     {
         internal OmsiRoadVehicleInst(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

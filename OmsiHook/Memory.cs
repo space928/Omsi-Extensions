@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace OmsiHook
 {
+    /// <summary>
+    /// Memory managment class for accessing and marshaling OMSI's memory
+    /// </summary>
     internal class Memory
     {
         private Process m_iProcess;

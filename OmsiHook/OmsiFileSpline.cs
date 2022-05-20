@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// Spline defined from a file
+    /// </summary>
     public class OmsiFileSpline : OmsiObject
     {
         public OmsiFileSpline() : base() { }

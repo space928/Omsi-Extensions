@@ -2,6 +2,9 @@
 
 namespace OmsiHook
 {
+    /// <summary>
+    /// Defines the active weather conditions as per the weather menu in game
+    /// </summary>
     public class OmsiWeather : OmsiObject
     {
         internal OmsiWeather(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// Base class for Direct 3D objects
+    /// </summary>
     public class D3DObject : OmsiObject
     {
         internal D3DObject(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

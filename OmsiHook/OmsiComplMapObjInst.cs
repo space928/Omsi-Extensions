@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// Base class for complex map object instances - such as vehicle instances and human instances
+    /// </summary>
     public class OmsiComplMapObjInst : OmsiPhysObjInst
     {
         internal OmsiComplMapObjInst(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }

@@ -1,5 +1,8 @@
 ﻿namespace OmsiHook
 {
+    /// <summary>
+    /// A Tile in a Map
+    /// </summary>
     public class OmsiMapKachel : OmsiObject
     {
         internal OmsiMapKachel(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
