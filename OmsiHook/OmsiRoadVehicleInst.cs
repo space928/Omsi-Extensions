@@ -1,3 +1,5 @@
+using System;
+
 namespace OmsiHook
 {
     /// <summary>
@@ -13,12 +15,10 @@ namespace OmsiHook
             get => Memory.ReadMemory<OmsiCriticalSection>(Address + 0x6f0);
             set => Memory.WriteMemory(Address + 0x6f0, value);
         }*/
-        /* TODO:
-        public OmsiRoadVehiclePtr RoadVehicle
+        public OmsiRoadVehicle RoadVehicle
         {
-            get => Memory.ReadMemory<OmsiRoadVehiclePtr>(Address + 0x710);
-            set => Memory.WriteMemory(Address + 0x710, value);
-        }*/
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x710));
+        }
         public bool OnLoadedKachel
         {
             get => Memory.ReadMemory<bool>(Address + 0x714);
@@ -423,6 +423,67 @@ namespace OmsiHook
         {
             get => Memory.ReadMemory<bool>(Address + 0x8ec);
             set => Memory.WriteMemory(Address + 0x8ec, value);
+        }
+
+
+        /// <summary>
+        /// Get a float variable for an object from its name.
+        /// </summary>
+        /// <param name="VarName">Variable Name</param>
+        /// <returns>requested float value</returns>
+        /// <exception cref="System.Exception"/>
+        public float GetVariable(string VarName)
+        {
+            int index = this.RoadVehicle.GetVarIndex(VarName);
+            if (index < this.PublicVars.Length && index >= 0)
+                return this.PublicVars[index];
+            else
+                throw new Exception("Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
+        }
+
+        /// <summary>
+        /// Set a float variable for an object to a value from its name.
+        /// </summary>
+        /// <param name="VarName">Variable Name</param>
+        /// <param name="Value">Desired Value</param>
+        /// <exception cref="System.Exception"/>
+        public void SetVariable(string VarName, float Value)
+        {
+            int index = this.RoadVehicle.GetVarIndex(VarName);
+            if (index < this.PublicVars.Length && index >= 0)
+                this.PublicVars[index] = Value;
+            else
+                throw new Exception("Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
+        }
+
+        /// <summary>
+        /// Get a string variable for an object from its name.
+        /// </summary>
+        /// <param name="VarName">Variable Name</param>
+        /// <returns>requested float value</returns>
+        /// <exception cref="System.Exception"/>
+        public string GetStringVariable(string VarName)
+        {
+            int index = this.RoadVehicle.GetStringVarIndex(VarName);
+            if (index < this.ComplObjInst.StringVars.Length && index >= 0)
+                return this.ComplObjInst.StringVars[index];
+            else
+                throw new Exception("String Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
+        }
+
+        /// <summary>
+        /// Set a string variable for an object to a value from its name.
+        /// </summary>
+        /// <param name="VarName">Variable Name</param>
+        /// <param name="Value">Desired Value</param>
+        /// <exception cref="System.Exception"/>
+        public void SetStringVariable(string VarName, string Value)
+        {
+            int index = this.RoadVehicle.GetStringVarIndex(VarName);
+            if (index < this.ComplObjInst.StringVars.Length && index >= 0)
+                this.ComplObjInst.StringVars[index] = Value;
+            else
+                throw new Exception("String Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
         }
     }
 }

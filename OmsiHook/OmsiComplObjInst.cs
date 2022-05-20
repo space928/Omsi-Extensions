@@ -79,7 +79,7 @@ namespace OmsiHook
         }
         public string[] StringVars
         {
-            get => Memory.ReadMemoryStringArray(Address + 0x2c);
+            get => Memory.ReadMemoryStringArray(Address + 0x2c, true);
         }
         /* TODO:
         public OmsiChangeTex[] ChangeTexs

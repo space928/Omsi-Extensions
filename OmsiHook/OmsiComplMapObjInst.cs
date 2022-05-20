@@ -135,7 +135,7 @@ namespace OmsiHook
         {
             get => Memory.ReadMemoryStructArray<OmsiCollFeedback>(Address + 0x254);
         }
-
+        /*
         /// <summary>
         /// Get a float variable for an object from its name.
         /// </summary>
@@ -194,6 +194,6 @@ namespace OmsiHook
                 this.ComplObjInst.StringVars[index] = Value;
             else
                 throw new Exception("String Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
-        }
+        }*/
     }
 }
