@@ -11,12 +11,14 @@ namespace OmsiHook
     /// <summary>
     /// Memory managment class for accessing and marshaling OMSI's memory
     /// </summary>
-    internal class Memory
+    public class Memory
     {
         private Process m_iProcess;
         private IntPtr m_iProcessHandle;
 
         private int m_iBytesRead;
+
+        internal IntPtr IprocessHandle { get => m_iProcessHandle; }
 
         /// <summary>
         /// Attempts to attach to a given process as a debugger.

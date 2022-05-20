@@ -56,5 +56,21 @@ namespace OmsiHook
         private static extern int TProgManPlaceRandomBus(int progMan, int aityp,
             int group, float TTtime, bool thread, bool instantCopy, int _typ,
             bool scheduled, int startDay, int tour, int line);
+
+
+        /// <summary>
+        /// TODO: MAKE EM PRIVATE - TESTING
+        /// </summary>
+        /// <param name="that"></param>
+        /// <param name="level"></param>
+        /// <param name="pLockedRect"></param>
+        /// <param name="pRect"></param>
+        /// <param name="Flags"></param>
+        /// <returns></returns>
+        [DllImport("OmsiHookInvoker.dll")]
+        public static extern int D3DTexture9LockRectangle(int that, int level, int pLockedRect, int pRect, int Flags);
+
+        [DllImport("OmsiHookInvoker.dll")]
+        public static extern int D3DTexture9UnlockRectangle(int that, int level);
     }
 }

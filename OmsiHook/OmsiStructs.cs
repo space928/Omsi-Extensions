@@ -1808,4 +1808,84 @@ namespace OmsiHook
     {
         public OmsiPoint size;
     }
+
+    public struct OmsiTextureItem
+    {
+        public ushort size_x;
+        public ushort size_y;
+        public double mem;
+        public int dataSize;
+        public bool dataReady;
+        public IntPtr texture;
+        public IntPtr oldTexture;
+        public string path;
+        public string justFilename;
+        public string loadPath;
+        public byte loaded;
+        public byte load_request;
+        public bool managed;
+        public uint failed;
+        public ushort used;
+        public ushort used_highRes;
+        public bool threadLoading;
+        public bool hasSpecials;
+        public bool no_unload;
+        public bool onlyAlpha;
+        public int nightMap;
+        public int winterSnowMap;
+        public int winterSnowfallMap;
+        public int fallMap;
+        public int springMap;
+        public int winterMap;
+        public int summerDryMap;
+        public int surfMap;
+        public bool moisture;
+        public bool puddles;
+        public bool moisture_ic;
+        public bool puddles_ic;
+        public byte surface;
+        public byte surface_ic;
+        public bool terrainMapping;
+        public bool terrainMapping_alpha;
+    }
+
+    internal struct OmsiTextureItemInternal
+    {
+        public ushort size_x;
+        public ushort size_y;
+        public double mem;
+        public int dataSize;
+        public bool dataReady;
+        [OmsiPtr] public int texture;
+        [OmsiPtr] public int oldTexture;
+        [OmsiStrPtr] public int path;
+        [OmsiStrPtr] public int justFilename;
+        [OmsiStrPtr] public int loadPath;
+        public byte loaded;
+        public byte load_request;
+        public bool managed;
+        public uint failed;
+        public ushort used;
+        public ushort used_highRes;
+        public bool threadLoading;
+        public bool hasSpecials;
+        public bool no_unload;
+        public bool onlyAlpha;
+        public int nightMap;
+        public int winterSnowMap;
+        public int winterSnowfallMap;
+        public int fallMap;
+        public int springMap;
+        public int winterMap;
+        public int summerDryMap;
+        public int surfMap;
+        public bool moisture;
+        public bool puddles;
+        public bool moisture_ic;
+        public bool puddles_ic;
+        public byte surface;
+        public byte surface_ic;
+        public bool terrainMapping;
+        public bool terrainMapping_alpha;
+    }
 }

@@ -80,5 +80,14 @@ namespace OmsiHook
         /// Timetable manager for current session
         /// </summary>
         public OmsiTimeTableMan TimeTableManager => new(Memory, Memory.ReadMemory<int>(0x008614e8));
+
+        /// <summary>
+        /// ! TESTING ! - Texture Manager
+        /// </summary>
+        public OmsiTextureMan TextureMan1 => new(Memory, Memory.ReadMemory<int>(0x00861bc4));
+        /// <summary>
+        /// ! TESTING ! - Texture Manager
+        /// </summary>
+        public OmsiTextureMan TextureMan2 => new(Memory, Memory.ReadMemory<int>(0x00861bc8));
     }
 }

@@ -119,6 +119,13 @@ __declspec(naked) int _cdecl BorlandFastCall(int funcPtr, int nRegArgs, int nArg
     }
 }
 
+cdecl int ThisCall(int functionPointer, int that, ...) {
+    _asm {
+        CALL functionPointer
+    }
+
+}
+
 // Warning function signature types have little meaning, they are chosen specifically to 
 // ensure the correct argument size is used!
 // NOTE: For float params, the compiler likes to extend them to doubles sometimes, just make 
@@ -150,4 +157,12 @@ extern "C" __declspec(dllexport) int TProgManPlaceRandomBus(int progMan, int ait
     return BorlandFastCall(0x00708f8c, 3, 11, 
         progMan, aityp, group, TTtime, thread, instantCopy, _typ,
         scheduled, startDay, tour, line);
+}
+
+
+extern "C" _declspec(dllexport) int D3DTexture9LockRectangle(int that, int level, int pLockedRect, int pRect, int Flags) {
+    return ThisCall(that + 0x4c, that, level, pLockedRect, pRect, Flags);
+}
+extern "C" _declspec(dllexport) int D3DTexture9UnlockRectangle(int that, int level) {
+    return ThisCall(that + 0x50, that, level);
 }

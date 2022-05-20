@@ -18,6 +18,9 @@ namespace OmsiHook
         private OmsiGlobals globals;
         private OmsiRemoteMethods remoteMethods;
 
+        public IntPtr IprocessHandle { get => omsiMemory.IprocessHandle; }
+        public Memory Mem { get => omsiMemory; }
+
         public OmsiGlobals Globals => globals ??= new(omsiMemory, 0, this);
 
 

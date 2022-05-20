@@ -43,8 +43,27 @@ namespace OmsiHookPlugin
                 Log("Spawning bus!");
                 try
                 {
-                    hook.Globals.RemoteMethods.PlaceRandomBus();
-                } catch (Exception e)
+                    var pLockedRect = Marshal.AllocCoTaskMem(1024);
+                    OmsiRemoteMethods.D3DTexture9LockRectangle(hook.Globals.PlayerVehicle.ComplObjInst.ScriptTextures[2].tex.ToInt32(), 0, pLockedRect.ToInt32(), 0, 0);
+                    unsafe
+                    {
+                        for (int y = 0; y < 708; ++y)
+                        {
+                            for (int x = 0; x < 450; ++x)
+                            {
+                                byte* destinationPixel = ((byte*)(pLockedRect + 4)) + *((int*)(pLockedRect+8)) * y + x * 4;
+
+                                destinationPixel[0] = (byte)((x * 2) % 256);
+                                destinationPixel[1] = 0;
+                                destinationPixel[2] = 0;
+                                destinationPixel[3] = 255;
+                            }
+                        }
+                    }
+                    OmsiRemoteMethods.D3DTexture9UnlockRectangle(hook.Globals.PlayerVehicle.ComplObjInst.ScriptTextures[2].tex.ToInt32(), 0);
+
+                }
+                catch (Exception e)
                 {
                     Log("Uh oh:");
                     Log(e.Message);
