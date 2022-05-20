@@ -7,7 +7,9 @@ namespace OmsiHook
     /// </summary>
     public class OmsiComplMapObjInst : OmsiPhysObjInst
     {
-        internal OmsiComplMapObjInst(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
+        internal OmsiComplMapObjInst(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) {
+            this.PublicVarsInternal = new MemArray<int>(Memory, Memory.ReadMemory<int>(Address + 0x23c));
+        }
         public OmsiComplMapObjInst() : base() { }
 
         public uint IDCode
@@ -104,10 +106,15 @@ namespace OmsiHook
         {
             get => Memory.ReadMemoryStructPtrArray<float>(Address + 0x238);
         }
-        public float[] PublicVars
+        private MemArray<int> PublicVarsInternal;
+        public MemArray<int> PublicVars
+        {
+            get => PublicVarsInternal;
+        }
+        /*public float[] PublicVars
         {
             get => Memory.ReadMemoryStructPtrArray<float>(Memory.ReadMemory<int>(Address + 0x23c));
-        }
+        }*/
         public OmsiComplMapObjInst ScriptShareParent
         {
             get => new(Memory, Memory.ReadMemory<int>(Address + 0x240));
@@ -144,9 +151,10 @@ namespace OmsiHook
         /// <exception cref="System.Exception"/>
         public float GetVariable(string VarName)
         {
+            this.PublicVars.UpdateFromHook();
             int index = this.ComplMapObj.GetVarIndex(VarName);
-            if (index < this.PublicVars.Length && index >= 0)
-                return this.PublicVars[index];
+            if (index < this.PublicVars.Count && index >= 0)
+                return Memory.ReadMemory<float>(this.PublicVars[index]);
             else
                 throw new Exception("Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
         }
@@ -159,9 +167,10 @@ namespace OmsiHook
         /// <exception cref="System.Exception"/>
         public void SetVariable(string VarName, float Value)
         {
+            this.PublicVars.UpdateFromHook();
             int index = this.ComplMapObj.GetVarIndex(VarName);
-            if (index < this.PublicVars.Length && index >= 0)
-                this.PublicVars[index] = Value;
+            if (index < this.PublicVars.Count && index >= 0)
+                Memory.WriteMemory(this.PublicVars[index], Value);
             else
                 throw new Exception("Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
         }

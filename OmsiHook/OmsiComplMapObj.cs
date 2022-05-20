@@ -7,7 +7,9 @@ namespace OmsiHook
     /// </summary>
     public class OmsiComplMapObj : OmsiPhysObj
     {
-        internal OmsiComplMapObj(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
+        internal OmsiComplMapObj(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) {
+            VarStringsInternal = Memory.ReadMemoryStringArray(Address + 0x1ec);
+        }
         public OmsiComplMapObj() : base() { }
 
         public string[] Scripts_Int => Memory.ReadMemoryStringArray(Address + 0x17c);
@@ -127,7 +129,8 @@ namespace OmsiHook
             get => Memory.ReadMemory<OmsiMapRenderPriority>(Address + 0x1e9);
             set => Memory.WriteMemory(Address + 0x1e9, value);
         }
-        public string[] VarStrings => Memory.ReadMemoryStringArray(Address + 0x1ec);
+        internal string[] VarStringsInternal;
+        public string[] VarStrings => VarStringsInternal;
         public string[] SVarStrings => Memory.ReadMemoryStringArray(Address + 0x1f0);
         public string[] SysVarStrings => Memory.ReadMemoryStringArray(Address + 0x1f4);
         public string[] CallBackStrings => Memory.ReadMemoryStringArray(Address + 0x1f8);

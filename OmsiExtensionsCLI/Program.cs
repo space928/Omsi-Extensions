@@ -37,13 +37,16 @@ namespace OmsiExtensionsCLI
                 Console.WriteLine("".PadRight(Console.WindowWidth-1));
                 try
                 {
-                    Console.WriteLine($"IBIS: {omsi.Globals.PlayerVehicle.GetStringVariable("IBIS")}  IBIS_TerminusCode: {omsi.Globals.PlayerVehicle.GetVariable("IBIS_TerminusCode")}");
+                    Console.WriteLine($"IBIS_cabindisplay: {omsi.Globals.PlayerVehicle.GetStringVariable("IBIS_cabindisplay")}  IBIS_Linie_Complex: {omsi.Globals.PlayerVehicle.GetVariable("IBIS_Linie_Complex")}".PadRight(Console.WindowWidth - 1));
+
+
+                    omsi.Globals.PlayerVehicle.SetVariable("IBIS_Linie_Complex", (float)(Math.Floor(omsi.Globals.PlayerVehicle.Position.x)*100));
                 }
                 catch (Exception e) { Console.WriteLine(e.Message); }
                 //omsi.Globals.PlayerVehicle.Velocity = new D3DVector { x=0, y=0, z=5 };
                 //omsi.Globals.PlayerVehicle.Bremspedal = 0;
 
-                Thread.Sleep(50);
+                Thread.Sleep(210);
             }
         }
     }
