@@ -226,15 +226,17 @@ namespace OmsiHook
 
         public int GetVarIndex(string VarName)
         {
-            for (int i = 0; i < this.VarStrings.Length; i++)
-                if (this.VarStrings[i] == VarName)
+            string[] strings = this.VarStrings;
+            for (int i = 0; i < strings.Length; i++)
+                if (strings[i] == VarName)
                     return i;
             throw new Exception("Variable '" + VarName + "' not found in object.");
         }
         public int GetStringVarIndex(string VarName)
         {
-            for (int i = 0; i < this.SVarStrings.Length; i++)
-                if (this.SVarStrings[i] == VarName)
+            string[] strings = this.SVarStrings;
+            for (int i = 0; i < strings.Length; i++)
+                if (strings[i] == VarName)
                     return i;
             throw new Exception("String Variable '" + VarName + "' not found in object.");
         }

@@ -65,7 +65,7 @@ namespace OmsiHook
         }
         public OmsiComplMapObj ComplMapObj
         {
-            get => new(Memory, Address + 0x210);
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x210));
         }
 
         [Obsolete("This was an error in the translation - please use ComplObjInst")]
@@ -75,7 +75,7 @@ namespace OmsiHook
         }
         public OmsiComplObjInst ComplObjInst
         {
-            get => new(Memory, Address + 0x214);
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x214));
         }
         public bool UseSound
         {
@@ -106,11 +106,11 @@ namespace OmsiHook
         }
         public float[] PublicVars
         {
-            get => Memory.ReadMemoryStructPtrArray<float>(Address + 0x23c);
+            get => Memory.ReadMemoryStructPtrArray<float>(Memory.ReadMemory<int>(Address + 0x23c));
         }
         public OmsiComplMapObjInst ScriptShareParent
         {
-            get => new(Memory, Address + 0x240);
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x240));
         }
         public float[] UserVars
         {
@@ -135,7 +135,7 @@ namespace OmsiHook
         {
             get => Memory.ReadMemoryStructArray<OmsiCollFeedback>(Address + 0x254);
         }
-        /*
+        
         /// <summary>
         /// Get a float variable for an object from its name.
         /// </summary>
@@ -194,6 +194,6 @@ namespace OmsiHook
                 this.ComplObjInst.StringVars[index] = Value;
             else
                 throw new Exception("String Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
-        }*/
+        }
     }
 }
