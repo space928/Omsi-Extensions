@@ -20,7 +20,7 @@ namespace OmsiHook
         public IntPtr Device
         {
             get => new(Memory.ReadMemory<int>(Address + 0x8));
-            set => Memory.WriteMemory(Address + 0x8, (int)value);
+            set => Memory.WriteMemory(Address + 0x8, value.ToInt32());
         }
         /// <summary>
         /// Pointer to an IDirectSoundBuffer8
@@ -28,7 +28,7 @@ namespace OmsiHook
         public IntPtr SoundBuffer
         {
             get => new(Memory.ReadMemory<int>(Address + 0xc));
-            set => Memory.WriteMemory(Address + 0xc, (int)value);
+            set => Memory.WriteMemory(Address + 0xc, value.ToInt32());
         }
         /// <summary>
         /// Pointer to an IDirectSoundFXWavesReverb8
@@ -36,7 +36,7 @@ namespace OmsiHook
         public IntPtr FX_Hall
         {
             get => new(Memory.ReadMemory<int>(Address + 0x10));
-            set => Memory.WriteMemory(Address + 0x10, (int)value);
+            set => Memory.WriteMemory(Address + 0x10, value.ToInt32());
         }
         public float FX_Hall_Gain
         {
@@ -202,7 +202,7 @@ namespace OmsiHook
         public IntPtr Int3D
         {
             get => new(Memory.ReadMemory<int>(Address + 0x80));
-            set => Memory.WriteMemory(Address + 0x80, (int)value);
+            set => Memory.WriteMemory(Address + 0x80, value.ToInt32());
         }
 
 
