@@ -1765,4 +1765,35 @@ namespace OmsiHook
         [OmsiStructArrayPtr(typeof(OmsiRVTypeTour), typeof(OmsiRVTypeTourInternal))] public int list_type_tour;
         [OmsiStruct(typeof(OmsiRVTypesLine), typeof(OmsiRVTypesLineInternal))] public int list_types_line;
     }
+
+    /* TODO: Parse the pointers better to get the variables */
+    public struct OmsiBoolClassCondiBool
+    {
+        /// <summary>
+        /// Pointer to array of float var pointers (OSC accessible variables)
+        /// </summary>
+        public int vars;
+        public int varNum;
+        public bool negative;
+    }
+    public struct OmsiBoolClassCondiInt
+    {
+        /// <summary>
+        /// Pointer to array of float var pointers (OSC accessible variables)
+        /// </summary>
+        public int vars;
+        public int varNum;
+        public int refValue;
+        public int comparison;
+    }
+    public struct OmsiBoolClassCondiFloat
+    {
+        /// <summary>
+        /// Pointer to array of float var pointers (OSC accessible variables)
+        /// </summary>
+        public int vars;
+        public int varNum;
+        public float refValue;
+        public int comparison;
+    }
 }
