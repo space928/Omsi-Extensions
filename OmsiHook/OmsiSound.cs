@@ -1,4 +1,6 @@
-﻿namespace OmsiHook
+﻿using System;
+
+namespace OmsiHook
 {
     /// <summary>
     /// Sound that is playable by OMSI
@@ -15,26 +17,26 @@
         /// <summary>
         /// Pointer to an IDirectSound8
         /// </summary>
-        public int Device
+        public IntPtr Device
         {
-            get => Memory.ReadMemory<int>(Address + 0x8);
-            set => Memory.WriteMemory(Address + 0x8, value);
+            get => (IntPtr)Memory.ReadMemory<int>(Address + 0x8);
+            set => Memory.WriteMemory(Address + 0x8, (int)value);
         }
         /// <summary>
         /// Pointer to an IDirectSoundBuffer8
         /// </summary>
-        public int SoundBuffer
+        public IntPtr SoundBuffer
         {
-            get => Memory.ReadMemory<int>(Address + 0xc);
-            set => Memory.WriteMemory(Address + 0xc, value);
+            get => (IntPtr)Memory.ReadMemory<int>(Address + 0xc);
+            set => Memory.WriteMemory(Address + 0xc, (int)value);
         }
         /// <summary>
         /// Pointer to an IDirectSoundFXWavesReverb8
         /// </summary>
-        public int FX_Hall
+        public IntPtr FX_Hall
         {
-            get => Memory.ReadMemory<int>(Address + 0x10);
-            set => Memory.WriteMemory(Address + 0x10, value);
+            get => (IntPtr)Memory.ReadMemory<int>(Address + 0x10);
+            set => Memory.WriteMemory(Address + 0x10, (int)value);
         }
         public float FX_Hall_Gain
         {
@@ -197,10 +199,10 @@
         /// <summary>
         /// Pointer to an IDirectSound3DBuffer
         /// </summary>
-        public int Int3D
+        public IntPtr Int3D
         {
-            get => Memory.ReadMemory<int>(Address + 0x80);
-            set => Memory.WriteMemory(Address + 0x80, value);
+            get => (IntPtr)Memory.ReadMemory<int>(Address + 0x80);
+            set => Memory.WriteMemory(Address + 0x80, (int)value);
         }
 
 
