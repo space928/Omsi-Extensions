@@ -1796,4 +1796,34 @@ namespace OmsiHook
         public float refValue;
         public int comparison;
     }
+    public enum OmsiMouseButton : byte
+    {
+        MBLeft, MBRight, MBMiddle
+    }
+    public enum OmsiPathRuleIdents : int
+    {
+        TPRISpeed, TPRIOvertake, TPRInocars, TPRIbuses, TPRItrucks, TPRITrafficDens, TPRIPriority
+    }
+    /// <summary>
+    /// This is a place holder struct, confirmation of exact struct data TBC
+    /// </summary>
+    public struct OmsiCriticalSection
+    {
+        public RTL_CRITICAL_SECTION cs;
+        public string name;
+        public uint ident;
+    }
+    /// <summary>
+    /// This is a place holder struct, confirmation of exact struct data TBC
+    /// </summary>
+    public struct RTL_CRITICAL_SECTION
+    {
+        IntPtr DebugInfo;
+        long LockCount;
+        long RecursionCount;
+        IntPtr OwningThread;
+        IntPtr LockSemaphore;
+        uint SpinCount;
+    }
+
 }

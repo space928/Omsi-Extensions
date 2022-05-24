@@ -80,5 +80,10 @@ namespace OmsiHook
         /// Timetable manager for current session
         /// </summary>
         public OmsiTimeTableMan TimeTableManager => new(Memory, Memory.ReadMemory<int>(0x008614e8));
+
+        /// <summary>
+        /// Current Program Manager
+        /// </summary>
+        public OmsiProgMan ProgamManager => new(Memory, Memory.ReadMemory<int>(0x00862f28));
     }
 }
