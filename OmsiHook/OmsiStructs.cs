@@ -1818,12 +1818,12 @@ namespace OmsiHook
     /// </summary>
     public struct RTL_CRITICAL_SECTION
     {
-        IntPtr DebugInfo;
-        long LockCount;
-        long RecursionCount;
-        IntPtr OwningThread;
-        IntPtr LockSemaphore;
-        uint SpinCount;
+        public IntPtr DebugInfo;
+        public long LockCount;
+        public long RecursionCount;
+        public IntPtr OwningThread;
+        public IntPtr LockSemaphore;
+        public uint SpinCount;
     }
 
 }

@@ -11,6 +11,7 @@ namespace OmsiHook
         public OmsiObjBlackRect() : base() { }
 
         internal OmsiObjBlackRect(Memory memory, int address) : base(memory, address) { }
+
         /// <summary>
         /// Pointer to IDirect3DVertexBuffer9
         /// </summary>

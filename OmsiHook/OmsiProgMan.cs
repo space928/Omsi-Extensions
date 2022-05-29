@@ -14,6 +14,7 @@ namespace OmsiHook
         public OmsiProgMan() : base() { }
 
         internal OmsiProgMan(Memory memory, int address) : base(memory, address) { }
+
         public bool LastStay
         {
             get => Memory.ReadMemory<bool>(Address + 0x4);
