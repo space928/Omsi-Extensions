@@ -1320,7 +1320,7 @@ namespace OmsiHook
         public uint passCount;
         public uint ticket_cnt;
         public float tickets_cash;
-        [OmsiStructPtr(typeof(OmsiPerbus),typeof(OmsiPerbusInternal))] public int perbus;
+        [OmsiStructArrayPtr(typeof(OmsiPerbus),typeof(OmsiPerbusInternal))] public int perbus;
 
     }
     public struct OmsiTTLogDetailed

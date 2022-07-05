@@ -18,10 +18,9 @@
             get => Memory.ReadMemory<bool>(Address + 0x500);
             set => Memory.WriteMemory(Address + 0x500, value);
         }
-        public OmsiAchse[] Achse
+        public MemArray<OmsiAchse> Achse
         {
-            get => Memory.ReadMemoryStructArray<OmsiAchse>(Address + 0x504);
-            //set => Memory.WriteMemoryStructArray<OmsiAchse>(Address + 0x504, value);
+            get => new(Memory, Address + 0x504);
         }
         /// <summary>
         /// Pivot
@@ -201,10 +200,9 @@
             get => Memory.ReadMemory<float>(Address + 0x5c4);
             set => Memory.WriteMemory(Address + 0x5c4, value);
         }
-        public OmsiContactShoe[] ContactShoes
+        public MemArray<OmsiContactShoe> ContactShoes
         {
-            get => Memory.ReadMemoryStructArray<OmsiContactShoe>(Address + 0x5c8);
-            //set => Memory.ReadMemoryStructArray<OmsiContactShoe>(Address + 0x5c8);
+            get => new(Memory, Address + 0x5c8);
         }
         public D3DVector Front_Window_Vector
         {

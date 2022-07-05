@@ -261,9 +261,9 @@ namespace OmsiHook
             get => Memory.ReadMemory<float>(Address + 0x120);
             set => Memory.WriteMemory(Address + 0x120, value);
         }
-        public OmsiPathID[] HovPath
+        public MemArray<OmsiPathID> HovPath
         {
-            get => Memory.ReadMemoryStructArray<OmsiPathID>(Address + 0x124);
+            get => new(Memory, Address + 0x124);
         }
         public OmsiPathRuleIdents Path_ActiveRule
         {

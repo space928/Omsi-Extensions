@@ -14,21 +14,21 @@
             get => 0x4
         }*/
 
-        public bool[] Links_Avl
+        public MemArray<bool> Links_Avl
         {
-            get => Memory.ReadMemoryStructArray<bool>(Address + 0x8);
+            get => new(Memory, Address + 0x8);
         }
-        public short[] StepSound
+        public MemArray<short> StepSound
         {
-            get => Memory.ReadMemoryStructArray<short>(Address + 0xc);
+            get => new(Memory, Address + 0xc);
         }
-        public float[] Height
+        public MemArray<float> Height
         {
-            get => Memory.ReadMemoryStructArray<float>(Address + 0x10);
+            get => new(Memory, Address + 0x10);
         }
-        public int[] LinkIndex
+        public MemArray<int> LinkIndex
         {
-            get => Memory.ReadMemoryStructArray<int>(Address + 0x14);
+            get => new(Memory, Address + 0x14);
         }
     }
 }
