@@ -18,6 +18,13 @@ namespace OmsiHook
 
         private int m_iBytesRead;
 
+        internal struct Flags
+        {
+            public const int PROCESS_VM_OPERATION = 0x0008;
+            public const int PROCESS_VM_READ = 0x0010;
+            public const int PROCESS_VM_WRITE = 0x0020;
+        }
+
         /// <summary>
         /// Attempts to attach to a given process as a debugger.
         /// </summary>
@@ -46,6 +53,7 @@ namespace OmsiHook
             return (false, null);
         }
 
+        #region Memory Writing Methods
         /// <summary>
         /// Sets the value of a struct at a given address.
         /// </summary>
@@ -62,7 +70,25 @@ namespace OmsiHook
         }
 
         /// <summary>
-        /// Writes the value of a struct to an array of structs at a given address.
+        /// Writes the value of a struct to an array of structs at a given address. <para/>
+        /// Performs bounds checking.
+        /// </summary>
+        /// <typeparam name="T">The type of the struct to write</typeparam>
+        /// <param name="address">The address of the array to write to</param>
+        /// <param name="value">The value of the new element</param>
+        /// <param name="index">The index of the element to write to</param>
+        public void WriteMemoryArrayItemSafe<T>(int address, T value, int index) where T : struct
+        {
+            int arr = ReadMemory<int>(address);
+            int len = ReadMemory<int>(address - 4);
+            if (index < 0 || index >= len)
+                throw new ArgumentOutOfRangeException($"Tried to write to item {index} of an {len} element array!");
+            WriteMemory(arr + index * Marshal.SizeOf<T>(), value);
+        }
+
+        /// <summary>
+        /// Writes the value of a struct to an array of structs at a given address. <para/>
+        /// Does NOT perform bounds checking!
         /// </summary>
         /// <typeparam name="T">The type of the struct to write</typeparam>
         /// <param name="address">The address of the array to write to</param>
@@ -72,6 +98,44 @@ namespace OmsiHook
         {
             int arr = ReadMemory<int>(address);
             WriteMemory(arr + index * Marshal.SizeOf<T>(), value);
+        }
+
+        /// <summary>
+        /// Allocates shared memory for an arrays of structs. <para/>
+        /// Does not zero the allocated memory!
+        /// </summary>
+        /// <typeparam name="T">The type of struct to make an array of</typeparam>
+        /// <param name="capacity">The number of items to allocate space for</param>
+        /// <param name="references">Allows the number of references to the array to be specified. 
+        /// Used when overwriting existing arrays to prevent the GC from clearing a array referenced 
+        /// by multiple objects when one is destroyed.</param>
+        /// <returns>The pointer to the first item of the newly allocated array</returns>
+        public int AllocateArray<T>(int capacity, int references = 1) where T : struct
+        {
+            /*
+             * DynArray struct layout:
+             * 0 - / NReferences (int)
+             * 1 - |
+             * 2 - |
+             * 3 - \
+             * 4 - / Length (int)
+             * 5 - |
+             * 6 - |
+             * 7 - \
+             * 8 - / Item1 (T)
+             * ...
+             * 8+sizeof(T) - Item2
+             * ...
+             */
+
+            int itemSize = Marshal.SizeOf<T>();
+            var ptr = Marshal.AllocCoTaskMem(capacity * itemSize + 8).ToInt32();
+            var arrStart = new IntPtr(ptr + 12);
+            // Write the array metadata
+            WriteMemory(ptr, references);
+            WriteMemory(ptr + 0x4, capacity);
+
+            return arrStart.ToInt32() + 8;
         }
 
         /// <summary>
@@ -160,7 +224,9 @@ namespace OmsiHook
             int arr = ReadMemory<int>(address);
             WriteMemory(arr + index * 4, value, wide);
         }
+        #endregion
 
+        #region Memory Reading Methods
         /// <summary>
         /// Reads a struct/value from unmanaged memory and returns it.
         /// </summary>
@@ -216,6 +282,114 @@ namespace OmsiHook
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Reads raw bytes from unmanaged memory at a given address.
+        /// </summary>
+        /// <param name="offset">The address to start reading from</param>
+        /// <param name="size">The number of bytes to read</param>
+        /// <returns></returns>
+        public byte[] ReadMemory(int offset, int size)
+        {
+            var buffer = new byte[size];
+
+            Imports.ReadProcessMemory((int)m_iProcessHandle, offset, buffer, size, ref m_iBytesRead);
+
+            return buffer;
+        }
+        #endregion
+
+        #region Memory Array Item Reading Methods
+        /// <summary>
+        /// Reads the value of an <seealso cref="OmsiObject"/> from an array at a given address. <para/>
+        /// Performs bounds checking for people who don't like corrupting data.
+        /// </summary>
+        /// <typeparam name="T">The type of the <seealso cref="OmsiObject"/> to read</typeparam>
+        /// <param name="address">The address of the array to read from</param>
+        /// <param name="index">The index of the element to read from</param>
+        public T ReadMemoryArrayItemObjSafe<T>(int address, int index) where T : OmsiObject, new()
+        {
+            int arr = ReadMemory<int>(address);
+            int len = ReadMemory<int>(arr - 4);
+            if (index < 0 || index >= len)
+                throw new IndexOutOfRangeException($"Tried to access element {index} in an array of {len} elements!");
+            return ReadMemoryArrayItemObj<T>(address, index);
+        }
+
+        /// <summary>
+        /// Reads the value of a <seealso cref="OmsiObject"/> from an array at a given address. <para/>
+        /// Does not perform any bounds checking!
+        /// </summary>
+        /// <typeparam name="T">The type of the <seealso cref="OmsiObject"/> to read</typeparam>
+        /// <param name="address">The address of the array to read from</param>
+        /// <param name="index">The index of the element to read from</param>
+        public T ReadMemoryArrayItemObj<T>(int address, int index) where T : OmsiObject, new()
+        {
+            int arr = ReadMemory<int>(address);
+            var n = new T();
+            n.InitObject(this, ReadMemory<int>(arr + index * 4));
+            return n;
+        }
+
+        /// <summary>
+        /// Reads the value of a struct from an array of structs at a given address. <para/>
+        /// Performs bounds checking for people who don't like corrupting data.
+        /// </summary>
+        /// <typeparam name="T">The type of the struct to read</typeparam>
+        /// <param name="address">The address of the array to read from</param>
+        /// <param name="index">The index of the element to read from</param>
+        public T ReadMemoryArrayItemSafe<T>(int address, int index) where T : struct
+        {
+            int arr = ReadMemory<int>(address);
+            int len = ReadMemory<int>(arr - 4);
+            if (index < 0 || index >= len)
+                throw new IndexOutOfRangeException($"Tried to access element {index} in an array of {len} elements!");
+            return ReadMemoryArrayItem<T>(address, index);
+        }
+
+        /// <summary>
+        /// Reads the value of a struct from an array of structs at a given address. <para/>
+        /// Does not perform any bounds checking!
+        /// </summary>
+        /// <typeparam name="T">The type of the struct to read</typeparam>
+        /// <param name="address">The address of the array to read from</param>
+        /// <param name="index">The index of the element to read from</param>
+        public T ReadMemoryArrayItem<T>(int address, int index) where T : struct
+        {
+            int arr = ReadMemory<int>(address);
+            return ReadMemory<T>(arr + index * Marshal.SizeOf<T>());
+        }
+
+        /// <summary>
+        /// Reads the value of a <seealso cref="string"/> from an array of strings at a given address. <para/>
+        /// Performs bounds checking for people who don't like corrupting data.
+        /// </summary>
+        /// <typeparam name="T">The type of the string to read</typeparam>
+        /// <param name="address">The address of the array to read from</param>
+        /// <param name="index">The index of the element to read from</param>
+        public string ReadMemoryArrayItemStringSafe(int address, int index, bool wide = false)
+        {
+            int arr = ReadMemory<int>(address);
+            int len = ReadMemory<int>(arr - 4);
+            if (index < 0 || index >= len)
+                throw new IndexOutOfRangeException($"Tried to access element {index} in an array of {len} elements!");
+            return ReadMemoryArrayItemString(address, index);
+        }
+
+        /// <summary>
+        /// Reads the value of a <seealso cref="string"/> from an array of strings at a given address. <para/>
+        /// Does not perform any bounds checking!
+        /// </summary>
+        /// <typeparam name="T">The type of the string to read</typeparam>
+        /// <param name="address">The address of the array to read from</param>
+        /// <param name="index">The index of the element to read from</param>
+        public string ReadMemoryArrayItemString(int address, int index, bool wide = false)
+        {
+            int arr = ReadMemory<int>(address);
+            return ReadMemoryString(arr + index * 4, wide);
+        }
+        #endregion
+
+        #region Memory Array Reading Methods
         /// <summary>
         /// Reads an array of OmsiObjects from unmanaged memory at a given address.
         /// </summary>
@@ -273,21 +447,9 @@ namespace OmsiHook
 
             return ret;
         }
+        #endregion 
 
-        /// <summary>
-        /// Reads raw bytes from unmanaged memory at a given address.
-        /// </summary>
-        /// <param name="offset">The address to start reading from</param>
-        /// <param name="size">The number of bytes to read</param>
-        /// <returns></returns>
-        public byte[] ReadMemory(int offset, int size)
-        {
-            var buffer = new byte[size];
-
-            Imports.ReadProcessMemory((int)m_iProcessHandle, offset, buffer, size, ref m_iBytesRead);
-
-            return buffer;
-        }
+        #region Conversion
 
         /// <summary>
         /// Marshals any data in a struct which couldn't be automatically marshalled by Marshal.PtrToStruct.
@@ -318,8 +480,8 @@ namespace OmsiHook
         /// <typeparam name="InStruct">The type of the struct to marshal</typeparam>
         /// <param name="obj">The struct as marshaled by Marshal.PtrToStruct</param>
         /// <returns>The fully marshalled struct.</returns>
-        public OutStruct MarshalStruct<OutStruct, InStruct>(InStruct obj) 
-            where OutStruct : struct 
+        public OutStruct MarshalStruct<OutStruct, InStruct>(InStruct obj)
+            where OutStruct : struct
             where InStruct : struct
         {
             object ret = new OutStruct();
@@ -368,7 +530,7 @@ namespace OmsiHook
                                 .MakeGenericMethod(a.InternalType)
                                 .Invoke(this, new object[] { val });
                             // Perform extra marshalling if needed
-                            if(a.RequiresExtraMarshalling)
+                            if (a.RequiresExtraMarshalling)
                                 val = typeof(Memory).GetMethod(nameof(MarshalStructs))
                                 .MakeGenericMethod(a.ObjType, a.InternalType)
                                 .Invoke(this, new object[] { val });
@@ -392,18 +554,6 @@ namespace OmsiHook
 
             return (OutStruct)ret;
         }
-
-        #region Other
-
-        internal struct Flags
-        {
-            public const int PROCESS_VM_OPERATION = 0x0008;
-            public const int PROCESS_VM_READ = 0x0010;
-            public const int PROCESS_VM_WRITE = 0x0020;
-        }
-        #endregion
-
-        #region Conversion
 
         private static T ByteArrayToStructure<T>(byte[] bytes) where T : struct
         {

@@ -18,70 +18,10 @@ namespace OmsiHook
         private OmsiGlobals globals;
         private OmsiRemoteMethods remoteMethods;
 
+        /// <summary>
+        /// Gets the object storing all of Omsi's global variables.
+        /// </summary>
         public OmsiGlobals Globals => globals ??= new(omsiMemory, 0, this);
-
-
-        /// <summary>
-        /// Gets the vehicle instance being driven by the player.
-        /// </summary>
-        [Obsolete("This property has been moved to the Globals Property.")]
-        public OmsiRoadVehicleInst PlayerVehicle => GetRoadVehicleInst(PlayerVehicleIndex);
-        [Obsolete("This property has been moved to the Globals Property.")]
-        public int PlayerVehicleIndex => omsiMemory.ReadMemory<int>(0x00861740);
-
-        /// <summary>
-        /// Current Weather
-        /// </summary>
-        [Obsolete("This property has been moved to the Globals Property.")]
-        public OmsiWeather Weather => new(omsiMemory, omsiMemory.ReadMemory<int>(0x008617D0));
-
-        /// <summary>
-        /// Current Map
-        /// </summary>
-        [Obsolete("This property has been moved to the Globals Property.")]
-        public OmsiMap Map => new(omsiMemory, omsiMemory.ReadMemory<int>(0x861588));
-
-        /// <summary>
-        /// In game TicketPack List
-        /// </summary>
-        [Obsolete("This property has been moved to the Globals Property.")]
-        public OmsiTicketPack TicketPack => omsiMemory.MarshalStruct<OmsiTicketPack, OmsiTicketPackInternal>(
-            omsiMemory.ReadMemory<OmsiTicketPackInternal>(0x008611fc));
-
-        /// <summary>
-        /// Access to RemoteMethods
-        /// </summary>
-        [Obsolete("This property has been moved to the Globals Property.")]
-        public OmsiRemoteMethods RemoteMethods => remoteMethods ??= new(omsiMemory, 0);
-
-        /// <summary>
-        /// Current in game Date / Time
-        /// </summary>
-        [Obsolete("This property has been moved to the Globals Property.")]
-        public OmsiTime Time => new(omsiMemory, 0);
-
-        /// <summary>
-        /// In game Driver List
-        /// </summary>
-        [Obsolete("This property has been moved to the Globals Property.")]
-        public OmsiDriver[] Drivers => omsiMemory.MarshalStructs<OmsiDriver, OmsiDriverInternal>(omsiMemory.ReadMemoryStructArray<OmsiDriverInternal>(0x008614F8));
-        [Obsolete("This property has been moved to the Globals Property.")]
-        public int SelectedDriver => omsiMemory.ReadMemory<int>(0x008614FC);
-
-        /// <summary>
-        /// Current Service logs
-        /// </summary>
-        [Obsolete("This property has been moved to the Globals Property.")]
-        public OmsiTTLogDetailed[] OmsiTTLogs => omsiMemory.MarshalStructs<OmsiTTLogDetailed, OmsiTTLogDetailedInternal>(
-            omsiMemory.ReadMemoryStructArray<OmsiTTLogDetailedInternal>(0x00861750));
-
-        /// <summary>
-        /// Current real weather config
-        /// </summary>
-        [Obsolete("This property has been moved to the Globals Property.")]
-        public OmsiActuWeather ActuWeather => new(omsiMemory, omsiMemory.ReadMemory<int>(0x00861278));
-        [Obsolete("This property has been moved to the Globals Property.")]
-        public OmsiHumanBeingInst[] Humans => omsiMemory.ReadMemoryObjArray<OmsiHumanBeingInst>(0x0086172c);
 
         /// <summary>
         /// Attaches the hooking application to OMSI.exe.
@@ -104,6 +44,7 @@ namespace OmsiHook
             Console.WriteLine("Connected succesfully!");
         }
 
+        [Obsolete("This will be obselete once TMyOMSIList is wrapped! The list of vehicles will be moved to OmsiGlobals.")]
         public OmsiRoadVehicleInst GetRoadVehicleInst(int index)
         {
             return new OmsiRoadVehicleInst(omsiMemory, GetListItem(0x00861508, index));
@@ -117,6 +58,7 @@ namespace OmsiHook
         /// <returns>The item at that location</returns>
         /// <remarks>TMyOMSIList has a bunch of junk in it as well as a TList which is what we index. 
         /// See 0x0074be18 in the dissassembly for an example of how to get an item from a TMyOMSIList</remarks>
+        [Obsolete("This API will be replaced once TMyOMSIList is wrapped!")]
         private int GetListItem(int addr, int index)
         {
             return omsiMemory.ReadMemory<int>(omsiMemory.ReadMemory<int>(omsiMemory.ReadMemory<int>(omsiMemory.ReadMemory<int>(addr) + 0x28) + 0x4) + index * 4);
