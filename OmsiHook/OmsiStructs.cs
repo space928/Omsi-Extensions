@@ -1382,6 +1382,11 @@ namespace OmsiHook
         THK_Free, THK_TooClose, THK_TooCloseFrontFront, THK_TooCloseFront, THK_TooCloseInside
     }
     
+    public enum OmsiPAIM : byte
+    {
+        PAIM_Parked, PAIM_Busstop, PAIM_Drive
+    }
+    
     public struct OmsiHumanKollisionFreeSide
     {
         public bool left;
