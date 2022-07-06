@@ -7,9 +7,7 @@ namespace OmsiHook
     /// </summary>
     public class OmsiComplMapObjInst : OmsiPhysObjInst
     {
-        internal OmsiComplMapObjInst(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) {
-            this.PublicVarsInternal = new MemArray<int>(Memory, Memory.ReadMemory<int>(Address + 0x23c));
-        }
+        internal OmsiComplMapObjInst(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
         public OmsiComplMapObjInst() : base() { }
 
         public uint IDCode
@@ -70,11 +68,6 @@ namespace OmsiHook
             get => new(Memory, Memory.ReadMemory<int>(Address + 0x210));
         }
 
-        [Obsolete("This was an error in the translation - please use ComplObjInst")]
-        public OmsiComplMapObjInst ComplMapObjInst
-        {
-            get => null;
-        }
         public OmsiComplObjInst ComplObjInst
         {
             get => new(Memory, Memory.ReadMemory<int>(Address + 0x214));
@@ -102,19 +95,14 @@ namespace OmsiHook
             get => Memory.ReadMemory<D3DColorValue>(Address + 0x225);
             set => Memory.WriteMemory(Address + 0x225, value);
         }
-        public float[] PublicVars_Int
+        public MemArray<OmsiFloatPtrInternal, OmsiFloatPtr> PublicVars_Int
         {
-            get => Memory.ReadMemoryStructPtrArray<float>(Address + 0x238);
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x238), false);
         }
-        private MemArray<int> PublicVarsInternal;
-        public MemArray<int> PublicVars
+        public MemArray<OmsiFloatPtrInternal, OmsiFloatPtr> PublicVars
         {
-            get => PublicVarsInternal;
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x23c), false);
         }
-        /*public float[] PublicVars
-        {
-            get => Memory.ReadMemoryStructPtrArray<float>(Memory.ReadMemory<int>(Address + 0x23c));
-        }*/
         public OmsiComplMapObjInst ScriptShareParent
         {
             get => new(Memory, Memory.ReadMemory<int>(Address + 0x240));
@@ -152,9 +140,10 @@ namespace OmsiHook
         public float GetVariable(string VarName)
         {
             this.PublicVars.UpdateFromHook();
+            this.PublicVars.UpdateFromHook();
             int index = this.ComplMapObj.GetVarIndex(VarName);
-            if (index < this.PublicVars.Count && index >= 0)
-                return Memory.ReadMemory<float>(this.PublicVars[index]);
+            if (index < this.PublicVars.arrayCache.Length && index >= 0)
+                return this.PublicVars[index].Float;
             else
                 throw new Exception("Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
         }
@@ -169,8 +158,8 @@ namespace OmsiHook
         {
             this.PublicVars.UpdateFromHook();
             int index = this.ComplMapObj.GetVarIndex(VarName);
-            if (index < this.PublicVars.Count && index >= 0)
-                Memory.WriteMemory(this.PublicVars[index], Value);
+            if (index < this.PublicVars.arrayCache.Length && index >= 0)
+                this.PublicVars[index] = new() { Float = Value };
             else
                 throw new Exception("Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
         }
@@ -183,6 +172,7 @@ namespace OmsiHook
         /// <exception cref="System.Exception"/>
         public string GetStringVariable(string VarName)
         {
+            this.ComplObjInst.StringVars.UpdateFromHook();
             int index = this.ComplMapObj.GetStringVarIndex(VarName);
             if (index < this.ComplObjInst.StringVars.arrayCache.Length && index >= 0)
                 return this.ComplObjInst.StringVars[index].String;
@@ -198,6 +188,7 @@ namespace OmsiHook
         /// <exception cref="System.Exception"/>
         public void SetStringVariable(string VarName, string Value)
         {
+            this.ComplObjInst.StringVars.UpdateFromHook();
             int index = this.ComplMapObj.GetStringVarIndex(VarName);
             if (index < this.ComplObjInst.StringVars.arrayCache.Length && index >= 0)
                 this.ComplObjInst.StringVars[index] = new() { String = Value};

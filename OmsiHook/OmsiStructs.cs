@@ -1886,6 +1886,14 @@ namespace OmsiHook
     {
         [OmsiStrPtr(true, true)] public int String;
     }
+    public struct OmsiFloatPtr
+    {
+        public float Float;
+    }
+    public struct OmsiFloatPtrInternal
+    {
+        [OmsiStructPtr(typeof(float))] public int Float;
+    }
 
 }
 

@@ -7,9 +7,7 @@ namespace OmsiHook
     /// </summary>
     public class OmsiComplMapObj : OmsiPhysObj
     {
-        internal OmsiComplMapObj(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) {
-            VarStringsInternal = Memory.ReadMemoryStringArray(Address + 0x1ec);
-        }
+        internal OmsiComplMapObj(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
         public OmsiComplMapObj() : base() { }
 
         public string[] Scripts_Int => Memory.ReadMemoryStringArray(Address + 0x17c);
@@ -130,11 +128,10 @@ namespace OmsiHook
             get => Memory.ReadMemory<OmsiMapRenderPriority>(Address + 0x1e9);
             set => Memory.WriteMemory(Address + 0x1e9, value);
         }
-        internal string[] VarStringsInternal;
-        public string[] VarStrings => VarStringsInternal;
-        public string[] SVarStrings => Memory.ReadMemoryStringArray(Address + 0x1f0);
-        public string[] SysVarStrings => Memory.ReadMemoryStringArray(Address + 0x1f4);
-        public string[] CallBackStrings => Memory.ReadMemoryStringArray(Address + 0x1f8);
+        public MemArrayString VarStrings => new(Memory, Address + 0x1ec, true);
+        public MemArrayString SVarStrings => new(Memory, Address + 0x1f0, true);
+        public MemArrayString SysVarStrings => new(Memory, Address + 0x1f4, true);
+        public MemArrayString CallBackStrings => new(Memory, Address + 0x1f8, true);
         public float[] SysVars => Memory.ReadMemoryStructPtrArray<float>(Address + 0x1fc);
         public bool ScriptShare
         {
@@ -230,16 +227,16 @@ namespace OmsiHook
 
         public int GetVarIndex(string VarName)
         {
-            string[] strings = this.VarStrings;
-            for (int i = 0; i < strings.Length; i++)
+            var strings = this.VarStrings;
+            for (int i = 0; i < strings.arrayCache.Length; i++)
                 if (strings[i] == VarName)
                     return i;
             throw new Exception("Variable '" + VarName + "' not found in object.");
         }
         public int GetStringVarIndex(string VarName)
         {
-            string[] strings = this.SVarStrings;
-            for (int i = 0; i < strings.Length; i++)
+            var strings = this.SVarStrings;
+            for (int i = 0; i < strings.arrayCache.Length; i++)
                 if (strings[i] == VarName)
                     return i;
             throw new Exception("String Variable '" + VarName + "' not found in object.");

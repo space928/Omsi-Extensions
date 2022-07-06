@@ -120,7 +120,7 @@ namespace OmsiHook
         public void WriteMemoryArrayItemSafe<T>(int address, T value, int index) where T : unmanaged
         {
             int arr = ReadMemory<int>(address);
-            int len = ReadMemory<int>(address - 4);
+            int len = ReadMemory<int>(arr - 4);
             if (index < 0 || index >= len)
                 throw new ArgumentOutOfRangeException($"Tried to write to item {index} of an {len} element array!");
             WriteMemory(arr + index * Marshal.SizeOf<T>(), value);
@@ -755,7 +755,7 @@ namespace OmsiHook
 
                             val = typeof(Memory).GetMethod(nameof(AllocateStruct))
                                 .MakeGenericMethod(a.InternalType)
-                                .Invoke(this, new object[] { val });
+                                .Invoke(this, new object[] { val,1 });
                             break;
 
                         case OmsiObjPtrAttribute a:
