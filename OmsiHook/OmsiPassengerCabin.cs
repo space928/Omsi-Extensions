@@ -8,14 +8,14 @@
         internal OmsiPassengerCabin(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
         public OmsiPassengerCabin() : base() { }
         
-        public OmsiSeat[] Seats
+        public MemArray<OmsiSeat> Seats
         {
-            get => Memory.ReadMemoryStructArray<OmsiSeat>(Address + 0x4);
+            get => new(Memory, Address + 0x4);
         }
         public OmsiPathPointBasic[] Entries => Memory.ReadMemoryObjArray<OmsiPathPointBasic>(Address + 0x8);
-        public OmsiEntryProp[] EntriesProp
+        public MemArray<OmsiEntryProp> EntriesProp
         {
-            get => Memory.ReadMemoryStructArray<OmsiEntryProp>(Address + 0xc);
+            get => new(Memory, Address + 0xc);
         }
         public OmsiPathPointBasic[] Exits => Memory.ReadMemoryObjArray<OmsiPathPointBasic>(Address + 0x10);
         public OmsiPassCabinStamper Stamper

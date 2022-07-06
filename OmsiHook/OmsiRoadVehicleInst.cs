@@ -29,7 +29,7 @@ namespace OmsiHook
             get => Memory.ReadMemory<bool>(Address + 0x715);
             set => Memory.WriteMemory(Address + 0x715, value);
         }
-        public OmsiAchseInstance[] Achsen => Memory.ReadMemoryStructArray<OmsiAchseInstance>(Address + 0x718);
+        public MemArray<OmsiAchseInstance> Achsen => new(Memory, Address + 0x718);
         public byte Achsen_Angetriben
         {
             get => Memory.ReadMemory<byte>(Address + 0x71c);
@@ -180,7 +180,7 @@ namespace OmsiHook
             get => Memory.ReadMemory<int>(Address + 0x7a0);
             set => Memory.WriteMemory(Address + 0x7a0, value);
         }
-        public int[] MyStations => Memory.ReadMemoryStructArray<int>(Address + 0x7a4);
+        public MemArray<int> MyStations => new(Memory, Address + 0x7a4);
         public int Ticket_Passenger
         {
             get => Memory.ReadMemory<int>(Address + 0x7a8);

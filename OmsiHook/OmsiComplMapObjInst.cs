@@ -68,11 +68,6 @@ namespace OmsiHook
             get => new(Memory, Memory.ReadMemory<int>(Address + 0x210));
         }
 
-        [Obsolete("This was an error in the translation - please use ComplObjInst")]
-        public OmsiComplMapObjInst ComplMapObjInst
-        {
-            get => null;
-        }
         public OmsiComplObjInst ComplObjInst
         {
             get => new(Memory, Memory.ReadMemory<int>(Address + 0x214));
@@ -100,13 +95,13 @@ namespace OmsiHook
             get => Memory.ReadMemory<D3DColorValue>(Address + 0x225);
             set => Memory.WriteMemory(Address + 0x225, value);
         }
-        public float[] PublicVars_Int
+        public MemArray<OmsiFloatPtrInternal, OmsiFloatPtr> PublicVars_Int
         {
-            get => Memory.ReadMemoryStructPtrArray<float>(Address + 0x238);
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x238), false);
         }
-        public float[] PublicVars
+        public MemArray<OmsiFloatPtrInternal, OmsiFloatPtr> PublicVars
         {
-            get => Memory.ReadMemoryStructPtrArray<float>(Memory.ReadMemory<int>(Address + 0x23c));
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x23c), false);
         }
         public OmsiComplMapObjInst ScriptShareParent
         {
@@ -144,9 +139,11 @@ namespace OmsiHook
         /// <exception cref="System.Exception"/>
         public float GetVariable(string VarName)
         {
+            this.PublicVars.UpdateFromHook();
+            this.PublicVars.UpdateFromHook();
             int index = this.ComplMapObj.GetVarIndex(VarName);
-            if (index < this.PublicVars.Length && index >= 0)
-                return this.PublicVars[index];
+            if (index < this.PublicVars.arrayCache.Length && index >= 0)
+                return this.PublicVars[index].Float;
             else
                 throw new Exception("Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
         }
@@ -159,9 +156,10 @@ namespace OmsiHook
         /// <exception cref="System.Exception"/>
         public void SetVariable(string VarName, float Value)
         {
+            this.PublicVars.UpdateFromHook();
             int index = this.ComplMapObj.GetVarIndex(VarName);
-            if (index < this.PublicVars.Length && index >= 0)
-                this.PublicVars[index] = Value;
+            if (index < this.PublicVars.arrayCache.Length && index >= 0)
+                this.PublicVars[index] = new() { Float = Value };
             else
                 throw new Exception("Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
         }
@@ -174,9 +172,10 @@ namespace OmsiHook
         /// <exception cref="System.Exception"/>
         public string GetStringVariable(string VarName)
         {
+            this.ComplObjInst.StringVars.UpdateFromHook();
             int index = this.ComplMapObj.GetStringVarIndex(VarName);
-            if (index < this.ComplObjInst.StringVars.Length && index >= 0)
-                return this.ComplObjInst.StringVars[index];
+            if (index < this.ComplObjInst.StringVars.arrayCache.Length && index >= 0)
+                return this.ComplObjInst.StringVars[index].String;
             else
                 throw new Exception("String Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
         }
@@ -189,9 +188,10 @@ namespace OmsiHook
         /// <exception cref="System.Exception"/>
         public void SetStringVariable(string VarName, string Value)
         {
+            this.ComplObjInst.StringVars.UpdateFromHook();
             int index = this.ComplMapObj.GetStringVarIndex(VarName);
-            if (index < this.ComplObjInst.StringVars.Length && index >= 0)
-                this.ComplObjInst.StringVars[index] = Value;
+            if (index < this.ComplObjInst.StringVars.arrayCache.Length && index >= 0)
+                this.ComplObjInst.StringVars[index] = new() { String = Value};
             else
                 throw new Exception("String Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
         }

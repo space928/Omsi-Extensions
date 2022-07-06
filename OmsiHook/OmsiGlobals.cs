@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace OmsiHook
 {
     /// <summary>
-    /// All recoginised Globals in OMSI
+    /// All recognised Globals in OMSI.
     /// </summary>
     public class OmsiGlobals : OmsiObject
     {
@@ -64,8 +64,7 @@ namespace OmsiHook
         /// <summary>
         /// Current Service logs
         /// </summary>
-        public OmsiTTLogDetailed[] OmsiTTLogs => Memory.MarshalStructs<OmsiTTLogDetailed, OmsiTTLogDetailedInternal>(
-            Memory.ReadMemoryStructArray<OmsiTTLogDetailedInternal>(0x00861750));
+        public MemArray<OmsiTTLogDetailedInternal, OmsiTTLogDetailed> OmsiTTLogs => new(Memory, 0x00861750, false);
 
         /// <summary>
         /// Current real weather config
@@ -80,6 +79,11 @@ namespace OmsiHook
         /// Timetable manager for current session
         /// </summary>
         public OmsiTimeTableMan TimeTableManager => new(Memory, Memory.ReadMemory<int>(0x008614e8));
+
+        /// <summary>
+        /// Current Program Manager
+        /// </summary>
+        public OmsiProgMan ProgamManager => new(Memory, Memory.ReadMemory<int>(0x00862f28));
 
         /// <summary>
         /// ! TESTING ! - Texture Manager

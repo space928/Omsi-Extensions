@@ -33,7 +33,7 @@ namespace OmsiExtensionsUI.ViewModels
         {
             omsiModel ??= new Models.OmsiModel();
 
-            var pos = omsiModel.OmsiHook.PlayerVehicle.Position;
+            var pos = omsiModel.OmsiHook.Globals.PlayerVehicle.Position;
             PlayerBusPosition = $"Player Bus Position = [{pos.x}, {pos.y}, {pos.z}]";
         }
     }

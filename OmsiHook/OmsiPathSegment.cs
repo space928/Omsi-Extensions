@@ -206,13 +206,13 @@ namespace OmsiHook
         {
             get => Memory.MarshalStructs<OmsiPathRule, OmsiPathRuleInternal>(Memory.ReadMemoryStructArray<OmsiPathRuleInternal>(Address + 0x1c8));
         }*/
-        public OmsiPathID[] Parallel
+        public MemArray<OmsiPathID> Parallel
         {
-            get => Memory.ReadMemoryStructArray<OmsiPathID>(Address + 0x1cc);
+            get => new(Memory, Address + 0x1cc);
         }
-        public OmsiPathCrossing[] Crossings
+        public MemArray<OmsiPathCrossing> Crossings
         {
-            get => Memory.ReadMemoryStructArray<OmsiPathCrossing>(Address + 0x1d0);
+            get => new(Memory, Address + 0x1d0);
         }
         public float Crossing_Min
         {
@@ -228,9 +228,9 @@ namespace OmsiHook
         {
             get => Memory.MarshalStructs<OmsiPathReservation, OmsiPathReservationInternal>(Memory.ReadMemoryStructArray<OmsiPathReservationInternal>(Address + 0x1dc));
         }
-        public OmsiPathSegmentFStr[] FStrn
+        public MemArray<OmsiPathSegmentFStr> FStrn
         {
-            get => Memory.ReadMemoryStructArray<OmsiPathSegmentFStr>(Address + 0x1e0);
+            get => new(Memory, Address + 0x1e0);
         }
         public OmsiPathInfoRailEnh Rail_Enh // Ptr
         {

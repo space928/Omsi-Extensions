@@ -3,6 +3,12 @@
     /// <summary>
     /// Base class for all OmsiHook objects - handles some of the memory managment for objects.
     /// </summary>
+    /// <remarks>
+    /// Wraps a native pointer in the remote application. Orphaned <seealso cref="OmsiObject"/>s with no 
+    /// <seealso cref="Address"/> bound will not behave correctly and should never be assigned to remote 
+    /// variables! As such, an <seealso cref="OmsiObject"/> cannot be created in C# without first allocating
+    /// an object in the remote application to bind to.
+    /// </remarks>
     public class OmsiObject
     {
         internal Memory Memory { get; private set; }

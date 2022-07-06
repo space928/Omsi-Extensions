@@ -112,11 +112,12 @@ namespace OmsiHook
             get => Memory.ReadMemory<int>(Address + 0x1d0);
             set => Memory.WriteMemory(Address + 0x1d0, value);
         }
-        public OmsiTreeInfo TreeInfo
+        // TODO: Implement internal struct for OmsiTreeInfo
+        /*public OmsiTreeInfo TreeInfo
         {
             get => Memory.ReadMemory<OmsiTreeInfo>(Address + 0x1d4);
             set => Memory.WriteMemory(Address + 0x1d4, value);
-        }
+        }*/
         public bool OnlyEditor
         {
             get => Memory.ReadMemory<bool>(Address + 0x1e8);
@@ -127,10 +128,10 @@ namespace OmsiHook
             get => Memory.ReadMemory<OmsiMapRenderPriority>(Address + 0x1e9);
             set => Memory.WriteMemory(Address + 0x1e9, value);
         }
-        public string[] VarStrings => Memory.ReadMemoryStringArray(Address + 0x1ec);
-        public string[] SVarStrings => Memory.ReadMemoryStringArray(Address + 0x1f0);
-        public string[] SysVarStrings => Memory.ReadMemoryStringArray(Address + 0x1f4);
-        public string[] CallBackStrings => Memory.ReadMemoryStringArray(Address + 0x1f8);
+        public MemArrayString VarStrings => new(Memory, Address + 0x1ec, true);
+        public MemArrayString SVarStrings => new(Memory, Address + 0x1f0, true);
+        public MemArrayString SysVarStrings => new(Memory, Address + 0x1f4, true);
+        public MemArrayString CallBackStrings => new(Memory, Address + 0x1f8, true);
         public float[] SysVars => Memory.ReadMemoryStructPtrArray<float>(Address + 0x1fc);
         public bool ScriptShare
         {
@@ -204,11 +205,11 @@ namespace OmsiHook
         }*/
         public OmsiPathManager ComplObj
         {
-            get => new OmsiPathManager(Memory, Memory.ReadMemory<int>(Address + 0x250));
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x250));
         }
-        public OmsiObjectPathInfo[] Paths
+        public MemArray<OmsiObjectPathInfoInternal, OmsiObjectPathInfo> Paths
         {
-            get => Memory.ReadMemoryStructArray<OmsiObjectPathInfo>(Address + 0x254);
+            get => new(Memory, Address + 0x254);
         }
         public OmsiSnapPosition[] SnapPoints
         {
@@ -218,24 +219,24 @@ namespace OmsiHook
         {
             get => Memory.ReadMemoryStructArray<OmsiCameraSettings>(Address + 0x25c);
         }
-        public OmsiSplineHelper[] OmsiSplineHelpers
+        public MemArray<OmsiSplineHelperInternal, OmsiSplineHelper> OmsiSplineHelpers
         {
-            get => Memory.ReadMemoryStructArray<OmsiSplineHelper>(Address + 0x260);
+            get => new(Memory, Address + 0x260);
         }
 
 
         public int GetVarIndex(string VarName)
         {
-            string[] strings = this.VarStrings;
-            for (int i = 0; i < strings.Length; i++)
+            var strings = this.VarStrings;
+            for (int i = 0; i < strings.arrayCache.Length; i++)
                 if (strings[i] == VarName)
                     return i;
             throw new Exception("Variable '" + VarName + "' not found in object.");
         }
         public int GetStringVarIndex(string VarName)
         {
-            string[] strings = this.SVarStrings;
-            for (int i = 0; i < strings.Length; i++)
+            var strings = this.SVarStrings;
+            for (int i = 0; i < strings.arrayCache.Length; i++)
                 if (strings[i] == VarName)
                     return i;
             throw new Exception("String Variable '" + VarName + "' not found in object.");

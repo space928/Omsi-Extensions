@@ -16,7 +16,7 @@ namespace OmsiExtensionsCLI
             OmsiHook.OmsiHook omsi = new();
             Task.WaitAll(omsi.AttachToOMSI());
             Console.Clear();
-
+            bool toggle = false;
             while (true)
             {
                 var pos = omsi.Globals.PlayerVehicle.Position;
@@ -39,7 +39,13 @@ namespace OmsiExtensionsCLI
                 Console.WriteLine("".PadRight(Console.WindowWidth - 1));
                 try
                 {
-                    Console.WriteLine($"IBIS: {omsi.Globals.PlayerVehicle.GetStringVariable("IBIS")}  IBIS_TerminusCode: {omsi.Globals.PlayerVehicle.GetVariable("IBIS_TerminusCode")}");
+                    Console.WriteLine($"IBIS_cabindisplay: {omsi.Globals.PlayerVehicle.GetStringVariable("IBIS_cabindisplay")}  IBIS_Linie_Complex: {omsi.Globals.PlayerVehicle.GetVariable("IBIS_Linie_Complex")}".PadRight(Console.WindowWidth - 1));
+
+
+                    omsi.Globals.PlayerVehicle.SetVariable("IBIS_Linie_Complex", (float)(Math.Floor(omsi.Globals.PlayerVehicle.Position.x)*100));
+                    omsi.Globals.PlayerVehicle.SetStringVariable("Matrix_TerminusL1", toggle ? "AUXI" : "string");
+                    omsi.Globals.PlayerVehicle.SetStringVariable("Matrix_TerminusL2", toggle ? "AUXI" : "string");
+                    toggle = !toggle;
                 }
                 catch (Exception e) { Console.WriteLine(e.Message); }
                 //omsi.Globals.PlayerVehicle.Velocity = new D3DVector { x=0, y=0, z=5 };
@@ -72,7 +78,7 @@ namespace OmsiExtensionsCLI
                     t.UnlockRectangle(0);
                 }
 
-
+                //omsi.Globals.OmsiTTLogs
                 Thread.Sleep(50);
             }
         }

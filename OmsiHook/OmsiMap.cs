@@ -78,8 +78,8 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x2d, value);
         }
 
-        public OmsiMapSeason[] Seasons
-            => Memory.ReadMemoryStructArray<OmsiMapSeason>(Address + 0x30);
+        public MemArray<OmsiMapSeason> Seasons
+            => new(Memory, Address + 0x30, true);
 
         public bool RealSwitches
         {
@@ -337,7 +337,7 @@ namespace OmsiHook
         public OmsiHolidays[] Holidays => Memory.MarshalStructs<OmsiHolidays, OmsiHolidaysInternal>(
             Memory.ReadMemoryStructArray<OmsiHolidaysInternal>(Address + 0x1cc));
 
-        public OmsiDST[] DaylightSavingTimes => Memory.ReadMemoryStructArray<OmsiDST>(Address + 0x1d0);
+        public MemArray<OmsiDST> DaylightSavingTimes => new(Memory, Address + 0x1d0, true);
 
         public D3DMatrix TexMatrix_Main
         {

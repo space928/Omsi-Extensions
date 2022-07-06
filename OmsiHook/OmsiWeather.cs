@@ -15,7 +15,7 @@ namespace OmsiHook
         public OmsiWeatherProp ActWeather
         {
             get => Memory.MarshalStruct<OmsiWeatherProp, OmsiWeatherPropInternal>(Memory.ReadMemory<OmsiWeatherPropInternal>(Address + 0x8));
-            set => Memory.WriteMemory(Address + 0x8, value);
+            set => Memory.WriteMemory(Address + 0x8, Memory.UnMarshalStruct<OmsiWeatherPropInternal, OmsiWeatherProp>(value));
         }
         public float PriLgtFactor
         {

@@ -12,15 +12,13 @@
             get => Memory.ReadMemory<int>(Address + 0x264);
             set => Memory.WriteMemory(Address + 0x264, value);
         }
-        public OmsiCameraSettings[] CameraSettingsDriver
+        public MemArray<OmsiCameraSettings> CameraSettingsDriver
         {
-            get => Memory.ReadMemoryStructArray<OmsiCameraSettings>(Address + 0x268);
-            //set => Memory.WriteMemory(Address + 0x264, value);
+            get => new(Memory, Address + 0x268);
         }
-        public OmsiCameraSettings[] CameraSettingsPax
+        public MemArray<OmsiCameraSettings> CameraSettingsPax
         {
-            get => Memory.ReadMemoryStructArray<OmsiCameraSettings>(Address + 0x26c);
-            //set => Memory.WriteMemory(Address + 0x264, value);
+            get => new(Memory, Address + 0x26c);
         }
         public D3DVector OutsideCameraCenter
         {
