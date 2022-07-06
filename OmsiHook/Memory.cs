@@ -549,7 +549,7 @@ namespace OmsiHook
         /// <typeparam name="T">The type of the struct to return</typeparam>
         /// <param name="address">The address of the array to read from</param>
         /// <returns>The parsed array of structs.</returns>
-        public T[] ReadMemoryStructPtrArray<T>(int address) where T : struct
+        public T[] ReadMemoryStructPtrArray<T>(int address) where T : unmanaged
         {
             int[] ptrs = ReadMemoryStructArray<int>(address);
 

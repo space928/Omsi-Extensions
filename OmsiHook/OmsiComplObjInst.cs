@@ -77,9 +77,9 @@ namespace OmsiHook
         {
             get => Memory.ReadMemoryStructPtrArray<float>(Address + 0x28);
         }
-        public string[] StringVars
+        public MemArray<OmsiWStringInternal, OmsiWString> StringVars
         {
-            get => Memory.ReadMemoryStringArray(Address + 0x2c, true);
+            get => new(Memory, Address + 0x2c, false);
         }
         /* TODO:
         public OmsiChangeTex[] ChangeTexs

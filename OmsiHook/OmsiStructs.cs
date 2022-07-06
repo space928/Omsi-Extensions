@@ -1878,5 +1878,14 @@ namespace OmsiHook
         public uint SpinCount;
     }
 
+    public struct OmsiWString
+    {
+        public string String;
+    }
+    public struct OmsiWStringInternal
+    {
+        [OmsiStrPtr(true, true)] public int String;
+    }
+
 }
 

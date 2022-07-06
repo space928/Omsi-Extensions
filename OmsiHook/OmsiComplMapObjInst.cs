@@ -184,8 +184,8 @@ namespace OmsiHook
         public string GetStringVariable(string VarName)
         {
             int index = this.ComplMapObj.GetStringVarIndex(VarName);
-            if (index < this.ComplObjInst.StringVars.Length && index >= 0)
-                return this.ComplObjInst.StringVars[index];
+            if (index < this.ComplObjInst.StringVars.arrayCache.Length && index >= 0)
+                return this.ComplObjInst.StringVars[index].String;
             else
                 throw new Exception("String Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
         }
@@ -199,8 +199,8 @@ namespace OmsiHook
         public void SetStringVariable(string VarName, string Value)
         {
             int index = this.ComplMapObj.GetStringVarIndex(VarName);
-            if (index < this.ComplObjInst.StringVars.Length && index >= 0)
-                this.ComplObjInst.StringVars[index] = Value;
+            if (index < this.ComplObjInst.StringVars.arrayCache.Length && index >= 0)
+                this.ComplObjInst.StringVars[index] = new() { String = Value};
             else
                 throw new Exception("String Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
         }
