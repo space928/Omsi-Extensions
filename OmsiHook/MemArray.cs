@@ -139,8 +139,7 @@ namespace OmsiHook
     /// For better performance in c# the contents of the wrapped array can be copied to managed memory when constructed
     /// or whenever <seealso cref="UpdateFromHook"/> is called. Cached arrays 
     /// </remarks>
-    /// <typeparam name="T">The type of struct to wrap. While it is constrained as <c>struct</c> for practical reasons, 
-    /// <c>T</c> <b>must</b> be constrained as <c>unmanaged</c></typeparam>
+    /// <typeparam name="T">The type of struct to wrap.</typeparam>
     public class MemArray<T> : MemArray<T, T> where T : unmanaged
     {
         public override T[] WrappedArray => cached ? arrayCache : Memory.ReadMemoryStructArray<T>(Address);
