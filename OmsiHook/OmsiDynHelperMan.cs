@@ -21,11 +21,12 @@ namespace OmsiHook
         {
             get => Memory.ReadMemoryObjArray<OmsiComplMapSceneObjInst>(Address + 0x8);
         }
-        public OmsiCriticalSection CriticalSection
+        // TODO: Implement OmsiCriticalSectionInternal
+        /*public OmsiCriticalSection CriticalSection
         {
             get => Memory.ReadMemory<OmsiCriticalSection>(Address + 0xc);
             set => Memory.WriteMemory(Address + 0xc, value);
-        }
+        }*/
         public OmsiPathSegment Prev_PathSegment
         {
             get => new(Memory, Memory.ReadMemory<int>(0x2c));

@@ -937,7 +937,7 @@ namespace OmsiHook
         public OmsiThirdRail[] third_rails;
     }
 
-    internal struct OmsiObjectPathInfoInternal
+    public struct OmsiObjectPathInfoInternal
     {
         public D3DVector position;
         public float hdg;
@@ -1011,6 +1011,12 @@ namespace OmsiHook
     {
         public OmsiSnapPosition pos;
         public string splineType;
+    }
+
+    public struct OmsiSplineHelperInternal
+    {
+        public OmsiSnapPosition pos;
+        [OmsiStrPtr] public int splineType;
     }
 
     public struct OmsiTriggerBox
@@ -1320,7 +1326,7 @@ namespace OmsiHook
         public uint passCount;
         public uint ticket_cnt;
         public float tickets_cash;
-        [OmsiStructPtr(typeof(OmsiPerbus), typeof(OmsiPerbusInternal))] public int perbus;
+        [OmsiStructArrayPtr(typeof(OmsiPerbus),typeof(OmsiPerbusInternal))] public int perbus;
 
     }
     public struct OmsiTTLogDetailed
@@ -1354,9 +1360,9 @@ namespace OmsiHook
         /// </summary>
         public byte dep_ok;
     }
-    internal struct OmsiTTLogDetailedInternal
+    public struct OmsiTTLogDetailedInternal
     {
-        [OmsiStrPtr] public int busstop_name;
+        [OmsiStrPtr(raw:true)] public int busstop_name;
         public int eta;
         public int etd;
         public int ata;

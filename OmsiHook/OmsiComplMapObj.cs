@@ -114,11 +114,12 @@ namespace OmsiHook
             get => Memory.ReadMemory<int>(Address + 0x1d0);
             set => Memory.WriteMemory(Address + 0x1d0, value);
         }
-        public OmsiTreeInfo TreeInfo
+        // TODO: Implement internal struct for OmsiTreeInfo
+        /*public OmsiTreeInfo TreeInfo
         {
             get => Memory.ReadMemory<OmsiTreeInfo>(Address + 0x1d4);
             set => Memory.WriteMemory(Address + 0x1d4, value);
-        }
+        }*/
         public bool OnlyEditor
         {
             get => Memory.ReadMemory<bool>(Address + 0x1e8);
@@ -207,11 +208,11 @@ namespace OmsiHook
         }*/
         public OmsiPathManager ComplObj
         {
-            get => new OmsiPathManager(Memory, Memory.ReadMemory<int>(Address + 0x250));
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x250));
         }
-        public OmsiObjectPathInfo[] Paths
+        public MemArray<OmsiObjectPathInfoInternal, OmsiObjectPathInfo> Paths
         {
-            get => Memory.ReadMemoryStructArray<OmsiObjectPathInfo>(Address + 0x254);
+            get => new(Memory, Address + 0x254);
         }
         public OmsiSnapPosition[] SnapPoints
         {
@@ -221,9 +222,9 @@ namespace OmsiHook
         {
             get => Memory.ReadMemoryStructArray<OmsiCameraSettings>(Address + 0x25c);
         }
-        public OmsiSplineHelper[] OmsiSplineHelpers
+        public MemArray<OmsiSplineHelperInternal, OmsiSplineHelper> OmsiSplineHelpers
         {
-            get => Memory.ReadMemoryStructArray<OmsiSplineHelper>(Address + 0x260);
+            get => new(Memory, Address + 0x260);
         }
 
 

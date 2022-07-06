@@ -45,8 +45,8 @@ namespace OmsiExtensionsCLI
                 catch (Exception e) { Console.WriteLine(e.Message); }
                 //omsi.Globals.PlayerVehicle.Velocity = new D3DVector { x=0, y=0, z=5 };
                 //omsi.Globals.PlayerVehicle.Bremspedal = 0;
-
-                Thread.Sleep(210);
+                //omsi.Globals.OmsiTTLogs
+                Thread.Sleep(50);
             }
         }
     }
