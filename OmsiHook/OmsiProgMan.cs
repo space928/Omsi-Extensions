@@ -347,7 +347,8 @@ namespace OmsiHook
         {
             get => new(Memory, Memory.ReadMemory<int>(0x1b0));
         }
-        public OmsiCriticalSection CS_MakeVehicle
+        // TODO: Write internal structs for these so that they can be marhsalled
+        /*public OmsiCriticalSection CS_MakeVehicle
         {
             get => Memory.ReadMemory<OmsiCriticalSection>(Address + 0x1b4);
             set => Memory.WriteMemory(Address + 0x1b4, value);
@@ -361,7 +362,7 @@ namespace OmsiHook
         {
             get => Memory.ReadMemory<OmsiCriticalSection>(Address + 0x1f4);
             set => Memory.WriteMemory(Address + 0x1f4, value);
-        }
+        }*/
         public bool FPS_ShowedAllReady
         {
             get => Memory.ReadMemory<bool>(Address + 0x214);

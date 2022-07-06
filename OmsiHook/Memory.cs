@@ -62,11 +62,48 @@ namespace OmsiHook
         /// <param name="address">The address of the data to set</param>
         /// <param name="value">The new value to set; this must be of the 
         /// correct data type to avoid memory corruption</param>
-        public void WriteMemory<T>(int address, T value) where T : struct
+        public void WriteMemory<T>(int address, T value) where T : unmanaged
         {
             var buffer = StructureToByteArray(value);
 
             Imports.WriteProcessMemory((int)m_iProcessHandle, address, buffer, buffer.Length, out _);
+        }
+
+        /// <summary>
+        /// Sets the value of an array of structs starting at a given address.
+        /// </summary>
+        /// <remarks>
+        /// This methods just copies a block of data accross without regard to the structure or metadata
+        /// of a dynamic array. If you want to copy data to an array use a <seealso cref="MemArray{InternalStruct, Struct}"/>. 
+        /// Only use this method if you know what you're doing.
+        /// </remarks>
+        /// <typeparam name="T">The managed type of the struct to set. 
+        /// This must have a one to one mapping with the unmanaged data.</typeparam>
+        /// <param name="address">The address of the data to set</param>
+        /// <param name="values">The array of new values to set; this must be of the 
+        /// correct data type to avoid memory corruption</param>
+        public void WriteMemory<T>(int address, T[] values) where T : unmanaged
+        {
+            int tSize = Marshal.SizeOf<T>();
+            byte[] buffer = new byte[tSize * values.Length];
+            for(int i = 0; i < buffer.Length; i += tSize)
+                StructureToByteArray(values, buffer, i);
+
+            Imports.WriteProcessMemory((int)m_iProcessHandle, address, buffer, buffer.Length, out _);
+        }
+
+        /// <summary>
+        /// Mildly quickly copies a block of data from one place to another in remote memory. <para/>
+        /// Copies the data to a temp buffer before copying to the destination so it's not very fast.
+        /// </summary>
+        /// <param name="src">Address to copy from</param>
+        /// <param name="dst">Address to copy to</param>
+        /// <param name="length">Number of bytes to copy</param>
+        internal void CopyMemory(int src, int dst, int length)
+        {
+            byte[] buffer = new byte[length];
+            Imports.ReadProcessMemory((int)m_iProcessHandle, src, buffer, length, ref length);
+            Imports.WriteProcessMemory((int)m_iProcessHandle, dst, buffer, length, out _);
         }
 
         /// <summary>
@@ -77,7 +114,7 @@ namespace OmsiHook
         /// <param name="address">The address of the array to write to</param>
         /// <param name="value">The value of the new element</param>
         /// <param name="index">The index of the element to write to</param>
-        public void WriteMemoryArrayItemSafe<T>(int address, T value, int index) where T : struct
+        public void WriteMemoryArrayItemSafe<T>(int address, T value, int index) where T : unmanaged
         {
             int arr = ReadMemory<int>(address);
             int len = ReadMemory<int>(address - 4);
@@ -94,23 +131,65 @@ namespace OmsiHook
         /// <param name="address">The address of the array to write to</param>
         /// <param name="value">The value of the new element</param>
         /// <param name="index">The index of the element to write to</param>
-        public void WriteMemoryArrayItem<T>(int address, T value, int index) where T : struct
+        public void WriteMemoryArrayItem<T>(int address, T value, int index) where T : unmanaged
         {
             int arr = ReadMemory<int>(address);
             WriteMemory(arr + index * Marshal.SizeOf<T>(), value);
         }
 
         /// <summary>
-        /// Allocates shared memory for an arrays of structs. <para/>
+        /// DEPRECATED: Replace with: <c>Memory.WriteMemoryArrayItemSafe(Address, Memory.AllocateString(value), index);</c><para/>
+        /// Writes the value of a string to an array of strings at a given address.<para/>
+        /// WARNING: This method will NOT allocate new memory, ensure that there is enough space before 
+        /// writing to the string.
+        /// </summary>
+        /// <param name="address">The address of the data to set</param>
+        /// <param name="value">The new value of the string to set; this must be of the 
+        /// correct encoding to avoid memory corruption</param>
+        /// <param name="index">The index of the element to write to</param>
+        /// <param name="wide">Chooses which encoding to convert the string to</param>
+        [Obsolete("Use: Memory.WriteMemoryArrayItemSafe(Address, Memory.AllocateString(value), index);")]
+        public void WriteMemoryArrayItem(int address, string value, int index, bool wide = false)
+        {
+            int arr = ReadMemory<int>(address);
+            WriteMemory(arr + index * 4, value, wide);
+        }
+
+        /// <summary>
+        /// Allocates shared memory for an array of structs. <para/>
         /// Does not zero the allocated memory!
         /// </summary>
+        /// <remarks>
+        /// Memory allocation behaviour is not well defined, memory corruption and leaks are possible!
+        /// </remarks>
+        /// <typeparam name="T">The type of struct to make an array of</typeparam>
+        /// <param name="data">The items to copy into the newly allocated array</param>
+        /// <param name="references">Allows the number of references to the array to be specified. 
+        /// Used when overwriting existing arrays to prevent the GC from clearing a array referenced 
+        /// by multiple objects when one is destroyed.</param>
+        /// <returns>The pointer to the first item of the newly allocated array</returns>
+        public int AllocateStructArray<T>(T[] data, int references = 1) where T : unmanaged
+        {
+            int ptr = AllocateStructArray<T>(data.Length, references);
+            WriteMemory(ptr, data);
+
+            return ptr;
+        }
+
+        /// <summary>
+        /// Allocates shared memory for an array of structs. <para/>
+        /// Does not zero the allocated memory!
+        /// </summary>
+        /// <remarks>
+        /// Memory allocation behaviour is not well defined, memory corruption and leaks are possible!
+        /// </remarks>
         /// <typeparam name="T">The type of struct to make an array of</typeparam>
         /// <param name="capacity">The number of items to allocate space for</param>
         /// <param name="references">Allows the number of references to the array to be specified. 
         /// Used when overwriting existing arrays to prevent the GC from clearing a array referenced 
         /// by multiple objects when one is destroyed.</param>
         /// <returns>The pointer to the first item of the newly allocated array</returns>
-        public int AllocateArray<T>(int capacity, int references = 1) where T : struct
+        public int AllocateStructArray<T>(int capacity, int references = 1) where T : unmanaged
         {
             /*
              * DynArray struct layout:
@@ -129,18 +208,57 @@ namespace OmsiHook
              */
 
             int itemSize = Marshal.SizeOf<T>();
-            var ptr = Marshal.AllocCoTaskMem(capacity * itemSize + 8).ToInt32();
-            var arrStart = new IntPtr(ptr + 12);
+            //var ptr = Marshal.AllocCoTaskMem(capacity * itemSize + 8).ToInt32();
+            int ptr = AllocRemoteMemory(capacity * itemSize + 8);
             // Write the array metadata
             WriteMemory(ptr, references);
             WriteMemory(ptr + 0x4, capacity);
 
-            return arrStart.ToInt32() + 8;
+            return ptr + 8;
+        }
+
+        /// <summary>
+        /// Allocates shared memory for a struct. <para/>
+        /// Does not zero the allocated memory! <para/>
+        /// Make sure to <seealso cref="UnMarshalStruct{OutStruct, InStruct}(InStruct)"/>
+        /// any structs that require it before passing them into this method.
+        /// </summary>
+        /// <remarks>
+        /// Memory allocation behaviour is not well defined, memory corruption and leaks are possible!
+        /// </remarks>
+        /// <typeparam name="T">Marshallable struct type to allocate memory for</typeparam>
+        /// <param name="value">Struct to copy into newly allocated memory</param>
+        /// <param name="references">Allows the number of references to the array to be specified. 
+        /// Used when overwriting existing arrays to prevent the GC from clearing a array referenced 
+        /// by multiple objects when one is destroyed.</param>
+        /// <returns>The pointer to the start of the newly allocated struct</returns>
+        public int AllocateStruct<T>(T value, int references = 1) where T : unmanaged
+        {
+            /*
+             * Managed struct layout:
+             * 0 - / NReferences (int)
+             * 1 - |
+             * 2 - |
+             * 3 - \
+             * 8 - / StructData (T)
+             * ...
+             */
+
+            int structSize = Marshal.SizeOf<T>();
+            int ptr = AllocRemoteMemory(structSize + 4);
+            // Write the array metadata
+            WriteMemory(ptr, references);
+            WriteMemory(ptr + 0x4, value);
+
+            return ptr + 4;
         }
 
         /// <summary>
         /// Allocates shared memory for a string and copies it accross.
         /// </summary>
+        /// <remarks>
+        /// Memory allocation behaviour is not well defined, memory corruption and leaks are possible!
+        /// </remarks>
         /// <param name="value">The string to copy</param>
         /// <param name="wide">Chooses which encoding to convert the string to</param>
         /// <param name="references">Allows the number of references to the string to be specified. 
@@ -175,7 +293,7 @@ namespace OmsiHook
             else
                 buffer = Encoding.ASCII.GetBytes(value);
 
-            var ptr = Marshal.AllocCoTaskMem(buffer.Length + 13).ToInt32();
+            var ptr = AllocRemoteMemory(buffer.Length + 13);
             var strStart = new IntPtr(ptr+12);
             Marshal.Copy(buffer, 0, strStart, buffer.Length);
             // Write the string metadata
@@ -208,22 +326,6 @@ namespace OmsiHook
             WriteMemory(address, AllocateString(value, wide, refs));
             //Imports.WriteProcessMemory((int)m_iProcessHandle, address, buffer, buffer.Length, out _);
         }
-
-        /// <summary>
-        /// Writes the value of a string to an array of strings at a given address.<para/>
-        /// WARNING: This method will NOT allocate new memory, ensure that there is enough space before 
-        /// writing to the string.
-        /// </summary>
-        /// <param name="address">The address of the data to set</param>
-        /// <param name="value">The new value of the string to set; this must be of the 
-        /// correct encoding to avoid memory corruption</param>
-        /// <param name="index">The index of the element to write to</param>
-        /// <param name="wide">Chooses which encoding to convert the string to</param>
-        public void WriteMemoryArrayItem(int address, string value, int index, bool wide = false)
-        {
-            int arr = ReadMemory<int>(address);
-            WriteMemory(arr + index * 4, value, wide);
-        }
         #endregion
 
         #region Memory Reading Methods
@@ -233,7 +335,7 @@ namespace OmsiHook
         /// <typeparam name="T">The type of the value/struct to read</typeparam>
         /// <param name="address">The address to read from</param>
         /// <returns>The value of the struct/value at the given address.</returns>
-        public T ReadMemory<T>(IntPtr address) where T : struct
+        public T ReadMemory<T>(IntPtr address) where T : unmanaged
         {
             return ReadMemory<T>(address.ToInt32());
         }
@@ -244,7 +346,7 @@ namespace OmsiHook
         /// <typeparam name="T">The type of the value/struct to read</typeparam>
         /// <param name="address">The address to read from</param>
         /// <returns>The value of the struct/value at the given address.</returns>
-        public T ReadMemory<T>(int address) where T : struct
+        public T ReadMemory<T>(int address) where T : unmanaged
         {
             var ByteSize = Marshal.SizeOf(typeof(T));
 
@@ -337,7 +439,7 @@ namespace OmsiHook
         /// <typeparam name="T">The type of the struct to read</typeparam>
         /// <param name="address">The address of the array to read from</param>
         /// <param name="index">The index of the element to read from</param>
-        public T ReadMemoryArrayItemSafe<T>(int address, int index) where T : struct
+        public T ReadMemoryArrayItemSafe<T>(int address, int index) where T : unmanaged
         {
             int arr = ReadMemory<int>(address);
             int len = ReadMemory<int>(arr - 4);
@@ -353,7 +455,7 @@ namespace OmsiHook
         /// <typeparam name="T">The type of the struct to read</typeparam>
         /// <param name="address">The address of the array to read from</param>
         /// <param name="index">The index of the element to read from</param>
-        public T ReadMemoryArrayItem<T>(int address, int index) where T : struct
+        public T ReadMemoryArrayItem<T>(int address, int index) where T : unmanaged
         {
             int arr = ReadMemory<int>(address);
             return ReadMemory<T>(arr + index * Marshal.SizeOf<T>());
@@ -372,7 +474,7 @@ namespace OmsiHook
             int len = ReadMemory<int>(arr - 4);
             if (index < 0 || index >= len)
                 throw new IndexOutOfRangeException($"Tried to access element {index} in an array of {len} elements!");
-            return ReadMemoryArrayItemString(address, index);
+            return ReadMemoryArrayItemString(address, index, wide);
         }
 
         /// <summary>
@@ -421,7 +523,7 @@ namespace OmsiHook
         /// <typeparam name="T">The type of the struct to return</typeparam>
         /// <param name="address">The address of the array to read from</param>
         /// <returns>The parsed array of structs.</returns>
-        public T[] ReadMemoryStructArray<T>(int address) where T : struct
+        public T[] ReadMemoryStructArray<T>(int address) where T : unmanaged
         {
             int arr = ReadMemory<int>(address);
             int len = ReadMemory<int>(arr - 4);
@@ -462,11 +564,31 @@ namespace OmsiHook
         /// <returns>The fully marshalled structs.</returns>
         public OutStruct[] MarshalStructs<OutStruct, InStruct>(InStruct[] obj)
            where OutStruct : struct
-           where InStruct : struct
+           where InStruct : unmanaged
         {
             OutStruct[] ret = new OutStruct[obj.Length];
             for (int i = 0; i < obj.Length; i++)
                 ret[i] = MarshalStruct<OutStruct, InStruct>(obj[i]);
+
+            return ret;
+        }
+
+        /// <summary>
+        /// Unmarshals any data in a struct which can't be automatically marshalled by Marshal.StructToPtr.
+        /// This method uses reflection and as such isn't very fast.
+        /// </summary>
+        /// <typeparam name="OutStruct">The type of the struct to output; MUST have corresponding 
+        /// field names to InStruct</typeparam>
+        /// <typeparam name="InStruct">The type of the struct to marshal</typeparam>
+        /// <param name="obj">The structs to be marshaled by Marshal.StructToPtr</param>
+        /// <returns>The fully unmarshalled structs.</returns>
+        public OutStruct[] UnMarshalStructs<OutStruct, InStruct>(InStruct[] obj)
+           where OutStruct : unmanaged
+           where InStruct : struct
+        {
+            OutStruct[] ret = new OutStruct[obj.Length];
+            for (int i = 0; i < obj.Length; i++)
+                ret[i] = UnMarshalStruct<OutStruct, InStruct>(obj[i]);
 
             return ret;
         }
@@ -482,7 +604,7 @@ namespace OmsiHook
         /// <returns>The fully marshalled struct.</returns>
         public OutStruct MarshalStruct<OutStruct, InStruct>(InStruct obj)
             where OutStruct : struct
-            where InStruct : struct
+            where InStruct : unmanaged
         {
             object ret = new OutStruct();
             foreach (var field in obj.GetType().GetFields())
@@ -545,6 +667,9 @@ namespace OmsiHook
                         case OmsiStrArrayPtrAttribute a:
                             val = ReadMemoryStringArray((int)val, a.Wide);
                             break;
+
+                        default:
+                            throw new NotImplementedException($"Attribute {attr.GetType().FullName} is not yet supported by the marhsaller!");
                     }
                 }
 
@@ -555,7 +680,94 @@ namespace OmsiHook
             return (OutStruct)ret;
         }
 
-        private static T ByteArrayToStructure<T>(byte[] bytes) where T : struct
+        /// <summary>
+        /// Unmarshals any data in a struct which can't be automatically marshalled by Marshal.StructToPtr.
+        /// This method uses reflection and as such isn't very fast.
+        /// </summary>
+        /// <typeparam name="OutStruct">The type of the struct to output; MUST have corresponding 
+        /// field names to InStruct</typeparam>
+        /// <typeparam name="InStruct">The type of the struct to marshal</typeparam>
+        /// <param name="obj">The complex struct to be unmarshalled</param>
+        /// <returns>The fully unmarshalled struct.</returns>
+        public OutStruct UnMarshalStruct<OutStruct, InStruct>(InStruct obj)
+            where OutStruct : unmanaged
+            where InStruct : struct
+        {
+            object ret = new OutStruct();
+            foreach (var field in ret.GetType().GetFields())
+            {
+                object val = field.GetValue(obj);
+                // The OutStruct should be annotated with the conversion metadata
+                foreach (var attr in field.GetCustomAttributes(false))
+                {
+                    // Based on which kind of attribute the field has, perform special marshalling operations
+                    switch (attr)
+                    {
+                        case OmsiStructAttribute a:
+                            if (a.RequiresExtraMarshalling)
+                                val = typeof(Memory).GetMethod(nameof(UnMarshalStruct))
+                                .MakeGenericMethod(a.InternalType, a.ObjType)
+                                .Invoke(this, new object[] { val });
+                            break;
+
+                        case OmsiStrPtrAttribute a:
+                            val = AllocateString((string)val, a.Wide);
+                            break;
+
+                        case OmsiPtrAttribute:
+                            val = ((IntPtr)val).ToInt32();
+                            break;
+
+                        case OmsiStructPtrAttribute a:
+                            // Perform extra marshalling if needed
+                            if (a.RequiresExtraMarshalling)
+                                val = typeof(Memory).GetMethod(nameof(UnMarshalStruct))
+                                .MakeGenericMethod(a.ObjType, a.InternalType)
+                                .Invoke(this, new object[] { val });
+
+                            val = typeof(Memory).GetMethod(nameof(AllocateStruct))
+                                .MakeGenericMethod(a.InternalType)
+                                .Invoke(this, new object[] { val });
+                            break;
+
+                        case OmsiObjPtrAttribute a:
+                            val = ((OmsiObject)val).Address;
+                            break;
+
+                        case OmsiStructArrayPtrAttribute a:
+                            // Perform extra marshalling if needed
+                            if (a.RequiresExtraMarshalling)
+                                val = typeof(Memory).GetMethod(nameof(UnMarshalStructs))
+                                .MakeGenericMethod(a.ObjType, a.InternalType)
+                                .Invoke(this, new object[] { val });
+
+                            val = typeof(Memory).GetMethod(nameof(AllocateStructArray))
+                                .MakeGenericMethod(a.InternalType)
+                                .Invoke(this, new object[] { val });
+                            break;
+
+                        case OmsiObjArrayPtrAttribute a:
+                            val = AllocateStructArray(((OmsiObject[])val).Select(x => x.Address).ToArray());
+                            break;
+
+                        case OmsiStrArrayPtrAttribute a:
+                            // TODO: I might add a dedicated method for allocating string arrays
+                            val = AllocateStructArray(((string[])val).Select(x => AllocateString(x, a.Wide)).ToArray());
+                            break;
+
+                        default:
+                            throw new NotImplementedException($"Attribute {attr.GetType().FullName} is not yet supported by the marhsaller!");
+                    }
+                }
+
+                // Match fields by name, setting the destination fields to the corresponding source fields
+                typeof(OutStruct).GetField(field.Name).SetValue(ret, val);
+            }
+
+            return (OutStruct)ret;
+        }
+
+        private static T ByteArrayToStructure<T>(byte[] bytes) where T : unmanaged
         {
             var handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
             try
@@ -568,6 +780,28 @@ namespace OmsiHook
             }
         }
 
+        /// <summary>
+        /// Converts a structure to a byte array without allocating any memory.
+        /// </summary>
+        /// <param name="obj">Struct to convert</param>
+        /// <param name="dst">Byte array to copy to</param>
+        /// <param name="startIndex">Index in the destination array to copy to</param>
+        private static void StructureToByteArray(object obj, byte[] dst, int startIndex)
+        {
+            var length = Marshal.SizeOf(obj);
+
+            var pointer = Marshal.AllocHGlobal(length);
+
+            Marshal.StructureToPtr(obj, pointer, true);
+            Marshal.Copy(pointer, dst, startIndex, length);
+            Marshal.FreeHGlobal(pointer);
+        }
+
+        /// <summary>
+        /// Converts a structure to a byte array.
+        /// </summary>
+        /// <param name="obj">Struct to convert</param>
+        /// <returns>A newly allocated byte array containing the struct</returns>
         private static byte[] StructureToByteArray(object obj)
         {
             var length = Marshal.SizeOf(obj);
@@ -581,6 +815,31 @@ namespace OmsiHook
             Marshal.FreeHGlobal(pointer);
 
             return array;
+        }
+
+        /// <summary>
+        /// Attempts to allocate memory in the remote process using VirtualAlloc.
+        /// </summary>
+        /// <remarks>
+        /// Returns 0 (nullptr) if no memory is to be allocated. Raises an
+        /// <seealso cref="OutOfMemoryException"/> if no memory could be allocated.
+        /// </remarks>
+        /// <param name="bytes">The number of bytes to allocate</param>
+        /// <returns>The pointer to the allocated memory</returns>
+        /// <exception cref="OutOfMemoryException"></exception>
+        internal int AllocRemoteMemory(int bytes)
+        {
+            // Return a nullptr if no memory is needed.
+            if (bytes == 0)
+                return 0;
+
+            int addr = Imports.VirtualAllocEx((int)m_iProcessHandle, 0, bytes, 
+                Imports.AllocationType.MEM_COMMIT | Imports.AllocationType.MEM_RESERVE, 
+                Imports.MemoryProtectionType.PAGE_READWRITE);
+            if (addr == 0)
+                throw new OutOfMemoryException("Couldn't allocate any more memory in the remote process!");
+
+            return addr;
         }
 
         #endregion

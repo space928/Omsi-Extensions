@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace OmsiHook
 {
     /// <summary>
-    /// All recoginised Globals in OMSI
+    /// All recognised Globals in OMSI.
     /// </summary>
     public class OmsiGlobals : OmsiObject
     {
