@@ -84,10 +84,13 @@ namespace OmsiHook
         /// correct data type to avoid memory corruption</param>
         public void WriteMemory<T>(int address, T[] values) where T : unmanaged
         {
+            if(typeof(T) == typeof(byte))
+                Imports.WriteProcessMemory((int)m_iProcessHandle, address, (byte[])Convert.ChangeType(values, typeof(byte[])), values.Length, out _);
+
             int tSize = Marshal.SizeOf<T>();
             byte[] buffer = new byte[tSize * values.Length];
             for(int i = 0; i < buffer.Length; i += tSize)
-                StructureToByteArray(values, buffer, i);
+                StructureToByteArray(values[i], buffer, i);
 
             Imports.WriteProcessMemory((int)m_iProcessHandle, address, buffer, buffer.Length, out _);
         }
@@ -294,17 +297,18 @@ namespace OmsiHook
                 buffer = Encoding.ASCII.GetBytes(value);
 
             var ptr = AllocRemoteMemory(buffer.Length + 13);
-            var strStart = new IntPtr(ptr+12);
-            Marshal.Copy(buffer, 0, strStart, buffer.Length);
+            int strStart = ptr+12;
+            WriteMemory(strStart, buffer);
+            //Marshal.Copy(buffer, 0, strStart, buffer.Length);
             // Write the string metadata
             WriteMemory(ptr, (short)1252);
             WriteMemory(ptr + 0x2, (short)(wide?2:1));
             WriteMemory(ptr + 0x4, references);
             WriteMemory(ptr + 0x8, value.Length);
             // Write null terminator
-            WriteMemory(strStart.ToInt32() + buffer.Length, (byte)0);
+            WriteMemory(strStart + buffer.Length, (byte)0);
 
-            return strStart.ToInt32();
+            return strStart;
         }
 
         /// <summary>
@@ -361,11 +365,16 @@ namespace OmsiHook
         /// Returns the value of a null terminated string at a given address.
         /// </summary>
         /// <param name="address">The address to read from</param>
+        /// <param name="raw">Treat the address as a pointer to the first character 
+        /// (<c>char *</c>) rather than a pointer to a pointer.</param>
         /// <returns>The value of the string at the given address.</returns>
-        public string ReadMemoryString(int address, bool wide = false)
+        public string ReadMemoryString(int address, bool wide = false, bool raw = false)
         {
             var sb = new StringBuilder();
-            int i = ReadMemory<int>(address);
+            int i = address;
+            if (!raw)
+                i = ReadMemory<int>(address);
+
             while (true)
             {
                 var bytes = ReadMemory(i, wide ? 2 : 1);
@@ -623,7 +632,7 @@ namespace OmsiHook
                             break;
 
                         case OmsiStrPtrAttribute a:
-                            val = ReadMemoryString((int)val, a.Wide);
+                            val = ReadMemoryString((int)val, a.Wide, a.Raw);
                             break;
 
                         case OmsiPtrAttribute:
@@ -631,7 +640,7 @@ namespace OmsiHook
                             break;
 
                         case OmsiStructPtrAttribute a:
-                            val = typeof(Memory).GetMethod(nameof(ReadMemory))
+                            val = typeof(Memory).GetMethod(nameof(ReadMemory), new Type[] { typeof(int) })
                                 .MakeGenericMethod(a.InternalType)
                                 .Invoke(this, new object[] { val });
                             // Perform extra marshalling if needed
@@ -696,7 +705,9 @@ namespace OmsiHook
             object ret = new OutStruct();
             foreach (var field in ret.GetType().GetFields())
             {
-                object val = field.GetValue(obj);
+                // Match fields by name, setting the destination fields to the corresponding source fields
+                object val = typeof(InStruct).GetField(field.Name).GetValue(obj);
+
                 // The OutStruct should be annotated with the conversion metadata
                 foreach (var attr in field.GetCustomAttributes(false))
                 {
@@ -760,8 +771,7 @@ namespace OmsiHook
                     }
                 }
 
-                // Match fields by name, setting the destination fields to the corresponding source fields
-                typeof(OutStruct).GetField(field.Name).SetValue(ret, val);
+                field.SetValue(ret, val);
             }
 
             return (OutStruct)ret;

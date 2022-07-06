@@ -1360,9 +1360,9 @@ namespace OmsiHook
         /// </summary>
         public byte dep_ok;
     }
-    internal struct OmsiTTLogDetailedInternal
+    public struct OmsiTTLogDetailedInternal
     {
-        [OmsiStrPtr] public int busstop_name;
+        [OmsiStrPtr(raw:true)] public int busstop_name;
         public int eta;
         public int etd;
         public int ata;

@@ -35,9 +35,10 @@ namespace OmsiExtensionsCLI
                 Console.WriteLine($"{omsi.Globals.PlayerVehicle.PAI_LastBrake} {omsi.Globals.PlayerVehicle.Bremspedal}".PadRight(Console.WindowWidth - 1));
                 Console.WriteLine($"{omsi.Globals.Time.Day}/{omsi.Globals.Time.Month}/{omsi.Globals.Time.Year} - {omsi.Globals.Time.Hour}:{omsi.Globals.Time.Minute}:{omsi.Globals.Time.Second:F2}");
                 Console.WriteLine("".PadRight(Console.WindowWidth-1));
+                
                 //omsi.Globals.PlayerVehicle.Velocity = new D3DVector { x=0, y=0, z=5 };
                 //omsi.Globals.PlayerVehicle.Bremspedal = 0;
-
+                //omsi.Globals.OmsiTTLogs
                 Thread.Sleep(50);
             }
         }

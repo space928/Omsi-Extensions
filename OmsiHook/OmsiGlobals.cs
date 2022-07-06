@@ -64,8 +64,7 @@ namespace OmsiHook
         /// <summary>
         /// Current Service logs
         /// </summary>
-        public OmsiTTLogDetailed[] OmsiTTLogs => Memory.MarshalStructs<OmsiTTLogDetailed, OmsiTTLogDetailedInternal>(
-            Memory.ReadMemoryStructArray<OmsiTTLogDetailedInternal>(0x00861750));
+        public MemArray<OmsiTTLogDetailedInternal, OmsiTTLogDetailed> OmsiTTLogs => new(Memory, 0x00861750, false);
 
         /// <summary>
         /// Current real weather config
