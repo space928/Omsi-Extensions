@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace OmsiHook
 {
@@ -130,22 +131,20 @@ namespace OmsiHook
         {
             get => Memory.ReadMemoryStructArray<OmsiCollFeedback>(Address + 0x254);
         }
-        
+
         /// <summary>
         /// Get a float variable for an object from its name.
         /// </summary>
         /// <param name="VarName">Variable Name</param>
         /// <returns>requested float value</returns>
-        /// <exception cref="System.Exception"/>
+        /// <exception cref="KeyNotFoundException"/>
         public float GetVariable(string VarName)
         {
-            this.PublicVars.UpdateFromHook();
-            this.PublicVars.UpdateFromHook();
-            int index = this.ComplMapObj.GetVarIndex(VarName);
-            if (index < this.PublicVars.arrayCache.Length && index >= 0)
+            int index = ComplMapObj.GetVarIndex(VarName);
+            if (index < PublicVars.Count && index >= 0)
                 return this.PublicVars[index].Float;
             else
-                throw new Exception("Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
+                throw new KeyNotFoundException("Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
         }
 
         /// <summary>
@@ -153,15 +152,14 @@ namespace OmsiHook
         /// </summary>
         /// <param name="VarName">Variable Name</param>
         /// <param name="Value">Desired Value</param>
-        /// <exception cref="System.Exception"/>
+        /// <exception cref="KeyNotFoundException"/>
         public void SetVariable(string VarName, float Value)
         {
-            this.PublicVars.UpdateFromHook();
-            int index = this.ComplMapObj.GetVarIndex(VarName);
-            if (index < this.PublicVars.arrayCache.Length && index >= 0)
-                this.PublicVars[index] = new() { Float = Value };
+            int index = ComplMapObj.GetVarIndex(VarName);
+            if (index < PublicVars.Count && index >= 0)
+                this.PublicVars[index] = new(Value);
             else
-                throw new Exception("Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
+                throw new KeyNotFoundException("Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
         }
 
         /// <summary>
@@ -169,15 +167,14 @@ namespace OmsiHook
         /// </summary>
         /// <param name="VarName">Variable Name</param>
         /// <returns>requested float value</returns>
-        /// <exception cref="System.Exception"/>
+        /// <exception cref="KeyNotFoundException"/>
         public string GetStringVariable(string VarName)
         {
-            this.ComplObjInst.StringVars.UpdateFromHook();
-            int index = this.ComplMapObj.GetStringVarIndex(VarName);
-            if (index < this.ComplObjInst.StringVars.arrayCache.Length && index >= 0)
-                return this.ComplObjInst.StringVars[index].String;
+            int index = ComplMapObj.GetStringVarIndex(VarName);
+            if (index < ComplObjInst.StringVars.Count && index >= 0)
+                return ComplObjInst.StringVars[index].String;
             else
-                throw new Exception("String Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
+                throw new KeyNotFoundException("String Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
         }
 
         /// <summary>
@@ -185,15 +182,14 @@ namespace OmsiHook
         /// </summary>
         /// <param name="VarName">Variable Name</param>
         /// <param name="Value">Desired Value</param>
-        /// <exception cref="System.Exception"/>
+        /// <exception cref="KeyNotFoundException"/>
         public void SetStringVariable(string VarName, string Value)
         {
-            this.ComplObjInst.StringVars.UpdateFromHook();
-            int index = this.ComplMapObj.GetStringVarIndex(VarName);
-            if (index < this.ComplObjInst.StringVars.arrayCache.Length && index >= 0)
-                this.ComplObjInst.StringVars[index] = new() { String = Value};
+            int index = ComplMapObj.GetStringVarIndex(VarName);
+            if (index < ComplObjInst.StringVars.Count && index >= 0)
+                ComplObjInst.StringVars[index] = new(Value);
             else
-                throw new Exception("String Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
+                throw new KeyNotFoundException("String Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
         }
     }
 }

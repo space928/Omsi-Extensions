@@ -1878,17 +1878,46 @@ namespace OmsiHook
         public uint SpinCount;
     }
 
+    /// <summary>
+    /// Struct used for Strings to floats - especially used in the OMSI OSC StringVariables
+    /// </summary>
+    public struct OmsiString
+    {
+        public string String;
+        public OmsiString(string s)
+        {
+            String = s;
+        }
+    }
+    public struct OmsiStringInternal
+    {
+        [OmsiStrPtr(false, true)] public int String;
+    }
+    /// <summary>
+    /// Struct used for WStrings to floats - especially used in the OMSI OSC StringVariables
+    /// </summary>
     public struct OmsiWString
     {
         public string String;
+        public OmsiWString(string s)
+        {
+            String = s;
+        }
     }
     public struct OmsiWStringInternal
     {
         [OmsiStrPtr(true, true)] public int String;
     }
+    /// <summary>
+    /// Struct used for Pointers to floats - especially used in the OMSI OSC variables
+    /// </summary>
     public struct OmsiFloatPtr
     {
         public float Float;
+        public OmsiFloatPtr(float f)
+        {
+            Float = f;
+        }
     }
     public struct OmsiFloatPtrInternal
     {

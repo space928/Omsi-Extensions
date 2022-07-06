@@ -39,7 +39,7 @@ namespace OmsiHook
             get => Memory.ReadMemory<int>(Address + 0x14);
             set => Memory.WriteMemory(Address + 0x14, value);
         }
-        public bool TextureRedunction
+        public bool TextureReduction
         {
             get => Memory.ReadMemory<bool>(Address + 0x18);
             set => Memory.WriteMemory(Address + 0x18, value);
@@ -73,9 +73,9 @@ namespace OmsiHook
             get => Memory.ReadMemory<byte>(Address + 0x25);
             set => Memory.WriteMemory(Address + 0x25, value);
         }
-        public float[] PublicVars
+        public MemArray<OmsiFloatPtrInternal, OmsiFloatPtr> PublicVars
         {
-            get => Memory.ReadMemoryStructPtrArray<float>(Address + 0x28);
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x28));
         }
         public MemArray<OmsiWStringInternal, OmsiWString> StringVars
         {
@@ -85,8 +85,7 @@ namespace OmsiHook
         public OmsiChangeTex[] ChangeTexs
         {
             get => Memory.ReadMemoryObjArray<OmsiChangeTex>(Address + 0x30);
-        }*/
-        /* TODO:
+        }
         public OmsiChangeMatl[] ChangeMatls
         {
             get => Memory.ReadMemoryObjArray<OmsiChangeMatl>(Address + 0x34);
@@ -142,7 +141,7 @@ namespace OmsiHook
             get => Memory.ReadMemory<D3DMatrix>(Address + 0x5c);
             set => Memory.WriteMemory(Address + 0x5c, value);
         }
-        public bool RemderMe
+        public bool RenderMe
         {
             get => Memory.ReadMemory<bool>(Address + 0x9c);
             set => Memory.WriteMemory(Address + 0x9c, value);

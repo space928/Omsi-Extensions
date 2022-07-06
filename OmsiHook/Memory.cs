@@ -551,11 +551,11 @@ namespace OmsiHook
         /// <returns>The parsed array of structs.</returns>
         public T[] ReadMemoryStructPtrArray<T>(int address) where T : unmanaged
         {
-            int[] ptrs = ReadMemoryStructArray<int>(address);
-
-            T[] ret = new T[ptrs.Length];
-            for (int i = 0; i < ptrs.Length; i++)
-                ret[i] = ReadMemory<T>(ptrs[i]);
+            int arr = ReadMemory<int>(address);
+            int len = ReadMemory<int>(arr - 4);
+            T[] ret = new T[len];
+            for (int i = 0; i < len; i++)
+                ret[i] = ReadMemory<T>(ReadMemory<int>(arr + i * Marshal.SizeOf<T>()));
 
             return ret;
         }

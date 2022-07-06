@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace OmsiHook
 {
@@ -224,22 +225,34 @@ namespace OmsiHook
             get => new(Memory, Address + 0x260);
         }
 
-
-        public int GetVarIndex(string VarName)
+        /// <summary>
+        /// Get the variable's index from it's name.
+        /// </summary>
+        /// <param name="varName">Variable name</param>
+        /// <returns></returns>
+        /// <exception cref="KeyNotFoundException"></exception>
+        public int GetVarIndex(string varName)
         {
             var strings = this.VarStrings;
-            for (int i = 0; i < strings.arrayCache.Length; i++)
-                if (strings[i] == VarName)
+            for (int i = 0; i < strings.Count; i++)
+                if (strings[i] == varName)
                     return i;
-            throw new Exception("Variable '" + VarName + "' not found in object.");
+            throw new KeyNotFoundException("Variable '" + varName + "' not found in object.");
         }
-        public int GetStringVarIndex(string VarName)
+
+        /// <summary>
+        /// Get the string variable's index from it's name.
+        /// </summary>
+        /// <param name="varName">Variable name</param>
+        /// <returns></returns>
+        /// <exception cref="KeyNotFoundException"></exception>
+        public int GetStringVarIndex(string varName)
         {
             var strings = this.SVarStrings;
-            for (int i = 0; i < strings.arrayCache.Length; i++)
-                if (strings[i] == VarName)
+            for (int i = 0; i < strings.Count; i++)
+                if (strings[i] == varName)
                     return i;
-            throw new Exception("String Variable '" + VarName + "' not found in object.");
+            throw new KeyNotFoundException("String Variable '" + varName + "' not found in object.");
         }
     }
 }

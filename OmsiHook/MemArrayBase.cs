@@ -18,7 +18,7 @@ namespace OmsiHook
 
         public abstract Struct[] WrappedArray { get; }
 
-        public int Count => cached ? arrayCache.Length : Memory.ReadMemory<int>(Address - 4);
+        public int Count => cached ? arrayCache.Length : Memory.ReadMemory<int>(Memory.ReadMemory<int>(Address) - 4);
 
         public bool IsReadOnly => false;
 
