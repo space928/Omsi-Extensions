@@ -1,3 +1,5 @@
+using System;
+
 namespace OmsiHook
 {
     /// <summary>
@@ -13,12 +15,10 @@ namespace OmsiHook
             get => Memory.ReadMemory<OmsiCriticalSection>(Address + 0x6f0);
             set => Memory.WriteMemory(Address + 0x6f0, value);
         }*/
-        /* TODO:
-        public OmsiRoadVehiclePtr RoadVehicle
+        public OmsiRoadVehicle RoadVehicle
         {
-            get => Memory.ReadMemory<OmsiRoadVehiclePtr>(Address + 0x710);
-            set => Memory.WriteMemory(Address + 0x710, value);
-        }*/
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x710));
+        }
         public bool OnLoadedKachel
         {
             get => Memory.ReadMemory<bool>(Address + 0x714);

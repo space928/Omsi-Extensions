@@ -1,4 +1,7 @@
-﻿namespace OmsiHook
+﻿using System;
+using System.Collections.Generic;
+
+namespace OmsiHook
 {
     /// <summary>
     /// Base class for complex map objects - used by vehicles and humans
@@ -126,12 +129,46 @@
             get => Memory.ReadMemory<OmsiMapRenderPriority>(Address + 0x1e9);
             set => Memory.WriteMemory(Address + 0x1e9, value);
         }
-        public string[] VarStrings => Memory.ReadMemoryStringArray(Address + 0x1ec);
-        public string[] SVarStrings => Memory.ReadMemoryStringArray(Address + 0x1f0);
-        public string[] SysVarStrings => Memory.ReadMemoryStringArray(Address + 0x1f4);
-        public string[] CallBackStrings => Memory.ReadMemoryStringArray(Address + 0x1f8);
-        //TODO:
-        //public float*[] SysVars => Memory.ReadMemoryStructArray<float*>(Address + 0x1fc);
+        private MemArrayStringDict varStrings;
+        /// <summary>
+        /// Array of names of float variables.
+        /// </summary>
+        /// <remarks>
+        /// The value of this property is automatically cached for performance.
+        /// </remarks>
+        public MemArrayStringDict VarStrings => varStrings ??= new(Memory, Address + 0x1ec, true);
+        private MemArrayStringDict sVarStrings;
+        /// <summary>
+        /// Array of names of string variables.
+        /// </summary>
+        /// <remarks>
+        /// The value of this property is automatically cached for performance.
+        /// </remarks>
+        public MemArrayStringDict SVarStrings => sVarStrings ??= new(Memory, Address + 0x1f0, true);
+        private MemArrayStringDict sysVarStrings;
+        /// <summary>
+        /// Array of names of system variables.
+        /// </summary>
+        /// <remarks>
+        /// The value of this property is automatically cached for performance.
+        /// </remarks>
+        public MemArrayStringDict SysVarStrings => sysVarStrings ??= new(Memory, Address + 0x1f4, true);
+        private MemArrayStringDict callBackStrings;
+        /// <summary>
+        /// Array of names of callbacks.
+        /// </summary>
+        /// <remarks>
+        /// The value of this property is automatically cached for performance.
+        /// </remarks>
+        public MemArrayStringDict CallBackStrings => callBackStrings ??= new(Memory, Address + 0x1f8, true);
+        private MemArray<OmsiFloatPtrInternal, OmsiFloatPtr> sysVars;
+        /// <summary>
+        /// Array of values of system variables.
+        /// </summary>
+        /// <remarks>
+        /// The value of this property is automatically cached for performance.
+        /// </remarks>
+        public MemArray<OmsiFloatPtrInternal, OmsiFloatPtr> SysVars => sysVars ??= new(Memory, Address + 0x1fc);
         public bool ScriptShare
         {
             get => Memory.ReadMemory<bool>(Address + 0x200);
@@ -222,6 +259,5 @@
         {
             get => new(Memory, Address + 0x260);
         }
-
     }
 }

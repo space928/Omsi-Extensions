@@ -15,7 +15,9 @@ namespace OmsiHook
     /// This is a heavyweight wrapper for native arrays that provides methods for reading and writing to arrays as well as 
     /// helping with memory management. For fast, low-level access, use the methods in the <seealso cref="Memory"/> class. <para/>
     /// For better performance in c# the contents of the wrapped array can be copied to managed memory when constructed
-    /// or whenever <seealso cref="UpdateFromHook"/> is called. Cached arrays 
+    /// or whenever <seealso cref="UpdateFromHook"/> is called. <para/>
+    /// Cached arrays are generally faster when accessed or searched frequently by C#, but they are slower to update and 
+    /// the user is responsible for ensuring that they are synchronised with the native array it wraps.
     /// </remarks>
     /// <typeparam name="Struct">The type of struct to wrap</typeparam>
     /// <typeparam name="InternalStruct">Internal struct type to marshal <c>Struct</c> from</typeparam>
@@ -137,7 +139,9 @@ namespace OmsiHook
     /// This is a heavyweight wrapper for native arrays that provides methods for reading and writing to arrays as well as 
     /// helping with memory management. For fast, low-level access, use the methods in the <seealso cref="Memory"/> class. <para/>
     /// For better performance in c# the contents of the wrapped array can be copied to managed memory when constructed
-    /// or whenever <seealso cref="UpdateFromHook"/> is called. Cached arrays 
+    /// or whenever <seealso cref="UpdateFromHook"/> is called. <para/>
+    /// Cached arrays are generally faster when accessed or searched frequently by C#, but they are slower to update and 
+    /// the user is responsible for ensuring that they are synchronised with the native array it wraps.
     /// </remarks>
     /// <typeparam name="T">The type of struct to wrap.</typeparam>
     public class MemArray<T> : MemArray<T, T> where T : unmanaged
@@ -238,6 +242,17 @@ namespace OmsiHook
         }
     }
 
+    /// <summary>
+    /// Wrapper for Arrays / Lists in OMSI's Memory.
+    /// </summary>
+    /// <remarks>
+    /// This is a heavyweight wrapper for native arrays that provides methods for reading and writing to arrays as well as 
+    /// helping with memory management. For fast, low-level access, use the methods in the <seealso cref="Memory"/> class. <para/>
+    /// For better performance in c# the contents of the wrapped array can be copied to managed memory when constructed
+    /// or whenever <seealso cref="UpdateFromHook"/> is called. <para/>
+    /// Cached arrays are generally faster when accessed or searched frequently by C#, but they are slower to update and 
+    /// the user is responsible for ensuring that they are synchronised with the native array it wraps.
+    /// </remarks>
     public class MemArrayString : MemArrayBase<string>
     {
         internal readonly bool wide;
@@ -348,6 +363,52 @@ namespace OmsiHook
             Memory.WriteMemory(Address, Memory.AllocateStructArray<int>(0, 0));
 
             GC.SuppressFinalize(this);
+        }
+    }
+
+    /// <summary>
+    /// Wrapper for Arrays / Lists in OMSI's Memory with automatic index caching.
+    /// </summary>
+    /// <remarks>
+    /// This type of MemArray relies on it being cached and as such no option exists to use it uncached.
+    /// This is a heavyweight wrapper for native arrays that provides methods for reading and writing to arrays as well as 
+    /// helping with memory management. For fast, low-level access, use the methods in the <seealso cref="Memory"/> class. <para/>
+    /// For better performance in c# the contents of the wrapped array can be copied to managed memory when constructed
+    /// or whenever <seealso cref="UpdateFromHook"/> is called. <para/>
+    /// Cached arrays are generally faster when accessed or searched frequently by C#, but they are slower to update and 
+    /// the user is responsible for ensuring that they are synchronised with the native array it wraps.
+    /// </remarks>
+    public class MemArrayStringDict : MemArrayString
+    { 
+        private Dictionary<string, int> indexDictionary = new();
+
+        public Dictionary<string, int> IndexDictionary => indexDictionary;
+
+        internal MemArrayStringDict(Memory memory, int address, bool wide = false) : base(memory, address, wide, true) { }
+        public MemArrayStringDict() : base() { }
+
+        /// <summary>
+        /// Gets the index of the string in the native array from it's value.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public int this[string item] => indexDictionary[item];
+
+        public override void UpdateFromHook()
+        {
+            base.UpdateFromHook();
+            indexDictionary = Enumerable.Range(0, Count).ToDictionary(x => arrayCache[x]);
+        }
+
+        public override bool Contains(string item) => indexDictionary.ContainsKey(item);
+        public override int IndexOf(string item) => indexDictionary[item];
+        public override bool Remove(string item)
+        {
+            if (indexDictionary.ContainsKey(item))
+                base.RemoveAt(indexDictionary[item]);
+            else
+                return false;
+            return true;
         }
     }
 }

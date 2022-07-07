@@ -1,4 +1,7 @@
-﻿namespace OmsiHook
+﻿using System;
+using System.Collections.Generic;
+
+namespace OmsiHook
 {
     /// <summary>
     /// Base class for complex map object instances - such as vehicle instances and human instances
@@ -63,11 +66,12 @@
         }
         public OmsiComplMapObj ComplMapObj
         {
-            get => new(Memory, Address + 0x210);
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x210));
         }
-        public OmsiComplMapObjInst ComplMapObjInst
+
+        public OmsiComplObjInst ComplObjInst
         {
-            get => new(Memory, Address + 0x214);
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x214));
         }
         public bool UseSound
         {
@@ -92,18 +96,17 @@
             get => Memory.ReadMemory<D3DColorValue>(Address + 0x225);
             set => Memory.WriteMemory(Address + 0x225, value);
         }
-        /* TODO:
-        public floatptr[] PublicVars_Int
+        public MemArray<OmsiFloatPtrInternal, OmsiFloatPtr> PublicVars_Int
         {
-            get => Memory.ReadMemoryStructArray<floatptr>(Address + 0x238);
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x238), false);
         }
-        public floatptr[] PublicVars
+        public MemArray<OmsiFloatPtrInternal, OmsiFloatPtr> PublicVars
         {
-            get => Memory.ReadMemoryStructArray<floatptr>(Address + 0x23c);
-        }*/
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x23c), false);
+        }
         public OmsiComplMapObjInst ScriptShareParent
         {
-            get => new(Memory, Address + 0x240);
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x240));
         }
         public float[] UserVars
         {
@@ -127,6 +130,66 @@
         public OmsiCollFeedback[] CollFeedbacks
         {
             get => Memory.ReadMemoryStructArray<OmsiCollFeedback>(Address + 0x254);
+        }
+
+        /// <summary>
+        /// Get a float variable for an object from its name.
+        /// </summary>
+        /// <param name="varName">Variable Name</param>
+        /// <returns>requested float value</returns>
+        /// <exception cref="KeyNotFoundException"/>
+        public float GetVariable(string varName)
+        {
+            int index = ComplMapObj.VarStrings[varName];
+            if (index < PublicVars.Count && index >= 0)
+                return this.PublicVars[index].Float;
+            else
+                throw new KeyNotFoundException($"Variable '{varName}' not found in object. - Index Out Of Bounds");
+        }
+
+        /// <summary>
+        /// Set a float variable for an object to a value from its name.
+        /// </summary>
+        /// <param name="varName">Variable Name</param>
+        /// <param name="value">Desired Value</param>
+        /// <exception cref="KeyNotFoundException"/>
+        public void SetVariable(string varName, float value)
+        {
+            int index = ComplMapObj.VarStrings[varName];
+            if (index < PublicVars.Count && index >= 0)
+                this.PublicVars[index] = new(value);
+            else
+                throw new KeyNotFoundException($"Variable '{varName}' not found in object. - Index Out Of Bounds");
+        }
+
+        /// <summary>
+        /// Get a string variable for an object from its name.
+        /// </summary>
+        /// <param name="varName">Variable Name</param>
+        /// <returns>requested float value</returns>
+        /// <exception cref="KeyNotFoundException"/>
+        public string GetStringVariable(string varName)
+        {
+            int index = ComplMapObj.SVarStrings[varName];
+            if (index < ComplObjInst.StringVars.Count && index >= 0)
+                return ComplObjInst.StringVars[index].String;
+            else
+                throw new KeyNotFoundException($"String Variable '{varName}' not found in object. - Index Out Of Bounds");
+        }
+
+        /// <summary>
+        /// Set a string variable for an object to a value from its name.
+        /// </summary>
+        /// <param name="varName">Variable Name</param>
+        /// <param name="value">Desired Value</param>
+        /// <exception cref="KeyNotFoundException"/>
+        public void SetStringVariable(string varName, string value)
+        {
+            int index = ComplMapObj.SVarStrings[varName];
+            if (index < ComplObjInst.StringVars.Count && index >= 0)
+                ComplObjInst.StringVars[index] = new(value);
+            else
+                throw new KeyNotFoundException($"String Variable '{varName}' not found in object. - Index Out Of Bounds");
         }
     }
 }

@@ -30,5 +30,18 @@
             this.Memory = memory;
             this.Address = address;
         }
+
+        public override bool Equals(object obj)
+        {
+            OmsiObject item = obj as OmsiObject;
+
+            if (item == null)
+            {
+                return (Address == 0);
+            }
+
+            return (item.Address == Address);
+        }
+
     }
 }

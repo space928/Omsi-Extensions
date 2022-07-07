@@ -127,7 +127,7 @@ namespace OmsiHook
 
         public OmsiObjPtrAttribute(Type objType)
         {
-            if (!objType.IsSubclassOf(typeof(OmsiObject)))
+            if (!objType.IsSubclassOf(typeof(OmsiObject)) && objType != typeof(OmsiObject))
                 throw new ArgumentException("OmsiObjPtr must be a pointer to an object deriving from " + nameof(OmsiObject) + "!");
 
             this.objType = objType;

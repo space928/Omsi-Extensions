@@ -120,7 +120,7 @@ namespace OmsiHook
         public void WriteMemoryArrayItemSafe<T>(int address, T value, int index) where T : unmanaged
         {
             int arr = ReadMemory<int>(address);
-            int len = ReadMemory<int>(address - 4);
+            int len = ReadMemory<int>(arr - 4);
             if (index < 0 || index >= len)
                 throw new ArgumentOutOfRangeException($"Tried to write to item {index} of an {len} element array!");
             WriteMemory(arr + index * Marshal.SizeOf<T>(), value);
@@ -544,6 +544,23 @@ namespace OmsiHook
         }
 
         /// <summary>
+        /// Reads an array of pointers to structs from unmanaged memory at a given address.
+        /// </summary>
+        /// <typeparam name="T">The type of the struct to return</typeparam>
+        /// <param name="address">The address of the array to read from</param>
+        /// <returns>The parsed array of structs.</returns>
+        public T[] ReadMemoryStructPtrArray<T>(int address) where T : unmanaged
+        {
+            int arr = ReadMemory<int>(address);
+            int len = ReadMemory<int>(arr - 4);
+            T[] ret = new T[len];
+            for (int i = 0; i < len; i++)
+                ret[i] = ReadMemory<T>(ReadMemory<int>(arr + i * Marshal.SizeOf<T>()));
+
+            return ret;
+        }
+
+        /// <summary>
         /// Reads an array of strings from unmanaged memory at a given address.
         /// </summary>
         /// <param name="address">The address of the array to read from</param>
@@ -738,7 +755,7 @@ namespace OmsiHook
 
                             val = typeof(Memory).GetMethod(nameof(AllocateStruct))
                                 .MakeGenericMethod(a.InternalType)
-                                .Invoke(this, new object[] { val });
+                                .Invoke(this, new object[] { val,1 });
                             break;
 
                         case OmsiObjPtrAttribute a:
