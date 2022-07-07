@@ -937,7 +937,7 @@ namespace OmsiHook
         public OmsiThirdRail[] third_rails;
     }
 
-    internal struct OmsiObjectPathInfoInternal
+    public struct OmsiObjectPathInfoInternal
     {
         public D3DVector position;
         public float hdg;
@@ -1011,6 +1011,12 @@ namespace OmsiHook
     {
         public OmsiSnapPosition pos;
         public string splineType;
+    }
+
+    public struct OmsiSplineHelperInternal
+    {
+        public OmsiSnapPosition pos;
+        [OmsiStrPtr] public int splineType;
     }
 
     public struct OmsiTriggerBox
@@ -1186,57 +1192,57 @@ namespace OmsiHook
         public byte typ;
     }
 
-	public struct OmsiWeightData
+    public struct OmsiWeightData
     {
-		public float[] influences;
+        public float[] influences;
     }
 
     internal struct OmsiWeightDataInternal
     {
-		[OmsiStructArrayPtrAttribute(typeof(float))] public int influences;
+        [OmsiStructArrayPtrAttribute(typeof(float))] public int influences;
     }
-  
-	public struct OmsiFileObjectPathInfo
+
+    public struct OmsiFileObjectPathInfo
     {
-		public OmsiPathRule[] rules;
+        public OmsiPathRule[] rules;
     }
     internal struct OmsiFileObjectPathInfoInternal
     {
-		[OmsiStructArrayPtr(typeof(OmsiPathRule), typeof(OmsiPathRuleInternal))] public int rules;
+        [OmsiStructArrayPtr(typeof(OmsiPathRule), typeof(OmsiPathRuleInternal))] public int rules;
     }
 
-	public struct OmsiPathRule
+    public struct OmsiPathRule
     {
-		public short[] trafficDensity_act;
-		public float[] trafficDensity;
-		public short priority_act;
-		public byte priority;
+        public short[] trafficDensity_act;
+        public float[] trafficDensity;
+        public short priority_act;
+        public byte priority;
     }
 
     internal struct OmsiPathRuleInternal
     {
-		[OmsiObjArrayPtr(typeof(short))] public int trafficDensity_act;
-		[OmsiObjArrayPtr(typeof(float))] public int trafficDensity;
-		public short priority_act;
-		public byte priority;
+        [OmsiObjArrayPtr(typeof(short))] public int trafficDensity_act;
+        [OmsiObjArrayPtr(typeof(float))] public int trafficDensity;
+        public short priority_act;
+        public byte priority;
     }
-  
+
     public struct OmsiPathSegmentFStr
     {
         public int fstr;
         public int fstrentry;
     }
 
-	public struct OmsiStringItem
+    public struct OmsiStringItem
     {
-		public string fstring;
-		public OmsiObject fobject;
+        public string fstring;
+        public OmsiObject fobject;
     }
 
     internal struct OmsiStringItemInternal
     {
-		[OmsiStrPtr] public int fstring;
-		[OmsiObjPtr(typeof(OmsiObject))] public int fobject;
+        [OmsiStrPtr] public int fstring;
+        [OmsiObjPtr(typeof(OmsiObject))] public int fobject;
     }
 
     public struct OmsiScriptTexture
@@ -1320,7 +1326,7 @@ namespace OmsiHook
         public uint passCount;
         public uint ticket_cnt;
         public float tickets_cash;
-        [OmsiStructPtr(typeof(OmsiPerbus),typeof(OmsiPerbusInternal))] public int perbus;
+        [OmsiStructArrayPtr(typeof(OmsiPerbus),typeof(OmsiPerbusInternal))] public int perbus;
 
     }
     public struct OmsiTTLogDetailed
@@ -1354,9 +1360,9 @@ namespace OmsiHook
         /// </summary>
         public byte dep_ok;
     }
-    internal struct OmsiTTLogDetailedInternal
+    public struct OmsiTTLogDetailedInternal
     {
-        [OmsiStrPtr] public int busstop_name;
+        [OmsiStrPtr(raw:true)] public int busstop_name;
         public int eta;
         public int etd;
         public int ata;
@@ -1381,12 +1387,12 @@ namespace OmsiHook
     {
         THK_Free, THK_TooClose, THK_TooCloseFrontFront, THK_TooCloseFront, THK_TooCloseInside
     }
-    
+
     public enum OmsiPAIM : byte
     {
         PAIM_Parked, PAIM_Busstop, PAIM_Drive
     }
-    
+
     public struct OmsiHumanKollisionFreeSide
     {
         public bool left;
@@ -1437,7 +1443,7 @@ namespace OmsiHook
         [OmsiStructArrayPtr(typeof(OmsiTTTrackEntry), typeof(OmsiTTTrackEntryInternal))] public int TrackEntrys;
         public float laenge; // Length
     }
-    
+
     public struct OmsiTTBusstop
     {
         public string name;
@@ -1751,7 +1757,7 @@ namespace OmsiHook
         [OmsiStrArrayPtr] public int filnames;
         public float probability;
     }
-    
+
     public struct OmsiRVFile
     {
         public int startDateRel2000;
@@ -1770,7 +1776,6 @@ namespace OmsiHook
         [OmsiStructArrayPtr(typeof(OmsiRVTypeTour), typeof(OmsiRVTypeTourInternal))] public int list_type_tour;
         [OmsiStruct(typeof(OmsiRVTypesLine), typeof(OmsiRVTypesLineInternal))] public int list_types_line;
     }
-
     /* TODO: Parse the pointers better to get the variables */
     public struct OmsiBoolClassCondiBool
     {
@@ -1805,9 +1810,51 @@ namespace OmsiHook
     {
         MBLeft, MBRight, MBMiddle
     }
+    public struct OmsiLOD
+    {
+        public float minSize;
+    }
+
+    public struct OmsiSpot
+    {
+        public D3DVector pos;
+        public D3DVector dir;
+        public float r;
+        public float g;
+        public float b;
+        public float range;
+        public float innerCone;
+        public float outerCoune;
+    }
+
+    public struct OmsiOFTTex
+    {
+        public int source;
+        public string font;
+        public OmsiPoint size;
+        public byte fullColor;
+        public uint color;
+        public byte orientation;
+        public char grid;
+    }
+    internal struct OmsiOFTTexInternal
+    {
+        public int source;
+        [OmsiStrPtr] public int font;
+        public OmsiPoint size;
+        public byte fullColor;
+        public uint color;
+        public byte orientation;
+        public char grid;
+    }
     public enum OmsiPathRuleIdents : int
     {
         TPRISpeed, TPRIOvertake, TPRInocars, TPRIbuses, TPRItrucks, TPRITrafficDens, TPRIPriority
+    }
+
+    public struct OmsiScriptTex
+    {
+        public OmsiPoint size;
     }
     /// <summary>
     /// This is a place holder struct, confirmation of exact struct data TBC
@@ -1831,4 +1878,51 @@ namespace OmsiHook
         public uint SpinCount;
     }
 
+    /// <summary>
+    /// Struct used for Strings to floats - especially used in the OMSI OSC StringVariables
+    /// </summary>
+    public struct OmsiString
+    {
+        public string String;
+        public OmsiString(string s)
+        {
+            String = s;
+        }
+    }
+    public struct OmsiStringInternal
+    {
+        [OmsiStrPtr(false, true)] public int String;
+    }
+    /// <summary>
+    /// Struct used for WStrings to floats - especially used in the OMSI OSC StringVariables
+    /// </summary>
+    public struct OmsiWString
+    {
+        public string String;
+        public OmsiWString(string s)
+        {
+            String = s;
+        }
+    }
+    public struct OmsiWStringInternal
+    {
+        [OmsiStrPtr(true, true)] public int String;
+    }
+    /// <summary>
+    /// Struct used for Pointers to floats - especially used in the OMSI OSC variables
+    /// </summary>
+    public struct OmsiFloatPtr
+    {
+        public float Float;
+        public OmsiFloatPtr(float f)
+        {
+            Float = f;
+        }
+    }
+    public struct OmsiFloatPtrInternal
+    {
+        [OmsiStructPtr(typeof(float))] public int Float;
+    }
+
 }
+

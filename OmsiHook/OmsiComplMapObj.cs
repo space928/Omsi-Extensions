@@ -1,4 +1,7 @@
-﻿namespace OmsiHook
+﻿using System;
+using System.Collections.Generic;
+
+namespace OmsiHook
 {
     /// <summary>
     /// Base class for complex map objects - used by vehicles and humans
@@ -110,11 +113,12 @@
             get => Memory.ReadMemory<int>(Address + 0x1d0);
             set => Memory.WriteMemory(Address + 0x1d0, value);
         }
-        public OmsiTreeInfo TreeInfo
+        // TODO: Implement internal struct for OmsiTreeInfo
+        /*public OmsiTreeInfo TreeInfo
         {
             get => Memory.ReadMemory<OmsiTreeInfo>(Address + 0x1d4);
             set => Memory.WriteMemory(Address + 0x1d4, value);
-        }
+        }*/
         public bool OnlyEditor
         {
             get => Memory.ReadMemory<bool>(Address + 0x1e8);
@@ -125,12 +129,46 @@
             get => Memory.ReadMemory<OmsiMapRenderPriority>(Address + 0x1e9);
             set => Memory.WriteMemory(Address + 0x1e9, value);
         }
-        public string[] VarStrings => Memory.ReadMemoryStringArray(Address + 0x1ec);
-        public string[] SVarStrings => Memory.ReadMemoryStringArray(Address + 0x1f0);
-        public string[] SysVarStrings => Memory.ReadMemoryStringArray(Address + 0x1f4);
-        public string[] CallBackStrings => Memory.ReadMemoryStringArray(Address + 0x1f8);
-        //TODO:
-        //public float*[] SysVars => Memory.ReadMemoryStructArray<float*>(Address + 0x1fc);
+        private MemArrayStringDict varStrings;
+        /// <summary>
+        /// Array of names of float variables.
+        /// </summary>
+        /// <remarks>
+        /// The value of this property is automatically cached for performance.
+        /// </remarks>
+        public MemArrayStringDict VarStrings => varStrings ??= new(Memory, Address + 0x1ec, true);
+        private MemArrayStringDict sVarStrings;
+        /// <summary>
+        /// Array of names of string variables.
+        /// </summary>
+        /// <remarks>
+        /// The value of this property is automatically cached for performance.
+        /// </remarks>
+        public MemArrayStringDict SVarStrings => sVarStrings ??= new(Memory, Address + 0x1f0, true);
+        private MemArrayStringDict sysVarStrings;
+        /// <summary>
+        /// Array of names of system variables.
+        /// </summary>
+        /// <remarks>
+        /// The value of this property is automatically cached for performance.
+        /// </remarks>
+        public MemArrayStringDict SysVarStrings => sysVarStrings ??= new(Memory, Address + 0x1f4, true);
+        private MemArrayStringDict callBackStrings;
+        /// <summary>
+        /// Array of names of callbacks.
+        /// </summary>
+        /// <remarks>
+        /// The value of this property is automatically cached for performance.
+        /// </remarks>
+        public MemArrayStringDict CallBackStrings => callBackStrings ??= new(Memory, Address + 0x1f8, true);
+        private MemArray<OmsiFloatPtrInternal, OmsiFloatPtr> sysVars;
+        /// <summary>
+        /// Array of values of system variables.
+        /// </summary>
+        /// <remarks>
+        /// The value of this property is automatically cached for performance.
+        /// </remarks>
+        public MemArray<OmsiFloatPtrInternal, OmsiFloatPtr> SysVars => sysVars ??= new(Memory, Address + 0x1fc);
         public bool ScriptShare
         {
             get => Memory.ReadMemory<bool>(Address + 0x200);
@@ -203,11 +241,11 @@
         }*/
         public OmsiPathManager ComplObj
         {
-            get => new OmsiPathManager(Memory, Memory.ReadMemory<int>(Address + 0x250));
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x250));
         }
-        public OmsiObjectPathInfo[] Paths
+        public MemArray<OmsiObjectPathInfoInternal, OmsiObjectPathInfo> Paths
         {
-            get => Memory.ReadMemoryStructArray<OmsiObjectPathInfo>(Address + 0x254);
+            get => new(Memory, Address + 0x254);
         }
         public OmsiSnapPosition[] SnapPoints
         {
@@ -217,10 +255,9 @@
         {
             get => Memory.ReadMemoryStructArray<OmsiCameraSettings>(Address + 0x25c);
         }
-        public OmsiSplineHelper[] OmsiSplineHelpers
+        public MemArray<OmsiSplineHelperInternal, OmsiSplineHelper> OmsiSplineHelpers
         {
-            get => Memory.ReadMemoryStructArray<OmsiSplineHelper>(Address + 0x260);
+            get => new(Memory, Address + 0x260);
         }
-
     }
 }

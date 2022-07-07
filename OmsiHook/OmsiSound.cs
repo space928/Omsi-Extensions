@@ -53,9 +53,9 @@ namespace OmsiHook
             get => Memory.ReadMemory<bool>(Address + 0x1c);
             set => Memory.WriteMemory(Address + 0x1c, value);
         }
-        public float[] InternVars
+        public MemArray<float> InternVars
         {
-            get => Memory.ReadMemoryStructArray<float>(Address + 0x20);
+            get => new(Memory, Address + 0x20);
         }
         public uint StartTime
         {
@@ -169,9 +169,9 @@ namespace OmsiHook
             get => Memory.ReadMemory<float>(Address + 0x6c);
             set => Memory.WriteMemory(Address + 0x6c, value);
         }
-        public int[] VolVars
+        public MemArray<int> VolVars
         {
-            get => Memory.ReadMemoryStructArray<int>(Address + 0x70);
+            get => new(Memory, Address + 0x70);
         }
         public OmsiFuncClass[] VolCurves
         {

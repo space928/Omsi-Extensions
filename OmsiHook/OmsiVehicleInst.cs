@@ -491,7 +491,5 @@
         {
             get => new(Memory, Memory.ReadMemory<int>(Address + 0x6e8));
         }
-
-        //TODO: A whole buch of AI fields and some other fields
     }
 }

@@ -4,7 +4,7 @@ namespace OmsiHook
 {
     /// <summary>
     /// Marks a field to be converted from an internal struct to a struct.<para/>
-    /// Used by Memory.MarshalStruct()
+    /// <seealso cref="Memory.MarshalStruct{OutStruct, InStruct}(InStruct)"/>
     /// </summary>
     [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
     sealed class OmsiStructAttribute : Attribute
@@ -41,7 +41,7 @@ namespace OmsiHook
 
     /// <summary>
     /// Marks a field to be converted from an int to a string.<para/>
-    /// Used by Memory.MarshalStruct()
+    /// Used by <seealso cref="Memory.MarshalStruct{OutStruct, InStruct}(InStruct)"/>
     /// </summary>
     [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
     sealed class OmsiStrPtrAttribute : Attribute
@@ -49,18 +49,27 @@ namespace OmsiHook
         // See the attribute guidelines at 
         //  http://go.microsoft.com/fwlink/?LinkId=85236
         readonly bool wide;
+        readonly bool raw;
 
-        public OmsiStrPtrAttribute(bool wide = false)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="wide">Whether or not to decode the string as UTF-16.</param>
+        /// <param name="raw">Treat the address as a pointer to the first character 
+        /// (<c>char *</c>) rather than a pointer to a pointer.</param>
+        public OmsiStrPtrAttribute(bool wide = false, bool raw = false)
         {
             this.wide = wide;
+            this.raw = raw;
         }
 
         public bool Wide => wide;
+        public bool Raw => raw;
     }
 
     /// <summary>
-    /// Marks a field to be converted from an int to an IntPtr (32-Bit).<para/>
-    /// Used by Memory.MarshalStruct()
+    /// Marks a field to be converted from an int to an <seealso cref="IntPtr"/> (32-Bit).<para/>
+    /// Used by <seealso cref="Memory.MarshalStruct{OutStruct, InStruct}(InStruct)"/>
     /// </summary>
     [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
     sealed class OmsiPtrAttribute : Attribute
@@ -69,8 +78,8 @@ namespace OmsiHook
     }
 
     /// <summary>
-    /// Marks a field to be converted from an int to a struct.<para/>
-    /// Used by Memory.MarshalStruct()
+    /// Marks a field to be converted from an <c>int</c> to a struct.<para/>
+    /// Used by <seealso cref="Memory.MarshalStruct{OutStruct, InStruct}(InStruct)"/>
     /// </summary>
     [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
     sealed class OmsiStructPtrAttribute : Attribute
@@ -106,8 +115,8 @@ namespace OmsiHook
     }
 
     /// <summary>
-    /// Marks a field to be converted from an int to an OmsiObject.<para/>
-    /// Used by Memory.MarshalStruct()
+    /// Marks a field to be converted from an int to an <seealso cref="OmsiObject"/>.<para/>
+    /// Used by <seealso cref="Memory.MarshalStruct{OutStruct, InStruct}(InStruct)"/>
     /// </summary>
     [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
     sealed class OmsiObjPtrAttribute : Attribute
@@ -128,8 +137,8 @@ namespace OmsiHook
     }
 
     /// <summary>
-    /// Marks a field to be converted from an int to an OmsiObject[].<para/>
-    /// Used by Memory.MarshalStruct()
+    /// Marks a field to be converted from an <c>int</c> to an <seealso cref="OmsiObject[]"/>.<para/>
+    /// Used by <seealso cref="Memory.MarshalStruct{OutStruct, InStruct}(InStruct)"/>
     /// </summary>
     [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
     sealed class OmsiObjArrayPtrAttribute : Attribute
@@ -150,8 +159,8 @@ namespace OmsiHook
     }
 
     /// <summary>
-    /// Marks a field to be converted from an int to a struct[].<para/>
-    /// Used by Memory.MarshalStruct()
+    /// Marks a field to be converted from an <c>int</c> to a <c>struct[]</c><para/>
+    /// Used by <seealso cref="Memory.MarshalStruct{OutStruct, InStruct}(InStruct)"/>
     /// </summary>
     [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
     sealed class OmsiStructArrayPtrAttribute : Attribute
@@ -187,8 +196,8 @@ namespace OmsiHook
     }
 
     /// <summary>
-    /// Marks a field to be converted from an int to an array of strings.<para/>
-    /// Used by Memory.MarshalStruct()
+    /// Marks a field to be converted from an <c>int</c> to an array of strings.<para/>
+    /// Used by <seealso cref="Memory.MarshalStruct{OutStruct, InStruct}(InStruct)"/>
     /// </summary>
     [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
     sealed class OmsiStrArrayPtrAttribute : Attribute

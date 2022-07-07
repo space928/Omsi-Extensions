@@ -1,3 +1,5 @@
+using System;
+
 namespace OmsiHook
 {
     /// <summary>
@@ -13,12 +15,10 @@ namespace OmsiHook
             get => Memory.ReadMemory<OmsiCriticalSection>(Address + 0x6f0);
             set => Memory.WriteMemory(Address + 0x6f0, value);
         }*/
-        /* TODO:
-        public OmsiRoadVehiclePtr RoadVehicle
+        public OmsiRoadVehicle RoadVehicle
         {
-            get => Memory.ReadMemory<OmsiRoadVehiclePtr>(Address + 0x710);
-            set => Memory.WriteMemory(Address + 0x710, value);
-        }*/
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x710));
+        }
         public bool OnLoadedKachel
         {
             get => Memory.ReadMemory<bool>(Address + 0x714);
@@ -29,7 +29,7 @@ namespace OmsiHook
             get => Memory.ReadMemory<bool>(Address + 0x715);
             set => Memory.WriteMemory(Address + 0x715, value);
         }
-        public OmsiAchseInstance[] Achsen => Memory.ReadMemoryStructArray<OmsiAchseInstance>(Address + 0x718);
+        public MemArray<OmsiAchseInstance> Achsen => new(Memory, Address + 0x718);
         public byte Achsen_Angetriben
         {
             get => Memory.ReadMemory<byte>(Address + 0x71c);
@@ -180,7 +180,7 @@ namespace OmsiHook
             get => Memory.ReadMemory<int>(Address + 0x7a0);
             set => Memory.WriteMemory(Address + 0x7a0, value);
         }
-        public int[] MyStations => Memory.ReadMemoryStructArray<int>(Address + 0x7a4);
+        public MemArray<int> MyStations => new(Memory, Address + 0x7a4);
         public int Ticket_Passenger
         {
             get => Memory.ReadMemory<int>(Address + 0x7a8);
