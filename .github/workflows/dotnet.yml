@@ -19,6 +19,8 @@ jobs:
         dotnet-version: 5.0.x
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1
+      with:
+        vs-version: '[17.1,17.2)'
     - name: Setup Windows 10 SDK
       uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.4
     - name: Restore dependencies
