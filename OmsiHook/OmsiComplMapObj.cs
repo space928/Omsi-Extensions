@@ -129,11 +129,18 @@ namespace OmsiHook
             get => Memory.ReadMemory<OmsiMapRenderPriority>(Address + 0x1e9);
             set => Memory.WriteMemory(Address + 0x1e9, value);
         }
-        public MemArrayString VarStrings => new(Memory, Address + 0x1ec, true);
-        public MemArrayString SVarStrings => new(Memory, Address + 0x1f0, true);
-        public MemArrayString SysVarStrings => new(Memory, Address + 0x1f4, true);
-        public MemArrayString CallBackStrings => new(Memory, Address + 0x1f8, true);
-        public float[] SysVars => Memory.ReadMemoryStructPtrArray<float>(Address + 0x1fc);
+        internal MemArrayString VarStringsInternal;
+        public MemArrayString VarStrings => VarStringsInternal ??= new(Memory, Address + 0x1ec, true);
+        internal Dictionary<string, int> OH_VarStringsMapInternal;
+        public Dictionary<string, int> OH_VarStringsMap = OH_VarStringsMapInternal ??= new Dictionary<string, int>();
+        internal MemArrayString SVarStringsInternal;
+        public MemArrayString SVarStrings => SVarStringsInternal ??= new(Memory, Address + 0x1f0, true);
+        internal MemArrayString SysVarStringsInternal;
+        public MemArrayString SysVarStrings => SysVarStringsInternal ??= new(Memory, Address + 0x1f4, true);
+        internal MemArrayString CallBackStringsInternal;
+        public MemArrayString CallBackStrings => CallBackStringsInternal ??= new(Memory, Address + 0x1f8, true);
+        internal MemArray<OmsiFloatPtrInternal, OmsiFloatPtr> SysVarsInternal;
+        public MemArray<OmsiFloatPtrInternal, OmsiFloatPtr> SysVars => SysVarsInternal ??= new(Memory, Address + 0x1fc);
         public bool ScriptShare
         {
             get => Memory.ReadMemory<bool>(Address + 0x200);
