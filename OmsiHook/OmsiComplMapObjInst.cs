@@ -135,61 +135,61 @@ namespace OmsiHook
         /// <summary>
         /// Get a float variable for an object from its name.
         /// </summary>
-        /// <param name="VarName">Variable Name</param>
+        /// <param name="varName">Variable Name</param>
         /// <returns>requested float value</returns>
         /// <exception cref="KeyNotFoundException"/>
-        public float GetVariable(string VarName)
+        public float GetVariable(string varName)
         {
-            int index = ComplMapObj.GetVarIndex(VarName);
+            int index = ComplMapObj.VarStrings[varName];
             if (index < PublicVars.Count && index >= 0)
                 return this.PublicVars[index].Float;
             else
-                throw new KeyNotFoundException("Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
+                throw new KeyNotFoundException($"Variable '{varName}' not found in object. - Index Out Of Bounds");
         }
 
         /// <summary>
         /// Set a float variable for an object to a value from its name.
         /// </summary>
-        /// <param name="VarName">Variable Name</param>
-        /// <param name="Value">Desired Value</param>
+        /// <param name="varName">Variable Name</param>
+        /// <param name="value">Desired Value</param>
         /// <exception cref="KeyNotFoundException"/>
-        public void SetVariable(string VarName, float Value)
+        public void SetVariable(string varName, float value)
         {
-            int index = ComplMapObj.GetVarIndex(VarName);
+            int index = ComplMapObj.VarStrings[varName];
             if (index < PublicVars.Count && index >= 0)
-                this.PublicVars[index] = new(Value);
+                this.PublicVars[index] = new(value);
             else
-                throw new KeyNotFoundException("Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
+                throw new KeyNotFoundException($"Variable '{varName}' not found in object. - Index Out Of Bounds");
         }
 
         /// <summary>
         /// Get a string variable for an object from its name.
         /// </summary>
-        /// <param name="VarName">Variable Name</param>
+        /// <param name="varName">Variable Name</param>
         /// <returns>requested float value</returns>
         /// <exception cref="KeyNotFoundException"/>
-        public string GetStringVariable(string VarName)
+        public string GetStringVariable(string varName)
         {
-            int index = ComplMapObj.GetStringVarIndex(VarName);
+            int index = ComplMapObj.SVarStrings[varName];
             if (index < ComplObjInst.StringVars.Count && index >= 0)
                 return ComplObjInst.StringVars[index].String;
             else
-                throw new KeyNotFoundException("String Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
+                throw new KeyNotFoundException($"String Variable '{varName}' not found in object. - Index Out Of Bounds");
         }
 
         /// <summary>
         /// Set a string variable for an object to a value from its name.
         /// </summary>
-        /// <param name="VarName">Variable Name</param>
-        /// <param name="Value">Desired Value</param>
+        /// <param name="varName">Variable Name</param>
+        /// <param name="value">Desired Value</param>
         /// <exception cref="KeyNotFoundException"/>
-        public void SetStringVariable(string VarName, string Value)
+        public void SetStringVariable(string varName, string value)
         {
-            int index = ComplMapObj.GetStringVarIndex(VarName);
+            int index = ComplMapObj.SVarStrings[varName];
             if (index < ComplObjInst.StringVars.Count && index >= 0)
-                ComplObjInst.StringVars[index] = new(Value);
+                ComplObjInst.StringVars[index] = new(value);
             else
-                throw new KeyNotFoundException("String Variable '" + VarName + "' not found in object. - Index Out Of Bounds");
+                throw new KeyNotFoundException($"String Variable '{varName}' not found in object. - Index Out Of Bounds");
         }
     }
 }

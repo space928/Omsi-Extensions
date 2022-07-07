@@ -129,18 +129,46 @@ namespace OmsiHook
             get => Memory.ReadMemory<OmsiMapRenderPriority>(Address + 0x1e9);
             set => Memory.WriteMemory(Address + 0x1e9, value);
         }
-        internal MemArrayString VarStringsInternal;
-        public MemArrayString VarStrings => VarStringsInternal ??= new(Memory, Address + 0x1ec, true);
-        internal Dictionary<string, int> OH_VarStringsMapInternal;
-        public Dictionary<string, int> OH_VarStringsMap = OH_VarStringsMapInternal ??= new Dictionary<string, int>();
-        internal MemArrayString SVarStringsInternal;
-        public MemArrayString SVarStrings => SVarStringsInternal ??= new(Memory, Address + 0x1f0, true);
-        internal MemArrayString SysVarStringsInternal;
-        public MemArrayString SysVarStrings => SysVarStringsInternal ??= new(Memory, Address + 0x1f4, true);
-        internal MemArrayString CallBackStringsInternal;
-        public MemArrayString CallBackStrings => CallBackStringsInternal ??= new(Memory, Address + 0x1f8, true);
-        internal MemArray<OmsiFloatPtrInternal, OmsiFloatPtr> SysVarsInternal;
-        public MemArray<OmsiFloatPtrInternal, OmsiFloatPtr> SysVars => SysVarsInternal ??= new(Memory, Address + 0x1fc);
+        private MemArrayStringDict varStrings;
+        /// <summary>
+        /// Array of names of float variables.
+        /// </summary>
+        /// <remarks>
+        /// The value of this property is automatically cached for performance.
+        /// </remarks>
+        public MemArrayStringDict VarStrings => varStrings ??= new(Memory, Address + 0x1ec, true);
+        private MemArrayStringDict sVarStrings;
+        /// <summary>
+        /// Array of names of string variables.
+        /// </summary>
+        /// <remarks>
+        /// The value of this property is automatically cached for performance.
+        /// </remarks>
+        public MemArrayStringDict SVarStrings => sVarStrings ??= new(Memory, Address + 0x1f0, true);
+        private MemArrayStringDict sysVarStrings;
+        /// <summary>
+        /// Array of names of system variables.
+        /// </summary>
+        /// <remarks>
+        /// The value of this property is automatically cached for performance.
+        /// </remarks>
+        public MemArrayStringDict SysVarStrings => sysVarStrings ??= new(Memory, Address + 0x1f4, true);
+        private MemArrayStringDict callBackStrings;
+        /// <summary>
+        /// Array of names of callbacks.
+        /// </summary>
+        /// <remarks>
+        /// The value of this property is automatically cached for performance.
+        /// </remarks>
+        public MemArrayStringDict CallBackStrings => callBackStrings ??= new(Memory, Address + 0x1f8, true);
+        private MemArray<OmsiFloatPtrInternal, OmsiFloatPtr> sysVars;
+        /// <summary>
+        /// Array of values of system variables.
+        /// </summary>
+        /// <remarks>
+        /// The value of this property is automatically cached for performance.
+        /// </remarks>
+        public MemArray<OmsiFloatPtrInternal, OmsiFloatPtr> SysVars => sysVars ??= new(Memory, Address + 0x1fc);
         public bool ScriptShare
         {
             get => Memory.ReadMemory<bool>(Address + 0x200);
@@ -230,36 +258,6 @@ namespace OmsiHook
         public MemArray<OmsiSplineHelperInternal, OmsiSplineHelper> OmsiSplineHelpers
         {
             get => new(Memory, Address + 0x260);
-        }
-
-        /// <summary>
-        /// Get the variable's index from it's name.
-        /// </summary>
-        /// <param name="varName">Variable name</param>
-        /// <returns></returns>
-        /// <exception cref="KeyNotFoundException"></exception>
-        public int GetVarIndex(string varName)
-        {
-            var strings = this.VarStrings;
-            for (int i = 0; i < strings.Count; i++)
-                if (strings[i] == varName)
-                    return i;
-            throw new KeyNotFoundException("Variable '" + varName + "' not found in object.");
-        }
-
-        /// <summary>
-        /// Get the string variable's index from it's name.
-        /// </summary>
-        /// <param name="varName">Variable name</param>
-        /// <returns></returns>
-        /// <exception cref="KeyNotFoundException"></exception>
-        public int GetStringVarIndex(string varName)
-        {
-            var strings = this.SVarStrings;
-            for (int i = 0; i < strings.Count; i++)
-                if (strings[i] == varName)
-                    return i;
-            throw new KeyNotFoundException("String Variable '" + varName + "' not found in object.");
         }
     }
 }
