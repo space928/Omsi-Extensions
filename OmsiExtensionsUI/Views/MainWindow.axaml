@@ -7,14 +7,61 @@
         x:Class="OmsiExtensionsUI.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="OmsiExtensionsUI">
-
-    <Design.DataContext>
+  <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
+    <DockPanel>
+      <Menu DockPanel.Dock="Top">
+        <MenuItem Header="_Omsi Connection">
+          <MenuItem Command="{Binding ConnectToOmsiCommand}" Header="_Connect"/>
+        </MenuItem>
+        <MenuItem Header="_Refresh Rate">
+          <MenuItem Command="{Binding UpdateDataCommand}" Header="10ms"/>
+          <MenuItem Command="{Binding UpdateDataCommand}" Header="20ms"/>
+          <MenuItem Command="{Binding UpdateDataCommand}" Header="50ms"/>
+          <MenuItem Command="{Binding UpdateDataCommand}" Header="100ms"/>
+          <MenuItem Command="{Binding UpdateDataCommand}" Header="1000ms"/>
+        </MenuItem>
+      </Menu>
 
-    <Grid RowDefinitions="*,*,*">
-        <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <TextBlock Grid.Row="1" Text="{Binding PlayerBusPosition}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <Button Content="Update Data" Command="{Binding UpdateDataCommand}"/>
-    </Grid>
+      <TabControl>
+        <TabItem Header="Floats" VerticalContentAlignment="Center">
+          <StackPanel Margin="10">
+            <TextBox Watermark="Search" Text="{Binding Search}"/>
+            <Grid RowDefinitions="*,*,*">
+              <DataGrid Height="200" Name="FloatsDataGrid" Items="{Binding Floats}" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="Name"  Binding="{Binding Name}" IsReadOnly="True"/>
+                  <DataGridTextColumn Header="Value" Binding="{Binding Value}" />
+                  <DataGridCheckBoxColumn Header="Show In Graph" Binding="{Binding ShowInGraph}"/>
+                </DataGrid.Columns>
+              </DataGrid>
+            </Grid>
+          </StackPanel>
+        </TabItem>
+        <TabItem Header="Strings" VerticalContentAlignment="Center">
+          <StackPanel Margin="10">
+            <TextBox Watermark="Search" Text="{Binding Search}"/>
+            <Grid RowDefinitions="*,*,*">
+              <DataGrid Height="200" Name="StringsDataGrid" Items="{Binding SVars}" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="Name"  Binding="{Binding Name}" IsReadOnly="True"/>
+                  <DataGridTextColumn Header="Value" Binding="{Binding Value}" />
+                </DataGrid.Columns>
+              </DataGrid>
+            </Grid>
+          </StackPanel>
+        </TabItem>
+        <!--
+        <TabItem Header="System" VerticalContentAlignment="Center">
+          <StackPanel Margin="10">
+            <TextBox Watermark="Search" Text="{Binding Search}"/>
+            <Grid RowDefinitions="*,*,*">
+              <TextBlock Text="I am in the System page !" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+              <TextBlock Grid.Row="1" Text="{Binding PlayerBusPosition}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Grid>
+          </StackPanel>
+        </TabItem>-->
+      </TabControl>
+    </DockPanel>
 </Window>
