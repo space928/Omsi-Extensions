@@ -397,7 +397,11 @@ namespace OmsiHook
         public override void UpdateFromHook()
         {
             base.UpdateFromHook();
-            indexDictionary = Enumerable.Range(0, Count).ToDictionary(x => arrayCache[x]);
+            indexDictionary.Clear();
+            for(int i = 0; i < Count; i++)
+            {
+                indexDictionary.TryAdd(arrayCache[i], i);
+            }
         }
 
         public override bool Contains(string item) => indexDictionary.ContainsKey(item);
