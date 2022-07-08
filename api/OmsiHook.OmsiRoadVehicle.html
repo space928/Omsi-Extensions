@@ -1,0 +1,734 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+    
+    <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Class OmsiRoadVehicle
+     | OmsiHook </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Class OmsiRoadVehicle
+     | OmsiHook ">
+      <meta name="generator" content="docfx 2.56.7.0">
+      
+      <link rel="shortcut icon" href="../images/favicon.ico">
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/night-owl.min.css">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" integrity="sha384-EvBWSlnoFgZlXJvpzS+MAUEjvN7+gcCwH+qh7GRFOGgZO0PuwOFro7qPOJnLfe7l" crossorigin="anonymous">
+      <link rel="stylesheet" href="../styles/config.css">
+      <link rel="stylesheet" href="../styles/discord.css">
+      <link rel="stylesheet" href="../styles/singulink.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
+      
+      <meta property="docfx:rel" content="../">
+      <meta property="docfx:newtab" content="true">
+    </head>
+    <body>
+        <div class="top-navbar">
+            <a class="burger-icon" onclick="toggleMenu()">
+                <svg name="Hamburger" style="vertical-align: middle;" width="34" height="34" viewbox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M20 6H4V9H20V6ZM4 10.999H20V13.999H4V10.999ZM4 15.999H20V18.999H4V15.999Z"></path></svg>
+            </a>
+
+            
+            <a class="brand" href="../index.html">
+              <img src="../images/logo.svg" alt="OmsiHook Documentation" class="logomark">
+              <span class="brand-title">OmsiHook Documentation</span>
+            </a>        </div>
+
+        <div class="body-content">
+            <div id="blackout" class="blackout" onclick="toggleMenu()"></div>
+
+            <nav id="sidebar" role="navigation">
+                <div class="sidebar">
+                    
+                    <div>
+                      <div class="mobile-hide">
+                        
+                        <a class="brand" href="../index.html">
+                          <img src="../images/logo.svg" alt="OmsiHook Documentation" class="logomark">
+                          <span class="brand-title">OmsiHook Documentation</span>
+                        </a>  </div>
+
+                      <div class="sidesearch">
+                        <form id="search" role="search" class="search">
+                            <i class="bi bi-search search-icon"></i>
+                            <input type="text" id="search-query" placeholder="Search" autocomplete="off">
+                        </form>
+                      </div>
+                    
+                      <div id="navbar">
+                      </div>
+                    </div>                    <div class="sidebar-item-separator"></div>
+                        
+                        <div id="sidetoggle">
+                          <div id="sidetoc"></div>
+                        </div>
+                </div>
+                <div class="footer">
+                  <strong>DocFX + OmsiHook = ♥</strong>
+                  
+                </div>            </nav>
+
+            <main class="main-panel">
+                
+                <div id="search-results" style="display: none;">
+                  <h1 class="search-list">Search Results for <span></span></h1>
+                  <div class="sr-items">
+                    <p><i class="bi bi-hourglass-split index-loading"></i></p>
+                  </div>
+                  <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+                </div>
+                <div role="main" class="hide-when-search">
+                        
+                        <div class="subnav navbar navbar-default">
+                          <div class="container hide-when-search" id="breadcrumb">
+                            <ul class="breadcrumb">
+                              <li></li>
+                            </ul>
+                          </div>
+                        </div>
+
+                    <article class="content wrap" id="_content" data-uid="OmsiHook.OmsiRoadVehicle">
+  
+  
+  <h1 id="OmsiHook_OmsiRoadVehicle" data-uid="OmsiHook.OmsiRoadVehicle" class="text-break">Class OmsiRoadVehicle
+  </h1>
+  <div class="markdown level0 summary"><p>Defines a Road Vehicle - most data is in the .bus/.ovh files</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="OmsiHook.OmsiObject.html">OmsiObject</a></div>
+    <div class="level2"><a class="xref" href="OmsiHook.OmsiPhysObj.html">OmsiPhysObj</a></div>
+    <div class="level3"><a class="xref" href="OmsiHook.OmsiComplMapObj.html">OmsiComplMapObj</a></div>
+    <div class="level4"><a class="xref" href="OmsiHook.OmsiVehicle.html">OmsiVehicle</a></div>
+    <div class="level5"><span class="xref">OmsiRoadVehicle</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiVehicle.StdCamera.html#OmsiHook_OmsiVehicle_StdCamera">OmsiVehicle.StdCamera</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiVehicle.CameraSettingsDriver.html#OmsiHook_OmsiVehicle_CameraSettingsDriver">OmsiVehicle.CameraSettingsDriver</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiVehicle.CameraSettingsPax.html#OmsiHook_OmsiVehicle_CameraSettingsPax">OmsiVehicle.CameraSettingsPax</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiVehicle.OutsideCameraCenter.html#OmsiHook_OmsiVehicle_OutsideCameraCenter">OmsiVehicle.OutsideCameraCenter</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiVehicle.View_Schedule.html#OmsiHook_OmsiVehicle_View_Schedule">OmsiVehicle.View_Schedule</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiVehicle.View_TicketSelling.html#OmsiHook_OmsiVehicle_View_TicketSelling">OmsiVehicle.View_TicketSelling</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiVehicle.Station_Side.html#OmsiHook_OmsiVehicle_Station_Side">OmsiVehicle.Station_Side</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiVehicle.Num_Werbung.html#OmsiHook_OmsiVehicle_Num_Werbung">OmsiVehicle.Num_Werbung</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiVehicle.AI_Veh_Type.html#OmsiHook_OmsiVehicle_AI_Veh_Type">OmsiVehicle.AI_Veh_Type</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiVehicle.REG_Type.html#OmsiHook_OmsiVehicle_REG_Type">OmsiVehicle.REG_Type</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiVehicle.Wider_Roll.html#OmsiHook_OmsiVehicle_Wider_Roll">OmsiVehicle.Wider_Roll</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiVehicle.Schwerpunkt_Height.html#OmsiHook_OmsiVehicle_Schwerpunkt_Height">OmsiVehicle.Schwerpunkt_Height</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiVehicle.REG_NumberActive.html#OmsiHook_OmsiVehicle_REG_NumberActive">OmsiVehicle.REG_NumberActive</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiVehicle.REG_List.html#OmsiHook_OmsiVehicle_REG_List">OmsiVehicle.REG_List</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiVehicle.REG_NumberFile.html#OmsiHook_OmsiVehicle_REG_NumberFile">OmsiVehicle.REG_NumberFile</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiVehicle.REG_Prefix.html#OmsiHook_OmsiVehicle_REG_Prefix">OmsiVehicle.REG_Prefix</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiVehicle.REG_Postfix.html#OmsiHook_OmsiVehicle_REG_Postfix">OmsiVehicle.REG_Postfix</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiVehicle.Ident_Var.html#OmsiHook_OmsiVehicle_Ident_Var">OmsiVehicle.Ident_Var</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiVehicle.KMCounter_Init_StartYear.html#OmsiHook_OmsiVehicle_KMCounter_Init_StartYear">OmsiVehicle.KMCounter_Init_StartYear</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiVehicle.KMCounter_Init_KMPerYear.html#OmsiHook_OmsiVehicle_KMCounter_Init_KMPerYear">OmsiVehicle.KMCounter_Init_KMPerYear</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.Scripts_Int.html#OmsiHook_OmsiComplMapObj_Scripts_Int">OmsiComplMapObj.Scripts_Int</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.Vars_Int.html#OmsiHook_OmsiComplMapObj_Vars_Int">OmsiComplMapObj.Vars_Int</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.SVars_Int.html#OmsiHook_OmsiComplMapObj_SVars_Int">OmsiComplMapObj.SVars_Int</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.ConstFiles_Int.html#OmsiHook_OmsiComplMapObj_ConstFiles_Int">OmsiComplMapObj.ConstFiles_Int</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.Model_Int.html#OmsiHook_OmsiComplMapObj_Model_Int">OmsiComplMapObj.Model_Int</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.PassengerCabin.html#OmsiHook_OmsiComplMapObj_PassengerCabin">OmsiComplMapObj.PassengerCabin</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.AbsHeight.html#OmsiHook_OmsiComplMapObj_AbsHeight">OmsiComplMapObj.AbsHeight</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.FoundInProtokoll.html#OmsiHook_OmsiComplMapObj_FoundInProtokoll">OmsiComplMapObj.FoundInProtokoll</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.Exists.html#OmsiHook_OmsiComplMapObj_Exists">OmsiComplMapObj.Exists</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.Groups.html#OmsiHook_OmsiComplMapObj_Groups">OmsiComplMapObj.Groups</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.FriendlyName.html#OmsiHook_OmsiComplMapObj_FriendlyName">OmsiComplMapObj.FriendlyName</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.StdColorScheme.html#OmsiHook_OmsiComplMapObj_StdColorScheme">OmsiComplMapObj.StdColorScheme</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.Model.html#OmsiHook_OmsiComplMapObj_Model">OmsiComplMapObj.Model</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.MyPath.html#OmsiHook_OmsiComplMapObj_MyPath">OmsiComplMapObj.MyPath</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.Sound.html#OmsiHook_OmsiComplMapObj_Sound">OmsiComplMapObj.Sound</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.Sound_AI.html#OmsiHook_OmsiComplMapObj_Sound_AI">OmsiComplMapObj.Sound_AI</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.Pause.html#OmsiHook_OmsiComplMapObj_Pause">OmsiComplMapObj.Pause</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.NoSound.html#OmsiHook_OmsiComplMapObj_NoSound">OmsiComplMapObj.NoSound</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.Complexity.html#OmsiHook_OmsiComplMapObj_Complexity">OmsiComplMapObj.Complexity</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.Joinable.html#OmsiHook_OmsiComplMapObj_Joinable">OmsiComplMapObj.Joinable</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.NullVar.html#OmsiHook_OmsiComplMapObj_NullVar">OmsiComplMapObj.NullVar</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.Special.html#OmsiHook_OmsiComplMapObj_Special">OmsiComplMapObj.Special</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.Depot.html#OmsiHook_OmsiComplMapObj_Depot">OmsiComplMapObj.Depot</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.HeightDeform.html#OmsiHook_OmsiComplMapObj_HeightDeform">OmsiComplMapObj.HeightDeform</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.HeightDeform_FileName.html#OmsiHook_OmsiComplMapObj_HeightDeform_FileName">OmsiComplMapObj.HeightDeform_FileName</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.Switch_State_Count.html#OmsiHook_OmsiComplMapObj_Switch_State_Count">OmsiComplMapObj.Switch_State_Count</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.OnlyEditor.html#OmsiHook_OmsiComplMapObj_OnlyEditor">OmsiComplMapObj.OnlyEditor</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.Priority.html#OmsiHook_OmsiComplMapObj_Priority">OmsiComplMapObj.Priority</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.VarStrings.html#OmsiHook_OmsiComplMapObj_VarStrings">OmsiComplMapObj.VarStrings</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.SVarStrings.html#OmsiHook_OmsiComplMapObj_SVarStrings">OmsiComplMapObj.SVarStrings</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.SysVarStrings.html#OmsiHook_OmsiComplMapObj_SysVarStrings">OmsiComplMapObj.SysVarStrings</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.CallBackStrings.html#OmsiHook_OmsiComplMapObj_CallBackStrings">OmsiComplMapObj.CallBackStrings</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.SysVars.html#OmsiHook_OmsiComplMapObj_SysVars">OmsiComplMapObj.SysVars</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.ScriptShare.html#OmsiHook_OmsiComplMapObj_ScriptShare">OmsiComplMapObj.ScriptShare</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.VB_Couple_Front_Open_For_Sound.html#OmsiHook_OmsiComplMapObj_VB_Couple_Front_Open_For_Sound">OmsiComplMapObj.VB_Couple_Front_Open_For_Sound</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.FirstUser.html#OmsiHook_OmsiComplMapObj_FirstUser">OmsiComplMapObj.FirstUser</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.AttatchmentPnts.html#OmsiHook_OmsiComplMapObj_AttatchmentPnts">OmsiComplMapObj.AttatchmentPnts</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.MapLights.html#OmsiHook_OmsiComplMapObj_MapLights">OmsiComplMapObj.MapLights</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.MapLighting.html#OmsiHook_OmsiComplMapObj_MapLighting">OmsiComplMapObj.MapLighting</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.LightMapMapping.html#OmsiHook_OmsiComplMapObj_LightMapMapping">OmsiComplMapObj.LightMapMapping</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.NightMapMode.html#OmsiHook_OmsiComplMapObj_NightMapMode">OmsiComplMapObj.NightMapMode</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.AmpelGroup.html#OmsiHook_OmsiComplMapObj_AmpelGroup">OmsiComplMapObj.AmpelGroup</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.CTC_FarbSchema.html#OmsiHook_OmsiComplMapObj_CTC_FarbSchema">OmsiComplMapObj.CTC_FarbSchema</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.TriggerBoxes.html#OmsiHook_OmsiComplMapObj_TriggerBoxes">OmsiComplMapObj.TriggerBoxes</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.ComplObj.html#OmsiHook_OmsiComplMapObj_ComplObj">OmsiComplMapObj.ComplObj</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.Paths.html#OmsiHook_OmsiComplMapObj_Paths">OmsiComplMapObj.Paths</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.SnapPoints.html#OmsiHook_OmsiComplMapObj_SnapPoints">OmsiComplMapObj.SnapPoints</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.ReflCameraSettings.html#OmsiHook_OmsiComplMapObj_ReflCameraSettings">OmsiComplMapObj.ReflCameraSettings</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObj.OmsiSplineHelpers.html#OmsiHook_OmsiComplMapObj_OmsiSplineHelpers">OmsiComplMapObj.OmsiSplineHelpers</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.FileName.html#OmsiHook_OmsiPhysObj_FileName">OmsiPhysObj.FileName</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.FileVersion.html#OmsiHook_OmsiPhysObj_FileVersion">OmsiPhysObj.FileVersion</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.Mass.html#OmsiHook_OmsiPhysObj_Mass">OmsiPhysObj.Mass</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.J_X.html#OmsiHook_OmsiPhysObj_J_X">OmsiPhysObj.J_X</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.J_Y.html#OmsiHook_OmsiPhysObj_J_Y">OmsiPhysObj.J_Y</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.J_Z.html#OmsiHook_OmsiPhysObj_J_Z">OmsiPhysObj.J_Z</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.PH_I.html#OmsiHook_OmsiPhysObj_PH_I">OmsiPhysObj.PH_I</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.PH_I_Inv.html#OmsiHook_OmsiPhysObj_PH_I_Inv">OmsiPhysObj.PH_I_Inv</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.CoG.html#OmsiHook_OmsiPhysObj_CoG">OmsiPhysObj.CoG</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.BoundingBox.html#OmsiHook_OmsiPhysObj_BoundingBox">OmsiPhysObj.BoundingBox</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.Z_B.html#OmsiHook_OmsiPhysObj_Z_B">OmsiPhysObj.Z_B</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.Z_F.html#OmsiHook_OmsiPhysObj_Z_F">OmsiPhysObj.Z_F</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.X_L.html#OmsiHook_OmsiPhysObj_X_L">OmsiPhysObj.X_L</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.X_R.html#OmsiHook_OmsiPhysObj_X_R">OmsiPhysObj.X_R</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.Fest.html#OmsiHook_OmsiPhysObj_Fest">OmsiPhysObj.Fest</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.No_Collision.html#OmsiHook_OmsiPhysObj_No_Collision">OmsiPhysObj.No_Collision</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.Active.html#OmsiHook_OmsiPhysObj_Active">OmsiPhysObj.Active</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.Surface.html#OmsiHook_OmsiPhysObj_Surface">OmsiPhysObj.Surface</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.CrashMode_Mast.html#OmsiHook_OmsiPhysObj_CrashMode_Mast">OmsiPhysObj.CrashMode_Mast</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.CrashMode_Mast_M.html#OmsiHook_OmsiPhysObj_CrashMode_Mast_M">OmsiPhysObj.CrashMode_Mast_M</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.CrashMode_Mast_Max.html#OmsiHook_OmsiPhysObj_CrashMode_Mast_Max">OmsiPhysObj.CrashMode_Mast_Max</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.CollMesh_Valid.html#OmsiHook_OmsiPhysObj_CollMesh_Valid">OmsiPhysObj.CollMesh_Valid</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.CollMesh_FileName.html#OmsiHook_OmsiPhysObj_CollMesh_FileName">OmsiPhysObj.CollMesh_FileName</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.CollMesh_Vertex_Cnt.html#OmsiHook_OmsiPhysObj_CollMesh_Vertex_Cnt">OmsiPhysObj.CollMesh_Vertex_Cnt</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.CollMesh_Index_Cnt.html#OmsiHook_OmsiPhysObj_CollMesh_Index_Cnt">OmsiPhysObj.CollMesh_Index_Cnt</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiObject.Equals.html#OmsiHook_OmsiObject_Equals_System_Object_">OmsiObject.Equals(Object)</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="OmsiHook.html">OmsiHook</a></h6>
+  <h6><strong>Assembly</strong>: OmsiHook.dll</h6>
+  <h5 id="OmsiHook_OmsiRoadVehicle_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class OmsiRoadVehicle : OmsiVehicle</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle__ctor" data-uid="OmsiHook.OmsiRoadVehicle.#ctor">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.-ctor.html#OmsiHook_OmsiRoadVehicle__ctor">OmsiRoadVehicle()</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Achse" data-uid="OmsiHook.OmsiRoadVehicle.Achse">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Achse.html#OmsiHook_OmsiRoadVehicle_Achse">Achse</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_AI_Brake_A_RowVar" data-uid="OmsiHook.OmsiRoadVehicle.AI_Brake_A_RowVar">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.AI_Brake_A_RowVar.html#OmsiHook_OmsiRoadVehicle_AI_Brake_A_RowVar">AI_Brake_A_RowVar</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_AI_Brake_A_Std" data-uid="OmsiHook.OmsiRoadVehicle.AI_Brake_A_Std">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.AI_Brake_A_Std.html#OmsiHook_OmsiRoadVehicle_AI_Brake_A_Std">AI_Brake_A_Std</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_AI_Brake_Final" data-uid="OmsiHook.OmsiRoadVehicle.AI_Brake_Final">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.AI_Brake_Final.html#OmsiHook_OmsiRoadVehicle_AI_Brake_Final">AI_Brake_Final</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_AI_Brake_MueExploit" data-uid="OmsiHook.OmsiRoadVehicle.AI_Brake_MueExploit">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.AI_Brake_MueExploit.html#OmsiHook_OmsiRoadVehicle_AI_Brake_MueExploit">AI_Brake_MueExploit</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_AI_Brake_StopPointOffset" data-uid="OmsiHook.OmsiRoadVehicle.AI_Brake_StopPointOffset">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.AI_Brake_StopPointOffset.html#OmsiHook_OmsiRoadVehicle_AI_Brake_StopPointOffset">AI_Brake_StopPointOffset</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_AI_DeltaHeight" data-uid="OmsiHook.OmsiRoadVehicle.AI_DeltaHeight">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.AI_DeltaHeight.html#OmsiHook_OmsiRoadVehicle_AI_DeltaHeight">AI_DeltaHeight</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Boogies_AVL" data-uid="OmsiHook.OmsiRoadVehicle.Boogies_AVL">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Boogies_AVL.html#OmsiHook_OmsiRoadVehicle_Boogies_AVL">Boogies_AVL</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Bookies_Y" data-uid="OmsiHook.OmsiRoadVehicle.Bookies_Y">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Bookies_Y.html#OmsiHook_OmsiRoadVehicle_Bookies_Y">Bookies_Y</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_ContactShoes" data-uid="OmsiHook.OmsiRoadVehicle.ContactShoes">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.ContactShoes.html#OmsiHook_OmsiRoadVehicle_ContactShoes">ContactShoes</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Couple" data-uid="OmsiHook.OmsiRoadVehicle.Couple">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Couple.html#OmsiHook_OmsiRoadVehicle_Couple">Couple</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Couple_Char" data-uid="OmsiHook.OmsiRoadVehicle.Couple_Char">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Couple_Char.html#OmsiHook_OmsiRoadVehicle_Couple_Char">Couple_Char</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Coupling" data-uid="OmsiHook.OmsiRoadVehicle.Coupling">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Coupling.html#OmsiHook_OmsiRoadVehicle_Coupling">Coupling</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Drehpunk" data-uid="OmsiHook.OmsiRoadVehicle.Drehpunk">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Drehpunk.html#OmsiHook_OmsiRoadVehicle_Drehpunk">Drehpunk</a>
+        </td>
+        <td class="markdown level1 summary"><p>Pivot</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_FF_Drag_Max" data-uid="OmsiHook.OmsiRoadVehicle.FF_Drag_Max">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.FF_Drag_Max.html#OmsiHook_OmsiRoadVehicle_FF_Drag_Max">FF_Drag_Max</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_FF_Drag_MaxSpeed" data-uid="OmsiHook.OmsiRoadVehicle.FF_Drag_MaxSpeed">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.FF_Drag_MaxSpeed.html#OmsiHook_OmsiRoadVehicle_FF_Drag_MaxSpeed">FF_Drag_MaxSpeed</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_FF_Vib_Amp" data-uid="OmsiHook.OmsiRoadVehicle.FF_Vib_Amp">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.FF_Vib_Amp.html#OmsiHook_OmsiRoadVehicle_FF_Vib_Amp">FF_Vib_Amp</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_FF_Vib_Period" data-uid="OmsiHook.OmsiRoadVehicle.FF_Vib_Period">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.FF_Vib_Period.html#OmsiHook_OmsiRoadVehicle_FF_Vib_Period">FF_Vib_Period</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_FF_Zentr_Max" data-uid="OmsiHook.OmsiRoadVehicle.FF_Zentr_Max">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.FF_Zentr_Max.html#OmsiHook_OmsiRoadVehicle_FF_Zentr_Max">FF_Zentr_Max</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_FF_Znetr_MaxSpeed" data-uid="OmsiHook.OmsiRoadVehicle.FF_Znetr_MaxSpeed">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.FF_Znetr_MaxSpeed.html#OmsiHook_OmsiRoadVehicle_FF_Znetr_MaxSpeed">FF_Znetr_MaxSpeed</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Front_Window_Vector" data-uid="OmsiHook.OmsiRoadVehicle.Front_Window_Vector">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Front_Window_Vector.html#OmsiHook_OmsiRoadVehicle_Front_Window_Vector">Front_Window_Vector</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Hersteller" data-uid="OmsiHook.OmsiRoadVehicle.Hersteller">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Hersteller.html#OmsiHook_OmsiRoadVehicle_Hersteller">Hersteller</a>
+        </td>
+        <td class="markdown level1 summary"><p>Manufacturer</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Hoefe" data-uid="OmsiHook.OmsiRoadVehicle.Hoefe">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Hoefe.html#OmsiHook_OmsiRoadVehicle_Hoefe">Hoefe</a>
+        </td>
+        <td class="markdown level1 summary"><p>HOF Files?</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Inv_Min_Radius" data-uid="OmsiHook.OmsiRoadVehicle.Inv_Min_Radius">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Inv_Min_Radius.html#OmsiHook_OmsiRoadVehicle_Inv_Min_Radius">Inv_Min_Radius</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Rowdy_Factor_Max" data-uid="OmsiHook.OmsiRoadVehicle.Rowdy_Factor_Max">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Rowdy_Factor_Max.html#OmsiHook_OmsiRoadVehicle_Rowdy_Factor_Max">Rowdy_Factor_Max</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Rowdy_Factor_Min" data-uid="OmsiHook.OmsiRoadVehicle.Rowdy_Factor_Min">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Rowdy_Factor_Min.html#OmsiHook_OmsiRoadVehicle_Rowdy_Factor_Min">Rowdy_Factor_Min</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Show_Dialog" data-uid="OmsiHook.OmsiRoadVehicle.Show_Dialog">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Show_Dialog.html#OmsiHook_OmsiRoadVehicle_Show_Dialog">Show_Dialog</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Sinuslauf_D" data-uid="OmsiHook.OmsiRoadVehicle.Sinuslauf_D">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Sinuslauf_D.html#OmsiHook_OmsiRoadVehicle_Sinuslauf_D">Sinuslauf_D</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Sinuslauf_Omega" data-uid="OmsiHook.OmsiRoadVehicle.Sinuslauf_Omega">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Sinuslauf_Omega.html#OmsiHook_OmsiRoadVehicle_Sinuslauf_Omega">Sinuslauf_Omega</a>
+        </td>
+        <td class="markdown level1 summary"><p>Sine Run Omega ?</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Sinuslauf_YSoll_Faktor" data-uid="OmsiHook.OmsiRoadVehicle.Sinuslauf_YSoll_Faktor">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Sinuslauf_YSoll_Faktor.html#OmsiHook_OmsiRoadVehicle_Sinuslauf_YSoll_Faktor">Sinuslauf_YSoll_Faktor</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Unknown_A" data-uid="OmsiHook.OmsiRoadVehicle.Unknown_A">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Unknown_A.html#OmsiHook_OmsiRoadVehicle_Unknown_A">Unknown_A</a>
+        </td>
+        <td class="markdown level1 summary"><p>! WARN ! Unkown name!</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Unknown_B" data-uid="OmsiHook.OmsiRoadVehicle.Unknown_B">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Unknown_B.html#OmsiHook_OmsiRoadVehicle_Unknown_B">Unknown_B</a>
+        </td>
+        <td class="markdown level1 summary"><p>! WARN ! Unkown name!</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Var_AI_Station_Side" data-uid="OmsiHook.OmsiRoadVehicle.Var_AI_Station_Side">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Var_AI_Station_Side.html#OmsiHook_OmsiRoadVehicle_Var_AI_Station_Side">Var_AI_Station_Side</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Var_Boogie_InvRadius" data-uid="OmsiHook.OmsiRoadVehicle.Var_Boogie_InvRadius">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Var_Boogie_InvRadius.html#OmsiHook_OmsiRoadVehicle_Var_Boogie_InvRadius">Var_Boogie_InvRadius</a>
+        </td>
+        <td class="markdown level1 summary"><p>! WARN ! Data type un-known, assumed int due to size</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Var_Boogie_Wheel_At_Limit" data-uid="OmsiHook.OmsiRoadVehicle.Var_Boogie_Wheel_At_Limit">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Var_Boogie_Wheel_At_Limit.html#OmsiHook_OmsiRoadVehicle_Var_Boogie_Wheel_At_Limit">Var_Boogie_Wheel_At_Limit</a>
+        </td>
+        <td class="markdown level1 summary"><p>! WARN ! Data type un-known, assumed int due to size</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Var_File_Schedule" data-uid="OmsiHook.OmsiRoadVehicle.Var_File_Schedule">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Var_File_Schedule.html#OmsiHook_OmsiRoadVehicle_Var_File_Schedule">Var_File_Schedule</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Var_HOF" data-uid="OmsiHook.OmsiRoadVehicle.Var_HOF">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Var_HOF.html#OmsiHook_OmsiRoadVehicle_Var_HOF">Var_HOF</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_VehType" data-uid="OmsiHook.OmsiRoadVehicle.VehType">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.VehType.html#OmsiHook_OmsiRoadVehicle_VehType">VehType</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Wagenkasten_Hebelarm_Z" data-uid="OmsiHook.OmsiRoadVehicle.Wagenkasten_Hebelarm_Z">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Wagenkasten_Hebelarm_Z.html#OmsiHook_OmsiRoadVehicle_Wagenkasten_Hebelarm_Z">Wagenkasten_Hebelarm_Z</a>
+        </td>
+        <td class="markdown level1 summary"><p>Body Lever Arm Z?</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Wagenkasten_rotXPhys_d" data-uid="OmsiHook.OmsiRoadVehicle.Wagenkasten_rotXPhys_d">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Wagenkasten_rotXPhys_d.html#OmsiHook_OmsiRoadVehicle_Wagenkasten_rotXPhys_d">Wagenkasten_rotXPhys_d</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Wagenkasten_rotXPhys_Omega" data-uid="OmsiHook.OmsiRoadVehicle.Wagenkasten_rotXPhys_Omega">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Wagenkasten_rotXPhys_Omega.html#OmsiHook_OmsiRoadVehicle_Wagenkasten_rotXPhys_Omega">Wagenkasten_rotXPhys_Omega</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Wagenkasten_rotZPhys_d" data-uid="OmsiHook.OmsiRoadVehicle.Wagenkasten_rotZPhys_d">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Wagenkasten_rotZPhys_d.html#OmsiHook_OmsiRoadVehicle_Wagenkasten_rotZPhys_d">Wagenkasten_rotZPhys_d</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Wagenkasten_rotZPhys_Omega" data-uid="OmsiHook.OmsiRoadVehicle.Wagenkasten_rotZPhys_Omega">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Wagenkasten_rotZPhys_Omega.html#OmsiHook_OmsiRoadVehicle_Wagenkasten_rotZPhys_Omega">Wagenkasten_rotZPhys_Omega</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Wagenkasten_TransZPhys_d" data-uid="OmsiHook.OmsiRoadVehicle.Wagenkasten_TransZPhys_d">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Wagenkasten_TransZPhys_d.html#OmsiHook_OmsiRoadVehicle_Wagenkasten_TransZPhys_d">Wagenkasten_TransZPhys_d</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiRoadVehicle_Wagenkasten_TransZPhys_Omega" data-uid="OmsiHook.OmsiRoadVehicle.Wagenkasten_TransZPhys_Omega">
+          <a class="xref" href="OmsiHook.OmsiRoadVehicle.Wagenkasten_TransZPhys_Omega.html#OmsiHook_OmsiRoadVehicle_Wagenkasten_TransZPhys_Omega">Wagenkasten_TransZPhys_Omega</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+                </div>
+
+                <div class="copyright-footer">
+                    <span>&#169; Thomas/Adam Mathieson. All rights reserved.</span>
+                </div>
+            </main>
+        </div>
+
+        
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+        <script type="text/javascript" src="../styles/jquery.twbsPagination.js"></script>
+        <script type="text/javascript" src="../styles/url.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/anchor-js/anchor.min.js"></script>
+        <script type="text/javascript" src="../styles/docfx.js"></script>
+        <script type="text/javascript" src="../styles/singulink.js"></script>
+        <script type="text/javascript" src="../styles/main.js"></script>    </body>
+</html>
