@@ -5,7 +5,6 @@ using System.Text;
 using ReactiveUI.Fody.Helpers;
 using System.Windows.Input;
 using ReactiveUI;
-using OmsiExtensionsUI.Models;
 using System.Collections.ObjectModel;
 using Avalonia.Threading;
 using System.Threading.Tasks;
@@ -16,11 +15,13 @@ namespace OmsiExtensionsUI.ViewModels
     {
         [Reactive] public int PlayerBus { get; private set; }
         [Reactive] public string Search { get; set; }
-        [Reactive] public ObservableCollection<OmsiFloatModel> Floats { get; private set; } = new();
-        [Reactive] public ObservableCollection<OmsiStringModel> SVars { get; private set; } = new();
+        [Reactive] public ObservableCollection<OmsiFloatViewModel> Floats { get; private set; } = new();
+        [Reactive] public ObservableCollection<OmsiStringViewModel> SVars { get; private set; } = new();
         public ICommand ConnectToOmsiCommand { get; private set; }
+        public ICommand UpdateDataCommand { get; private set; }
 
-        private Models.OmsiModel omsiModel;
+        private readonly OmsiHook.OmsiHook omsiHook = new();
+        private readonly DispatcherTimer updateTimer;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         // Disabled warning given they are set in CreateCommands() and UpdateData().
@@ -28,49 +29,50 @@ namespace OmsiExtensionsUI.ViewModels
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             CreateCommands();
+
+            updateTimer = new DispatcherTimer(DispatcherPriority.Background);
+            updateTimer.Interval = TimeSpan.FromMilliseconds(50);
+            updateTimer.Tick += MonitorOmsiTick;
         }
 
         private void CreateCommands()
         {
             ConnectToOmsiCommand = ReactiveCommand.Create(() => ConnectToOmsi());
+            UpdateDataCommand = ReactiveCommand.Create<string>((x) => updateTimer.Interval = TimeSpan.FromMilliseconds(double.Parse(x)));
         }
 
         async private void ConnectToOmsi()
         {
-            omsiModel ??= new Models.OmsiModel(this);
-            await Dispatcher.UIThread.InvokeAsync(omsiModel.Connect, DispatcherPriority.Background);
+            await omsiHook.AttachToOMSI();
 
-            while (true)
-            {
-                await Dispatcher.UIThread.InvokeAsync(() => {
-                    var vehicle = omsiModel.OmsiHook.Globals.PlayerVehicle;
-                    var VarStrings = vehicle.ComplMapObj.VarStrings;
-                    var keys = new List<string>(VarStrings.IndexDictionary.Keys);
-                    var pv = vehicle.PublicVars.WrappedArray;
-                    for (int i = 0; i < keys.Count; i++)
-                    {
-                        if (Floats.Count > i)
-                        {
-                            Floats[i].Value = pv[VarStrings[keys[i]]].Float;
-                            
-                        }
-                        else
-                        {
-                            Floats.Add(new(keys[i], pv[VarStrings[keys[i]]].Float, vehicle));
-                        }
-                    }
+            ReadVarList();
+            updateTimer.Start();
+        }
 
-                    /*VarStrings = vehicle.ComplMapObj.SVarStrings;
-                    keys = new List<string>(VarStrings.IndexDictionary.Keys);
-                    var pv2 = vehicle.ComplObjInst.StringVars.WrappedArray;
-                    for (int i = 0; i < keys.Count; i++)
-                    {
-                        this.VM.SVars.Add(new(keys[i], pv2[VarStrings[keys[i]]].String, vehicle));
-                    }*/
-                }, DispatcherPriority.Background);
-                await Task.Delay(50);
-            }
+        private void MonitorOmsiTick(object? sender, EventArgs e)
+        {
+            var vehicle = omsiHook.Globals.PlayerVehicle;
+            var publicVars = vehicle.PublicVars.WrappedArray;
+            var stringVars = vehicle.ComplObjInst.StringVars.WrappedArray;
+            for (int i = 0; i < publicVars.Length; i++)
+                Floats[i].Value = publicVars[i].Float;
+            for (int i = 0; i < stringVars.Length; i++)
+                SVars[i].Value = stringVars[i].String;
+        }
 
+        private void ReadVarList()
+        {
+            var vehicle = omsiHook.Globals.PlayerVehicle;
+            var varStrings = vehicle.ComplMapObj.VarStrings;
+            var svarStrings = vehicle.ComplMapObj.SVarStrings;
+
+            var pv = vehicle.PublicVars.WrappedArray;
+            for (int i = 0; i < varStrings.Count; i++)
+                Floats.Add(new(varStrings[i], pv[i].Float));
+
+            var sv = vehicle.ComplObjInst.StringVars;
+            for (int i = 0; i < svarStrings.Count; i++)
+                SVars.Add(new(svarStrings[i], sv[i].String));
         }
     }
 }

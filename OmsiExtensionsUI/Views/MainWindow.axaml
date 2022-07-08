@@ -16,11 +16,11 @@
           <MenuItem Command="{Binding ConnectToOmsiCommand}" Header="_Connect"/>
         </MenuItem>
         <MenuItem Header="_Refresh Rate">
-          <MenuItem Command="{Binding UpdateDataCommand}" Header="10ms"/>
-          <MenuItem Command="{Binding UpdateDataCommand}" Header="20ms"/>
-          <MenuItem Command="{Binding UpdateDataCommand}" Header="50ms"/>
-          <MenuItem Command="{Binding UpdateDataCommand}" Header="100ms"/>
-          <MenuItem Command="{Binding UpdateDataCommand}" Header="1000ms"/>
+          <MenuItem Command="{Binding UpdateDataCommand}" CommandParameter="10" Header="10ms"/>
+          <MenuItem Command="{Binding UpdateDataCommand}" CommandParameter="20" Header="20ms"/>
+		  <MenuItem Command="{Binding UpdateDataCommand}" CommandParameter="50" Header="50ms"/>
+		  <MenuItem Command="{Binding UpdateDataCommand}" CommandParameter="100" Header="100ms"/>
+		  <MenuItem Command="{Binding UpdateDataCommand}" CommandParameter="1000" Header="1000ms"/>
         </MenuItem>
       </Menu>
 
