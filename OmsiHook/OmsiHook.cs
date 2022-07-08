@@ -24,6 +24,11 @@ namespace OmsiHook
         public OmsiGlobals Globals => globals ??= new(omsiMemory, 0, this);
 
         /// <summary>
+        /// Gets the currently hooked Omsi process.
+        /// </summary>
+        public Process OmsiProcess => process;
+
+        /// <summary>
         /// Attaches the hooking application to OMSI.exe.
         /// Always call this at some point before trying to read and write data.
         /// </summary>
