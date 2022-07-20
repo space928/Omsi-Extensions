@@ -16,8 +16,8 @@ namespace OmsiHook
 
         public string Name
         {
-            get => Memory.ReadMemoryString(Address + 0x4);
-            set => Memory.WriteMemory(Address + 0x4, value);
+            get => Memory.ReadMemoryString(Address + 0x4, true);
+            set => Memory.WriteMemory(Address + 0x4, value, true);
         }
         public string[] GlobalStrings
         {
