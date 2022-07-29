@@ -10,7 +10,7 @@
 
         public string Name
         {
-            get => Memory.ReadMemoryString(Address + 0x4);
+            get => Memory.ReadMemoryString(Address + 0x4, true);
             set => Memory.WriteMemory(Address + 0x4, value);
         }
         public float Ratio

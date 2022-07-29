@@ -84,5 +84,13 @@ namespace OmsiHook
         /// Current Program Manager
         /// </summary>
         public OmsiProgMan ProgamManager => new(Memory, Memory.ReadMemory<int>(0x00862f28));
+
+        internal OmsiCamera Camera1 => new(Memory, Memory.ReadMemory<int>(0x008616d4));
+        internal OmsiCamera Camera2 => new(Memory, Memory.ReadMemory<int>(0x008616dc));
+        /// <summary>
+        /// Main Camera Object
+        /// </summary>
+        public OmsiCamera Camera => new(Memory, Memory.ReadMemory<int>(0x008616e0));
+        internal OmsiCamera Camera4 => new(Memory, Memory.ReadMemory<int>(0x008616e4));
     }
 }
