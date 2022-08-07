@@ -14,7 +14,7 @@
             get => Memory.ReadMemory<uint>(Address + 0x4);
             set => Memory.WriteMemory(Address + 0x4, value);
         }
-        public string Filename
+        public string Obj
         {
             get => Memory.ReadMemoryString(Address + 0x8);
             set => Memory.WriteMemory(Address + 0x8, value);
