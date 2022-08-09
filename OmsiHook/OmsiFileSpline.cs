@@ -60,7 +60,7 @@
             set => Memory.WriteMemory(Address + 0x30, value);
         }
         /// <summary>
-        /// Euler spiral ??
+        /// Track transition curve
         /// </summary>
         public bool Klothoide
         {
@@ -72,11 +72,17 @@
             get => Memory.ReadMemory<byte>(Address + 0x35);
             set => Memory.WriteMemory(Address + 0x35, value);
         }
+        /// <summary>
+        /// Slope Start
+        /// </summary>
         public float Steig_Start
         {
             get => Memory.ReadMemory<float>(Address + 0x38);
             set => Memory.WriteMemory(Address + 0x38, value);
         }
+        /// <summary>
+        /// Slope End
+        /// </summary>
         public float Steig_End
         {
             get => Memory.ReadMemory<float>(Address + 0x3c);
@@ -102,7 +108,7 @@
             get => Memory.ReadMemory<float>(Address + 0x4c);
             set => Memory.WriteMemory(Address + 0x4c, value);
         }
-        public bool useDeltaHeight
+        public bool UseDeltaHeight
         {
             get => Memory.ReadMemory<bool>(Address + 0x50);
             set => Memory.WriteMemory(Address + 0x50, value);
@@ -118,16 +124,13 @@
             set => Memory.WriteMemory(Address + 0x58, value);
         }
         public OmsiSplineSegment MySegment => new(Memory, Memory.ReadMemory<int>(Address + 0x5c));
-        public MemArray<OmsiFileSplinePathInfoInternal, OmsiFileSplinePathInfo> Paths => new(Memory, Memory.ReadMemory<int>(Address + 0x60));
+        public MemArray<OmsiFileSplinePathInfoInternal, OmsiFileSplinePathInfo> Paths => new(Memory, Memory.ReadMemory<int>(Address + 0x60), true);
         public int Chrono_Origin
         {
             get => Memory.ReadMemory<int>(Address + 0x64);
             set => Memory.WriteMemory(Address + 0x64, value);
         }
-
         public OmsiChronoChange[] Chrono_Changes => Memory.ReadMemoryObjArray<OmsiChronoChange>(Address + 0x68);
-
         public OmsiObjChronoVars Chrono_Active => new(Memory, Memory.ReadMemory<int>(Address + 0x6c));
-
     }
 }
