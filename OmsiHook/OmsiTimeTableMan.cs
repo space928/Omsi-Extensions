@@ -48,7 +48,7 @@ namespace OmsiHook
         }
         public string[] NoRVNumbers
         {
-            get => Memory.ReadMemoryStringArray(Address + 0x24);
+            get => Memory.ReadMemoryStringArray(Address + 0x24, raw: true);
         }
     }
 }
