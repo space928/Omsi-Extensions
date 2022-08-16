@@ -1924,5 +1924,15 @@ namespace OmsiHook
         [OmsiStructPtr(typeof(float))] public int Float;
     }
 
+    public struct OmsiFileSplinePathInfo
+    {
+        public OmsiPathRule[] Rules;
+    }
+
+    public struct OmsiFileSplinePathInfoInternal
+    {
+        [OmsiStructArrayPtr(typeof(OmsiPathRule), typeof(OmsiPathRuleInternal))] public int Rules;
+    }
+
 }
 
