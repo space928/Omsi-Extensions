@@ -21,7 +21,7 @@ namespace OmsiHook
         }
         public string[] GlobalStrings
         {
-            get => Memory.ReadMemoryStringArray(Address + 0x8);
+            get => Memory.ReadMemoryStringArray(Address + 0x8, true);
             //set => Memory.WriteMemory(Address + 0x8, value);
         }
         public string ServiceTrip

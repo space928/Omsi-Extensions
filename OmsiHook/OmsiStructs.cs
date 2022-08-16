@@ -1105,19 +1105,19 @@ namespace OmsiHook
         public string endstelle; // ANSI String
         public int texNummer;
         public string[] strings;
-        public bool allExit;
+        public byte allExit;
     }
     internal struct OmsiHOFTargetInternal
     {
         public int nummer;
-        [OmsiStrPtr] public int name; // ANSI String
+        [OmsiStrPtr(true)] public int name; // ANSI String
         /// <summary>
         /// Terminus
         /// </summary>
-        [OmsiStrPtr] public int endstelle; // ANSI String
+        [OmsiStrPtr(true)] public int endstelle; // ANSI String
         public int texNummer;
-        [OmsiStrArrayPtr] public int strings;
-        public bool allExit;
+        [OmsiStrArrayPtr(true)] public int strings;
+        public byte allExit;
     }
 
     public struct OmsiHofFISBusstop
@@ -1127,8 +1127,8 @@ namespace OmsiHook
     }
     internal struct OmsiHofFISBusstopInternal
     {
-        [OmsiStrPtr] public int ident; // ANSI String
-        [OmsiStrArrayPtr] public int strings;
+        [OmsiStrPtr(true)] public int ident; // ANSI String
+        [OmsiStrArrayPtr(true)] public int strings;
     }
 
     public struct OmsiHofFISTrip
