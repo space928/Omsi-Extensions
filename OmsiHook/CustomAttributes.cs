@@ -217,12 +217,20 @@ namespace OmsiHook
         // See the attribute guidelines at 
         //  http://go.microsoft.com/fwlink/?LinkId=85236
         readonly bool wide;
+        readonly bool raw;
 
-        public OmsiStrArrayPtrAttribute(bool wide = false)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="wide"></param>
+        /// <param name="raw">If <see langword="true"/>, treat the <c>address</c> as the pointer to the first element 
+        /// of the array instead of as a pointer to the array.</param>
+        public OmsiStrArrayPtrAttribute(bool wide = false, bool raw = false)
         {
             this.wide = wide;
         }
 
         public bool Wide => wide;
+        public bool Raw => raw;
     }
 }

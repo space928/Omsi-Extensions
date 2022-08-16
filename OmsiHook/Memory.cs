@@ -170,10 +170,12 @@ namespace OmsiHook
         /// <param name="references">Allows the number of references to the array to be specified. 
         /// Used when overwriting existing arrays to prevent the GC from clearing a array referenced 
         /// by multiple objects when one is destroyed.</param>
+        /// <param name="raw">If <see langword="true"/>, treat the <c>address</c> as the pointer to the first element 
+        /// of the array instead of as a pointer to the array.</param>
         /// <returns>The pointer to the first item of the newly allocated array</returns>
-        public int AllocateStructArray<T>(T[] data, int references = 1) where T : unmanaged
+        public int AllocateStructArray<T>(T[] data, int references = 1, bool raw = false) where T : unmanaged
         {
-            int ptr = AllocateStructArray<T>(data.Length, references);
+            int ptr = AllocateStructArray<T>(data.Length, references, raw);
             WriteMemory(ptr, data);
 
             return ptr;
@@ -191,8 +193,10 @@ namespace OmsiHook
         /// <param name="references">Allows the number of references to the array to be specified. 
         /// Used when overwriting existing arrays to prevent the GC from clearing a array referenced 
         /// by multiple objects when one is destroyed.</param>
+        /// <param name="raw">If <see langword="true"/>, treat the <c>address</c> as the pointer to the first element 
+        /// of the array instead of as a pointer to the array.</param>
         /// <returns>The pointer to the first item of the newly allocated array</returns>
-        public int AllocateStructArray<T>(int capacity, int references = 1) where T : unmanaged
+        public int AllocateStructArray<T>(int capacity, int references = 1, bool raw = false) where T : unmanaged
         {
             /*
              * DynArray struct layout:
@@ -209,6 +213,9 @@ namespace OmsiHook
              * 8+sizeof(T) - Item2
              * ...
              */
+
+            if (raw)
+                throw new NotImplementedException("Writing to raw struct arrays is not yet supported.");
 
             int itemSize = Marshal.SizeOf<T>();
             //var ptr = Marshal.AllocCoTaskMem(capacity * itemSize + 8).ToInt32();
@@ -267,8 +274,10 @@ namespace OmsiHook
         /// <param name="references">Allows the number of references to the string to be specified. 
         /// Used when overwriting existing strings to prevent the GC from clearing a string referenced 
         /// by multiple objects when one is destroyed.</param>
+        /// <param name="raw">Treat the address as a pointer to the first character 
+        /// (<c>char *</c>) rather than a pointer to a pointer.</param>
         /// <returns>The pointer to the newly allocated string</returns>
-        public int AllocateString(string value, bool wide = false, int references = 1)
+        public int AllocateString(string value, bool wide = false, int references = 1, bool raw = false)
         {
             /*
              * AnsiString/UnicodeString struct layout:
@@ -289,6 +298,9 @@ namespace OmsiHook
              * ... \
              * ... - Null
              */
+
+            if (raw)
+                throw new NotImplementedException("Writing to raw strings is not yet supported.");
 
             byte[] buffer;
             if (wide)
@@ -568,10 +580,14 @@ namespace OmsiHook
         /// Reads an array of strings from unmanaged memory at a given address.
         /// </summary>
         /// <param name="address">The address of the array to read from</param>
+        /// <param name="raw">If <see langword="true"/>, treat the <c>address</c> as the pointer to the first element 
+        /// of the array instead of as a pointer to the array.</param>
         /// <returns>The parsed array of strings.</returns>
-        public string[] ReadMemoryStringArray(int address, bool wide = false)
+        public string[] ReadMemoryStringArray(int address, bool wide = false, bool raw = false)
         {
-            int arr = ReadMemory<int>(address);
+            int arr = address;
+            if (!raw)
+                arr = ReadMemory<int>(address);
             int len = ReadMemory<int>(arr - 4);
             string[] ret = new string[len];
             for (int i = 0; i < len; i++)
@@ -695,7 +711,7 @@ namespace OmsiHook
                             break;
 
                         case OmsiStrArrayPtrAttribute a:
-                            val = ReadMemoryStringArray((int)val, a.Wide);
+                            val = ReadMemoryStringArray((int)val, a.Wide, a.Raw);
                             break;
 
                         case OmsiMarshallerAttribute a:
@@ -762,7 +778,7 @@ namespace OmsiHook
 
                             val = typeof(Memory).GetMethod(nameof(AllocateStruct))
                                 .MakeGenericMethod(a.InternalType)
-                                .Invoke(this, new object[] { val,1 });
+                                .Invoke(this, new object[] { val, 1 });
                             break;
 
                         case OmsiObjPtrAttribute a:
@@ -778,7 +794,7 @@ namespace OmsiHook
 
                             val = typeof(Memory).GetMethod(nameof(AllocateStructArray))
                                 .MakeGenericMethod(a.InternalType)
-                                .Invoke(this, new object[] { val });
+                                .Invoke(this, new object[] { val, 1, a.Raw });
                             break;
 
                         case OmsiObjArrayPtrAttribute a:
@@ -787,7 +803,7 @@ namespace OmsiHook
 
                         case OmsiStrArrayPtrAttribute a:
                             // TODO: I might add a dedicated method for allocating string arrays
-                            val = AllocateStructArray(((string[])val).Select(x => AllocateString(x, a.Wide)).ToArray());
+                            val = AllocateStructArray(((string[])val).Select(x => AllocateString(x, a.Wide, 1, a.Raw)).ToArray());
                             break;
 
                         default:
