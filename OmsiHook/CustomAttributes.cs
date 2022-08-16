@@ -228,6 +228,7 @@ namespace OmsiHook
         public OmsiStrArrayPtrAttribute(bool wide = false, bool raw = false)
         {
             this.wide = wide;
+            this.raw = raw;
         }
 
         public bool Wide => wide;
