@@ -531,10 +531,14 @@ namespace OmsiHook
         /// </remarks>
         /// <typeparam name="T">The type of the struct to return</typeparam>
         /// <param name="address">The address of the array to read from</param>
+        /// <param name="raw">If <see langword="true"/>, treat the <c>address</c> as the pointer to the first element 
+        /// of the array instead of as a pointer to the array.</param>
         /// <returns>The parsed array of structs.</returns>
-        public T[] ReadMemoryStructArray<T>(int address) where T : unmanaged
+        public T[] ReadMemoryStructArray<T>(int address, bool raw = false) where T : unmanaged
         {
-            int arr = ReadMemory<int>(address);
+            int arr = address;
+            if(!raw)
+                arr = ReadMemory<int>(address);
             int len = ReadMemory<int>(arr - 4);
             T[] ret = new T[len];
             for (int i = 0; i < len; i++)
@@ -593,6 +597,7 @@ namespace OmsiHook
            where InStruct : unmanaged
         {
             OutStruct[] ret = new OutStruct[obj.Length];
+            Console.WriteLine("building a " + typeof(OutStruct).Name + "...");
             for (int i = 0; i < obj.Length; i++)
                 ret[i] = MarshalStruct<OutStruct, InStruct>(obj[i]);
 
@@ -676,7 +681,7 @@ namespace OmsiHook
                         case OmsiStructArrayPtrAttribute a:
                             val = typeof(Memory).GetMethod(nameof(ReadMemoryStructArray))
                                 .MakeGenericMethod(a.InternalType)
-                                .Invoke(this, new object[] { val });
+                                .Invoke(this, new object[] { val, a.Raw });
                             // Perform extra marshalling if needed
                             if (a.RequiresExtraMarshalling)
                                 val = typeof(Memory).GetMethod(nameof(MarshalStructs))
@@ -694,8 +699,11 @@ namespace OmsiHook
                             val = ReadMemoryStringArray((int)val, a.Wide);
                             break;
 
-                        default:
+                        case OmsiMarshallerAttribute a:
                             throw new NotImplementedException($"Attribute {attr.GetType().FullName} is not yet supported by the marhsaller!");
+
+                        default:
+                            break;
                     }
                 }
 

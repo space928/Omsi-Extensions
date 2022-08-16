@@ -3,11 +3,18 @@
 namespace OmsiHook
 {
     /// <summary>
+    /// Abstract attribute class for all Omsi Marshaller Attributes.<para/>
+    /// <seealso cref="Memory.MarshalStruct{OutStruct, InStruct}(InStruct)"/>
+    /// </summary>
+    [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+    abstract class OmsiMarshallerAttribute : Attribute { }
+
+    /// <summary>
     /// Marks a field to be converted from an internal struct to a struct.<para/>
     /// <seealso cref="Memory.MarshalStruct{OutStruct, InStruct}(InStruct)"/>
     /// </summary>
     [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-    sealed class OmsiStructAttribute : Attribute
+    sealed class OmsiStructAttribute : OmsiMarshallerAttribute
     {
         // See the attribute guidelines at 
         //  http://go.microsoft.com/fwlink/?LinkId=85236
@@ -44,7 +51,7 @@ namespace OmsiHook
     /// Used by <seealso cref="Memory.MarshalStruct{OutStruct, InStruct}(InStruct)"/>
     /// </summary>
     [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-    sealed class OmsiStrPtrAttribute : Attribute
+    sealed class OmsiStrPtrAttribute : OmsiMarshallerAttribute
     {
         // See the attribute guidelines at 
         //  http://go.microsoft.com/fwlink/?LinkId=85236
@@ -72,7 +79,7 @@ namespace OmsiHook
     /// Used by <seealso cref="Memory.MarshalStruct{OutStruct, InStruct}(InStruct)"/>
     /// </summary>
     [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-    sealed class OmsiPtrAttribute : Attribute
+    sealed class OmsiPtrAttribute : OmsiMarshallerAttribute
     {
 
     }
@@ -82,7 +89,7 @@ namespace OmsiHook
     /// Used by <seealso cref="Memory.MarshalStruct{OutStruct, InStruct}(InStruct)"/>
     /// </summary>
     [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-    sealed class OmsiStructPtrAttribute : Attribute
+    sealed class OmsiStructPtrAttribute : OmsiMarshallerAttribute
     {
         // See the attribute guidelines at 
         //  http://go.microsoft.com/fwlink/?LinkId=85236
@@ -119,7 +126,7 @@ namespace OmsiHook
     /// Used by <seealso cref="Memory.MarshalStruct{OutStruct, InStruct}(InStruct)"/>
     /// </summary>
     [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-    sealed class OmsiObjPtrAttribute : Attribute
+    sealed class OmsiObjPtrAttribute : OmsiMarshallerAttribute
     {
         // See the attribute guidelines at 
         //  http://go.microsoft.com/fwlink/?LinkId=85236
@@ -141,7 +148,7 @@ namespace OmsiHook
     /// Used by <seealso cref="Memory.MarshalStruct{OutStruct, InStruct}(InStruct)"/>
     /// </summary>
     [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-    sealed class OmsiObjArrayPtrAttribute : Attribute
+    sealed class OmsiObjArrayPtrAttribute : OmsiMarshallerAttribute
     {
         // See the attribute guidelines at 
         //  http://go.microsoft.com/fwlink/?LinkId=85236
@@ -163,13 +170,14 @@ namespace OmsiHook
     /// Used by <seealso cref="Memory.MarshalStruct{OutStruct, InStruct}(InStruct)"/>
     /// </summary>
     [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-    sealed class OmsiStructArrayPtrAttribute : Attribute
+    sealed class OmsiStructArrayPtrAttribute : OmsiMarshallerAttribute
     {
         // See the attribute guidelines at 
         //  http://go.microsoft.com/fwlink/?LinkId=85236
         readonly Type objType;
         readonly Type internalType;
         readonly bool requiresExtraMarshalling;
+        readonly bool raw;
 
         /// <summary>
         /// 
@@ -178,7 +186,9 @@ namespace OmsiHook
         /// <param name="internalType">The intermidiate type to convert through 
         /// (in case Marshal.PtrToStruct doesn't support all the fields in objType).
         /// Leave null to default to objType</param>
-        public OmsiStructArrayPtrAttribute(Type objType, Type internalType = null)
+        /// <param name="raw">If <see langword="true"/>, treat the <c>address</c> as the pointer to the first element 
+        /// of the array instead of as a pointer to the array.</param>
+        public OmsiStructArrayPtrAttribute(Type objType, Type internalType = null, bool raw = false)
         {
             if (!objType.IsValueType)
                 throw new ArgumentException("OmsiStructArrayPtr must be a pointer to a struct/value!");
@@ -188,11 +198,13 @@ namespace OmsiHook
             this.objType = objType;
             this.requiresExtraMarshalling = internalType != null;
             this.internalType = internalType ?? objType;
+            this.raw = raw;
         }
 
         public Type ObjType => objType;
         public Type InternalType => internalType;
         public bool RequiresExtraMarshalling => requiresExtraMarshalling;
+        public bool Raw => raw;
     }
 
     /// <summary>
@@ -200,7 +212,7 @@ namespace OmsiHook
     /// Used by <seealso cref="Memory.MarshalStruct{OutStruct, InStruct}(InStruct)"/>
     /// </summary>
     [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-    sealed class OmsiStrArrayPtrAttribute : Attribute
+    sealed class OmsiStrArrayPtrAttribute : OmsiMarshallerAttribute
     {
         // See the attribute guidelines at 
         //  http://go.microsoft.com/fwlink/?LinkId=85236

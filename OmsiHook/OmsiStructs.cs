@@ -1654,7 +1654,7 @@ namespace OmsiHook
     }
     internal struct OmsiTTTourEntryInternal
     {
-        [OmsiStrPtr] public int trip;
+        [OmsiStrPtr(raw: true)] public int trip;
         public int tripIndex;
         public int profile;
         public float startTime;
@@ -1664,16 +1664,16 @@ namespace OmsiHook
 
     public struct OmsiTTTourValid
     {
-        public bool mon;
-        public bool tue;
-        public bool wed;
-        public bool thu;
-        public bool fri;
-        public bool sat;
-        public bool sun;
-        public bool hol;
-        public bool hols;
-        public bool noHols;
+        public byte mon;
+        public byte tue;
+        public byte wed;
+        public byte thu;
+        public byte fri;
+        public byte sat;
+        public byte sun;
+        public byte hol;
+        public byte hols;
+        public byte noHols;
     }
 
     public struct OmsiTTTour
@@ -1684,45 +1684,48 @@ namespace OmsiHook
         public int aiGroupIndex;
         public string vehicle_nr_reservations;
         public int[] vehical_indizes;
-        public bool hasNormalVeh;
+        public byte hasNormalVeh;
         /// <summary>
         /// day done? (Day of week maybe? - OmsiTTTourValid?)
         /// </summary>
         public int TagErledigt;
         public OmsiTTTourValid validOn;
-        public bool invalide;
+        public byte invalide;
+        public byte _nothing;
         public OmsiTTTourEntry[] entrys;
     }
     internal struct OmsiTTTourInternal
     {
-        [OmsiStrPtr] public int name;
-        [OmsiStrPtr] public int aiGroup;
+        [OmsiStrPtr(raw: true)] public int name;
+        [OmsiStrPtr(raw: true)] public int aiGroup;
         public int aiType;
         public int aiGroupIndex;
-        [OmsiStrPtr] public int vehicle_nr_reservations;
-        [OmsiStructArrayPtr(typeof(int))] public int vehical_indizes;
-        public bool hasNormalVeh;
+        [OmsiStrPtr(raw: true)] public int vehicle_nr_reservations;
+        [OmsiStructArrayPtr(typeof(int), raw: true)] public int vehical_indizes;
+        public byte hasNormalVeh;
         public int TagErledigt; // day done? (Day of week maybe? - OmsiTTTourValid?)
-        [OmsiStruct(typeof(OmsiTTTourValid), typeof(OmsiTTTourValid))] public int validOn;
-        public bool invalide;
-        [OmsiStructArrayPtr(typeof(OmsiTTTourEntry), typeof(OmsiTTTourEntryInternal))] public int entrys;
+        [OmsiStruct(typeof(OmsiTTTourValid))] public OmsiTTTourValid validOn;
+        public byte invalide;
+        public byte _nothing;
+        [OmsiStructArrayPtr(typeof(OmsiTTTourEntry), typeof(OmsiTTTourEntryInternal), raw: true)] public int entrys;
     }
 
     public struct OmsiTTLine
     {
         public string name;
-        public bool userAllowed;
+        public byte userAllowed;
         public byte priority;
         public OmsiTTTour[] tours;
         public int chrono_origin;
     }
+    [StructLayout(LayoutKind.Explicit)]
     internal struct OmsiTTLineInternal
     {
-        [OmsiStrPtr] public int name;
-        public bool userAllowed;
-        public byte priority;
-        [OmsiStructArrayPtr(typeof(OmsiTTTour), typeof(OmsiTTTourInternal))] public int tours;
-        public int chrono_origin;
+        [FieldOffset(0x0)][OmsiStrPtr(raw: true)] public int name;
+        [FieldOffset(0x4)]public byte userAllowed;
+        [FieldOffset(0x5)]public byte priority;
+        [FieldOffset(0x8)][OmsiStructArrayPtr(typeof(OmsiTTTour), typeof(OmsiTTTourInternal), raw: true)] public int tours;
+        [FieldOffset(0xc)]public int chrono_origin;
     }
 
     public struct OmsiRVNumTour
