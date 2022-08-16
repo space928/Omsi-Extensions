@@ -1691,23 +1691,22 @@ namespace OmsiHook
         public int TagErledigt;
         public OmsiTTTourValid validOn;
         public byte invalide;
-        public byte _nothing;
         public OmsiTTTourEntry[] entrys;
     }
+    [StructLayout(LayoutKind.Explicit)]
     internal struct OmsiTTTourInternal
     {
-        [OmsiStrPtr(raw: true)] public int name;
-        [OmsiStrPtr(raw: true)] public int aiGroup;
-        public int aiType;
-        public int aiGroupIndex;
-        [OmsiStrPtr(raw: true)] public int vehicle_nr_reservations;
-        [OmsiStructArrayPtr(typeof(int), raw: true)] public int vehical_indizes;
-        public byte hasNormalVeh;
-        public int TagErledigt; // day done? (Day of week maybe? - OmsiTTTourValid?)
-        [OmsiStruct(typeof(OmsiTTTourValid))] public OmsiTTTourValid validOn;
-        public byte invalide;
-        public byte _nothing;
-        [OmsiStructArrayPtr(typeof(OmsiTTTourEntry), typeof(OmsiTTTourEntryInternal), raw: true)] public int entrys;
+        [FieldOffset(0x0)][OmsiStrPtr(raw: true)] public int name;
+        [FieldOffset(0x4)][OmsiStrPtr(raw: true)] public int aiGroup;
+        [FieldOffset(0x8)] public int aiType;
+        [FieldOffset(0xc)] public int aiGroupIndex;
+        [FieldOffset(0x10)][OmsiStrPtr(raw: true)] public int vehicle_nr_reservations;
+        [FieldOffset(0x14)][OmsiStructArrayPtr(typeof(int), raw: true)] public int vehical_indizes;
+        [FieldOffset(0x18)] public byte hasNormalVeh;
+        [FieldOffset(0x1c)] public int TagErledigt; // day done? (Day of week maybe? - OmsiTTTourValid?)
+        [FieldOffset(0x20)][OmsiStruct(typeof(OmsiTTTourValid))] public OmsiTTTourValid validOn;
+        [FieldOffset(0x2a)] public byte invalide;
+        [FieldOffset(0x2c)][OmsiStructArrayPtr(typeof(OmsiTTTourEntry), typeof(OmsiTTTourEntryInternal), raw: true)] public int entrys;
     }
 
     public struct OmsiTTLine

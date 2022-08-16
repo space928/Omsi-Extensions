@@ -597,7 +597,6 @@ namespace OmsiHook
            where InStruct : unmanaged
         {
             OutStruct[] ret = new OutStruct[obj.Length];
-            Console.WriteLine("building a " + typeof(OutStruct).Name + "...");
             for (int i = 0; i < obj.Length; i++)
                 ret[i] = MarshalStruct<OutStruct, InStruct>(obj[i]);
 
