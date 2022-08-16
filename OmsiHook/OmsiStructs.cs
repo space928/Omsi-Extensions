@@ -1105,19 +1105,19 @@ namespace OmsiHook
         public string endstelle; // ANSI String
         public int texNummer;
         public string[] strings;
-        public bool allExit;
+        public byte allExit;
     }
     internal struct OmsiHOFTargetInternal
     {
         public int nummer;
-        [OmsiStrPtr] public int name; // ANSI String
+        [OmsiStrPtr(raw:true)] public int name; // ANSI String
         /// <summary>
         /// Terminus
         /// </summary>
-        [OmsiStrPtr] public int endstelle; // ANSI String
+        [OmsiStrPtr(raw: true)] public int endstelle; // ANSI String
         public int texNummer;
-        [OmsiStrArrayPtr] public int strings;
-        public bool allExit;
+        [OmsiStrArrayPtr(wide:true, raw:true)] public int strings;
+        public byte allExit;
     }
 
     public struct OmsiHofFISBusstop
@@ -1127,8 +1127,8 @@ namespace OmsiHook
     }
     internal struct OmsiHofFISBusstopInternal
     {
-        [OmsiStrPtr] public int ident; // ANSI String
-        [OmsiStrArrayPtr] public int strings;
+        [OmsiStrPtr(raw: true)] public int ident; // ANSI String
+        [OmsiStrArrayPtr(wide: true, raw: true)] public int strings;
     }
 
     public struct OmsiHofFISTrip
@@ -1142,10 +1142,10 @@ namespace OmsiHook
     internal struct OmsiHofFISTripInternal
     {
         public int code;
-        [OmsiStrPtr] public int name; // ANSI String
+        [OmsiStrPtr(raw: true)] public int name; // ANSI String
         public int target;
-        [OmsiStrPtr] public int line; // ANSI String
-        [OmsiStrArrayPtr] public int busstops;
+        [OmsiStrPtr(raw: true)] public int line; // ANSI String
+        [OmsiStrArrayPtr(raw:true)] public int busstops;
     }
     public struct OmsiCollFeedback
     {
