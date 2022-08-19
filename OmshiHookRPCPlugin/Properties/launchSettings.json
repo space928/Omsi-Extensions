@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "OmsiHookRPCPlugin": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
