@@ -16,7 +16,6 @@ namespace OmsiHook
         private Memory omsiMemory;
         private Process process;
         private OmsiGlobals globals;
-        private OmsiRemoteMethods remoteMethods;
 
         /// <summary>
         /// Gets the object storing all of Omsi's global variables.

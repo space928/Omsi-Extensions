@@ -9,6 +9,9 @@
   <PropertyGroup>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
+  <PropertyGroup>
+	<DefineConstants>OMSI_PLUGIN</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="DNNE" Version="1.0.30" />
   </ItemGroup>

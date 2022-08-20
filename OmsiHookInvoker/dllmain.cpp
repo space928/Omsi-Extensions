@@ -151,3 +151,15 @@ extern "C" __declspec(dllexport) int TProgManPlaceRandomBus(int progMan, int ait
         progMan, aityp, group, TTtime, thread, instantCopy, _typ,
         scheduled, startDay, tour, line);
 }
+
+extern "C" __declspec(dllexport) int GetMem(int length)
+{
+    return BorlandFastCall(0x00404614, 1, 1,
+        length);
+}
+
+extern "C" __declspec(dllexport) void FreeMem(int addr)
+{
+    BorlandFastCall(0x00404630, 1, 1,
+        addr);
+}
