@@ -12,11 +12,15 @@ namespace OmsiHook
 	public static class OmsiRemoteMethods
 	{
         private static NamedPipeClientStream pipe;
+        private static Memory memory;
 
         public static bool IsInitialised => pipe is {IsConnected: true};
 
-        public static void InitRemoteMethods()
+        // TODO: Okay maybe this shouldn't be static... Singleton?
+        internal static void InitRemoteMethods(Memory omsiMemory)
         {
+            memory = omsiMemory;
+
 #if !OMSI_PLUGIN
             pipe = new(OmsiHookRPCMethods.PIPE_NAME);
             pipe.ReadMode = PipeTransmissionMode.Byte;
@@ -37,10 +41,10 @@ namespace OmsiHook
         {
             int vehList = TTempRVListCreate(0x0074802C, 1);
             string path = @"Vehicles\GPM_MAN_LionsCity_M\MAN_A47.bus";
-            int mem = Memory.AllocateString(path, false);
+            int mem = memory.AllocateString(path, false);
 
-            return TProgManMakeVehicle(Memory.ReadMemory<int>(0x00862f28), vehList,
-                Memory.ReadMemory<int>(0x008615A8), false, false,
+            return TProgManMakeVehicle(memory.ReadMemory<int>(0x00862f28), vehList,
+                memory.ReadMemory<int>(0x008615A8), false, false,
               0, false, false, false, false,
               -1, true, 0, (byte)3, false,
               0, 0, 0, 0, 0, false,
@@ -61,7 +65,7 @@ namespace OmsiHook
         public static int PlaceRandomBus(int aiType = 0, int group = 1, int type = -1, bool scheduled = false, int tour = 0, int line = 0)
         {
 #if OMSI_PLUGIN
-            return TProgManPlaceRandomBus(Memory.ReadMemory<int>(0x00862f28), aiType, group, 0, false, true, type, scheduled, 0, tour, line);
+            return TProgManPlaceRandomBus(memory.ReadMemory<int>(0x00862f28), aiType, group, 0, false, true, type, scheduled, 0, tour, line);
 #else
             int argPos = 0;
             Span<byte> writeBuffer = stackalloc byte[39];

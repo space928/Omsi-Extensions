@@ -120,9 +120,10 @@ namespace OmsiHook
         {
             var sb = new StringBuilder();
             int i = addr;
+            byte[] bytesBuff = new byte[2];
             while (true)
             {
-                var bytes = omsiMemory.ReadMemory(i, wide ? 2 : 1);
+                var bytes = omsiMemory.ReadMemory(i, wide ? 2 : 1, bytesBuff);
                 if (bytes.All(x => x == 0))
                     break;
 

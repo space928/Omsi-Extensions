@@ -14,7 +14,6 @@ namespace OmsiHook
         internal OmsiGlobals(Memory omsiMemory, int baseAddress, OmsiHook hook) : base(omsiMemory, baseAddress) { this.hook = hook; }
         public OmsiGlobals(OmsiHook hook) : base() { this.hook = hook; }
 
-        private OmsiRemoteMethods remoteMethods;
         private OmsiHook hook;
 
         /// <summary>
@@ -41,11 +40,6 @@ namespace OmsiHook
         /// </summary>
         public OmsiTicketPack TicketPack => Memory.MarshalStruct<OmsiTicketPack, OmsiTicketPackInternal>(
             Memory.ReadMemory<OmsiTicketPackInternal>(0x008611fc));
-
-        /// <summary>
-        /// Access to RemoteMethods
-        /// </summary>
-        public OmsiRemoteMethods RemoteMethods => remoteMethods ??= new(Memory, 0);
 
         /// <summary>
         /// Current in game Date / Time
