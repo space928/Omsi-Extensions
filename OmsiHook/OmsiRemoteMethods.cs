@@ -9,23 +9,13 @@ namespace OmsiHook
     /// All of these methods will only work if called from a native Omsi plugin or if the OmsiHookRPCPlugin is installed.
     /// These methods also rely on OmsiHookInvoker.dll which must be in the Omsi plugins folder.
     /// </summary>
-	public class OmsiRemoteMethods : OmsiObject
+	public static class OmsiRemoteMethods
 	{
-        private NamedPipeClientStream pipe;
-        //private byte[] writeBuffer;
-        //private byte[] readBuffer;
+        private static NamedPipeClientStream pipe;
 
-        public OmsiRemoteMethods() : base()
-        {
-            Init();
-        }
+        public static bool IsInitialised => pipe is {IsConnected: true};
 
-        internal OmsiRemoteMethods(Memory memory, int address) : base(memory, address)
-        {
-            Init();
-        }
-
-        private void Init()
+        public static void InitRemoteMethods()
         {
 #if !OMSI_PLUGIN
             pipe = new(OmsiHookRPCMethods.PIPE_NAME);
@@ -43,7 +33,7 @@ namespace OmsiHook
         }
 
         [Obsolete]
-        public int MakeVehicle()
+        public static int MakeVehicle()
         {
             int vehList = TTempRVListCreate(0x0074802C, 1);
             string path = @"Vehicles\GPM_MAN_LionsCity_M\MAN_A47.bus";
@@ -68,7 +58,7 @@ namespace OmsiHook
         /// <param name="tour"></param>
         /// <param name="line"></param>
         /// <returns>The index of the vehicle that was placed.</returns>
-        public int PlaceRandomBus(int aiType = 0, int group = 1, int type = -1, bool scheduled = false, int tour = 0, int line = 0)
+        public static int PlaceRandomBus(int aiType = 0, int group = 1, int type = -1, bool scheduled = false, int tour = 0, int line = 0)
         {
 #if OMSI_PLUGIN
             return TProgManPlaceRandomBus(Memory.ReadMemory<int>(0x00862f28), aiType, group, 0, false, true, type, scheduled, 0, tour, line);
@@ -101,7 +91,7 @@ namespace OmsiHook
         /// <param name="length">How many bytes to allocate</param>
         /// <returns>A pointer to the newly allocated memory (note that you made need to
         /// <c>VirtualProtect</c> it to access it).</returns>
-        public int OmsiGetMem(int length)
+        public static int OmsiGetMem(int length)
         {
 #if OMSI_PLUGIN
             return GetMem(length);
@@ -122,7 +112,7 @@ namespace OmsiHook
         /// EXPERIMENTAL: A lot of messy stuff has to work for this to not crash.
         /// </summary>
         /// <param name="addr">The pointer to the object to deallocate</param>
-        public void OmsiFreeMem(int addr)
+        public static void OmsiFreeMem(int addr)
         {
 #if OMSI_PLUGIN
             FreeMem(addr);

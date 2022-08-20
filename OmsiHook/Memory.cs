@@ -883,9 +883,13 @@ namespace OmsiHook
             if (bytes == 0)
                 return 0;
 
-            int addr = Imports.VirtualAllocEx((int)m_iProcessHandle, 0, bytes, 
+            /*int addr = Imports.VirtualAllocEx((int)m_iProcessHandle, 0, bytes, 
                 Imports.AllocationType.MEM_COMMIT | Imports.AllocationType.MEM_RESERVE, 
-                Imports.MemoryProtectionType.PAGE_READWRITE);
+                Imports.MemoryProtectionType.PAGE_READWRITE);*/
+            // TODO: Probably slow
+            if (!OmsiRemoteMethods.IsInitialised)
+                OmsiRemoteMethods.InitRemoteMethods();
+            int addr = OmsiRemoteMethods.OmsiGetMem(bytes);
             if (addr == 0)
                 throw new OutOfMemoryException("Couldn't allocate any more memory in the remote process!");
 
