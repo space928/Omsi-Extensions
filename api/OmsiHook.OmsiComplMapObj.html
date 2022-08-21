@@ -1,0 +1,547 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+    
+    <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Class OmsiComplMapObj
+     | OmsiHook </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Class OmsiComplMapObj
+     | OmsiHook ">
+      <meta name="generator" content="docfx 2.56.7.0">
+      
+      <link rel="shortcut icon" href="../images/favicon.ico">
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/night-owl.min.css">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" integrity="sha384-EvBWSlnoFgZlXJvpzS+MAUEjvN7+gcCwH+qh7GRFOGgZO0PuwOFro7qPOJnLfe7l" crossorigin="anonymous">
+      <link rel="stylesheet" href="../styles/config.css">
+      <link rel="stylesheet" href="../styles/discord.css">
+      <link rel="stylesheet" href="../styles/singulink.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
+      
+      <meta property="docfx:rel" content="../">
+      <meta property="docfx:newtab" content="true">
+    </head>
+    <body>
+        <div class="top-navbar">
+            <a class="burger-icon" onclick="toggleMenu()">
+                <svg name="Hamburger" style="vertical-align: middle;" width="34" height="34" viewbox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M20 6H4V9H20V6ZM4 10.999H20V13.999H4V10.999ZM4 15.999H20V18.999H4V15.999Z"></path></svg>
+            </a>
+
+            
+            <a class="brand" href="../index.html">
+              <img src="../images/logo.svg" alt="OmsiHook Documentation" class="logomark">
+              <span class="brand-title">OmsiHook Documentation</span>
+            </a>        </div>
+
+        <div class="body-content">
+            <div id="blackout" class="blackout" onclick="toggleMenu()"></div>
+
+            <nav id="sidebar" role="navigation">
+                <div class="sidebar">
+                    
+                    <div>
+                      <div class="mobile-hide">
+                        
+                        <a class="brand" href="../index.html">
+                          <img src="../images/logo.svg" alt="OmsiHook Documentation" class="logomark">
+                          <span class="brand-title">OmsiHook Documentation</span>
+                        </a>  </div>
+
+                      <div class="sidesearch">
+                        <form id="search" role="search" class="search">
+                            <i class="bi bi-search search-icon"></i>
+                            <input type="text" id="search-query" placeholder="Search" autocomplete="off">
+                        </form>
+                      </div>
+                    
+                      <div id="navbar">
+                      </div>
+                    </div>                    <div class="sidebar-item-separator"></div>
+                        
+                        <div id="sidetoggle">
+                          <div id="sidetoc"></div>
+                        </div>
+                </div>
+                <div class="footer">
+                  <strong>DocFX + OmsiHook = ♥</strong>
+                  
+                </div>            </nav>
+
+            <main class="main-panel">
+                
+                <div id="search-results" style="display: none;">
+                  <h1 class="search-list">Search Results for <span></span></h1>
+                  <div class="sr-items">
+                    <p><i class="bi bi-hourglass-split index-loading"></i></p>
+                  </div>
+                  <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+                </div>
+                <div role="main" class="hide-when-search">
+                        
+                        <div class="subnav navbar navbar-default">
+                          <div class="container hide-when-search" id="breadcrumb">
+                            <ul class="breadcrumb">
+                              <li></li>
+                            </ul>
+                          </div>
+                        </div>
+
+                    <article class="content wrap" id="_content" data-uid="OmsiHook.OmsiComplMapObj">
+  
+  
+  <h1 id="OmsiHook_OmsiComplMapObj" data-uid="OmsiHook.OmsiComplMapObj" class="text-break">Class OmsiComplMapObj
+  </h1>
+  <div class="markdown level0 summary"><p>Base class for complex map objects - used by vehicles and humans</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="OmsiHook.OmsiObject.html">OmsiObject</a></div>
+    <div class="level2"><a class="xref" href="OmsiHook.OmsiPhysObj.html">OmsiPhysObj</a></div>
+    <div class="level3"><span class="xref">OmsiComplMapObj</span></div>
+      <div class="level4"><a class="xref" href="OmsiHook.OmsiHumanBeing.html">OmsiHumanBeing</a></div>
+      <div class="level4"><a class="xref" href="OmsiHook.OmsiVehicle.html">OmsiVehicle</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.FileName.html#OmsiHook_OmsiPhysObj_FileName">OmsiPhysObj.FileName</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.FileVersion.html#OmsiHook_OmsiPhysObj_FileVersion">OmsiPhysObj.FileVersion</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.Mass.html#OmsiHook_OmsiPhysObj_Mass">OmsiPhysObj.Mass</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.J_X.html#OmsiHook_OmsiPhysObj_J_X">OmsiPhysObj.J_X</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.J_Y.html#OmsiHook_OmsiPhysObj_J_Y">OmsiPhysObj.J_Y</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.J_Z.html#OmsiHook_OmsiPhysObj_J_Z">OmsiPhysObj.J_Z</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.PH_I.html#OmsiHook_OmsiPhysObj_PH_I">OmsiPhysObj.PH_I</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.PH_I_Inv.html#OmsiHook_OmsiPhysObj_PH_I_Inv">OmsiPhysObj.PH_I_Inv</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.CoG.html#OmsiHook_OmsiPhysObj_CoG">OmsiPhysObj.CoG</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.BoundingBox.html#OmsiHook_OmsiPhysObj_BoundingBox">OmsiPhysObj.BoundingBox</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.Z_B.html#OmsiHook_OmsiPhysObj_Z_B">OmsiPhysObj.Z_B</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.Z_F.html#OmsiHook_OmsiPhysObj_Z_F">OmsiPhysObj.Z_F</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.X_L.html#OmsiHook_OmsiPhysObj_X_L">OmsiPhysObj.X_L</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.X_R.html#OmsiHook_OmsiPhysObj_X_R">OmsiPhysObj.X_R</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.Fest.html#OmsiHook_OmsiPhysObj_Fest">OmsiPhysObj.Fest</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.No_Collision.html#OmsiHook_OmsiPhysObj_No_Collision">OmsiPhysObj.No_Collision</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.Active.html#OmsiHook_OmsiPhysObj_Active">OmsiPhysObj.Active</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.Surface.html#OmsiHook_OmsiPhysObj_Surface">OmsiPhysObj.Surface</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.CrashMode_Mast.html#OmsiHook_OmsiPhysObj_CrashMode_Mast">OmsiPhysObj.CrashMode_Mast</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.CrashMode_Mast_M.html#OmsiHook_OmsiPhysObj_CrashMode_Mast_M">OmsiPhysObj.CrashMode_Mast_M</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.CrashMode_Mast_Max.html#OmsiHook_OmsiPhysObj_CrashMode_Mast_Max">OmsiPhysObj.CrashMode_Mast_Max</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.CollMesh_Valid.html#OmsiHook_OmsiPhysObj_CollMesh_Valid">OmsiPhysObj.CollMesh_Valid</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.CollMesh_FileName.html#OmsiHook_OmsiPhysObj_CollMesh_FileName">OmsiPhysObj.CollMesh_FileName</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.CollMesh_Vertex_Cnt.html#OmsiHook_OmsiPhysObj_CollMesh_Vertex_Cnt">OmsiPhysObj.CollMesh_Vertex_Cnt</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObj.CollMesh_Index_Cnt.html#OmsiHook_OmsiPhysObj_CollMesh_Index_Cnt">OmsiPhysObj.CollMesh_Index_Cnt</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiObject.Equals.html#OmsiHook_OmsiObject_Equals_System_Object_">OmsiObject.Equals(Object)</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="OmsiHook.html">OmsiHook</a></h6>
+  <h6><strong>Assembly</strong>: OmsiHook.dll</h6>
+  <h5 id="OmsiHook_OmsiComplMapObj_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class OmsiComplMapObj : OmsiPhysObj</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj__ctor" data-uid="OmsiHook.OmsiComplMapObj.#ctor">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.-ctor.html#OmsiHook_OmsiComplMapObj__ctor">OmsiComplMapObj()</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_AbsHeight" data-uid="OmsiHook.OmsiComplMapObj.AbsHeight">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.AbsHeight.html#OmsiHook_OmsiComplMapObj_AbsHeight">AbsHeight</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_AmpelGroup" data-uid="OmsiHook.OmsiComplMapObj.AmpelGroup">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.AmpelGroup.html#OmsiHook_OmsiComplMapObj_AmpelGroup">AmpelGroup</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_AttatchmentPnts" data-uid="OmsiHook.OmsiComplMapObj.AttatchmentPnts">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.AttatchmentPnts.html#OmsiHook_OmsiComplMapObj_AttatchmentPnts">AttatchmentPnts</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_CallBackStrings" data-uid="OmsiHook.OmsiComplMapObj.CallBackStrings">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.CallBackStrings.html#OmsiHook_OmsiComplMapObj_CallBackStrings">CallBackStrings</a>
+        </td>
+        <td class="markdown level1 summary"><p>Array of names of callbacks.</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_Complexity" data-uid="OmsiHook.OmsiComplMapObj.Complexity">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.Complexity.html#OmsiHook_OmsiComplMapObj_Complexity">Complexity</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_ComplObj" data-uid="OmsiHook.OmsiComplMapObj.ComplObj">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.ComplObj.html#OmsiHook_OmsiComplMapObj_ComplObj">ComplObj</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_ConstFiles_Int" data-uid="OmsiHook.OmsiComplMapObj.ConstFiles_Int">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.ConstFiles_Int.html#OmsiHook_OmsiComplMapObj_ConstFiles_Int">ConstFiles_Int</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_CTC_FarbSchema" data-uid="OmsiHook.OmsiComplMapObj.CTC_FarbSchema">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.CTC_FarbSchema.html#OmsiHook_OmsiComplMapObj_CTC_FarbSchema">CTC_FarbSchema</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_Depot" data-uid="OmsiHook.OmsiComplMapObj.Depot">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.Depot.html#OmsiHook_OmsiComplMapObj_Depot">Depot</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_Exists" data-uid="OmsiHook.OmsiComplMapObj.Exists">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.Exists.html#OmsiHook_OmsiComplMapObj_Exists">Exists</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_FirstUser" data-uid="OmsiHook.OmsiComplMapObj.FirstUser">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.FirstUser.html#OmsiHook_OmsiComplMapObj_FirstUser">FirstUser</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_FoundInProtokoll" data-uid="OmsiHook.OmsiComplMapObj.FoundInProtokoll">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.FoundInProtokoll.html#OmsiHook_OmsiComplMapObj_FoundInProtokoll">FoundInProtokoll</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_FriendlyName" data-uid="OmsiHook.OmsiComplMapObj.FriendlyName">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.FriendlyName.html#OmsiHook_OmsiComplMapObj_FriendlyName">FriendlyName</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_Groups" data-uid="OmsiHook.OmsiComplMapObj.Groups">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.Groups.html#OmsiHook_OmsiComplMapObj_Groups">Groups</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_HeightDeform" data-uid="OmsiHook.OmsiComplMapObj.HeightDeform">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.HeightDeform.html#OmsiHook_OmsiComplMapObj_HeightDeform">HeightDeform</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_HeightDeform_FileName" data-uid="OmsiHook.OmsiComplMapObj.HeightDeform_FileName">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.HeightDeform_FileName.html#OmsiHook_OmsiComplMapObj_HeightDeform_FileName">HeightDeform_FileName</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_Joinable" data-uid="OmsiHook.OmsiComplMapObj.Joinable">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.Joinable.html#OmsiHook_OmsiComplMapObj_Joinable">Joinable</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_LightMapMapping" data-uid="OmsiHook.OmsiComplMapObj.LightMapMapping">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.LightMapMapping.html#OmsiHook_OmsiComplMapObj_LightMapMapping">LightMapMapping</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_MapLighting" data-uid="OmsiHook.OmsiComplMapObj.MapLighting">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.MapLighting.html#OmsiHook_OmsiComplMapObj_MapLighting">MapLighting</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_MapLights" data-uid="OmsiHook.OmsiComplMapObj.MapLights">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.MapLights.html#OmsiHook_OmsiComplMapObj_MapLights">MapLights</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_Model" data-uid="OmsiHook.OmsiComplMapObj.Model">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.Model.html#OmsiHook_OmsiComplMapObj_Model">Model</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_Model_Int" data-uid="OmsiHook.OmsiComplMapObj.Model_Int">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.Model_Int.html#OmsiHook_OmsiComplMapObj_Model_Int">Model_Int</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_MyPath" data-uid="OmsiHook.OmsiComplMapObj.MyPath">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.MyPath.html#OmsiHook_OmsiComplMapObj_MyPath">MyPath</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_NightMapMode" data-uid="OmsiHook.OmsiComplMapObj.NightMapMode">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.NightMapMode.html#OmsiHook_OmsiComplMapObj_NightMapMode">NightMapMode</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_NoSound" data-uid="OmsiHook.OmsiComplMapObj.NoSound">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.NoSound.html#OmsiHook_OmsiComplMapObj_NoSound">NoSound</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_NullVar" data-uid="OmsiHook.OmsiComplMapObj.NullVar">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.NullVar.html#OmsiHook_OmsiComplMapObj_NullVar">NullVar</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_OmsiSplineHelpers" data-uid="OmsiHook.OmsiComplMapObj.OmsiSplineHelpers">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.OmsiSplineHelpers.html#OmsiHook_OmsiComplMapObj_OmsiSplineHelpers">OmsiSplineHelpers</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_OnlyEditor" data-uid="OmsiHook.OmsiComplMapObj.OnlyEditor">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.OnlyEditor.html#OmsiHook_OmsiComplMapObj_OnlyEditor">OnlyEditor</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_PassengerCabin" data-uid="OmsiHook.OmsiComplMapObj.PassengerCabin">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.PassengerCabin.html#OmsiHook_OmsiComplMapObj_PassengerCabin">PassengerCabin</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_Paths" data-uid="OmsiHook.OmsiComplMapObj.Paths">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.Paths.html#OmsiHook_OmsiComplMapObj_Paths">Paths</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_Pause" data-uid="OmsiHook.OmsiComplMapObj.Pause">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.Pause.html#OmsiHook_OmsiComplMapObj_Pause">Pause</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_Priority" data-uid="OmsiHook.OmsiComplMapObj.Priority">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.Priority.html#OmsiHook_OmsiComplMapObj_Priority">Priority</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_ReflCameraSettings" data-uid="OmsiHook.OmsiComplMapObj.ReflCameraSettings">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.ReflCameraSettings.html#OmsiHook_OmsiComplMapObj_ReflCameraSettings">ReflCameraSettings</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_Scripts_Int" data-uid="OmsiHook.OmsiComplMapObj.Scripts_Int">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.Scripts_Int.html#OmsiHook_OmsiComplMapObj_Scripts_Int">Scripts_Int</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_ScriptShare" data-uid="OmsiHook.OmsiComplMapObj.ScriptShare">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.ScriptShare.html#OmsiHook_OmsiComplMapObj_ScriptShare">ScriptShare</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_SnapPoints" data-uid="OmsiHook.OmsiComplMapObj.SnapPoints">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.SnapPoints.html#OmsiHook_OmsiComplMapObj_SnapPoints">SnapPoints</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_Sound" data-uid="OmsiHook.OmsiComplMapObj.Sound">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.Sound.html#OmsiHook_OmsiComplMapObj_Sound">Sound</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_Sound_AI" data-uid="OmsiHook.OmsiComplMapObj.Sound_AI">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.Sound_AI.html#OmsiHook_OmsiComplMapObj_Sound_AI">Sound_AI</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_Special" data-uid="OmsiHook.OmsiComplMapObj.Special">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.Special.html#OmsiHook_OmsiComplMapObj_Special">Special</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_StdColorScheme" data-uid="OmsiHook.OmsiComplMapObj.StdColorScheme">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.StdColorScheme.html#OmsiHook_OmsiComplMapObj_StdColorScheme">StdColorScheme</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_SVars_Int" data-uid="OmsiHook.OmsiComplMapObj.SVars_Int">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.SVars_Int.html#OmsiHook_OmsiComplMapObj_SVars_Int">SVars_Int</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_SVarStrings" data-uid="OmsiHook.OmsiComplMapObj.SVarStrings">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.SVarStrings.html#OmsiHook_OmsiComplMapObj_SVarStrings">SVarStrings</a>
+        </td>
+        <td class="markdown level1 summary"><p>Array of names of string variables.</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_Switch_State_Count" data-uid="OmsiHook.OmsiComplMapObj.Switch_State_Count">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.Switch_State_Count.html#OmsiHook_OmsiComplMapObj_Switch_State_Count">Switch_State_Count</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_SysVars" data-uid="OmsiHook.OmsiComplMapObj.SysVars">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.SysVars.html#OmsiHook_OmsiComplMapObj_SysVars">SysVars</a>
+        </td>
+        <td class="markdown level1 summary"><p>Array of values of system variables.</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_SysVarStrings" data-uid="OmsiHook.OmsiComplMapObj.SysVarStrings">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.SysVarStrings.html#OmsiHook_OmsiComplMapObj_SysVarStrings">SysVarStrings</a>
+        </td>
+        <td class="markdown level1 summary"><p>Array of names of system variables.</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_TriggerBoxes" data-uid="OmsiHook.OmsiComplMapObj.TriggerBoxes">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.TriggerBoxes.html#OmsiHook_OmsiComplMapObj_TriggerBoxes">TriggerBoxes</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_Vars_Int" data-uid="OmsiHook.OmsiComplMapObj.Vars_Int">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.Vars_Int.html#OmsiHook_OmsiComplMapObj_Vars_Int">Vars_Int</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_VarStrings" data-uid="OmsiHook.OmsiComplMapObj.VarStrings">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.VarStrings.html#OmsiHook_OmsiComplMapObj_VarStrings">VarStrings</a>
+        </td>
+        <td class="markdown level1 summary"><p>Array of names of float variables.</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiComplMapObj_VB_Couple_Front_Open_For_Sound" data-uid="OmsiHook.OmsiComplMapObj.VB_Couple_Front_Open_For_Sound">
+          <a class="xref" href="OmsiHook.OmsiComplMapObj.VB_Couple_Front_Open_For_Sound.html#OmsiHook_OmsiComplMapObj_VB_Couple_Front_Open_For_Sound">VB_Couple_Front_Open_For_Sound</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+                </div>
+
+                <div class="copyright-footer">
+                    <span>&#169; Thomas/Adam Mathieson. All rights reserved.</span>
+                </div>
+            </main>
+        </div>
+
+        
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+        <script type="text/javascript" src="../styles/jquery.twbsPagination.js"></script>
+        <script type="text/javascript" src="../styles/url.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/anchor-js/anchor.min.js"></script>
+        <script type="text/javascript" src="../styles/docfx.js"></script>
+        <script type="text/javascript" src="../styles/singulink.js"></script>
+        <script type="text/javascript" src="../styles/main.js"></script>    </body>
+</html>

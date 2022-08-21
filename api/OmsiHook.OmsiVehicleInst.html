@@ -1,0 +1,893 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+    
+    <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Class OmsiVehicleInst
+     | OmsiHook </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Class OmsiVehicleInst
+     | OmsiHook ">
+      <meta name="generator" content="docfx 2.56.7.0">
+      
+      <link rel="shortcut icon" href="../images/favicon.ico">
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/night-owl.min.css">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" integrity="sha384-EvBWSlnoFgZlXJvpzS+MAUEjvN7+gcCwH+qh7GRFOGgZO0PuwOFro7qPOJnLfe7l" crossorigin="anonymous">
+      <link rel="stylesheet" href="../styles/config.css">
+      <link rel="stylesheet" href="../styles/discord.css">
+      <link rel="stylesheet" href="../styles/singulink.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
+      
+      <meta property="docfx:rel" content="../">
+      <meta property="docfx:newtab" content="true">
+    </head>
+    <body>
+        <div class="top-navbar">
+            <a class="burger-icon" onclick="toggleMenu()">
+                <svg name="Hamburger" style="vertical-align: middle;" width="34" height="34" viewbox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M20 6H4V9H20V6ZM4 10.999H20V13.999H4V10.999ZM4 15.999H20V18.999H4V15.999Z"></path></svg>
+            </a>
+
+            
+            <a class="brand" href="../index.html">
+              <img src="../images/logo.svg" alt="OmsiHook Documentation" class="logomark">
+              <span class="brand-title">OmsiHook Documentation</span>
+            </a>        </div>
+
+        <div class="body-content">
+            <div id="blackout" class="blackout" onclick="toggleMenu()"></div>
+
+            <nav id="sidebar" role="navigation">
+                <div class="sidebar">
+                    
+                    <div>
+                      <div class="mobile-hide">
+                        
+                        <a class="brand" href="../index.html">
+                          <img src="../images/logo.svg" alt="OmsiHook Documentation" class="logomark">
+                          <span class="brand-title">OmsiHook Documentation</span>
+                        </a>  </div>
+
+                      <div class="sidesearch">
+                        <form id="search" role="search" class="search">
+                            <i class="bi bi-search search-icon"></i>
+                            <input type="text" id="search-query" placeholder="Search" autocomplete="off">
+                        </form>
+                      </div>
+                    
+                      <div id="navbar">
+                      </div>
+                    </div>                    <div class="sidebar-item-separator"></div>
+                        
+                        <div id="sidetoggle">
+                          <div id="sidetoc"></div>
+                        </div>
+                </div>
+                <div class="footer">
+                  <strong>DocFX + OmsiHook = ♥</strong>
+                  
+                </div>            </nav>
+
+            <main class="main-panel">
+                
+                <div id="search-results" style="display: none;">
+                  <h1 class="search-list">Search Results for <span></span></h1>
+                  <div class="sr-items">
+                    <p><i class="bi bi-hourglass-split index-loading"></i></p>
+                  </div>
+                  <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+                </div>
+                <div role="main" class="hide-when-search">
+                        
+                        <div class="subnav navbar navbar-default">
+                          <div class="container hide-when-search" id="breadcrumb">
+                            <ul class="breadcrumb">
+                              <li></li>
+                            </ul>
+                          </div>
+                        </div>
+
+                    <article class="content wrap" id="_content" data-uid="OmsiHook.OmsiVehicleInst">
+  
+  
+  <h1 id="OmsiHook_OmsiVehicleInst" data-uid="OmsiHook.OmsiVehicleInst" class="text-break">Class OmsiVehicleInst
+  </h1>
+  <div class="markdown level0 summary"><p>Instance of <a class="xref" href="OmsiHook.OmsiVehicle.html">OmsiVehicle</a></p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="OmsiHook.OmsiObject.html">OmsiObject</a></div>
+    <div class="level2"><a class="xref" href="OmsiHook.OmsiMapObjInst.html">OmsiMapObjInst</a></div>
+    <div class="level3"><a class="xref" href="OmsiHook.OmsiPhysObjInst.html">OmsiPhysObjInst</a></div>
+    <div class="level4"><a class="xref" href="OmsiHook.OmsiComplMapObjInst.html">OmsiComplMapObjInst</a></div>
+    <div class="level5"><a class="xref" href="OmsiHook.OmsiMovingMapObjInst.html">OmsiMovingMapObjInst</a></div>
+    <div class="level6"><span class="xref">OmsiVehicleInst</span></div>
+      <div class="level7"><a class="xref" href="OmsiHook.OmsiRoadVehicleInst.html">OmsiRoadVehicleInst</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.IDCode.html#OmsiHook_OmsiComplMapObjInst_IDCode">OmsiComplMapObjInst.IDCode</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.MyFileObject.html#OmsiHook_OmsiComplMapObjInst_MyFileObject">OmsiComplMapObjInst.MyFileObject</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.EinsVar.html#OmsiHook_OmsiComplMapObjInst_EinsVar">OmsiComplMapObjInst.EinsVar</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.Debug.html#OmsiHook_OmsiComplMapObjInst_Debug">OmsiComplMapObjInst.Debug</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.Unknown_OCMOI_A.html#OmsiHook_OmsiComplMapObjInst_Unknown_OCMOI_A">OmsiComplMapObjInst.Unknown_OCMOI_A</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.Unknown_OCMOI_B.html#OmsiHook_OmsiComplMapObjInst_Unknown_OCMOI_B">OmsiComplMapObjInst.Unknown_OCMOI_B</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.Unknown_OCMOI_C.html#OmsiHook_OmsiComplMapObjInst_Unknown_OCMOI_C">OmsiComplMapObjInst.Unknown_OCMOI_C</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.UUnknown_OCMOI_D.html#OmsiHook_OmsiComplMapObjInst_UUnknown_OCMOI_D">OmsiComplMapObjInst.UUnknown_OCMOI_D</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.Unknown_OCMOI_E.html#OmsiHook_OmsiComplMapObjInst_Unknown_OCMOI_E">OmsiComplMapObjInst.Unknown_OCMOI_E</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.SoundItent.html#OmsiHook_OmsiComplMapObjInst_SoundItent">OmsiComplMapObjInst.SoundItent</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.FarbSchema.html#OmsiHook_OmsiComplMapObjInst_FarbSchema">OmsiComplMapObjInst.FarbSchema</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.ComplMapObj.html#OmsiHook_OmsiComplMapObjInst_ComplMapObj">OmsiComplMapObjInst.ComplMapObj</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.ComplObjInst.html#OmsiHook_OmsiComplMapObjInst_ComplObjInst">OmsiComplMapObjInst.ComplObjInst</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.UseSound.html#OmsiHook_OmsiComplMapObjInst_UseSound">OmsiComplMapObjInst.UseSound</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.SoundPack.html#OmsiHook_OmsiComplMapObjInst_SoundPack">OmsiComplMapObjInst.SoundPack</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.ReflCameras.html#OmsiHook_OmsiComplMapObjInst_ReflCameras">OmsiComplMapObjInst.ReflCameras</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.Selected.html#OmsiHook_OmsiComplMapObjInst_Selected">OmsiComplMapObjInst.Selected</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.AmbLight.html#OmsiHook_OmsiComplMapObjInst_AmbLight">OmsiComplMapObjInst.AmbLight</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.PublicVars_Int.html#OmsiHook_OmsiComplMapObjInst_PublicVars_Int">OmsiComplMapObjInst.PublicVars_Int</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.PublicVars.html#OmsiHook_OmsiComplMapObjInst_PublicVars">OmsiComplMapObjInst.PublicVars</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.ScriptShareParent.html#OmsiHook_OmsiComplMapObjInst_ScriptShareParent">OmsiComplMapObjInst.ScriptShareParent</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.UserVars.html#OmsiHook_OmsiComplMapObjInst_UserVars">OmsiComplMapObjInst.UserVars</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.MyPathGroup.html#OmsiHook_OmsiComplMapObjInst_MyPathGroup">OmsiComplMapObjInst.MyPathGroup</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.OutsideVol.html#OmsiHook_OmsiComplMapObjInst_OutsideVol">OmsiComplMapObjInst.OutsideVol</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.CollFeedback_Activ.html#OmsiHook_OmsiComplMapObjInst_CollFeedback_Activ">OmsiComplMapObjInst.CollFeedback_Activ</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.CollFeedbacks.html#OmsiHook_OmsiComplMapObjInst_CollFeedbacks">OmsiComplMapObjInst.CollFeedbacks</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.GetVariable.html#OmsiHook_OmsiComplMapObjInst_GetVariable_System_String_">OmsiComplMapObjInst.GetVariable(String)</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.SetVariable.html#OmsiHook_OmsiComplMapObjInst_SetVariable_System_String_System_Single_">OmsiComplMapObjInst.SetVariable(String, Single)</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.GetStringVariable.html#OmsiHook_OmsiComplMapObjInst_GetStringVariable_System_String_">OmsiComplMapObjInst.GetStringVariable(String)</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiComplMapObjInst.SetStringVariable.html#OmsiHook_OmsiComplMapObjInst_SetStringVariable_System_String_System_String_">OmsiComplMapObjInst.SetStringVariable(String, String)</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObjInst.Mast_BasePoint.html#OmsiHook_OmsiPhysObjInst_Mast_BasePoint">OmsiPhysObjInst.Mast_BasePoint</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObjInst.F_Long.html#OmsiHook_OmsiPhysObjInst_F_Long">OmsiPhysObjInst.F_Long</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObjInst.F_Vert.html#OmsiHook_OmsiPhysObjInst_F_Vert">OmsiPhysObjInst.F_Vert</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObjInst.F_Lat.html#OmsiHook_OmsiPhysObjInst_F_Lat">OmsiPhysObjInst.F_Lat</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObjInst.M_Long.html#OmsiHook_OmsiPhysObjInst_M_Long">OmsiPhysObjInst.M_Long</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObjInst.M_Lat.html#OmsiHook_OmsiPhysObjInst_M_Lat">OmsiPhysObjInst.M_Lat</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObjInst.M_Vert.html#OmsiHook_OmsiPhysObjInst_M_Vert">OmsiPhysObjInst.M_Vert</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObjInst.CrashMode_Mast_GES.html#OmsiHook_OmsiPhysObjInst_CrashMode_Mast_GES">OmsiPhysObjInst.CrashMode_Mast_GES</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObjInst.Velocity.html#OmsiHook_OmsiPhysObjInst_Velocity">OmsiPhysObjInst.Velocity</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObjInst.LastForce.html#OmsiHook_OmsiPhysObjInst_LastForce">OmsiPhysObjInst.LastForce</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObjInst.LastMoment.html#OmsiHook_OmsiPhysObjInst_LastMoment">OmsiPhysObjInst.LastMoment</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObjInst.Long.html#OmsiHook_OmsiPhysObjInst_Long">OmsiPhysObjInst.Long</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObjInst.Lat.html#OmsiHook_OmsiPhysObjInst_Lat">OmsiPhysObjInst.Lat</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObjInst.Vert.html#OmsiHook_OmsiPhysObjInst_Vert">OmsiPhysObjInst.Vert</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObjInst.Hdg.html#OmsiHook_OmsiPhysObjInst_Hdg">OmsiPhysObjInst.Hdg</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObjInst.Turn_Velocity.html#OmsiHook_OmsiPhysObjInst_Turn_Velocity">OmsiPhysObjInst.Turn_Velocity</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObjInst.Veloc_Lokal.html#OmsiHook_OmsiPhysObjInst_Veloc_Lokal">OmsiPhysObjInst.Veloc_Lokal</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObjInst.Contact.html#OmsiHook_OmsiPhysObjInst_Contact">OmsiPhysObjInst.Contact</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiPhysObjInst.Camera.html#OmsiHook_OmsiPhysObjInst_Camera">OmsiPhysObjInst.Camera</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiMapObjInst.Position.html#OmsiHook_OmsiMapObjInst_Position">OmsiMapObjInst.Position</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiMapObjInst.Pos_Mat.html#OmsiHook_OmsiMapObjInst_Pos_Mat">OmsiMapObjInst.Pos_Mat</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiMapObjInst.Rotation.html#OmsiHook_OmsiMapObjInst_Rotation">OmsiMapObjInst.Rotation</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiMapObjInst.Scale.html#OmsiHook_OmsiMapObjInst_Scale">OmsiMapObjInst.Scale</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiMapObjInst.RelMatrix.html#OmsiHook_OmsiMapObjInst_RelMatrix">OmsiMapObjInst.RelMatrix</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiMapObjInst.Used_RelVec.html#OmsiHook_OmsiMapObjInst_Used_RelVec">OmsiMapObjInst.Used_RelVec</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiMapObjInst.Kachel.html#OmsiHook_OmsiMapObjInst_Kachel">OmsiMapObjInst.Kachel</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiMapObjInst.AbsPosition.html#OmsiHook_OmsiMapObjInst_AbsPosition">OmsiMapObjInst.AbsPosition</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiMapObjInst.AbsPosition_Inv.html#OmsiHook_OmsiMapObjInst_AbsPosition_Inv">OmsiMapObjInst.AbsPosition_Inv</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiMapObjInst.AbsPosition_ThreadFree.html#OmsiHook_OmsiMapObjInst_AbsPosition_ThreadFree">OmsiMapObjInst.AbsPosition_ThreadFree</a>
+    </div>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiObject.Equals.html#OmsiHook_OmsiObject_Equals_System_Object_">OmsiObject.Equals(Object)</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="OmsiHook.html">OmsiHook</a></h6>
+  <h6><strong>Assembly</strong>: OmsiHook.dll</h6>
+  <h5 id="OmsiHook_OmsiVehicleInst_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class OmsiVehicleInst : OmsiMovingMapObjInst</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst__ctor" data-uid="OmsiHook.OmsiVehicleInst.#ctor">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.-ctor.html#OmsiHook_OmsiVehicleInst__ctor">OmsiVehicleInst()</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_A_Rot" data-uid="OmsiHook.OmsiVehicleInst.A_Rot">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.A_Rot.html#OmsiHook_OmsiVehicleInst_A_Rot">A_Rot</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_A_Trans" data-uid="OmsiHook.OmsiVehicleInst.A_Trans">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.A_Trans.html#OmsiHook_OmsiVehicleInst_A_Trans">A_Trans</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_Act_Camera_Driver" data-uid="OmsiHook.OmsiVehicleInst.Act_Camera_Driver">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.Act_Camera_Driver.html#OmsiHook_OmsiVehicleInst_Act_Camera_Driver">Act_Camera_Driver</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_Act_Camera_Pax" data-uid="OmsiHook.OmsiVehicleInst.Act_Camera_Pax">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.Act_Camera_Pax.html#OmsiHook_OmsiVehicleInst_Act_Camera_Pax">Act_Camera_Pax</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Blinker_L" data-uid="OmsiHook.OmsiVehicleInst.AI_Blinker_L">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Blinker_L.html#OmsiHook_OmsiVehicleInst_AI_Blinker_L">AI_Blinker_L</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Blinker_R" data-uid="OmsiHook.OmsiVehicleInst.AI_Blinker_R">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Blinker_R.html#OmsiHook_OmsiVehicleInst_AI_Blinker_R">AI_Blinker_R</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_BrakeLight" data-uid="OmsiHook.OmsiVehicleInst.AI_BrakeLight">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_BrakeLight.html#OmsiHook_OmsiVehicleInst_AI_BrakeLight">AI_BrakeLight</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Engine" data-uid="OmsiHook.OmsiVehicleInst.AI_Engine">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Engine.html#OmsiHook_OmsiVehicleInst_AI_Engine">AI_Engine</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_InteriorLight" data-uid="OmsiHook.OmsiVehicleInst.AI_InteriorLight">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_InteriorLight.html#OmsiHook_OmsiVehicleInst_AI_InteriorLight">AI_InteriorLight</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Licht" data-uid="OmsiHook.OmsiVehicleInst.AI_Licht">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Licht.html#OmsiHook_OmsiVehicleInst_AI_Licht">AI_Licht</a>
+        </td>
+        <td class="markdown level1 summary"><p>Light</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Licht_Change_Counter" data-uid="OmsiHook.OmsiVehicleInst.AI_Licht_Change_Counter">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Licht_Change_Counter.html#OmsiHook_OmsiVehicleInst_AI_Licht_Change_Counter">AI_Licht_Change_Counter</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Licht_Change_Timer" data-uid="OmsiHook.OmsiVehicleInst.AI_Licht_Change_Timer">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Licht_Change_Timer.html#OmsiHook_OmsiVehicleInst_AI_Licht_Change_Timer">AI_Licht_Change_Timer</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Lichthupe" data-uid="OmsiHook.OmsiVehicleInst.AI_Lichthupe">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Lichthupe.html#OmsiHook_OmsiVehicleInst_AI_Lichthupe">AI_Lichthupe</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Lichthupe_LastSpeed" data-uid="OmsiHook.OmsiVehicleInst.AI_Lichthupe_LastSpeed">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Lichthupe_LastSpeed.html#OmsiHook_OmsiVehicleInst_AI_Lichthupe_LastSpeed">AI_Lichthupe_LastSpeed</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Lichthupe_Timer" data-uid="OmsiHook.OmsiVehicleInst.AI_Lichthupe_Timer">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Lichthupe_Timer.html#OmsiHook_OmsiVehicleInst_AI_Lichthupe_Timer">AI_Lichthupe_Timer</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_Amplifyer" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_Amplifyer">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_Amplifyer.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_Amplifyer">AI_Scheduled_Amplifyer</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_AtStation" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_AtStation">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_AtStation.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_AtStation">AI_Scheduled_AtStation</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_Aussetzen_before_tourentry" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_Aussetzen_before_tourentry">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_Aussetzen_before_tourentry.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_Aussetzen_before_tourentry">AI_Scheduled_Aussetzen_before_tourentry</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_Aussetzen_Betriebsfahrt" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_Aussetzen_Betriebsfahrt">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_Aussetzen_Betriebsfahrt.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_Aussetzen_Betriebsfahrt">AI_Scheduled_Aussetzen_Betriebsfahrt</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_Delay" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_Delay">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_Delay.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_Delay">AI_Scheduled_Delay</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_Info_Valid" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_Info_Valid">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_Info_Valid.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_Info_Valid">AI_Scheduled_Info_Valid</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_InvalidDataWarning" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_InvalidDataWarning">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_InvalidDataWarning.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_InvalidDataWarning">AI_Scheduled_InvalidDataWarning</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_Line" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_Line">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_Line.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_Line">AI_Scheduled_Line</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_NewTerminusSet" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_NewTerminusSet">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_NewTerminusSet.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_NewTerminusSet">AI_Scheduled_NewTerminusSet</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_NextBusstop" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_NextBusstop">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_NextBusstop.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_NextBusstop">AI_Scheduled_NextBusstop</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_NextBusstop_state" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_NextBusstop_state">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_NextBusstop_state.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_NextBusstop_state">AI_Scheduled_NextBusstop_state</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_NextBusstop_TimeToDepart" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_NextBusstop_TimeToDepart">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_NextBusstop_TimeToDepart.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_NextBusstop_TimeToDepart">AI_Scheduled_NextBusstop_TimeToDepart</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_NextBusstopArrTime" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_NextBusstopArrTime">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_NextBusstopArrTime.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_NextBusstopArrTime">AI_Scheduled_NextBusstopArrTime</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_NextBusstopDist" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_NextBusstopDist">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_NextBusstopDist.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_NextBusstopDist">AI_Scheduled_NextBusstopDist</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_NextBusstopDist_Min" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_NextBusstopDist_Min">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_NextBusstopDist_Min.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_NextBusstopDist_Min">AI_Scheduled_NextBusstopDist_Min</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_NextBusstopIDCode" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_NextBusstopIDCode">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_NextBusstopIDCode.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_NextBusstopIDCode">AI_Scheduled_NextBusstopIDCode</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_NextBusstopIndex" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_NextBusstopIndex">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_NextBusstopIndex.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_NextBusstopIndex">AI_Scheduled_NextBusstopIndex</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_NextBusstopName" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_NextBusstopName">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_NextBusstopName.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_NextBusstopName">AI_Scheduled_NextBusstopName</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_NextBusstopRelHDG" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_NextBusstopRelHDG">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_NextBusstopRelHDG.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_NextBusstopRelHDG">AI_Scheduled_NextBusstopRelHDG</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_NextBusstopTime" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_NextBusstopTime">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_NextBusstopTime.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_NextBusstopTime">AI_Scheduled_NextBusstopTime</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_PrevBusstop" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_PrevBusstop">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_PrevBusstop.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_PrevBusstop">AI_Scheduled_PrevBusstop</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_PrevBusstopDepTime" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_PrevBusstopDepTime">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_PrevBusstopDepTime.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_PrevBusstopDepTime">AI_Scheduled_PrevBusstopDepTime</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_PrevBusstopDist" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_PrevBusstopDist">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_PrevBusstopDist.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_PrevBusstopDist">AI_Scheduled_PrevBusstopDist</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_Profile" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_Profile">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_Profile.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_Profile">AI_Scheduled_Profile</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_SetBusstopDisplayTimer" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_SetBusstopDisplayTimer">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_SetBusstopDisplayTimer.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_SetBusstopDisplayTimer">AI_Scheduled_SetBusstopDisplayTimer</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_StartDay" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_StartDay">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_StartDay.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_StartDay">AI_Scheduled_StartDay</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_Target_Index" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_Target_Index">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_Target_Index.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_Target_Index">AI_Scheduled_Target_Index</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_Tour" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_Tour">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_Tour.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_Tour">AI_Scheduled_Tour</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_TourEntry" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_TourEntry">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_TourEntry.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_TourEntry">AI_Scheduled_TourEntry</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_Scheduled_Trip" data-uid="OmsiHook.OmsiVehicleInst.AI_Scheduled_Trip">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_Scheduled_Trip.html#OmsiHook_OmsiVehicleInst_AI_Scheduled_Trip">AI_Scheduled_Trip</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_AI_var" data-uid="OmsiHook.OmsiVehicleInst.AI_var">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.AI_var.html#OmsiHook_OmsiVehicleInst_AI_var">AI_var</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_Amplify" data-uid="OmsiHook.OmsiVehicleInst.Amplify">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.Amplify.html#OmsiHook_OmsiVehicleInst_Amplify">Amplify</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_Bremskraft" data-uid="OmsiHook.OmsiVehicleInst.Bremskraft">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.Bremskraft.html#OmsiHook_OmsiVehicleInst_Bremskraft">Bremskraft</a>
+        </td>
+        <td class="markdown level1 summary"><p>Braking power</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_Bremspedal" data-uid="OmsiHook.OmsiVehicleInst.Bremspedal">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.Bremspedal.html#OmsiHook_OmsiVehicleInst_Bremspedal">Bremspedal</a>
+        </td>
+        <td class="markdown level1 summary"><p>Brake pedal</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_CabinAir_AbsHum" data-uid="OmsiHook.OmsiVehicleInst.CabinAir_AbsHum">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.CabinAir_AbsHum.html#OmsiHook_OmsiVehicleInst_CabinAir_AbsHum">CabinAir_AbsHum</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_CabinAir_RelHum" data-uid="OmsiHook.OmsiVehicleInst.CabinAir_RelHum">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.CabinAir_RelHum.html#OmsiHook_OmsiVehicleInst_CabinAir_RelHum">CabinAir_RelHum</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_CabinAir_Temp" data-uid="OmsiHook.OmsiVehicleInst.CabinAir_Temp">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.CabinAir_Temp.html#OmsiHook_OmsiVehicleInst_CabinAir_Temp">CabinAir_Temp</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_Camera_Driver" data-uid="OmsiHook.OmsiVehicleInst.Camera_Driver">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.Camera_Driver.html#OmsiHook_OmsiVehicleInst_Camera_Driver">Camera_Driver</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_Camera_Pax" data-uid="OmsiHook.OmsiVehicleInst.Camera_Pax">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.Camera_Pax.html#OmsiHook_OmsiVehicleInst_Camera_Pax">Camera_Pax</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_Cameras_Driver" data-uid="OmsiHook.OmsiVehicleInst.Cameras_Driver">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.Cameras_Driver.html#OmsiHook_OmsiVehicleInst_Cameras_Driver">Cameras_Driver</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_Cameras_Pax" data-uid="OmsiHook.OmsiVehicleInst.Cameras_Pax">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.Cameras_Pax.html#OmsiHook_OmsiVehicleInst_Cameras_Pax">Cameras_Pax</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_CS_AI_BusStopData" data-uid="OmsiHook.OmsiVehicleInst.CS_AI_BusStopData">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.CS_AI_BusStopData.html#OmsiHook_OmsiVehicleInst_CS_AI_BusStopData">CS_AI_BusStopData</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_Dirt" data-uid="OmsiHook.OmsiVehicleInst.Dirt">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.Dirt.html#OmsiHook_OmsiVehicleInst_Dirt">Dirt</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_DirtRate" data-uid="OmsiHook.OmsiVehicleInst.DirtRate">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.DirtRate.html#OmsiHook_OmsiVehicleInst_DirtRate">DirtRate</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_DriverMatrix" data-uid="OmsiHook.OmsiVehicleInst.DriverMatrix">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.DriverMatrix.html#OmsiHook_OmsiVehicleInst_DriverMatrix">DriverMatrix</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_EntriesOpen" data-uid="OmsiHook.OmsiVehicleInst.EntriesOpen">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.EntriesOpen.html#OmsiHook_OmsiVehicleInst_EntriesOpen">EntriesOpen</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_EntriesReq" data-uid="OmsiHook.OmsiVehicleInst.EntriesReq">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.EntriesReq.html#OmsiHook_OmsiVehicleInst_EntriesReq">EntriesReq</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_ExitsOpen" data-uid="OmsiHook.OmsiVehicleInst.ExitsOpen">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.ExitsOpen.html#OmsiHook_OmsiVehicleInst_ExitsOpen">ExitsOpen</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_ExitsReq" data-uid="OmsiHook.OmsiVehicleInst.ExitsReq">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.ExitsReq.html#OmsiHook_OmsiVehicleInst_ExitsReq">ExitsReq</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_HeadPos" data-uid="OmsiHook.OmsiVehicleInst.HeadPos">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.HeadPos.html#OmsiHook_OmsiVehicleInst_HeadPos">HeadPos</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_HeadVeloc" data-uid="OmsiHook.OmsiVehicleInst.HeadVeloc">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.HeadVeloc.html#OmsiHook_OmsiVehicleInst_HeadVeloc">HeadVeloc</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_Humans_Count" data-uid="OmsiHook.OmsiVehicleInst.Humans_Count">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.Humans_Count.html#OmsiHook_OmsiVehicleInst_Humans_Count">Humans_Count</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_Kupplung" data-uid="OmsiHook.OmsiVehicleInst.Kupplung">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.Kupplung.html#OmsiHook_OmsiVehicleInst_Kupplung">Kupplung</a>
+        </td>
+        <td class="markdown level1 summary"><p>Clutch</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_LastSitzHgt" data-uid="OmsiHook.OmsiVehicleInst.LastSitzHgt">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.LastSitzHgt.html#OmsiHook_OmsiVehicleInst_LastSitzHgt">LastSitzHgt</a>
+        </td>
+        <td class="markdown level1 summary"><p>Last seat height</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_LastSitzVeloc" data-uid="OmsiHook.OmsiVehicleInst.LastSitzVeloc">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.LastSitzVeloc.html#OmsiHook_OmsiVehicleInst_LastSitzVeloc">LastSitzVeloc</a>
+        </td>
+        <td class="markdown level1 summary"><p>Last seat velocity</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_MaxWert_Gas_O_Amplify" data-uid="OmsiHook.OmsiVehicleInst.MaxWert_Gas_O_Amplify">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.MaxWert_Gas_O_Amplify.html#OmsiHook_OmsiVehicleInst_MaxWert_Gas_O_Amplify">MaxWert_Gas_O_Amplify</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_Microphone" data-uid="OmsiHook.OmsiVehicleInst.Microphone">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.Microphone.html#OmsiHook_OmsiVehicleInst_Microphone">Microphone</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_OutsideCamera" data-uid="OmsiHook.OmsiVehicleInst.OutsideCamera">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.OutsideCamera.html#OmsiHook_OmsiVehicleInst_OutsideCamera">OutsideCamera</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_PAI" data-uid="OmsiHook.OmsiVehicleInst.PAI">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.PAI.html#OmsiHook_OmsiVehicleInst_PAI">PAI</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_PAI_Mode" data-uid="OmsiHook.OmsiVehicleInst.PAI_Mode">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.PAI_Mode.html#OmsiHook_OmsiVehicleInst_PAI_Mode">PAI_Mode</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_PAI_Timer" data-uid="OmsiHook.OmsiVehicleInst.PAI_Timer">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.PAI_Timer.html#OmsiHook_OmsiVehicleInst_PAI_Timer">PAI_Timer</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_Pass_Cabin_useAlsoNextVeh" data-uid="OmsiHook.OmsiVehicleInst.Pass_Cabin_useAlsoNextVeh">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.Pass_Cabin_useAlsoNextVeh.html#OmsiHook_OmsiVehicleInst_Pass_Cabin_useAlsoNextVeh">Pass_Cabin_useAlsoNextVeh</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_Pass_Cabin_useAlsoPrevVeh" data-uid="OmsiHook.OmsiVehicleInst.Pass_Cabin_useAlsoPrevVeh">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.Pass_Cabin_useAlsoPrevVeh.html#OmsiHook_OmsiVehicleInst_Pass_Cabin_useAlsoPrevVeh">Pass_Cabin_useAlsoPrevVeh</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_PrecipRate" data-uid="OmsiHook.OmsiVehicleInst.PrecipRate">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.PrecipRate.html#OmsiHook_OmsiVehicleInst_PrecipRate">PrecipRate</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_Prev_AI_Licht" data-uid="OmsiHook.OmsiVehicleInst.Prev_AI_Licht">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.Prev_AI_Licht.html#OmsiHook_OmsiVehicleInst_Prev_AI_Licht">Prev_AI_Licht</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_Rad_M_Ab" data-uid="OmsiHook.OmsiVehicleInst.Rad_M_Ab">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.Rad_M_Ab.html#OmsiHook_OmsiVehicleInst_Rad_M_Ab">Rad_M_Ab</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_Rad_N_Ab" data-uid="OmsiHook.OmsiVehicleInst.Rad_N_Ab">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.Rad_N_Ab.html#OmsiHook_OmsiVehicleInst_Rad_N_Ab">Rad_N_Ab</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_Radio" data-uid="OmsiHook.OmsiVehicleInst.Radio">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.Radio.html#OmsiHook_OmsiVehicleInst_Radio">Radio</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_Schedule_Active_var" data-uid="OmsiHook.OmsiVehicleInst.Schedule_Active_var">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.Schedule_Active_var.html#OmsiHook_OmsiVehicleInst_Schedule_Active_var">Schedule_Active_var</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_SeatOccupancy" data-uid="OmsiHook.OmsiVehicleInst.SeatOccupancy">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.SeatOccupancy.html#OmsiHook_OmsiVehicleInst_SeatOccupancy">SeatOccupancy</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_SitzMatrix" data-uid="OmsiHook.OmsiVehicleInst.SitzMatrix">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.SitzMatrix.html#OmsiHook_OmsiVehicleInst_SitzMatrix">SitzMatrix</a>
+        </td>
+        <td class="markdown level1 summary"><p>Seat matrix</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_Throttle" data-uid="OmsiHook.OmsiVehicleInst.Throttle">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.Throttle.html#OmsiHook_OmsiVehicleInst_Throttle">Throttle</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_Throttle_Pressed" data-uid="OmsiHook.OmsiVehicleInst.Throttle_Pressed">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.Throttle_Pressed.html#OmsiHook_OmsiVehicleInst_Throttle_Pressed">Throttle_Pressed</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiVehicleInst_WheelBackRunning" data-uid="OmsiHook.OmsiVehicleInst.WheelBackRunning">
+          <a class="xref" href="OmsiHook.OmsiVehicleInst.WheelBackRunning.html#OmsiHook_OmsiVehicleInst_WheelBackRunning">WheelBackRunning</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+                </div>
+
+                <div class="copyright-footer">
+                    <span>&#169; Thomas/Adam Mathieson. All rights reserved.</span>
+                </div>
+            </main>
+        </div>
+
+        
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+        <script type="text/javascript" src="../styles/jquery.twbsPagination.js"></script>
+        <script type="text/javascript" src="../styles/url.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/anchor-js/anchor.min.js"></script>
+        <script type="text/javascript" src="../styles/docfx.js"></script>
+        <script type="text/javascript" src="../styles/singulink.js"></script>
+        <script type="text/javascript" src="../styles/main.js"></script>    </body>
+</html>

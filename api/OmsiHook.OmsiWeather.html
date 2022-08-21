@@ -1,0 +1,342 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+    
+    <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Class OmsiWeather
+     | OmsiHook </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Class OmsiWeather
+     | OmsiHook ">
+      <meta name="generator" content="docfx 2.56.7.0">
+      
+      <link rel="shortcut icon" href="../images/favicon.ico">
+      <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/night-owl.min.css">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" integrity="sha384-EvBWSlnoFgZlXJvpzS+MAUEjvN7+gcCwH+qh7GRFOGgZO0PuwOFro7qPOJnLfe7l" crossorigin="anonymous">
+      <link rel="stylesheet" href="../styles/config.css">
+      <link rel="stylesheet" href="../styles/discord.css">
+      <link rel="stylesheet" href="../styles/singulink.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
+      
+      <meta property="docfx:rel" content="../">
+      <meta property="docfx:newtab" content="true">
+    </head>
+    <body>
+        <div class="top-navbar">
+            <a class="burger-icon" onclick="toggleMenu()">
+                <svg name="Hamburger" style="vertical-align: middle;" width="34" height="34" viewbox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M20 6H4V9H20V6ZM4 10.999H20V13.999H4V10.999ZM4 15.999H20V18.999H4V15.999Z"></path></svg>
+            </a>
+
+            
+            <a class="brand" href="../index.html">
+              <img src="../images/logo.svg" alt="OmsiHook Documentation" class="logomark">
+              <span class="brand-title">OmsiHook Documentation</span>
+            </a>        </div>
+
+        <div class="body-content">
+            <div id="blackout" class="blackout" onclick="toggleMenu()"></div>
+
+            <nav id="sidebar" role="navigation">
+                <div class="sidebar">
+                    
+                    <div>
+                      <div class="mobile-hide">
+                        
+                        <a class="brand" href="../index.html">
+                          <img src="../images/logo.svg" alt="OmsiHook Documentation" class="logomark">
+                          <span class="brand-title">OmsiHook Documentation</span>
+                        </a>  </div>
+
+                      <div class="sidesearch">
+                        <form id="search" role="search" class="search">
+                            <i class="bi bi-search search-icon"></i>
+                            <input type="text" id="search-query" placeholder="Search" autocomplete="off">
+                        </form>
+                      </div>
+                    
+                      <div id="navbar">
+                      </div>
+                    </div>                    <div class="sidebar-item-separator"></div>
+                        
+                        <div id="sidetoggle">
+                          <div id="sidetoc"></div>
+                        </div>
+                </div>
+                <div class="footer">
+                  <strong>DocFX + OmsiHook = ♥</strong>
+                  
+                </div>            </nav>
+
+            <main class="main-panel">
+                
+                <div id="search-results" style="display: none;">
+                  <h1 class="search-list">Search Results for <span></span></h1>
+                  <div class="sr-items">
+                    <p><i class="bi bi-hourglass-split index-loading"></i></p>
+                  </div>
+                  <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
+                </div>
+                <div role="main" class="hide-when-search">
+                        
+                        <div class="subnav navbar navbar-default">
+                          <div class="container hide-when-search" id="breadcrumb">
+                            <ul class="breadcrumb">
+                              <li></li>
+                            </ul>
+                          </div>
+                        </div>
+
+                    <article class="content wrap" id="_content" data-uid="OmsiHook.OmsiWeather">
+  
+  
+  <h1 id="OmsiHook_OmsiWeather" data-uid="OmsiHook.OmsiWeather" class="text-break">Class OmsiWeather
+  </h1>
+  <div class="markdown level0 summary"><p>Defines the active weather conditions as per the weather menu in game</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="OmsiHook.OmsiObject.html">OmsiObject</a></div>
+    <div class="level2"><span class="xref">OmsiWeather</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="OmsiHook.OmsiObject.Equals.html#OmsiHook_OmsiObject_Equals_System_Object_">OmsiObject.Equals(Object)</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="OmsiHook.html">OmsiHook</a></h6>
+  <h6><strong>Assembly</strong>: OmsiHook.dll</h6>
+  <h5 id="OmsiHook_OmsiWeather_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class OmsiWeather : OmsiObject</code></pre>
+  </div>
+  <h3 id="properties">Properties
+  </h3>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_AbsHum" data-uid="OmsiHook.OmsiWeather.AbsHum">
+          <a class="xref" href="OmsiHook.OmsiWeather.AbsHum.html#OmsiHook_OmsiWeather_AbsHum">AbsHum</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_ActFogDensity" data-uid="OmsiHook.OmsiWeather.ActFogDensity">
+          <a class="xref" href="OmsiHook.OmsiWeather.ActFogDensity.html#OmsiHook_OmsiWeather_ActFogDensity">ActFogDensity</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_ActLightness" data-uid="OmsiHook.OmsiWeather.ActLightness">
+          <a class="xref" href="OmsiHook.OmsiWeather.ActLightness.html#OmsiHook_OmsiWeather_ActLightness">ActLightness</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_ActualWindDir" data-uid="OmsiHook.OmsiWeather.ActualWindDir">
+          <a class="xref" href="OmsiHook.OmsiWeather.ActualWindDir.html#OmsiHook_OmsiWeather_ActualWindDir">ActualWindDir</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_ActualWindSpeed" data-uid="OmsiHook.OmsiWeather.ActualWindSpeed">
+          <a class="xref" href="OmsiHook.OmsiWeather.ActualWindSpeed.html#OmsiHook_OmsiWeather_ActualWindSpeed">ActualWindSpeed</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_ActualWindVec" data-uid="OmsiHook.OmsiWeather.ActualWindVec">
+          <a class="xref" href="OmsiHook.OmsiWeather.ActualWindVec.html#OmsiHook_OmsiWeather_ActualWindVec">ActualWindVec</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_ActWeather" data-uid="OmsiHook.OmsiWeather.ActWeather">
+          <a class="xref" href="OmsiHook.OmsiWeather.ActWeather.html#OmsiHook_OmsiWeather_ActWeather">ActWeather</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_AmbLgtFactor" data-uid="OmsiHook.OmsiWeather.AmbLgtFactor">
+          <a class="xref" href="OmsiHook.OmsiWeather.AmbLgtFactor.html#OmsiHook_OmsiWeather_AmbLgtFactor">AmbLgtFactor</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_CamPosDiff" data-uid="OmsiHook.OmsiWeather.CamPosDiff">
+          <a class="xref" href="OmsiHook.OmsiWeather.CamPosDiff.html#OmsiHook_OmsiWeather_CamPosDiff">CamPosDiff</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_CloudCat" data-uid="OmsiHook.OmsiWeather.CloudCat">
+          <a class="xref" href="OmsiHook.OmsiWeather.CloudCat.html#OmsiHook_OmsiWeather_CloudCat">CloudCat</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_CloudPos" data-uid="OmsiHook.OmsiWeather.CloudPos">
+          <a class="xref" href="OmsiHook.OmsiWeather.CloudPos.html#OmsiHook_OmsiWeather_CloudPos">CloudPos</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_Clouds" data-uid="OmsiHook.OmsiWeather.Clouds">
+          <a class="xref" href="OmsiHook.OmsiWeather.Clouds.html#OmsiHook_OmsiWeather_Clouds">Clouds</a>
+        </td>
+        <td class="markdown level1 summary"><p>TD3DMeshFileObject Pointer</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_CloudTransparenz" data-uid="OmsiHook.OmsiWeather.CloudTransparenz">
+          <a class="xref" href="OmsiHook.OmsiWeather.CloudTransparenz.html#OmsiHook_OmsiWeather_CloudTransparenz">CloudTransparenz</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_CloudTypeNum" data-uid="OmsiHook.OmsiWeather.CloudTypeNum">
+          <a class="xref" href="OmsiHook.OmsiWeather.CloudTypeNum.html#OmsiHook_OmsiWeather_CloudTypeNum">CloudTypeNum</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_CloudTypes" data-uid="OmsiHook.OmsiWeather.CloudTypes">
+          <a class="xref" href="OmsiHook.OmsiWeather.CloudTypes.html#OmsiHook_OmsiWeather_CloudTypes">CloudTypes</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_Daemmerungsschalter_Helligkeit" data-uid="OmsiHook.OmsiWeather.Daemmerungsschalter_Helligkeit">
+          <a class="xref" href="OmsiHook.OmsiWeather.Daemmerungsschalter_Helligkeit.html#OmsiHook_OmsiWeather_Daemmerungsschalter_Helligkeit">Daemmerungsschalter_Helligkeit</a>
+        </td>
+        <td class="markdown level1 summary"><p>Twilight switch brightness?</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_Helligkeit" data-uid="OmsiHook.OmsiWeather.Helligkeit">
+          <a class="xref" href="OmsiHook.OmsiWeather.Helligkeit.html#OmsiHook_OmsiWeather_Helligkeit">Helligkeit</a>
+        </td>
+        <td class="markdown level1 summary"><p>Brightness</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_LastCamPos" data-uid="OmsiHook.OmsiWeather.LastCamPos">
+          <a class="xref" href="OmsiHook.OmsiWeather.LastCamPos.html#OmsiHook_OmsiWeather_LastCamPos">LastCamPos</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_LightAll" data-uid="OmsiHook.OmsiWeather.LightAll">
+          <a class="xref" href="OmsiHook.OmsiWeather.LightAll.html#OmsiHook_OmsiWeather_LightAll">LightAll</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_LightAmb" data-uid="OmsiHook.OmsiWeather.LightAmb">
+          <a class="xref" href="OmsiHook.OmsiWeather.LightAmb.html#OmsiHook_OmsiWeather_LightAmb">LightAmb</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_LightPri" data-uid="OmsiHook.OmsiWeather.LightPri">
+          <a class="xref" href="OmsiHook.OmsiWeather.LightPri.html#OmsiHook_OmsiWeather_LightPri">LightPri</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_LightSec" data-uid="OmsiHook.OmsiWeather.LightSec">
+          <a class="xref" href="OmsiHook.OmsiWeather.LightSec.html#OmsiHook_OmsiWeather_LightSec">LightSec</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_Percip" data-uid="OmsiHook.OmsiWeather.Percip">
+          <a class="xref" href="OmsiHook.OmsiWeather.Percip.html#OmsiHook_OmsiWeather_Percip">Percip</a>
+        </td>
+        <td class="markdown level1 summary"><p>TD3DMeshFileObject Pointer</p>
+</td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_Percip_LastMat" data-uid="OmsiHook.OmsiWeather.Percip_LastMat">
+          <a class="xref" href="OmsiHook.OmsiWeather.Percip_LastMat.html#OmsiHook_OmsiWeather_Percip_LastMat">Percip_LastMat</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_Percip_WaySum" data-uid="OmsiHook.OmsiWeather.Percip_WaySum">
+          <a class="xref" href="OmsiHook.OmsiWeather.Percip_WaySum.html#OmsiHook_OmsiWeather_Percip_WaySum">Percip_WaySum</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_PercipSet" data-uid="OmsiHook.OmsiWeather.PercipSet">
+          <a class="xref" href="OmsiHook.OmsiWeather.PercipSet.html#OmsiHook_OmsiWeather_PercipSet">PercipSet</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_PercipVec" data-uid="OmsiHook.OmsiWeather.PercipVec">
+          <a class="xref" href="OmsiHook.OmsiWeather.PercipVec.html#OmsiHook_OmsiWeather_PercipVec">PercipVec</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_PriLgtFactor" data-uid="OmsiHook.OmsiWeather.PriLgtFactor">
+          <a class="xref" href="OmsiHook.OmsiWeather.PriLgtFactor.html#OmsiHook_OmsiWeather_PriLgtFactor">PriLgtFactor</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_RelHum" data-uid="OmsiHook.OmsiWeather.RelHum">
+          <a class="xref" href="OmsiHook.OmsiWeather.RelHum.html#OmsiHook_OmsiWeather_RelHum">RelHum</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_SecLgtFactor" data-uid="OmsiHook.OmsiWeather.SecLgtFactor">
+          <a class="xref" href="OmsiHook.OmsiWeather.SecLgtFactor.html#OmsiHook_OmsiWeather_SecLgtFactor">SecLgtFactor</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+      <tr>
+        <td id="OmsiHook_OmsiWeather_WetGround" data-uid="OmsiHook.OmsiWeather.WetGround">
+          <a class="xref" href="OmsiHook.OmsiWeather.WetGround.html#OmsiHook_OmsiWeather_WetGround">WetGround</a>
+        </td>
+        <td class="markdown level1 summary"></td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+                </div>
+
+                <div class="copyright-footer">
+                    <span>&#169; Thomas/Adam Mathieson. All rights reserved.</span>
+                </div>
+            </main>
+        </div>
+
+        
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+        <script type="text/javascript" src="../styles/jquery.twbsPagination.js"></script>
+        <script type="text/javascript" src="../styles/url.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/anchor-js/anchor.min.js"></script>
+        <script type="text/javascript" src="../styles/docfx.js"></script>
+        <script type="text/javascript" src="../styles/singulink.js"></script>
+        <script type="text/javascript" src="../styles/main.js"></script>    </body>
+</html>
