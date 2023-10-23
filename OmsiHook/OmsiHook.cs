@@ -41,9 +41,11 @@ namespace OmsiHook
             var found = false;
             while (!found)
             {
-                await Task.Delay(250);
                 (found, process) = omsiMemory.Attach("omsi");
-                Console.WriteLine("Waiting for OMSI.exe...");
+                if (!found) {
+                    Console.WriteLine("Waiting for OMSI.exe...");
+                    await Task.Delay(250);
+                }
             }
 
             Console.WriteLine("Connected succesfully!");
