@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OmsiHookPlugin", "OmsiHookP
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OmsiHookInvoker", "OmsiHookInvoker\OmsiHookInvoker.vcxproj", "{CBCB99EF-DD1A-4D4D-A9A8-9BF251FDCD1B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OmsiHookRPCPlugin", "OmshiHookRPCPlugin\OmsiHookRPCPlugin.csproj", "{CDB17143-5653-48BE-AAC8-8419D5B4FD2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OmsiHookRPCPlugin", "OmsiHookRPCPlugin\OmsiHookRPCPlugin.csproj", "{CDB17143-5653-48BE-AAC8-8419D5B4FD2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
