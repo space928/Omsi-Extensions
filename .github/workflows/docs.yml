@@ -20,9 +20,52 @@ jobs:
       with:
         args: OmsiHook/docfx.json
 
-    # Publish generated site using GitHub Pages
-    - uses: maxheld83/ghpages@master
-      name: Publish Documentation on GitHub Pages
+    # Archive the generated site as an artifact
+    - name: Archive artifact
+      run: |
+          tar \
+            --dereference --hard-dereference \
+            --directory "$INPUT_PATH" \
+            -cvf "$RUNNER_TEMP\artifact.tar" \
+            --exclude=.git \
+            --exclude=.github \
+            --force-local \
+            "."
       env:
-        BUILD_DIR: OmsiHook/_site # docfx's default output directory is _site
-        GH_PAT: ${{ secrets.GH_PAT }} # See https://github.com/maxheld83/ghpages
+          INPUT_PATH: OmsiHook/_site # docfx's default output directory is _site
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: github-pages
+        path: ${{ runner.temp }}/artifact.tar
+        retention-days: ${{ inputs.retention-days }}
+        if-no-files-found: error
+
+  deploy:
+    # Publish generated site using GitHub Pages
+    needs: build
+
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+
+    # Deploy to the github-pages environment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    # Specify runner + deployment step
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
+        
+    # Publish generated site using GitHub Pages
+    # - uses: actions/deploy-pages@v1.2.9
+    #   name: Publish Documentation on GitHub Pages
+    #   env:
+    #     BUILD_DIR: OmsiHook/_site # docfx's default output directory is _site
+    #     GH_PAT: ${{ secrets.GH_PAT }} # See https://github.com/maxheld83/ghpages
