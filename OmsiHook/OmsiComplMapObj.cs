@@ -20,7 +20,7 @@ namespace OmsiHook
             get => Memory.ReadMemoryString(Address + 0x18c);
             set => Memory.WriteMemory(Address + 0x18c, value);
         }
-        public OmsiPassengerCabin PassengerCabin => new(Memory, Address + 0x190);
+        public OmsiPassengerCabin PassengerCabin => new(Memory, Memory.ReadMemory<int>(Address + 0x190));
         public bool AbsHeight
         {
             get => Memory.ReadMemory<bool>(Address + 0x194);

@@ -15,7 +15,7 @@
         }*/
         public string FileName
         {
-            get => Memory.ReadMemoryString(Memory.ReadMemory<int>(Address + 0x8));
+            get => Memory.ReadMemoryString(Address + 0x8);
             set => Memory.WriteMemory(Address + 0x8, value);
         }
         public bool AI
@@ -25,7 +25,7 @@
         }
         public string Path
         {
-            get => Memory.ReadMemoryString(Memory.ReadMemory<int>(Address + 0x10));
+            get => Memory.ReadMemoryString(Address + 0x10);
             set => Memory.WriteMemory(Address + 0x10, value);
         }
         public int SoundCount

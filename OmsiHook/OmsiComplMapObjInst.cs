@@ -80,7 +80,7 @@ namespace OmsiHook
         }
         public OmsiSoundPack SoundPack
         {
-            get => new(Memory, Address + 0x21c);
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x21c));
         }
         public OmsiCamera[] ReflCameras
         {
