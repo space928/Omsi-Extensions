@@ -57,7 +57,7 @@ namespace OmsiHook
         //  http://go.microsoft.com/fwlink/?LinkId=85236
         readonly bool wide;
         readonly bool raw;
-        readonly bool lengthPrefixed;
+        readonly bool pascal;
 
         /// <summary>
         /// 
@@ -65,16 +65,29 @@ namespace OmsiHook
         /// <param name="wide">Whether or not to decode the string as UTF-16.</param>
         /// <param name="raw">Treat the address as a pointer to the first character 
         /// (<c>char *</c>) rather than a pointer to a pointer.</param>
-        public OmsiStrPtrAttribute(bool wide = false, bool raw = false, bool lengthPrefixed = false)
+        /// <param name="pascal">Whether the string can be treated as a length prefixed (pascal) 
+        /// string, which is much faster to read</param>
+        public OmsiStrPtrAttribute(bool wide = false, bool raw = false, bool pascal = true)
         {
             this.wide = wide;
             this.raw = raw;
-            this.lengthPrefixed = lengthPrefixed;
+            this.pascal = pascal;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="strType">Flags specifying how to decode the string.</param>
+        public OmsiStrPtrAttribute(StrPtrType strType)
+        {
+            this.wide = (strType & StrPtrType.Wide) != 0;
+            this.raw = (strType & StrPtrType.Raw) != 0;
+            this.pascal = (strType & StrPtrType.Pascal) != 0;
         }
 
         public bool Wide => wide;
         public bool Raw => raw;
-        public bool LengthPrefixed => lengthPrefixed;
+        public bool Pascal => pascal;
     }
 
     /// <summary>
@@ -221,6 +234,7 @@ namespace OmsiHook
         //  http://go.microsoft.com/fwlink/?LinkId=85236
         readonly bool wide;
         readonly bool raw;
+        readonly bool pascal;
 
         /// <summary>
         /// 
@@ -228,13 +242,65 @@ namespace OmsiHook
         /// <param name="wide"></param>
         /// <param name="raw">If <see langword="true"/>, treat the <c>address</c> as the pointer to the first element 
         /// of the array instead of as a pointer to the array.</param>
-        public OmsiStrArrayPtrAttribute(bool wide = false, bool raw = false)
+        /// <param name="pascal">Whether the string can be treated as a length prefixed (pascal) 
+        /// string, which is much faster to read</param>
+        public OmsiStrArrayPtrAttribute(bool wide = false, bool raw = false, bool pascal = false)
         {
             this.wide = wide;
             this.raw = raw;
+            this.pascal = pascal;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="strType">Flags specifying how to decode the string.</param>
+        public OmsiStrArrayPtrAttribute(StrPtrType strType)
+        {
+            this.wide = (strType & StrPtrType.Wide) != 0;
+            this.raw = (strType & StrPtrType.Raw) != 0;
+            this.pascal = (strType & StrPtrType.Pascal) != 0;
         }
 
         public bool Wide => wide;
         public bool Raw => raw;
+        public bool Pascal => pascal;
+    }
+
+    /// <summary>
+    /// An enum specifying how a string pointer should be marshalled.
+    /// </summary>
+    [Flags]
+    public enum StrPtrType
+    {
+        /// <summary>
+        /// Indicates the value points to a standard UTF-8/System code page, null-terminated string
+        /// </summary>
+        PCStr = 0,
+        /// <summary>
+        /// Indicates the string is encoded in UTF-16
+        /// </summary>
+        Wide = 1 << 0,
+        /// <summary>
+        /// Indicates the value points directly to start of the string (as opposed to being a pointer to a pointer).
+        /// </summary>
+        Raw = 1 << 1,
+        /// <summary>
+        /// Indicates the string is 
+        /// </summary>
+        Pascal = 1 << 2,
+
+        /// <summary>
+        /// The default for most strings in Omsi.
+        /// </summary>
+        DelphiString = Wide | Pascal,
+        /// <summary>
+        /// The default for most AnsiStrings in Omsi.
+        /// </summary>
+        DelphiAnsiString = Pascal,
+        /// <summary>
+        /// The default for most strings in arrays in Omsi.
+        /// </summary>
+        RawDelphiString = Wide | Pascal | Raw,
     }
 }

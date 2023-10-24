@@ -391,8 +391,24 @@ namespace OmsiHook
         /// Returns the value of a null terminated/length prefixed string at a given address.
         /// </summary>
         /// <param name="address">The address to read from</param>
+        /// <param name="strType">Flags specifying how to decode the string.</param>
+        /// <returns>The value of the string at the given address.</returns>
+        public string ReadMemoryString(int address, StrPtrType strType)
+        {
+            return ReadMemoryString(address, 
+                (strType & StrPtrType.Wide) != 0,
+                (strType & StrPtrType.Raw) != 0,
+                (strType & StrPtrType.Pascal) != 0);
+        }
+
+        /// <summary>
+        /// Returns the value of a null terminated/length prefixed string at a given address.
+        /// </summary>
+        /// <param name="address">The address to read from</param>
         /// <param name="raw">Treat the address as a pointer to the first character 
         /// (<c>char *</c>) rather than a pointer to a pointer.</param>
+        /// <param name="pascalString">Whether the string can be treated as a length prefixed (pascal) 
+        /// string, which is much faster to read</param>
         /// <returns>The value of the string at the given address.</returns>
         public string ReadMemoryString(int address, bool wide = false, bool raw = false, bool pascalString = true)
         {
@@ -407,6 +423,8 @@ namespace OmsiHook
             if (pascalString)
             {
                 int strLen = ReadMemory<int>(i - 4);
+                if(wide)
+                    strLen *= 2;
                 var bytes = ReadMemory(i, strLen, readBuffer);
                 sb.Append(wide ? Encoding.Unicode.GetString(bytes) : Encoding.ASCII.GetString(bytes));
             }
@@ -619,8 +637,10 @@ namespace OmsiHook
         /// <param name="address">The address of the array to read from</param>
         /// <param name="raw">If <see langword="true"/>, treat the <c>address</c> as the pointer to the first element 
         /// of the array instead of as a pointer to the array.</param>
+        /// <param name="pascal">Whether the string can be treated as a length prefixed (pascal) 
+        /// string, which is much faster to read</param>
         /// <returns>The parsed array of strings.</returns>
-        public string[] ReadMemoryStringArray(int address, bool wide = false, bool raw = false)
+        public string[] ReadMemoryStringArray(int address, bool wide = false, bool raw = false, bool pascal = true)
         {
             int arr = address;
             if (!raw)
@@ -630,7 +650,7 @@ namespace OmsiHook
             int len = ReadMemory<int>(arr - 4);
             string[] ret = new string[len];
             for (int i = 0; i < len; i++)
-                ret[i] = ReadMemoryString(arr + i * 4, wide);
+                ret[i] = ReadMemoryString(arr + i * 4, wide, raw:false, pascal);
 
             return ret;
         }
@@ -716,7 +736,7 @@ namespace OmsiHook
                                 break;
 
                             case OmsiStrPtrAttribute a:
-                                val = ReadMemoryString((int)val, a.Wide, a.Raw, a.LengthPrefixed);
+                                val = ReadMemoryString((int)val, a.Wide, a.Raw, a.Pascal);
                                 break;
 
                             case OmsiPtrAttribute:
@@ -766,7 +786,7 @@ namespace OmsiHook
                                 break;
 
                             case OmsiStrArrayPtrAttribute a:
-                                val = ReadMemoryStringArray((int)val, a.Wide, a.Raw);
+                                val = ReadMemoryStringArray((int)val, a.Wide, a.Raw, a.Pascal);
                                 break;
 
                             case OmsiMarshallerAttribute a:

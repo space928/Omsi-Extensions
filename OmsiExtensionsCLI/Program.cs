@@ -35,9 +35,8 @@ namespace OmsiExtensionsCLI
                 Console.WriteLine($"{omsi.Globals.PlayerVehicle.PAI_LastBrake} {omsi.Globals.PlayerVehicle.Bremspedal}".PadRight(Console.WindowWidth - 1));
                 Console.WriteLine($"{omsi.Globals.Time.Day}/{omsi.Globals.Time.Month}/{omsi.Globals.Time.Year} - {omsi.Globals.Time.Hour}:{omsi.Globals.Time.Minute}:{omsi.Globals.Time.Second:F2}");
                 Console.WriteLine($"Camera data: x:{omsi.Globals.Camera.Pos.x:F3}   y:{omsi.Globals.Camera.Pos.y:F3}   z:{omsi.Globals.Camera.Pos.z:F3}      ".PadRight(Console.WindowWidth - 1));
-                /*Console.WriteLine(($"Camera2 data: x:{omsi.Globals.Camera2.Pos.x:F3}   y:{omsi.Globals.Camera2.Pos.y:F3}   z:{omsi.Globals.Camera2.Pos.z:F3}      ").PadRight(Console.WindowWidth - 1));
-                Console.WriteLine(($"Camera3 data: x:{omsi.Globals.Camera3.Pos.x:F3}   y:{omsi.Globals.Camera3.Pos.y:F3}   z:{omsi.Globals.Camera3.Pos.z:F3}      ").PadRight(Console.WindowWidth - 1));
-                Console.WriteLine(($"Camera4 data: x:{omsi.Globals.Camera4.Pos.x:F3}   y:{omsi.Globals.Camera4.Pos.y:F3}   z:{omsi.Globals.Camera4.Pos.z:F3}      ").PadRight(Console.WindowWidth - 1));*/
+                Console.WriteLine($"{omsi.Globals.Drivers}".PadRight(Console.WindowWidth - 1));
+                
                 Console.WriteLine("".PadRight(Console.WindowWidth-1));
                 try
                 {

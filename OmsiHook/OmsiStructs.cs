@@ -349,8 +349,8 @@ namespace OmsiHook
     {
         [OmsiStrPtr(raw:true)] public int filename;
         [OmsiStrPtr(true, raw:true)] public int voicepath;
-        //[OmsiStructArrayPtr(typeof(OmsiTicket), typeof(OmsiTicketInternal))]
-        [OmsiPtr]
+        [OmsiStructArrayPtr(typeof(OmsiTicket), typeof(OmsiTicketInternal))]
+        //[OmsiPtr]
         public int tickets;
         public float stamper_prop;
         public float ticketBuy_prop;
@@ -362,25 +362,29 @@ namespace OmsiHook
     {
         public string filename;
         public string voicepath;
-        //public OmsiTicket[] tickets;
-        public IntPtr tickets;
+        public OmsiTicket[] tickets;
+        //public IntPtr tickets;
         public float stamper_prop;
         public float ticketBuy_prop;
         public float chattiness;
         public float whinge_prop;
     }
 
+    [StructLayout(LayoutKind.Explicit, Size = 0x2c)]
     internal struct OmsiTicketInternal
     {
         //TODO: I don't think these are decoding correctly (I saw nothing when I looked), check this actually works.
-        [OmsiStrPtr(raw:true)] public int name, name_english, name_display;
-        public int max_stations;
-        public int age_min, age_max;
-        public float value;
-        public bool dayTicket;
-        public float propability;
-        [OmsiObjPtr(typeof(D3DMeshFileObject))] public int mesh_block;
-        [OmsiObjPtr(typeof(D3DMeshFileObject))] public int mesh_single;
+        [FieldOffset(0x0)] [OmsiStrPtr(StrPtrType.Raw)] public int name;
+        [FieldOffset(0x4)] [OmsiStrPtr(StrPtrType.Raw)] public int name_english;
+        [FieldOffset(0x8)] [OmsiStrPtr(StrPtrType.Raw)] public int name_display;
+        [FieldOffset(0xc)] public int max_stations;
+        [FieldOffset(0x10)] public int age_min;
+        [FieldOffset(0x14)] public int age_max;
+        [FieldOffset(0x18)] public float value;
+        [FieldOffset(0x1c)] public bool dayTicket;
+        [FieldOffset(0x20)] public float propability;
+        [FieldOffset(0x24)] [OmsiObjPtr(typeof(D3DMeshFileObject))] public int mesh_block;
+        [FieldOffset(0x28)] [OmsiObjPtr(typeof(D3DMeshFileObject))] public int mesh_single;
     }
 
     public struct OmsiTicket
@@ -584,7 +588,7 @@ namespace OmsiHook
     internal struct OmsiHolidayInternal
     {
         public int date;
-        [OmsiStrPtr] public int name;
+        [OmsiStrPtr(StrPtrType.DelphiString)] public int name;
     }
 
     public struct OmsiHoliday
@@ -596,7 +600,7 @@ namespace OmsiHook
     internal struct OmsiHolidaysInternal
     {
         public int start, ende;
-        [OmsiStrPtr] public int name;
+        [OmsiStrPtr(StrPtrType.DelphiString)] public int name;
     }
 
     public struct OmsiHolidays
@@ -1277,7 +1281,7 @@ namespace OmsiHook
     }
     internal struct OmsiPerbusInternal
     {
-        [OmsiStrPtr] public int busname;
+        [OmsiStrPtr(StrPtrType.PCStr)] public int busname;
         public uint hektometer;
     }
 
@@ -1306,30 +1310,30 @@ namespace OmsiHook
         public OmsiPerbus[] perbus;
     }
 
+    [StructLayout(LayoutKind.Explicit, Size = 0x68)]
     internal struct OmsiDriverInternal
     {
-        [OmsiStrPtr] public int filename;
-        [OmsiStrPtr] public int name;
-        public bool gender;
-        public double birthday;
-        public double dateOfHire;
-        public uint cnt_busstop_all;
-        public uint cnt_busstop_late;
-        public uint cnt_busstop_early;
-        public uint hektometer_all;
-        public uint cnt_crashs;
-        public uint cnt_hitandrun;
-        public uint cnt_hitandrun_heavy;
-        public uint crashes_ped;
-        public double bew_fahrstill; // These look like driver raitings
-        public uint bew_passcomfort;
-        public uint bew_ticket_count;
-        public uint bew_ticket_points;
-        public uint passCount;
-        public uint ticket_cnt;
-        public float tickets_cash;
-        [OmsiStructArrayPtr(typeof(OmsiPerbus),typeof(OmsiPerbusInternal))] public int perbus;
-
+        [FieldOffset(0x0)][OmsiStrPtr(StrPtrType.RawDelphiString)] public int filename;
+        [FieldOffset(0x4)][OmsiStrPtr(StrPtrType.RawDelphiString)] public int name;
+        [FieldOffset(0x8)] public bool gender;
+        [FieldOffset(0x10)] public double birthday;
+        [FieldOffset(0x18)] public double dateOfHire;
+        [FieldOffset(0x20)] public uint cnt_busstop_all;
+        [FieldOffset(0x24)] public uint cnt_busstop_late;
+        [FieldOffset(0x28)] public uint cnt_busstop_early;
+        [FieldOffset(0x2c)] public uint hektometer_all;
+        [FieldOffset(0x30)] public uint cnt_crashs;
+        [FieldOffset(0x34)] public uint cnt_hitandrun;
+        [FieldOffset(0x38)] public uint cnt_hitandrun_heavy;
+        [FieldOffset(0x3c)] public uint crashes_ped;
+        [FieldOffset(0x40)] public double bew_fahrstill; // These look like driver raitings
+        [FieldOffset(0x48)] public uint bew_passcomfort;
+        [FieldOffset(0x4c)] public uint bew_ticket_count;
+        [FieldOffset(0x50)] public uint bew_ticket_points;
+        [FieldOffset(0x54)] public uint passCount;
+        [FieldOffset(0x58)] public uint ticket_cnt;
+        [FieldOffset(0x5c)] public float tickets_cash;
+        [FieldOffset(0x60)][OmsiStructArrayPtr(typeof(OmsiPerbus),typeof(OmsiPerbusInternal))] public int perbus;
     }
     public struct OmsiTTLogDetailed
     {
