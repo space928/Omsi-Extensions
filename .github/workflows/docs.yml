@@ -23,16 +23,15 @@ jobs:
     # Archive the generated site as an artifact
     - name: Archive artifact
       run: |
-          tar \
-            --dereference --hard-dereference \
-            --directory "$INPUT_PATH" \
-            -cvf "$RUNNER_TEMP\artifact.tar" \
-            --exclude=.git \
-            --exclude=.github \
-            --force-local \
-            "."
+        tar \
+          --dereference --hard-dereference \
+          --directory "$INPUT_PATH" \
+          -cvf "$RUNNER_TEMP/artifact.tar" \
+          --exclude=.git \
+          --exclude=.github \
+          .
       env:
-          INPUT_PATH: OmsiHook/_site # docfx's default output directory is _site
+        INPUT_PATH: OmsiHook/_site # docfx's default output directory is _site
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
