@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,8 +41,10 @@ namespace OmsiHook
             }
             catch (Exception e)
             {
+#if DEBUG
                 Console.WriteLine("The plugin couldn't grant itself debug privileges, it may fail to attach to the game.");
                 Console.WriteLine(e);
+#endif
             }
             omsiProcessHandle =
                 Imports.OpenProcess(
@@ -105,8 +108,10 @@ namespace OmsiHook
         internal void CopyMemory(int src, int dst, int length)
         {
             byte[] buffer = new byte[length];
-            Imports.ReadProcessMemory((int)omsiProcessHandle, src, buffer, length, ref length);
-            Imports.WriteProcessMemory((int)omsiProcessHandle, dst, buffer, length, out _);
+            if(!Imports.ReadProcessMemory((int)omsiProcessHandle, src, buffer, length, ref length))
+                throw new AccessViolationException($"Couldn't read {length} bytes of process memory @ {src:X}!");
+            if(!Imports.WriteProcessMemory((int)omsiProcessHandle, dst, buffer, length, out _))
+                throw new AccessViolationException($"Couldn't write {length} bytes to process memory @ {dst:X}!");
         }
 
         /// <summary>
@@ -365,37 +370,63 @@ namespace OmsiHook
         public T ReadMemory<T>(int address) where T : unmanaged
         {
             int byteSize = Marshal.SizeOf(typeof(T));
+            if (byteSize > readBuffer.Length)
+                throw new ArgumentException($"Couldn't read memory for object of type {typeof(T).Name} @ {address}; it wouldn't fit in the read buffer!");
             int bytesRead = -1;
 
-            Imports.ReadProcessMemory((int)omsiProcessHandle, address, readBuffer, byteSize, ref bytesRead);
+            if (!Imports.ReadProcessMemory((int)omsiProcessHandle, address, readBuffer, byteSize, ref bytesRead))
+#if DEBUG
+            {
+                Debug.WriteLine($"Couldn't read {byteSize} bytes of process memory @ {address:X}!\n{new System.Diagnostics.StackTrace(true)}");
+                return new T();
+            }
+#else
+                throw new AccessViolationException($"Couldn't read {byteSize} bytes of process memory @ {address:X}!");
+#endif
 
             return ByteArrayToStructure<T>(readBuffer);
         }
 
         /// <summary>
-        /// Returns the value of a null terminated string at a given address.
+        /// Returns the value of a null terminated/length prefixed string at a given address.
         /// </summary>
         /// <param name="address">The address to read from</param>
         /// <param name="raw">Treat the address as a pointer to the first character 
         /// (<c>char *</c>) rather than a pointer to a pointer.</param>
         /// <returns>The value of the string at the given address.</returns>
-        public string ReadMemoryString(int address, bool wide = false, bool raw = false)
+        public string ReadMemoryString(int address, bool wide = false, bool raw = false, bool pascalString = true)
         {
             var sb = new StringBuilder();
             int i = address;
             if (!raw)
                 i = ReadMemory<int>(address);
 
-            while (true)
-            {
-                var bytes = ReadMemory(i, wide ? 2 : 1, readBuffer);
-                if ((wide ? (bytes[0] | bytes[1]) : bytes[0]) == 0)
-                    break;
+            if(i == 0)
+                return null;
 
+            if (pascalString)
+            {
+                int strLen = ReadMemory<int>(i - 4);
+                var bytes = ReadMemory(i, strLen, readBuffer);
                 sb.Append(wide ? Encoding.Unicode.GetString(bytes) : Encoding.ASCII.GetString(bytes));
-                i++;
-                if (wide)
-                    i++;
+            }
+            else
+            {
+                try
+                {
+                    while (true)
+                    {
+                        var bytes = ReadMemory(i, wide ? 2 : 1, readBuffer);
+                        if (bytes.Count == 0 || (wide ? (bytes[0] | bytes[1]) : bytes[0]) == 0)
+                            break;
+
+                        sb.Append(wide ? Encoding.Unicode.GetString(bytes) : Encoding.ASCII.GetString(bytes));
+                        i++;
+                        if (wide)
+                            i++;
+                    }
+                }
+                catch (AccessViolationException) { return null; }
             }
 
             return sb.ToString();
@@ -409,12 +440,17 @@ namespace OmsiHook
         /// <param name="buffer">The buffer to read into</param>
         public ArraySegment<byte> ReadMemory(int offset, int size, byte[] buffer)
         {
-            int bytesRead = -1;
-            Imports.ReadProcessMemory((int)omsiProcessHandle, offset, buffer, size, ref bytesRead);
+            int bytesRead = 0;
+            if (size == 0)
+                return new(buffer, 0, 0);
+            if (size > buffer.Length)
+                throw new ArgumentException($"Couldn't read memory for object of type byte[] @ {offset}; it wouldn't fit in the read buffer (tried reading {size} bytes into {buffer.Length})!");
+            if (!Imports.ReadProcessMemory((int)omsiProcessHandle, offset, buffer, size, ref bytesRead))
+                throw new AccessViolationException($"Couldn't read {size} bytes of process memory @ {offset:X}!");
 
             return new (buffer, 0, bytesRead);
         }
-        #endregion
+#endregion
 
         #region Memory Array Item Reading Methods
         /// <summary>
@@ -517,6 +553,8 @@ namespace OmsiHook
         public T[] ReadMemoryObjArray<T>(int address) where T : OmsiObject, new()
         {
             int arr = ReadMemory<int>(address);
+            if(arr == 0)
+                return Array.Empty<T>();
             int len = ReadMemory<int>(arr - 4);
             T[] ret = new T[len];
             for (int i = 0; i < len; i++)
@@ -544,8 +582,10 @@ namespace OmsiHook
         public T[] ReadMemoryStructArray<T>(int address, bool raw = false) where T : unmanaged
         {
             int arr = address;
-            if(!raw)
+            if(!raw && address != 0)
                 arr = ReadMemory<int>(address);
+            if(arr == 0)
+                return Array.Empty<T>();
             int len = ReadMemory<int>(arr - 4);
             T[] ret = new T[len];
             for (int i = 0; i < len; i++)
@@ -563,6 +603,8 @@ namespace OmsiHook
         public T[] ReadMemoryStructPtrArray<T>(int address) where T : unmanaged
         {
             int arr = ReadMemory<int>(address);
+            if (arr == 0 && address != 0)
+                return Array.Empty<T>();
             int len = ReadMemory<int>(arr - 4);
             T[] ret = new T[len];
             for (int i = 0; i < len; i++)
@@ -583,6 +625,8 @@ namespace OmsiHook
             int arr = address;
             if (!raw)
                 arr = ReadMemory<int>(address);
+            if (arr == 0 && address != 0)
+                return Array.Empty<string>();
             int len = ReadMemory<int>(arr - 4);
             string[] ret = new string[len];
             for (int i = 0; i < len; i++)
@@ -590,7 +634,7 @@ namespace OmsiHook
 
             return ret;
         }
-        #endregion 
+        #endregion
 
         #region Conversion
 
@@ -650,78 +694,110 @@ namespace OmsiHook
             object ret = new OutStruct();
             foreach (var field in obj.GetType().GetFields())
             {
-                object val = field.GetValue(obj);
-                foreach (var attr in field.GetCustomAttributes(false))
+#if DEBUG
+                try
                 {
-                    // Based on which kind of attribute the field has, perform special marshalling operations
-                    switch (attr)
+#endif
+                    object val = field.GetValue(obj);
+                    foreach (var attr in field.GetCustomAttributes(false))
                     {
-                        case OmsiStructAttribute a:
-                            if (a.RequiresExtraMarshalling)
-                                val = typeof(Memory).GetMethod(nameof(MarshalStruct))
-                                .MakeGenericMethod(a.ObjType, a.InternalType)
-                                .Invoke(this, new object[] { val });
-                            break;
+                        // Based on which kind of attribute the field has, perform special marshalling operations
+                        switch (attr)
+                        {
+                            case OmsiStructAttribute a:
+                                if (a.RequiresExtraMarshalling)
+                                {
+                                    if (a.InternalType == typeof(InStruct))
+                                        throw new ArgumentException($"Struct of type {typeof(InStruct).Name} tried to marshall one of it's fields as {typeof(InStruct).Name}, recursive data types are not allowed!");
+                                    val = typeof(Memory).GetMethod(nameof(MarshalStruct))
+                                    .MakeGenericMethod(a.ObjType, a.InternalType)
+                                    .Invoke(this, new object[] { val });
+                                }
+                                break;
 
-                        case OmsiStrPtrAttribute a:
-                            val = ReadMemoryString((int)val, a.Wide, a.Raw);
-                            break;
+                            case OmsiStrPtrAttribute a:
+                                val = ReadMemoryString((int)val, a.Wide, a.Raw, a.LengthPrefixed);
+                                break;
 
-                        case OmsiPtrAttribute:
-                            val = new IntPtr((int)val);
-                            break;
+                            case OmsiPtrAttribute:
+                                val = new IntPtr((int)val);
+                                break;
 
-                        case OmsiStructPtrAttribute a:
-                            val = typeof(Memory).GetMethod(nameof(ReadMemory), new Type[] { typeof(int) })
-                                .MakeGenericMethod(a.InternalType)
-                                .Invoke(this, new object[] { val });
-                            // Perform extra marshalling if needed
-                            if (a.RequiresExtraMarshalling)
-                                val = typeof(Memory).GetMethod(nameof(MarshalStruct))
-                                .MakeGenericMethod(a.ObjType, a.InternalType)
-                                .Invoke(this, new object[] { val });
-                            break;
+                            case OmsiStructPtrAttribute a:
+                                val = typeof(Memory).GetMethod(nameof(ReadMemory), new Type[] { typeof(int) })
+                                    .MakeGenericMethod(a.InternalType)
+                                    .Invoke(this, new object[] { val });
+                                // Perform extra marshalling if needed
+                                if (a.RequiresExtraMarshalling)
+                                {
+                                    if (a.InternalType == typeof(InStruct))
+                                        throw new ArgumentException($"Struct of type {typeof(InStruct).Name} tried to marshall one of it's fields as {typeof(InStruct).Name}, recursive data types are not allowed!");
+                                    val = typeof(Memory).GetMethod(nameof(MarshalStruct))
+                                    .MakeGenericMethod(a.ObjType, a.InternalType)
+                                    .Invoke(this, new object[] { val });
+                                }
+                                break;
 
-                        case OmsiObjPtrAttribute a:
-                            int addr = (int)val;
-                            val = Activator.CreateInstance(a.ObjType, true);
-                            ((OmsiObject)val).InitObject(this, addr);
-                            break;
+                            case OmsiObjPtrAttribute a:
+                                int addr = (int)val;
+                                val = Activator.CreateInstance(a.ObjType, true);
+                                ((OmsiObject)val).InitObject(this, addr);
+                                break;
 
-                        case OmsiStructArrayPtrAttribute a:
-                            val = typeof(Memory).GetMethod(nameof(ReadMemoryStructArray))
-                                .MakeGenericMethod(a.InternalType)
-                                .Invoke(this, new object[] { val, a.Raw });
-                            // Perform extra marshalling if needed
-                            if (a.RequiresExtraMarshalling)
-                                val = typeof(Memory).GetMethod(nameof(MarshalStructs))
-                                .MakeGenericMethod(a.ObjType, a.InternalType)
-                                .Invoke(this, new object[] { val });
-                            break;
+                            case OmsiStructArrayPtrAttribute a:
+                                val = typeof(Memory).GetMethod(nameof(ReadMemoryStructArray))
+                                    .MakeGenericMethod(a.InternalType)
+                                    .Invoke(this, new object[] { val, a.Raw });
+                                // Perform extra marshalling if needed
+                                if (a.RequiresExtraMarshalling)
+                                {
+                                    if (a.InternalType == typeof(InStruct))
+                                        throw new ArgumentException($"Struct of type {typeof(InStruct).Name} tried to marshall one of it's fields as {typeof(InStruct).Name}[], recursive data types are not allowed!");
+                                    val = typeof(Memory).GetMethod(nameof(MarshalStructs))
+                                    .MakeGenericMethod(a.ObjType, a.InternalType)
+                                    .Invoke(this, new object[] { val });
+                                }
+                                break;
 
-                        case OmsiObjArrayPtrAttribute a:
-                            val = typeof(Memory).GetMethod(nameof(ReadMemoryObjArray))
-                                .MakeGenericMethod(a.ObjType)
-                                .Invoke(this, new object[] { val });
-                            break;
+                            case OmsiObjArrayPtrAttribute a:
+                                val = typeof(Memory).GetMethod(nameof(ReadMemoryObjArray))
+                                    .MakeGenericMethod(a.ObjType)
+                                    .Invoke(this, new object[] { val });
+                                break;
 
-                        case OmsiStrArrayPtrAttribute a:
-                            val = ReadMemoryStringArray((int)val, a.Wide, a.Raw);
-                            break;
+                            case OmsiStrArrayPtrAttribute a:
+                                val = ReadMemoryStringArray((int)val, a.Wide, a.Raw);
+                                break;
 
-                        case OmsiMarshallerAttribute a:
-                            throw new NotImplementedException($"Attribute {attr.GetType().FullName} is not yet supported by the marshaller!");
+                            case OmsiMarshallerAttribute a:
+                                throw new NotImplementedException($"Attribute {attr.GetType().FullName} is not yet supported by the marshaller!");
 
-                        default:
-                            break;
+                            default:
+                                break;
+                        }
                     }
-                }
 
-                // Match fields by name, setting the destination fields to the corresponding source fields
-                typeof(OutStruct).GetField(field.Name).SetValue(ret, val);
+                    // Match fields by name, setting the destination fields to the corresponding source fields
+                    typeof(OutStruct).GetField(field.Name).SetValue(ret, val);
+#if DEBUG
+                } catch(Exception ex)
+                {
+                    throw new FieldAccessException($"Failed to marshal field '{field.Name}' in '{field.ReflectedType.FullName}'. \n" +
+                        $"Attributes:\n{GetCustomAttributeDebugString(field)}\n" +
+                        $"Failed with internal exception:", ex);
+                }
+#endif
             }
 
             return (OutStruct)ret;
+        }
+
+        private static string GetCustomAttributeDebugString(FieldInfo field)
+        {
+            return string.Join("\n\t", field.GetCustomAttributes(false)
+                .Select(x => string.Format("  {0}: {1}", x.GetType().Name, string.Join(", ", x.GetType()
+                                              .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
+                                              .Select(attProp=>$"{attProp.Name}={attProp.GetValue(x)}")))));
         }
 
         /// <summary>
@@ -890,9 +966,10 @@ namespace OmsiHook
             }
             else
             {
-                // TODO: Probably slow
+#if !OMSI_PLUGIN
                 if (!OmsiRemoteMethods.IsInitialised)
-                    OmsiRemoteMethods.InitRemoteMethods(this);
+                    throw new Exception("OmsiRemoteMethods are not initialised, remote memory allocator cannot be used!");
+#endif
 
                 addr = OmsiRemoteMethods.OmsiGetMem(bytes);
             }
@@ -903,7 +980,7 @@ namespace OmsiHook
             return addr;
         }
 
-        #endregion
+#endregion
     }
 
     internal static class Imports

@@ -14,24 +14,27 @@ namespace OmsiHook
         private static NamedPipeClientStream pipe;
         private static Memory memory;
 
-        public static bool IsInitialised => pipe is {IsConnected: true};
+        public static bool IsInitialised => pipe?.IsConnected ?? false;
 
         // TODO: Okay maybe this shouldn't be static... Singleton?
-        internal static void InitRemoteMethods(Memory omsiMemory)
+        internal static void InitRemoteMethods(Memory omsiMemory, bool inifiniteTimeout = false)
         {
             memory = omsiMemory;
 
 #if !OMSI_PLUGIN
-            pipe = new(OmsiHookRPCMethods.PIPE_NAME);
-            pipe.ReadMode = PipeTransmissionMode.Byte;
+            pipe = new(".", OmsiHookRPCMethods.PIPE_NAME, PipeDirection.InOut);
+            //pipe.ReadMode = PipeTransmissionMode.Message;
             try
             {
-                pipe.Connect(5000);
+                if (inifiniteTimeout)
+                    pipe.Connect();
+                else
+                    pipe.Connect(20000);
             }
             catch(TimeoutException)
             {
                 pipe = null;
-                throw new TimeoutException("Couldn't manage to connect to OmsiHookRPCPlugin within 5 seconds! Check that it is loaded correctly.");
+                throw new TimeoutException("Couldn't manage to connect to OmsiHookRPCPlugin within 20 seconds! Check that it is loaded correctly.");
             }
 #endif
         }
@@ -70,7 +73,7 @@ namespace OmsiHook
             int argPos = 0;
             Span<byte> writeBuffer = stackalloc byte[39];
             Span<byte> readBuffer = stackalloc byte[4];
-            BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], (int)OmsiHookRPCMethods.RemoteMethod.TProgManPlaceRandomBus);
+            BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)OmsiHookRPCMethods.RemoteMethod.TProgManPlaceRandomBus);
             BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], aiType);
             BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], group);
             BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], 0);
@@ -103,7 +106,7 @@ namespace OmsiHook
             int argPos = 0;
             Span<byte> writeBuffer = stackalloc byte[8];
             Span<byte> readBuffer = stackalloc byte[4];
-            BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], (int)OmsiHookRPCMethods.RemoteMethod.GetMem);
+            BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)OmsiHookRPCMethods.RemoteMethod.GetMem);
             BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], length);
             pipe.Write(writeBuffer);
             pipe.Read(readBuffer);
@@ -124,7 +127,7 @@ namespace OmsiHook
             int argPos = 0;
             Span<byte> writeBuffer = stackalloc byte[8];
             Span<byte> readBuffer = stackalloc byte[4];
-            BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], (int)OmsiHookRPCMethods.RemoteMethod.FreeMem);
+            BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)OmsiHookRPCMethods.RemoteMethod.FreeMem);
             BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], addr);
             pipe.Write(writeBuffer);
             pipe.Read(readBuffer);

@@ -30,8 +30,9 @@ namespace OmsiHook
         /// <summary>
         /// Attaches the hooking application to OMSI.exe.
         /// Always call this at some point before trying to read and write data.
+        /// <param name="initialiseRemoteMethods">Try to initialise the connection to OmsiHookRPCPlugin, which is needed if you intend to call Omsi code or allocate memory.</param>
         /// </summary>
-        public async Task AttachToOMSI()
+        public async Task AttachToOMSI(bool initialiseRemoteMethods = true)
         {
             Console.WriteLine("Attaching to OMSI.exe...");
 
@@ -43,6 +44,11 @@ namespace OmsiHook
                 await Task.Delay(250);
                 (found, process) = omsiMemory.Attach("omsi");
                 Console.WriteLine("Waiting for OMSI.exe...");
+            }
+
+            if(initialiseRemoteMethods)
+            {
+                OmsiRemoteMethods.InitRemoteMethods(omsiMemory);
             }
 
             Console.WriteLine("Connected succesfully!");

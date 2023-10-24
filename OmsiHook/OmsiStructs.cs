@@ -347,9 +347,10 @@ namespace OmsiHook
 
     internal struct OmsiTicketPackInternal
     {
-        [OmsiStrPtr] public int filename;
-        [OmsiStrPtr(true)] public int voicepath;
-        [OmsiStructArrayPtr(typeof(OmsiTicket), typeof(OmsiTicketInternal))]
+        [OmsiStrPtr(raw:true)] public int filename;
+        [OmsiStrPtr(true, raw:true)] public int voicepath;
+        //[OmsiStructArrayPtr(typeof(OmsiTicket), typeof(OmsiTicketInternal))]
+        [OmsiPtr]
         public int tickets;
         public float stamper_prop;
         public float ticketBuy_prop;
@@ -361,7 +362,8 @@ namespace OmsiHook
     {
         public string filename;
         public string voicepath;
-        public OmsiTicket[] tickets;
+        //public OmsiTicket[] tickets;
+        public IntPtr tickets;
         public float stamper_prop;
         public float ticketBuy_prop;
         public float chattiness;
@@ -371,7 +373,7 @@ namespace OmsiHook
     internal struct OmsiTicketInternal
     {
         //TODO: I don't think these are decoding correctly (I saw nothing when I looked), check this actually works.
-        [OmsiStrPtr] public int name, name_english, name_display;
+        [OmsiStrPtr(raw:true)] public int name, name_english, name_display;
         public int max_stations;
         public int age_min, age_max;
         public float value;
@@ -1893,7 +1895,7 @@ namespace OmsiHook
     }
     public struct OmsiStringInternal
     {
-        [OmsiStrPtr(false, true)] public int String;
+        [OmsiStrPtr(false, true, false)] public int String;
     }
     /// <summary>
     /// Struct used for WStrings to floats - especially used in the OMSI OSC StringVariables
@@ -1908,7 +1910,7 @@ namespace OmsiHook
     }
     public struct OmsiWStringInternal
     {
-        [OmsiStrPtr(true, true)] public int String;
+        [OmsiStrPtr(true, true, false)] public int String;
     }
     /// <summary>
     /// Struct used for Pointers to floats - especially used in the OMSI OSC variables

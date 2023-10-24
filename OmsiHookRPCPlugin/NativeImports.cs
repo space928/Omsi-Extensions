@@ -24,6 +24,6 @@ namespace OmsiHookRPCPlugin
         [DllImport("OmsiHookInvoker.dll")]
         internal static extern int GetMem(int length);
         [DllImport("OmsiHookInvoker.dll")]
-        internal static extern void FreeMem(int addr);
+        internal static extern int FreeMem(int addr);
     }
 }

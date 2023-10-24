@@ -158,8 +158,8 @@ extern "C" __declspec(dllexport) int GetMem(int length)
         length);
 }
 
-extern "C" __declspec(dllexport) void FreeMem(int addr)
+extern "C" __declspec(dllexport) int FreeMem(int addr)
 {
-    BorlandFastCall(0x00404630, 1, 1,
+    return BorlandFastCall(0x00404630, 1, 1,
         addr);
 }

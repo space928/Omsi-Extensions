@@ -57,6 +57,7 @@ namespace OmsiHook
         //  http://go.microsoft.com/fwlink/?LinkId=85236
         readonly bool wide;
         readonly bool raw;
+        readonly bool lengthPrefixed;
 
         /// <summary>
         /// 
@@ -64,14 +65,16 @@ namespace OmsiHook
         /// <param name="wide">Whether or not to decode the string as UTF-16.</param>
         /// <param name="raw">Treat the address as a pointer to the first character 
         /// (<c>char *</c>) rather than a pointer to a pointer.</param>
-        public OmsiStrPtrAttribute(bool wide = false, bool raw = false)
+        public OmsiStrPtrAttribute(bool wide = false, bool raw = false, bool lengthPrefixed = false)
         {
             this.wide = wide;
             this.raw = raw;
+            this.lengthPrefixed = lengthPrefixed;
         }
 
         public bool Wide => wide;
         public bool Raw => raw;
+        public bool LengthPrefixed => lengthPrefixed;
     }
 
     /// <summary>

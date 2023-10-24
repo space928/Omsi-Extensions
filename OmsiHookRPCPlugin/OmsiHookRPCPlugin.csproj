@@ -4,6 +4,11 @@
     <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
   <PropertyGroup>
+	  <Authors>Thomas Mathieson</Authors>
+	  <Version>1.1.0</Version>
+	  <Copyright>Thomas Mathieson</Copyright>
+  </PropertyGroup>
+  <PropertyGroup>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
