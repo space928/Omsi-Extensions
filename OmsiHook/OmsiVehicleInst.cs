@@ -225,8 +225,8 @@
 
         public OmsiPAIM PAI_Mode
         {
-            get => Memory.ReadMemory<OmsiPAIM>(Address + 0x625);
-            set => Memory.WriteMemory(Address + 0x625, value);
+            get => (OmsiPAIM)Memory.ReadMemory<byte>(Address + 0x625);
+            set => Memory.WriteMemory(Address + 0x625, (byte)value);
         }
         public uint PAI_Timer
         {

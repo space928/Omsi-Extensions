@@ -71,9 +71,10 @@ namespace OmsiHook
             return TProgManPlaceRandomBus(memory.ReadMemory<int>(0x00862f28), aiType, group, 0, false, true, type, scheduled, 0, tour, line);
 #else
             int argPos = 0;
-            Span<byte> writeBuffer = stackalloc byte[39];
+            var method = OmsiHookRPCMethods.RemoteMethod.TProgManPlaceRandomBus;
+            Span<byte> writeBuffer = stackalloc byte[OmsiHookRPCMethods.RemoteMethodsArgsSizes[method]+4];
             Span<byte> readBuffer = stackalloc byte[4];
-            BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)OmsiHookRPCMethods.RemoteMethod.TProgManPlaceRandomBus);
+            BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)method);
             BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], aiType);
             BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], group);
             BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], 0);
@@ -104,9 +105,10 @@ namespace OmsiHook
             return GetMem(length);
 #else
             int argPos = 0;
-            Span<byte> writeBuffer = stackalloc byte[8];
+            var method = OmsiHookRPCMethods.RemoteMethod.GetMem;
+            Span<byte> writeBuffer = stackalloc byte[OmsiHookRPCMethods.RemoteMethodsArgsSizes[method]+4];
             Span<byte> readBuffer = stackalloc byte[4];
-            BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)OmsiHookRPCMethods.RemoteMethod.GetMem);
+            BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)method);
             BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], length);
             pipe.Write(writeBuffer);
             pipe.Read(readBuffer);
@@ -125,9 +127,10 @@ namespace OmsiHook
             FreeMem(addr);
 #else
             int argPos = 0;
-            Span<byte> writeBuffer = stackalloc byte[8];
+            var method = OmsiHookRPCMethods.RemoteMethod.FreeMem;
+            Span<byte> writeBuffer = stackalloc byte[OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 4];
             Span<byte> readBuffer = stackalloc byte[4];
-            BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)OmsiHookRPCMethods.RemoteMethod.FreeMem);
+            BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)method);
             BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], addr);
             pipe.Write(writeBuffer);
             pipe.Read(readBuffer);

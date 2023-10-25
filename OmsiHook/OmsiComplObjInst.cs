@@ -73,7 +73,7 @@ namespace OmsiHook
             get => Memory.ReadMemory<byte>(Address + 0x25);
             set => Memory.WriteMemory(Address + 0x25, value);
         }
-        public MemArray<OmsiFloatPtrInternal, OmsiFloatPtr> PublicVars
+        public MemArrayPtr<float> PublicVars
         {
             get => new(Memory, Memory.ReadMemory<int>(Address + 0x28));
         }

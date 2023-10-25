@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,11 @@ namespace OmsiHook
         /// have to fit on the stack anyway.
         /// </summary>
         private readonly byte[] readBuffer = new byte[4096];
+        /// <summary>
+        /// Buffer to stage remote memory writes in. 4k should be large enough for any structs we encounter as
+        /// they have to fit on the stack anyway.
+        /// </summary>
+        private readonly byte[] writeBuffer = new byte[4096];
 
         /// <summary>
         /// Attempts to attach to a given process as a debugger.
@@ -39,13 +45,17 @@ namespace OmsiHook
             {
                 Process.EnterDebugMode();
             }
+#if DEBUG
             catch (Exception e)
             {
-#if DEBUG
+
                 Console.WriteLine("The plugin couldn't grant itself debug privileges, it may fail to attach to the game.");
                 Console.WriteLine(e);
-#endif
+
             }
+#else
+            catch { }
+#endif
             omsiProcessHandle =
                 Imports.OpenProcess(
                     (int) (Imports.OpenProcessFlags.PROCESS_VM_OPERATION |
@@ -66,10 +76,9 @@ namespace OmsiHook
         /// correct data type to avoid memory corruption</param>
         public void WriteMemory<T>(int address, T value) where T : unmanaged
         {
-            // TODO: Prevent extra buffer allocation.
-            var buffer = StructureToByteArray(value);
+            var size = StructureToByteArray(value, writeBuffer, 0);
 
-            Imports.WriteProcessMemory((int)omsiProcessHandle, address, buffer, buffer.Length, out _);
+            Imports.WriteProcessMemory((int)omsiProcessHandle, address, writeBuffer, size, out _);
         }
 
         /// <summary>
@@ -122,13 +131,22 @@ namespace OmsiHook
         /// <param name="address">The address of the array to write to</param>
         /// <param name="value">The value of the new element</param>
         /// <param name="index">The index of the element to write to</param>
-        public void WriteMemoryArrayItemSafe<T>(int address, T value, int index) where T : unmanaged
+        /// <param name="itemPointer">Whether to write to the item pointed to by array (ie the array is an array of pointers)</param>
+        public void WriteMemoryArrayItemSafe<T>(int address, T value, int index, bool itemPointer = false) where T : unmanaged
         {
             int arr = ReadMemory<int>(address);
             int len = ReadMemory<int>(arr - 4);
             if (index < 0 || index >= len)
                 throw new ArgumentOutOfRangeException($"Tried to write to item {index} of an {len} element array!");
-            WriteMemory(arr + index * Marshal.SizeOf<T>(), value);
+            if (itemPointer)
+            {
+                int addr = ReadMemory<int>(arr + index * 4);
+                WriteMemory(addr, value);
+            }
+            else
+            {
+                WriteMemory(arr + index * (Marshal.SizeOf<T>()), value);
+            }
         }
 
         /// <summary>
@@ -139,28 +157,19 @@ namespace OmsiHook
         /// <param name="address">The address of the array to write to</param>
         /// <param name="value">The value of the new element</param>
         /// <param name="index">The index of the element to write to</param>
-        public void WriteMemoryArrayItem<T>(int address, T value, int index) where T : unmanaged
+        /// <param name="itemPointer">Whether to write to the item pointed to by array (ie the array is an array of pointers)</param>
+        public void WriteMemoryArrayItem<T>(int address, T value, int index, bool itemPointer = false) where T : unmanaged
         {
             int arr = ReadMemory<int>(address);
-            WriteMemory(arr + index * Marshal.SizeOf<T>(), value);
-        }
-
-        /// <summary>
-        /// DEPRECATED: Replace with: <c>Memory.WriteMemoryArrayItemSafe(Address, Memory.AllocateString(value), index);</c><para/>
-        /// Writes the value of a string to an array of strings at a given address.<para/>
-        /// WARNING: This method will NOT allocate new memory, ensure that there is enough space before 
-        /// writing to the string.
-        /// </summary>
-        /// <param name="address">The address of the data to set</param>
-        /// <param name="value">The new value of the string to set; this must be of the 
-        /// correct encoding to avoid memory corruption</param>
-        /// <param name="index">The index of the element to write to</param>
-        /// <param name="wide">Chooses which encoding to convert the string to</param>
-        [Obsolete("Use: Memory.WriteMemoryArrayItemSafe(Address, Memory.AllocateString(value), index);")]
-        public void WriteMemoryArrayItem(int address, string value, int index, bool wide = false)
-        {
-            int arr = ReadMemory<int>(address);
-            WriteMemory(arr + index * 4, value, wide);
+            if (itemPointer)
+            {
+                int addr = ReadMemory<int>(arr + index * 4);
+                WriteMemory(addr, value);
+            }
+            else
+            {
+                WriteMemory(arr + index * (Marshal.SizeOf<T>()), value);
+            }
         }
 
         /// <summary>
@@ -375,7 +384,7 @@ namespace OmsiHook
             int bytesRead = -1;
 
             if (!Imports.ReadProcessMemory((int)omsiProcessHandle, address, readBuffer, byteSize, ref bytesRead))
-#if DEBUG
+#if DEBUG && SILENCE_ACCESS_VIOLATION
             {
                 Debug.WriteLine($"Couldn't read {byteSize} bytes of process memory @ {address:X}!\n{new System.Diagnostics.StackTrace(true)}");
                 return new T();
@@ -509,13 +518,14 @@ namespace OmsiHook
         /// <typeparam name="T">The type of the struct to read</typeparam>
         /// <param name="address">The address of the array to read from</param>
         /// <param name="index">The index of the element to read from</param>
-        public T ReadMemoryArrayItemSafe<T>(int address, int index) where T : unmanaged
+        /// <param name="itemPointer">Whether the item in the array is a pointer to the desired item (ie and array of pointers to <typeparamref name="T"/>)</param>
+        public T ReadMemoryArrayItemSafe<T>(int address, int index, bool itemPointer = false) where T : unmanaged
         {
             int arr = ReadMemory<int>(address);
             int len = ReadMemory<int>(arr - 4);
             if (index < 0 || index >= len)
                 throw new IndexOutOfRangeException($"Tried to access element {index} in an array of {len} elements!");
-            return ReadMemoryArrayItem<T>(address, index);
+            return ReadMemoryArrayItem<T>(address, index, itemPointer);
         }
 
         /// <summary>
@@ -525,10 +535,14 @@ namespace OmsiHook
         /// <typeparam name="T">The type of the struct to read</typeparam>
         /// <param name="address">The address of the array to read from</param>
         /// <param name="index">The index of the element to read from</param>
-        public T ReadMemoryArrayItem<T>(int address, int index) where T : unmanaged
+        /// <param name="itemPointer">Whether the item in the array is a pointer to the desired item (ie and array of pointers to <typeparamref name="T"/>)</param>
+        public T ReadMemoryArrayItem<T>(int address, int index, bool itemPointer = false) where T : unmanaged
         {
             int arr = ReadMemory<int>(address);
-            return ReadMemory<T>(arr + index * Marshal.SizeOf<T>());
+            if(itemPointer)
+                return ReadMemory<T>(ReadMemory<int>(arr + index * 4));
+            else
+                return ReadMemory<T>(arr + index * Marshal.SizeOf<T>());
         }
 
         /// <summary>
@@ -601,9 +615,9 @@ namespace OmsiHook
         {
             int arr = address;
             if(!raw && address != 0)
-                arr = ReadMemory<int>(address);
+                arr = ReadMemory<int>(arr);
             if(arr == 0)
-                return Array.Empty<T>();
+                return null;
             int len = ReadMemory<int>(arr - 4);
             T[] ret = new T[len];
             for (int i = 0; i < len; i++)
@@ -621,8 +635,8 @@ namespace OmsiHook
         public T[] ReadMemoryStructPtrArray<T>(int address) where T : unmanaged
         {
             int arr = ReadMemory<int>(address);
-            if (arr == 0 && address != 0)
-                return Array.Empty<T>();
+            if (arr == 0 || address == 0)
+                return null;
             int len = ReadMemory<int>(arr - 4);
             T[] ret = new T[len];
             for (int i = 0; i < len; i++)
@@ -643,10 +657,10 @@ namespace OmsiHook
         public string[] ReadMemoryStringArray(int address, bool wide = false, bool raw = false, bool pascal = true)
         {
             int arr = address;
-            if (!raw)
-                arr = ReadMemory<int>(address);
-            if (arr == 0 && address != 0)
-                return Array.Empty<string>();
+            if (!raw && address != 0)
+                arr = ReadMemory<int>(arr);
+            if (arr == 0)
+                return null;
             int len = ReadMemory<int>(arr - 4);
             string[] ret = new string[len];
             for (int i = 0; i < len; i++)
@@ -671,6 +685,7 @@ namespace OmsiHook
            where OutStruct : struct
            where InStruct : unmanaged
         {
+            if(obj == null) return null;
             OutStruct[] ret = new OutStruct[obj.Length];
             for (int i = 0; i < obj.Length; i++)
                 ret[i] = MarshalStruct<OutStruct, InStruct>(obj[i]);
@@ -910,15 +925,7 @@ namespace OmsiHook
 
         private static T ByteArrayToStructure<T>(byte[] bytes) where T : unmanaged
         {
-            var handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
-            try
-            {
-                return (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(T));
-            }
-            finally
-            {
-                handle.Free();
-            }
+            return MemoryMarshal.Read<T>(bytes);
         }
 
         /// <summary>
@@ -927,35 +934,11 @@ namespace OmsiHook
         /// <param name="obj">Struct to convert</param>
         /// <param name="dst">Byte array to copy to</param>
         /// <param name="startIndex">Index in the destination array to copy to</param>
-        private static void StructureToByteArray(object obj, byte[] dst, int startIndex)
+        /// <returns>The number of bytes written to the array</returns>
+        private static int StructureToByteArray<T>(T obj, byte[] dst, int startIndex) where T : unmanaged
         {
-            var length = Marshal.SizeOf(obj);
-
-            var pointer = Marshal.AllocHGlobal(length);
-
-            Marshal.StructureToPtr(obj, pointer, true);
-            Marshal.Copy(pointer, dst, startIndex, length);
-            Marshal.FreeHGlobal(pointer);
-        }
-
-        /// <summary>
-        /// Converts a structure to a byte array.
-        /// </summary>
-        /// <param name="obj">Struct to convert</param>
-        /// <returns>A newly allocated byte array containing the struct</returns>
-        private static byte[] StructureToByteArray(object obj)
-        {
-            var length = Marshal.SizeOf(obj);
-
-            var array = new byte[length];
-
-            var pointer = Marshal.AllocHGlobal(length);
-
-            Marshal.StructureToPtr(obj, pointer, true);
-            Marshal.Copy(pointer, array, 0, length);
-            Marshal.FreeHGlobal(pointer);
-
-            return array;
+            MemoryMarshal.Write(dst.AsSpan()[startIndex..], ref obj);
+            return Unsafe.SizeOf<T>();
         }
 
         /// <summary>

@@ -161,14 +161,14 @@ namespace OmsiHook
         /// The value of this property is automatically cached for performance.
         /// </remarks>
         public MemArrayStringDict CallBackStrings => callBackStrings ??= new(Memory, Address + 0x1f8, true);
-        private MemArray<OmsiFloatPtrInternal, OmsiFloatPtr> sysVars;
+        private MemArrayPtr<float> sysVars;
         /// <summary>
         /// Array of values of system variables.
         /// </summary>
         /// <remarks>
         /// The value of this property is automatically cached for performance.
         /// </remarks>
-        public MemArray<OmsiFloatPtrInternal, OmsiFloatPtr> SysVars => sysVars ??= new(Memory, Address + 0x1fc);
+        public MemArrayPtr<float> SysVars => sysVars ??= new(Memory, Address + 0x1fc);
         public bool ScriptShare
         {
             get => Memory.ReadMemory<bool>(Address + 0x200);
