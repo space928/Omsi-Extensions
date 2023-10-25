@@ -90,10 +90,10 @@ namespace OmsiHook
         {
             get => Memory.ReadMemoryObjArray<OmsiChangeMatl>(Address + 0x34);
         }*/
-        public OmsiFreeTexInst[] FreeTexInsts
+        /*public OmsiFreeTexInst[] FreeTexInsts
         {
             get => Memory.ReadMemoryObjArray<OmsiFreeTexInst>(Address + 0x38);
-        }
+        }*/
         /* TODO:
         /// <summary>
         /// Array of Smoke Instances
@@ -105,10 +105,10 @@ namespace OmsiHook
         /// <summary>
         /// ! Warning Data Type Mismatch! - Official Data Type: PIDirect3DTexture9
         /// </summary>
-        public int[] ReflectionTexs
+        /*public int[] ReflectionTexs
         {
             get => Memory.ReadMemoryStructArray<int>(Address + 0x40);
-        }
+        }*/
         public bool OFTTexturesLoaded
         {
             get => Memory.ReadMemory<bool>(Address + 0x44);
@@ -119,10 +119,10 @@ namespace OmsiHook
         {
             get => Memory.ReadMemoryObjArray<iDirect3DTexture9>(Address + 0x48);
         }*/
-        public string[] OFT_LastString
+        /*public string[] OFT_LastString
         {
             get => Memory.ReadMemoryStringArray(Address + 0x4c);
-        }
+        }*/
         public OmsiScriptTexture[] ScriptTextures
         {
             get => Memory.MarshalStructs<OmsiScriptTexture, OmsiScriptTextureInternal>(Memory.ReadMemoryStructArray<OmsiScriptTextureInternal>(Address + 0x50));
@@ -166,10 +166,11 @@ namespace OmsiHook
             get => Memory.ReadMemory<uint>(Address + 0xe8);
             set => Memory.WriteMemory(Address + 0xe8, value);
         }
+        /* TODO:
         public D3DMatrix[] AnimMatrixes
         {
             get => Memory.ReadMemoryStructArray<D3DMatrix>(Address + 0xec);
-        }
+        }*/
         public bool Simple_Translated
         {
             get => Memory.ReadMemory<bool>(Address + 0xf0);

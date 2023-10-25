@@ -1,16 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net5.0-windows</TargetFramework>
-    <Platforms>x86</Platforms>
+    <Platforms>AnyCPU;x86</Platforms>
+  </PropertyGroup>
+  <PropertyGroup>
+	  <Authors>Thomas Mathieson</Authors>
+	  <Version>1.1.0</Version>
+	  <Copyright>Thomas Mathieson</Copyright>
   </PropertyGroup>
   <PropertyGroup>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup>
-	<DefineConstants>OMSI_PLUGIN</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="DNNE" Version="1.0.30" />
@@ -19,7 +21,7 @@
     <ProjectReference Include="..\OmsiHook\OmsiHook.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="OmsiHookPlugin.opl">
+    <None Update="OmsiHookRPCPlugin.opl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

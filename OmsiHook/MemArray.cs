@@ -400,7 +400,8 @@ namespace OmsiHook
             indexDictionary.Clear();
             for(int i = 0; i < Count; i++)
             {
-                indexDictionary.TryAdd(arrayCache[i], i);
+                if(arrayCache[i] != null)
+                    indexDictionary.TryAdd(arrayCache[i], i);
             }
         }
 

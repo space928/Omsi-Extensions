@@ -16,7 +16,6 @@ namespace OmsiHook
         private Memory omsiMemory;
         private Process process;
         private OmsiGlobals globals;
-        private OmsiRemoteMethods remoteMethods;
 
         /// <summary>
         /// Gets the object storing all of Omsi's global variables.
@@ -31,8 +30,9 @@ namespace OmsiHook
         /// <summary>
         /// Attaches the hooking application to OMSI.exe.
         /// Always call this at some point before trying to read and write data.
+        /// <param name="initialiseRemoteMethods">Try to initialise the connection to OmsiHookRPCPlugin, which is needed if you intend to call Omsi code or allocate memory.</param>
         /// </summary>
-        public async Task AttachToOMSI()
+        public async Task AttachToOMSI(bool initialiseRemoteMethods = true)
         {
             Console.WriteLine("Attaching to OMSI.exe...");
 
@@ -46,6 +46,11 @@ namespace OmsiHook
                     Console.WriteLine("Waiting for OMSI.exe...");
                     await Task.Delay(250);
                 }
+            }
+
+            if(initialiseRemoteMethods)
+            {
+                OmsiRemoteMethods.InitRemoteMethods(omsiMemory);
             }
 
             Console.WriteLine("Connected succesfully!");
@@ -123,9 +128,10 @@ namespace OmsiHook
         {
             var sb = new StringBuilder();
             int i = addr;
+            byte[] bytesBuff = new byte[2];
             while (true)
             {
-                var bytes = omsiMemory.ReadMemory(i, wide ? 2 : 1);
+                var bytes = omsiMemory.ReadMemory(i, wide ? 2 : 1, bytesBuff);
                 if (bytes.All(x => x == 0))
                     break;
 
