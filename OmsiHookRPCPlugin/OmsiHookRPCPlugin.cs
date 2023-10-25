@@ -94,7 +94,7 @@ namespace OmsiHookRPCPlugin
             threadPool = new();
             for(int i = 0; i < MAX_CLIENTS; i++)
             {
-                Thread thread = new(() => ServerThreadStart(i));
+                Thread thread = new(() => ServerThreadStart(i-1));
                 threadPool.Add(thread);
                 lock(returnPool)
                     returnPool.Add(new(new(false), 0));
@@ -108,9 +108,10 @@ namespace OmsiHookRPCPlugin
             {
                 try
                 {
+                    Log($"[RPC Server {threadId}] Init.");
                     using NamedPipeServerStream pipe = new(PIPE_NAME, PipeDirection.InOut, MAX_CLIENTS, PipeTransmissionMode.Byte);
                     pipe.WaitForConnection();
-                    Log($"Client has connected to server thread {threadId}.");
+                    Log($"[RPC Server {threadId}] Client has connected.");
 
                     using BinaryReader reader = new(pipe);
                     using BinaryWriter writer = new(pipe);
@@ -145,7 +146,7 @@ namespace OmsiHookRPCPlugin
                 {
                     Log(ex);
                 }
-                Log($"Client has disconnected from server thread {threadId}.");
+                Log($"[RPC Server {threadId}] Client has disconnected.");
             }
         }
 

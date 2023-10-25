@@ -6,7 +6,7 @@ namespace OmsiHook
 {
     public abstract class MemArrayBase<Struct> : OmsiObject, IDisposable, IEnumerable<Struct>, ICollection<Struct>, IList<Struct>
     {
-        internal readonly bool cached;
+        internal bool cached;
         internal Struct[] arrayCache;
 
         public abstract Struct this[int index] { get; set; }
@@ -14,11 +14,25 @@ namespace OmsiHook
         /// <summary>
         /// Whether or not this <seealso cref="MemArray{T}"/> is cached.
         /// </summary>
-        public bool Cached => cached;
+        public virtual bool Cached { get => cached; set { cached = value; UpdateFromHook(); } }
 
         public abstract Struct[] WrappedArray { get; }
 
-        public int Count => cached ? arrayCache.Length : Memory.ReadMemory<int>(Memory.ReadMemory<int>(Address) - 4);
+        public int Count
+        {
+            get
+            {
+                if (cached)
+                    return arrayCache.Length;
+                else
+                {
+                    int start = Memory.ReadMemory<int>(Address);
+                    if (start == 0)
+                        throw new NullReferenceException();
+                    return Memory.ReadMemory<int>(start - 4);
+                }
+            }
+        }
 
         public bool IsReadOnly => false;
 
@@ -47,7 +61,11 @@ namespace OmsiHook
         public abstract void Insert(int index, Struct item);
         public abstract bool Remove(Struct item);
         public abstract void RemoveAt(int index);
-        public abstract void UpdateFromHook();
+        /// <summary>
+        /// Forces the cached contents of the MemArray to resynchronise with the hooked application.
+        /// </summary>
+        /// <param name="index">When set, updates only the item at the given index of the array</param>
+        public abstract void UpdateFromHook(int index = -1);
 
         /// <summary>
         /// Call this method to initialise an OmsiObject if the two-parameter constructor wasn't used.

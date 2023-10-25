@@ -2,3 +2,5 @@
   href: intro.md
 - name: Building Native Omsi Plugins
   href: building-native-plugins.md
+- name: Performance Tips
+  href: performance-tips.md

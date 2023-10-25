@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <Authors>Thomas Mathieson et al</Authors>
     <Copyright>Copyright Thomas Mathieson 2022 all rights reserved</Copyright>
     <PackageProjectUrl>https://github.com/space928/Omsi-Extensions</PackageProjectUrl>
@@ -19,7 +19,10 @@
     <PackageIcon>Logo.png</PackageIcon>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
 
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />

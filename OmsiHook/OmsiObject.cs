@@ -25,7 +25,7 @@
         /// </summary>
         /// <param name="memory"></param>
         /// <param name="address"></param>
-        internal void InitObject(Memory memory, int address)
+        internal virtual void InitObject(Memory memory, int address)
         {
             this.Memory = memory;
             this.Address = address;
@@ -33,9 +33,7 @@
 
         public override bool Equals(object obj)
         {
-            OmsiObject item = obj as OmsiObject;
-
-            if (item == null)
+            if (obj is not OmsiObject item)
             {
                 return (Address == 0);
             }
@@ -43,5 +41,9 @@
             return (item.Address == Address);
         }
 
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }
