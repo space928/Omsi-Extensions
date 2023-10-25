@@ -15,7 +15,9 @@ namespace OmsiHookRPCPlugin
             TTempRVListCreate,
             TProgManPlaceRandomBus,
             GetMem,
-            FreeMem
+            FreeMem,
+            HookD3D,
+            CreateTexture
         }
     }
 }

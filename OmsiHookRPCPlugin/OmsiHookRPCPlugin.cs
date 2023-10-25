@@ -220,6 +220,18 @@ namespace OmsiHookRPCPlugin
                         BitConverter.ToInt32(methodData.args, argInd)
                     );
                     break;
+                case RemoteMethod.HookD3D:
+                    ret = NativeImports.HookD3D();
+                    break;
+                case RemoteMethod.CreateTexture:
+                    ret = NativeImports.CreateTexture(
+                        BitConverter.ToUInt32(methodData.args, argInd),
+                        BitConverter.ToUInt32(methodData.args, argInd += 4),
+                        BitConverter.ToUInt32(methodData.args, argInd += 4),
+                        BitConverter.ToUInt32(methodData.args, argInd += 4),
+                        BitConverter.ToUInt32(methodData.args, argInd += 4)
+                    );
+                    break;
                 default:
                     Log($"Unknown message type: {methodData.method} encountered!");
                     break;

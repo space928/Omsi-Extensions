@@ -134,6 +134,45 @@ namespace OmsiHook
 #endif
         }
 
+        /// <summary>
+        /// Attempts to get the current D3D context from Omsi, required before any of the graphics 
+        /// </summary>
+        public static bool OmsiHookD3D()
+        {
+#if OMSI_PLUGIN
+            return HookD3D() != 0;
+#else
+            int argPos = 0;
+            Span<byte> writeBuffer = stackalloc byte[4];
+            Span<byte> readBuffer = stackalloc byte[4];
+            BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)OmsiHookRPCMethods.RemoteMethod.HookD3D);
+            pipe.Write(writeBuffer);
+            return pipe.Read(readBuffer) != 0;
+#endif
+        }
+
+        /// <summary>
+        /// Attempts to get the current D3D context from Omsi, required before any of the graphics 
+        /// </summary>
+        public static bool OmsiCreateTexture(uint width, uint height, DXGI_FORMAT format, uint ppTexture, uint pSharedHandle)
+        {
+#if OMSI_PLUGIN
+            return CreateTexture(width, height, (uint)format, ppTexture, pSharedHandle) != 0;
+#else
+            int argPos = 0;
+            Span<byte> writeBuffer = stackalloc byte[20];
+            Span<byte> readBuffer = stackalloc byte[4];
+            BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)OmsiHookRPCMethods.RemoteMethod.HookD3D);
+            BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], width);
+            BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], height);
+            BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], (uint)format); 
+            BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], ppTexture);
+            BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], pSharedHandle);
+            pipe.Write(writeBuffer);
+            return pipe.Read(readBuffer) != 0;
+#endif
+        }
+
         [DllImport("OmsiHookInvoker.dll")]
         private static extern int TProgManMakeVehicle(int progMan, int vehList, int _RoadVehicleTypes, bool onlyvehlist, bool CS,
             float TTtime, bool situationload, bool dialog, bool setdriver, bool thread,
@@ -150,5 +189,16 @@ namespace OmsiHook
         internal static extern int GetMem(int length);
         [DllImport("OmsiHookInvoker.dll")]
         internal static extern void FreeMem(int addr);
+        [DllImport("OmsiHookInvoker.dll")]
+        internal static extern int HookD3D();
+        [DllImport("OmsiHookInvoker.dll")]
+        internal static extern int CreateTexture(uint Width, uint Height, uint Format, uint ppTexture, uint pSharedHandle);
+
+        public enum DXGI_FORMAT :uint
+        {
+            R16G16B16A16_FLOAT = 10,
+            R10G10B10A2_UNORM = 24,
+            R8G8B8A8_UNORM = 28
+        }
     }
 }

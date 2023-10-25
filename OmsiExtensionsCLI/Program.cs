@@ -43,18 +43,18 @@ namespace OmsiExtensionsCLI
                     Console.WriteLine($"INEO_PS_Matricule: {omsi.Globals.PlayerVehicle.GetStringVariable("INEO_Login")}".PadRight(Console.WindowWidth - 1));
 
 
-                    //omsi.Globals.PlayerVehicle.SetVariable("IBIS_Linie_Complex", (float)(Math.Floor(omsi.Globals.PlayerVehicle.Position.x)*100));
                     omsi.Globals.PlayerVehicle.SetStringVariable("INEO_Login", toggle ? "thomas" : "01234");
-                    /*omsi.Globals.PlayerVehicle.SetStringVariable("Matrix_TerminusL1", toggle ? "AUXI" : "string");
-                    omsi.Globals.PlayerVehicle.SetStringVariable("Matrix_TerminusL2", toggle ? "AUXI" : "string");*/
                     toggle = !toggle;
                 }
                 catch (Exception e) { Console.WriteLine(e.Message); }
-                //omsi.Globals.PlayerVehicle.Velocity = new D3DVector { x=0, y=0, z=5 };
-                //omsi.Globals.PlayerVehicle.Bremspedal = 0;
-                //omsi.Globals.OmsiTTLogs
+
                 Thread.Sleep(200);
             }
         }
+    }
+
+    public class DXTests
+    {
+
     }
 }

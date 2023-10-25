@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 
 namespace OmsiHookRPCPlugin
 {
@@ -25,5 +20,9 @@ namespace OmsiHookRPCPlugin
         internal static extern int GetMem(int length);
         [DllImport("OmsiHookInvoker.dll")]
         internal static extern int FreeMem(int addr);
+        [DllImport("OmsiHookInvoker.dll")]
+        internal static extern int HookD3D();
+        [DllImport("OmsiHookInvoker.dll")]
+        internal static extern int CreateTexture(uint Width, uint Height, uint Format, uint ppTexture, uint pSharedHandle);
     }
 }

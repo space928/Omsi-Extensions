@@ -1,5 +1,8 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "pch.h"
+#include "DXHook.h"
+
+DXHook* m_dxHook;
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
@@ -11,7 +14,10 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     case DLL_PROCESS_ATTACH:
     case DLL_THREAD_ATTACH:
     case DLL_THREAD_DETACH:
+        break;
     case DLL_PROCESS_DETACH:
+        if (m_dxHook)
+            delete m_dxHook;
         break;
     }
     return TRUE;
@@ -162,4 +168,19 @@ extern "C" __declspec(dllexport) int FreeMem(int addr)
 {
     return BorlandFastCall(0x00404630, 1, 1,
         addr);
+}
+
+extern "C" __declspec(dllexport) BOOL HookD3D()
+{
+    if (!m_dxHook)
+        m_dxHook = new DXHook();
+
+    return m_dxHook->HookD3D();
+}
+
+extern "C" __declspec(dllexport) HRESULT CreateTexture(UINT Width, UINT Height, D3DFORMAT Format, IDirect3DTexture9** ppTexture, HANDLE* pSharedHandle)
+{
+    if (!m_dxHook)
+        return E_FAIL;
+    return m_dxHook->CreateTexture(Width, Height, Format, ppTexture, pSharedHandle);
 }
