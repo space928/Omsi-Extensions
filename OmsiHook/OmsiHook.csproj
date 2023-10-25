@@ -3,16 +3,16 @@
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
     <Authors>Thomas Mathieson et al</Authors>
-    <Copyright>Copyright Thomas Mathieson 2022 all rights reserved</Copyright>
+    <Copyright>Copyright Thomas Mathieson 2023 all rights reserved</Copyright>
     <PackageProjectUrl>https://github.com/space928/Omsi-Extensions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/space928/Omsi-Extensions</RepositoryUrl>
     <PackageLicenseFile></PackageLicenseFile>
     <Description>OmsiHook is a simple library for hooking into Omsi's memory for modding.</Description>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <AssemblyVersion>2.1.0.1</AssemblyVersion>
-    <FileVersion>2.1.0.1</FileVersion>
-    <Version>2.1.0</Version>
+    <AssemblyVersion>2.2.0.1</AssemblyVersion>
+    <FileVersion>2.2.0.1</FileVersion>
+    <Version>2.2.0</Version>
     <PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>
     <SignAssembly>False</SignAssembly>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -20,9 +20,10 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Nullable>disable</Nullable>
+    <Platforms>x86</Platforms>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'" />
 
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
@@ -34,14 +35,33 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-    <None Include="..\Release\OmsiHookInvoker.dll" Link="OmsiHookInvoker.dll">
+    <None Include="..\$(Configuration)\OmsiHookInvoker.dll" Link="OmsiHookInvoker.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Pack>True</Pack>
-      <PackagePath>\lib\net5.0</PackagePath>
+      <PackagePath>\lib\net6.0</PackagePath>
     </None>
+	<None Include="..\OmsiHookRPCPlugin\bin\x86\$(Configuration)\$(TargetFramework)\OmsiHookRPCPlugin.dll" Link="OmsiHookRPCPlugin.dll">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  <Pack>True</Pack>
+	  <PackagePath>\lib\net6.0</PackagePath>
+	</None>
+	<None Include="..\OmsiHookRPCPlugin\bin\x86\$(Configuration)\$(TargetFramework)\OmsiHookRPCPluginNE.dll" Link="OmsiHookRPCPluginNE.dll">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  <Pack>True</Pack>
+	  <PackagePath>\lib\net6.0</PackagePath>
+	</None>
+	<None Include="..\OmsiHookRPCPlugin\bin\x86\$(Configuration)\$(TargetFramework)\OmsiHookRPCPlugin.opl" Link="OmsiHookRPCPlugin.opl">
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  <Pack>True</Pack>
+	  <PackagePath>\lib\net6.0</PackagePath>
+	</None>
   </ItemGroup>
 
   <ItemGroup>
+	  <!-- <PackageReference Include="DhyMik.DocFx.UpdateDocFxVersionAttributeTask" Version="1.1.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>-->
     <PackageReference Include="docfx.console" Condition="'$(Configuration)'!='Debug'" Version="2.59.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -53,6 +73,7 @@
 	  <ProjectReference Include="..\OmsiHookInvoker\OmsiHookInvoker.vcxproj">
 		  <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
 	  </ProjectReference>
+	  <ProjectReference Include="..\OmsiHookRPCPlugin\OmsiHookRPCPlugin.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -5,7 +5,7 @@
   </PropertyGroup>
   <PropertyGroup>
 	  <Authors>Thomas Mathieson</Authors>
-	  <Version>1.1.0</Version>
+	  <Version>1.2.0</Version>
 	  <Copyright>Thomas Mathieson</Copyright>
   </PropertyGroup>
   <PropertyGroup>
@@ -15,10 +15,16 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="DNNE" Version="1.0.30" />
+    <Compile Include="..\OmsiHook\OmsiHookRPCMethods.cs" Link="OmsiHookRPCMethods.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OmsiHook\OmsiHook.csproj" />
+    <None Include="..\Logo.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="DNNE" Version="1.0.30" />
   </ItemGroup>
   <ItemGroup>
     <None Update="OmsiHookRPCPlugin.opl">
@@ -95,8 +101,12 @@
         valid self-contained install environment. -->
 		<DnneSelfContained_Experimental>false</DnneSelfContained_Experimental>
 		<BaseOutputPath></BaseOutputPath>
+		<Title>OmsiHook RPC Plugin</Title>
+		<PackageIcon>Logo.png</PackageIcon>
+		<PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>
+		<SignAssembly>False</SignAssembly>
 	</PropertyGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Command="xcopy &quot;$(SolutionDir)Debug\*.dll&quot; &quot;$(OutDir)&quot; /y&#xD;&#xA;xcopy &quot;$(SolutionDir)Release\*.dll&quot; &quot;$(OutDir)&quot; /y&#xD;&#xA;xcopy &quot;$(OutDir)*.dll&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y&#xD;&#xA;xcopy &quot;$(OutDir)*.opl&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y&#xD;&#xA;xcopy &quot;$(OutDir)*.runtimeconfig.json&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y" />
+	  <Exec Command="xcopy &quot;$(SolutionDir)$(Configuration)\*.dll&quot; &quot;$(OutDir)&quot; /y&#xD;&#xA;xcopy &quot;$(OutDir)*.dll&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y /c&#xD;&#xA;xcopy &quot;$(OutDir)*.opl&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y /c &#xD;&#xA;xcopy &quot;$(OutDir)*.runtimeconfig.json&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y /c" />
 	</Target>
 </Project>

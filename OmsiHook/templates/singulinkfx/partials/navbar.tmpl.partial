@@ -7,6 +7,7 @@
 
   {{#_enableSearch}}
   <div class="sidesearch">
+    <a class="version versionHeader" href="">Version {{{_DocumentationVersion}}}</a>
     <form id="search" role="search" class="search">
         <i class="bi bi-search search-icon"></i>
         <input type="text" id="search-query" placeholder="{{__global.search}}" autocomplete="off">

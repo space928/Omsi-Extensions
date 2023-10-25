@@ -61,7 +61,7 @@ cached or not.
 OmsiHook allows you to call remote methods in Omsi, this is a fairly complicated process and as such 
 isn't always very fast. For native Omsi plugins using OmsiHook you don't need to worry much about the 
 performance of remote calls, but for external applications using OmsiHook, these calls are especially 
-expensive. This is because in this case OmsiHook needs to relty on OmsiHookRPCPlugin, a native Omsi 
+expensive. This is because in this case OmsiHook needs to rely on OmsiHookRPCPlugin, a native Omsi 
 plugin shipped with OmsiHook which executes remote calls on the behalf of OmsiHook in batches, once 
 per frame. As such, for external applications, remote calls will *always* take at least 1 frame to 
 complete.

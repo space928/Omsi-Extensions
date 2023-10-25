@@ -53,15 +53,6 @@ namespace OmsiHookRPCPlugin
             }
         }
 
-        private static readonly ReadOnlyDictionary<RemoteMethod, int> RemoteMethodsArgsSizes = new(new Dictionary<RemoteMethod, int>()
-        {
-            { RemoteMethod.TProgManMakeVehicle,         61 },
-            { RemoteMethod.TTempRVListCreate,           8 },
-            { RemoteMethod.TProgManPlaceRandomBus,      35 },
-            { RemoteMethod.GetMem,                      4 },
-            { RemoteMethod.FreeMem,                     4 },
-        });
-
         private static void Log(object msg)
         {
             lock (logLock)
