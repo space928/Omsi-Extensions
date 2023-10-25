@@ -9,7 +9,7 @@
     <PackageLicenseFile></PackageLicenseFile>
     <Description>OmsiHook is a simple library for hooking into Omsi's memory for modding.</Description>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <AssemblyVersion>2.2.0.1</AssemblyVersion>
     <FileVersion>2.2.0.1</FileVersion>
     <Version>2.2.0</Version>

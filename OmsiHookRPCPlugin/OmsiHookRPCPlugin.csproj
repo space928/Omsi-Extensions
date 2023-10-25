@@ -27,8 +27,9 @@
     <PackageReference Include="DNNE" Version="1.0.30" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="OmsiHookRPCPlugin.opl">
+    <None Include="OmsiHookRPCPlugin.opl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
   </ItemGroup>
 	<PropertyGroup>
