@@ -302,5 +302,9 @@ namespace OmsiHook
         /// The default for most strings in arrays in Omsi.
         /// </summary>
         RawDelphiString = Wide | Pascal | Raw,
+        /// <summary>
+        /// The default for most AnsiStrings in arrays in Omsi.
+        /// </summary>
+        RawDelphiAnsiString = Pascal | Raw,
     }
 }

@@ -29,7 +29,7 @@ namespace OmsiHook
         }*/
         public OmsiPathSegment Prev_PathSegment
         {
-            get => new(Memory, Memory.ReadMemory<int>(0x2c));
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x2c));
         }
     }
 }

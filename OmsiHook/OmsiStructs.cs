@@ -111,7 +111,7 @@ namespace OmsiHook
         public uint borderColor;
         public D3DMaterial9 d3dMaterial;
         [OmsiPtr] public int freeTexs;
-        [OmsiStrPtr] public int shaderBlock;
+        [OmsiStrPtr(StrPtrType.RawDelphiString)] public int shaderBlock;
         public bool splineScaleByLength;
     }
 
@@ -171,7 +171,7 @@ namespace OmsiHook
     internal struct OmsiMapKachelInfoInternal
     {
         public OmsiPoint position;
-        [OmsiStrPtr] public int filename;
+        [OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int filename;
         public int mapKachel;
     }
 
@@ -234,8 +234,8 @@ namespace OmsiHook
 
     internal struct OmsiGroundTypeInternal
     {
-        [OmsiStrPtr] public int texture;
-        [OmsiStrPtr] public int det_texture;
+        [OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int texture;
+        [OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int det_texture;
         public int tex_id;
         public int det_tex_id;
         public byte resolution;
@@ -265,8 +265,8 @@ namespace OmsiHook
 
     internal struct OmsiWeatherPropInternal
     {
-        [OmsiStrPtr(true)] public int name; // STRING
-        [OmsiStrPtr(true)] public int description; // STRING
+        [OmsiStrPtr(StrPtrType.RawDelphiString)] public int name; // STRING
+        [OmsiStrPtr(StrPtrType.RawDelphiString)] public int description; // STRING
         public float fogDensity;
         public float lightness;
         public float windSpeed;
@@ -277,7 +277,7 @@ namespace OmsiHook
         public byte percipitation;
         public byte percipRate;
         public D3DVector percipVec;
-        [OmsiStrPtr] public int cloudType; // ANSI STRING
+        [OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int cloudType; // ANSI STRING
         public float cloudHeight;
         public int cloudTexture;
         public float bodenfeuchte;
@@ -328,8 +328,8 @@ namespace OmsiHook
 
     internal struct OmsiCloudTypeInternal
     {
-        [OmsiStrPtr] public int name; // ANSI String
-        [OmsiStrPtr] public int texFile; // ANSI String
+        [OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int name; // ANSI String
+        [OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int texFile; // ANSI String
         public float texSize;
         public bool ovc;
     }
@@ -347,10 +347,9 @@ namespace OmsiHook
 
     internal struct OmsiTicketPackInternal
     {
-        [OmsiStrPtr(raw:true)] public int filename;
-        [OmsiStrPtr(true, raw:true)] public int voicepath;
-        [OmsiStructArrayPtr(typeof(OmsiTicket), typeof(OmsiTicketInternal))]
-        //[OmsiPtr]
+        [OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int filename;
+        [OmsiStrPtr(StrPtrType.RawDelphiString)] public int voicepath;
+        [OmsiStructArrayPtr(typeof(OmsiTicket), typeof(OmsiTicketInternal), true)]
         public int tickets;
         public float stamper_prop;
         public float ticketBuy_prop;
@@ -363,7 +362,6 @@ namespace OmsiHook
         public string filename;
         public string voicepath;
         public OmsiTicket[] tickets;
-        //public IntPtr tickets;
         public float stamper_prop;
         public float ticketBuy_prop;
         public float chattiness;
@@ -374,9 +372,9 @@ namespace OmsiHook
     internal struct OmsiTicketInternal
     {
         //TODO: I don't think these are decoding correctly (I saw nothing when I looked), check this actually works.
-        [FieldOffset(0x0)] [OmsiStrPtr(StrPtrType.Raw)] public int name;
-        [FieldOffset(0x4)] [OmsiStrPtr(StrPtrType.Raw)] public int name_english;
-        [FieldOffset(0x8)] [OmsiStrPtr(StrPtrType.Raw)] public int name_display;
+        [FieldOffset(0x0)] [OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int name;
+        [FieldOffset(0x4)] [OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int name_english;
+        [FieldOffset(0x8)] [OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int name_display;
         [FieldOffset(0xc)] public int max_stations;
         [FieldOffset(0x10)] public int age_min;
         [FieldOffset(0x14)] public int age_max;
@@ -444,11 +442,11 @@ namespace OmsiHook
         public D3DVector moneyPos;
         public D3DVector moneyPos_var;
         public int moneyPos_parent_idx;
-        [OmsiStrPtr] public int moneyPos_parent_str; // ANSIString
+        [OmsiStrPtr(StrPtrType.DelphiAnsiString)] public int moneyPos_parent_str; // ANSIString
         public D3DVector changePos;
         public D3DVector changePos_var;
         public int changePos_parent_idx;
-        [OmsiStrPtr] public int changePos_parent_str; // ANSIString
+        [OmsiStrPtr(StrPtrType.DelphiAnsiString)] public int changePos_parent_str; // ANSIString
         public bool valid;
     }
     public struct OmsiTreeInfo
@@ -502,7 +500,7 @@ namespace OmsiHook
 
     internal struct OmsiUnschedVehGroupInternal
     {
-        [OmsiStrPtr] public int aiList;
+        [OmsiStrPtr(StrPtrType.RawDelphiString)] public int aiList;
         public int aiList_index;
         public int defaultDensity;
         public float densityFactor;
@@ -588,7 +586,7 @@ namespace OmsiHook
     internal struct OmsiHolidayInternal
     {
         public int date;
-        [OmsiStrPtr(StrPtrType.DelphiString)] public int name;
+        [OmsiStrPtr(StrPtrType.RawDelphiString)] public int name;
     }
 
     public struct OmsiHoliday
@@ -600,7 +598,7 @@ namespace OmsiHook
     internal struct OmsiHolidaysInternal
     {
         public int start, ende;
-        [OmsiStrPtr(StrPtrType.DelphiString)] public int name;
+        [OmsiStrPtr(StrPtrType.RawDelphiString)] public int name;
     }
 
     public struct OmsiHolidays
@@ -1247,7 +1245,7 @@ namespace OmsiHook
 
     internal struct OmsiStringItemInternal
     {
-        [OmsiStrPtr] public int fstring;
+        [OmsiStrPtr(StrPtrType.RawDelphiString)] public int fstring;
         [OmsiObjPtr(typeof(OmsiObject))] public int fobject;
     }
 
@@ -1281,7 +1279,7 @@ namespace OmsiHook
     }
     internal struct OmsiPerbusInternal
     {
-        [OmsiStrPtr(StrPtrType.PCStr)] public int busname;
+        [OmsiStrPtr(StrPtrType.Raw)] public int busname;
         public uint hektometer;
     }
 
@@ -1333,7 +1331,7 @@ namespace OmsiHook
         [FieldOffset(0x54)] public uint passCount;
         [FieldOffset(0x58)] public uint ticket_cnt;
         [FieldOffset(0x5c)] public float tickets_cash;
-        [FieldOffset(0x60)][OmsiStructArrayPtr(typeof(OmsiPerbus),typeof(OmsiPerbusInternal))] public int perbus;
+        [FieldOffset(0x60)][OmsiStructArrayPtr(typeof(OmsiPerbus),typeof(OmsiPerbusInternal), true)] public int perbus;
     }
     public struct OmsiTTLogDetailed
     {
@@ -1368,7 +1366,7 @@ namespace OmsiHook
     }
     public struct OmsiTTLogDetailedInternal
     {
-        [OmsiStrPtr(raw:true)] public int busstop_name;
+        [OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int busstop_name;
         public int eta;
         public int etd;
         public int ata;
@@ -1418,18 +1416,19 @@ namespace OmsiHook
         public int chronon_origin;
         public string[] chronos_bad;
     }
+    [StructLayout(LayoutKind.Explicit, Size = 0x28)]
     internal struct OmsiTTTrackEntryInternal
     {
-        public uint idCode;
-        public int pathIndexOnObject;
-        [OmsiStructPtr(typeof(OmsiPathID))] public int pathIndex;
-        public float relDist;
-        public float dist;
-        public bool valid;
-        public byte pathOrderCheck;
-        [OmsiStructArrayPtr(typeof(int), raw: true)] public int fstrn_allowed;
-        public int chronon_origin;
-        [OmsiStrArrayPtr(raw: true)] public int chronos_bad;
+        [FieldOffset(0x0)] public uint idCode;
+        [FieldOffset(0x4)] public int pathIndexOnObject;
+        [FieldOffset(0x8)] public OmsiPathID pathIndex;
+        [FieldOffset(0x10)] public float relDist;
+        [FieldOffset(0x14)] public float dist;
+        [FieldOffset(0x18)] public bool valid;
+        [FieldOffset(0x19)] public byte pathOrderCheck;
+        [FieldOffset(0x1c)] [OmsiStructArrayPtr(typeof(int), raw: true)] public int fstrn_allowed;
+        [FieldOffset(0x20)] public int chronon_origin;
+        [FieldOffset(0x24)] [OmsiStrArrayPtr(raw: true)] public int chronos_bad;
     }
 
     public struct OmsiTTTrack
@@ -1476,8 +1475,8 @@ namespace OmsiHook
     }
     internal struct OmsiTTBusstopInternal
     {
-        [OmsiStrPtr(wide: true, raw: true)] public int name;
-        [OmsiStrPtr(wide: true, raw: true)] public int name_zusatz; // Supliment / Addition
+        [OmsiStrPtr(StrPtrType.RawDelphiString)] public int name;
+        [OmsiStrPtr(StrPtrType.RawDelphiString)] public int name_zusatz; // Supliment / Addition
         public int kachel;
         public uint IDCode_formal;
         public uint IDCode_real;
@@ -1563,8 +1562,8 @@ namespace OmsiHook
     }
     internal struct OmsiTTBusstopListEntryChronoRenameInternal
     {
-        [OmsiStrPtr] public int name;
-        [OmsiStrPtr] public int name_zustatz; // Supliment / Addition
+        [OmsiStrPtr(StrPtrType.RawDelphiString)] public int name;
+        [OmsiStrPtr(StrPtrType.RawDelphiString)] public int name_zustatz; // Supliment / Addition
         public float aussteiger; // Dropouts?
         public int chrono_origin;
     }
@@ -1591,16 +1590,16 @@ namespace OmsiHook
     }
     internal struct OmsiTTBusstopListEntryInternal
     {
-        [OmsiStrPtr] public int name_zustatz; // Supliment / Addition
-        [OmsiStrPtr] public int name;
+        [OmsiStrPtr(StrPtrType.RawDelphiString)] public int name_zustatz; // Supliment / Addition
+        [OmsiStrPtr(StrPtrType.RawDelphiString)] public int name;
         public int kachel;
         public uint IDCode;
         public uint parent_IDCode;
         public float preset_aussteiger; // Dropouts?
-        [OmsiStrArrayPtr] public int chronos_bad;
+        [OmsiStrArrayPtr(StrPtrType.RawDelphiString)] public int chronos_bad;
         public int index;
-        [OmsiStructArrayPtr(typeof(int))] public int stnlinks_starting;
-        [OmsiStructArrayPtr(typeof(int))] public int stnlinks_ending;
+        [OmsiStructArrayPtr(typeof(int), raw: true)] public int stnlinks_starting;
+        [OmsiStructArrayPtr(typeof(int), raw: true)] public int stnlinks_ending;
         public int chrono_origin;
         [OmsiStructArrayPtr(typeof(OmsiTTBusstopListEntryChronoRename), typeof(OmsiTTBusstopListEntryChronoRenameInternal))] public int chrono_rename;
     }
@@ -1630,14 +1629,14 @@ namespace OmsiHook
     }
     internal struct OmsiTTStnLinkInternal
     {
-        [OmsiStructArrayPtr(typeof(OmsiTTTrackEntry), typeof(OmsiTTTrackEntryInternal))] public int trackEntrys;
+        [OmsiStructArrayPtr(typeof(OmsiTTTrackEntry), typeof(OmsiTTTrackEntryInternal), raw: true)] public int trackEntrys;
         public float laenge; // Length
         public uint busstop_start_IDCode;
         public uint busstop_end_IDCode;
         public float x_path_Start;
         public float x_path_end;
-        [OmsiStructArrayPtr(typeof(int))] public int chronos_needed;
-        [OmsiStructArrayPtr(typeof(int))] public int chronos_bad;
+        [OmsiStructArrayPtr(typeof(int), raw: true)] public int chronos_needed;
+        [OmsiStructArrayPtr(typeof(int), raw: true)] public int chronos_bad;
         public int busstop_start;
         public int busstop_end;
         public int chrono_origin;
@@ -1902,7 +1901,7 @@ namespace OmsiHook
         [OmsiStrPtr(false, true, false)] public int String;
     }
     /// <summary>
-    /// Struct used for WStrings to floats - especially used in the OMSI OSC StringVariables
+    /// Struct used for WStrings to strings - especially used in the OMSI OSC StringVariables
     /// </summary>
     public struct OmsiWString
     {

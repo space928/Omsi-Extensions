@@ -145,7 +145,7 @@ namespace OmsiHook
         }
         public OmsiMouseButton Maus_Button
         {
-            get => Memory.ReadMemory<OmsiMouseButton>(Address + 0xaa);
+            get => (OmsiMouseButton)Memory.ReadMemory<byte>(Address + 0xaa);
             set => Memory.WriteMemory(Address + 0xaa, value);
         }
         public D3DVector MausLine3DPos
@@ -195,7 +195,7 @@ namespace OmsiHook
         }
         public OmsiMouseButton Maus_Last_Button
         {
-            get => Memory.ReadMemory<OmsiMouseButton>(Address + 0xec);
+            get => (OmsiMouseButton)Memory.ReadMemory<byte>(Address + 0xec);
             set => Memory.WriteMemory(Address + 0xec, value);
         }
         public bool Maus_Last_Clicked
@@ -267,7 +267,7 @@ namespace OmsiHook
         }
         public OmsiPathRuleIdents Path_ActiveRule
         {
-            get => Memory.ReadMemory<OmsiPathRuleIdents>(Address + 0x128);
+            get => (OmsiPathRuleIdents)Memory.ReadMemory<byte>(Address + 0x128);
             set => Memory.WriteMemory(Address + 0x128, value);
         }
         public float Path_ActiveRuleValue

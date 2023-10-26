@@ -4,12 +4,12 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace OmsiHookRPCPlugin
 {
-    public static class OmsiHookRPCMethods
+    internal static class OmsiHookRPCMethods
     {
         public const string PIPE_NAME = @"OmsiHookRPCPipe";
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public enum RemoteMethod : int
+        internal enum RemoteMethod : int
         {
             TProgManMakeVehicle,
             TTempRVListCreate,
@@ -19,5 +19,14 @@ namespace OmsiHookRPCPlugin
             HookD3D,
             CreateTexture
         }
+
+        internal static readonly ReadOnlyDictionary<RemoteMethod, int> RemoteMethodsArgsSizes = new(new Dictionary<RemoteMethod, int>()
+        {
+            { RemoteMethod.TProgManMakeVehicle,         61 },
+            { RemoteMethod.TTempRVListCreate,           8 },
+            { RemoteMethod.TProgManPlaceRandomBus,      35 },
+            { RemoteMethod.GetMem,                      4 },
+            { RemoteMethod.FreeMem,                     4 },
+        });
     }
 }

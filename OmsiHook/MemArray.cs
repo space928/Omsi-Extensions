@@ -36,12 +36,15 @@ namespace OmsiHook
 
         internal MemArray(Memory memory, int address, bool cached = true) : base(memory, address, cached) { }
 
-        /// <summary>
-        /// Forces the cached contents of the MemArray to resynchronise with the hooked application.
-        /// </summary>
-        public override void UpdateFromHook()
+        public override void UpdateFromHook(int index = -1)
         {
-            arrayCache = Memory.MarshalStructs<Struct, InternalStruct>(Memory.ReadMemoryStructArray<InternalStruct>(Address));
+            if (cached)
+            {
+                if (index < 0)
+                    arrayCache = Memory.MarshalStructs<Struct, InternalStruct>(Memory.ReadMemoryStructArray<InternalStruct>(Address));
+                else
+                    arrayCache[index] = Memory.MarshalStruct<Struct, InternalStruct>(Memory.ReadMemoryArrayItem<InternalStruct>(Address, index));
+            }
         }
 
         public override Struct this[int index]
@@ -51,7 +54,8 @@ namespace OmsiHook
                     Memory.ReadMemoryArrayItemSafe<InternalStruct>(Address, index));
             set
             {
-                arrayCache[index] = value;
+                if (cached)
+                    arrayCache[index] = value;
                 Memory.WriteMemoryArrayItemSafe(Address, Memory.UnMarshalStruct<InternalStruct, Struct>(value), index);
             }
         }
@@ -105,7 +109,8 @@ namespace OmsiHook
         public override void Clear()
         {
             Memory.WriteMemory(Address, Memory.AllocateStructArray<InternalStruct>(0));
-            arrayCache = Array.Empty<Struct>();
+            if(cached)
+                arrayCache = Array.Empty<Struct>();
         }
 
         public override bool Remove(Struct item) => throw new NotImplementedException();
@@ -151,12 +156,15 @@ namespace OmsiHook
         public MemArray() : base() { }
         internal MemArray(Memory memory, int address, bool cached = true) : base(memory, address, cached) { }
 
-        /// <summary>
-        /// Forces the cached contents of the MemArray to resynchronise with the hooked application.
-        /// </summary>
-        public override void UpdateFromHook()
+        public override void UpdateFromHook(int index = -1)
         {
-            arrayCache = Memory.ReadMemoryStructArray<T>(Address);
+            if (cached)
+            {
+                if(index >= 0)
+                    arrayCache[index] = Memory.ReadMemoryArrayItem<T>(Address, index);
+                else
+                    arrayCache = Memory.ReadMemoryStructArray<T>(Address);
+            }
         }
 
         public override T this[int index] 
@@ -164,7 +172,8 @@ namespace OmsiHook
             get => cached ? arrayCache [index] : Memory.ReadMemoryArrayItemSafe<T>(Address, index);
             set
             {
-                arrayCache[index] = value;
+                if (cached)
+                    arrayCache[index] = value;
                 Memory.WriteMemoryArrayItemSafe(Address, value, index);
             }
         }
@@ -215,7 +224,110 @@ namespace OmsiHook
         public override void Clear()
         {
             Memory.WriteMemory(Address, Memory.AllocateStructArray<T>(0));
-            arrayCache = Array.Empty<T>();
+            if (cached)
+                arrayCache = Array.Empty<T>();
+        }
+
+        public override bool Remove(T item) => throw new NotImplementedException();
+
+        public override void Insert(int index, T item) => throw new NotImplementedException();
+
+        public override void RemoveAt(int index) => throw new NotImplementedException();
+
+        /// <summary>
+        /// Attemps to free the memory allocated to the array if it's no longer referenced by OMSI.
+        /// </summary>
+        /// <remarks>
+        /// For now this just clears the native array and removes all references so that hopefully the GC can clean it up.
+        /// </remarks>
+        public override void Dispose()
+        {
+            // TODO: Free the old array
+            //Memory.Free(Memory.ReadMemory<int>(Address));
+            // Remove references from current array. TODO: Does this work? Is this safe?
+            Memory.WriteMemory(Memory.ReadMemory<int>(Address) - 8, 0);
+            Memory.WriteMemory(Address, Memory.AllocateStructArray<T>(0, 0));
+
+            GC.SuppressFinalize(this);
+        }
+    }
+
+    /// <summary>
+    /// Wrapper for Arrays / Lists in OMSI's Memory.
+    /// </summary>
+    /// <remarks>
+    /// This is a heavyweight wrapper for native arrays that provides methods for reading and writing to arrays as well as 
+    /// helping with memory management. For fast, low-level access, use the methods in the <seealso cref="Memory"/> class. <para/>
+    /// For better performance in c# the contents of the wrapped array can be copied to managed memory when constructed
+    /// or whenever <seealso cref="UpdateFromHook"/> is called. <para/>
+    /// Cached arrays are generally faster when accessed or searched frequently by C#, but they are slower to update and 
+    /// the user is responsible for ensuring that they are synchronised with the native array it wraps.
+    /// </remarks>
+    /// <typeparam name="T">The type of struct to wrap.</typeparam>
+    public class MemArrayPtr<T> : MemArray<T> where T : unmanaged
+    {
+        public override T[] WrappedArray => cached ? arrayCache : Memory.ReadMemoryStructPtrArray<T>(Address);
+
+        public MemArrayPtr() : base() { }
+        internal MemArrayPtr(Memory memory, int address, bool cached = true) : base(memory, address, cached) { }
+
+        public override void UpdateFromHook(int index = -1)
+        {
+            if (cached)
+            {
+                if(index >= 0)
+                    arrayCache[index] = Memory.ReadMemoryArrayItem<T>(Address, index, true);
+                else
+                    arrayCache = Memory.ReadMemoryStructPtrArray<T>(Address);
+            }
+        }
+
+        public override T this[int index]
+        {
+            get => cached ? arrayCache[index] : Memory.ReadMemoryArrayItemSafe<T>(Address, index, true);
+            set
+            {
+                if (cached)
+                    arrayCache[index] = value;
+                Memory.WriteMemoryArrayItemSafe(Address, value, index, true);
+            }
+        }
+
+        public override void Add(T item)
+        {
+            int arr = Memory.ReadMemory<int>(Address);
+            int len = Memory.ReadMemory<int>(arr - 4);
+            int narr = Memory.AllocateStructArray<int>(++len);
+            int ndata = Memory.AllocateStruct(item);
+            Memory.WriteMemory(Address, narr);
+            if (cached)
+            {
+                // Copy native array
+                Memory.CopyMemory(arr, narr, (len - 1) * 4);
+
+                // Update cached array
+                Array.Resize(ref arrayCache, len);
+                arrayCache[len - 1] = item;
+            }
+            else
+            {
+                // Copy native array
+                Memory.CopyMemory(arr, narr, (len - 1) * 4);
+            }
+
+            // Add the new item to the native array
+            Memory.WriteMemoryArrayItem(Address, ndata, len - 1, false);
+        }
+
+        /// <summary>
+        /// Clears the native array but maintains the reference to prevent the GC from destroying it.
+        /// Note that this does not free or dereference the items pointed to by the array elements.
+        /// </summary>
+        public override void Clear()
+        {
+            Memory.WriteMemory(Address, Memory.AllocateStructArray<T>(0));
+            if (cached)
+                arrayCache = Array.Empty<T>();
         }
 
         public override bool Remove(T item) => throw new NotImplementedException();
@@ -260,8 +372,10 @@ namespace OmsiHook
         public override string this[int index] 
         { 
             get => cached ? arrayCache[index] : Memory.ReadMemoryArrayItemStringSafe(Address, index, wide); 
-            set {
-                arrayCache[index] = value;
+            set 
+            {
+                if (cached)
+                    arrayCache[index] = value;
                 Memory.WriteMemoryArrayItemSafe(Address, Memory.AllocateString(value), index);
             }
         }
@@ -287,9 +401,15 @@ namespace OmsiHook
             this.wide = wide;
         }
 
-        public override void UpdateFromHook()
+        public override void UpdateFromHook(int index = -1)
         {
-            arrayCache = Memory.ReadMemoryStringArray(Address, wide);
+            if (cached)
+            {
+                if(index >= 0)
+                    arrayCache[index] = Memory.ReadMemoryArrayItemString(Address, index, wide);
+                else
+                    arrayCache = Memory.ReadMemoryStringArray(Address, wide);
+            }
         }
 
         /// <summary>
@@ -336,7 +456,8 @@ namespace OmsiHook
         public override void Clear()
         {
             Memory.WriteMemory(Address, Memory.AllocateStructArray<int>(0));
-            arrayCache = Array.Empty<string>();
+            if (cached)
+                arrayCache = Array.Empty<string>();
         }
 
         public override bool Contains(string item) => WrappedArray.Contains(item);
@@ -394,14 +515,29 @@ namespace OmsiHook
         /// <returns></returns>
         public int this[string item] => indexDictionary[item];
 
-        public override void UpdateFromHook()
+        public override bool Cached { get => cached; }
+
+        public override void UpdateFromHook(int index = -1)
         {
-            base.UpdateFromHook();
-            indexDictionary.Clear();
-            for(int i = 0; i < Count; i++)
+            if (index >= 0)
             {
-                if(arrayCache[i] != null)
-                    indexDictionary.TryAdd(arrayCache[i], i);
+                string prevValue = arrayCache[index];
+                base.UpdateFromHook(index);
+                if (prevValue != arrayCache[index])
+                {
+                    indexDictionary.Remove(prevValue);
+                    indexDictionary.Add(arrayCache[index], index);
+                }
+            }
+            else
+            {
+                base.UpdateFromHook(index);
+                indexDictionary.Clear();
+                for (int i = 0; i < Count; i++)
+                {
+                    if (arrayCache[i] != null)
+                        indexDictionary.TryAdd(arrayCache[i], i);
+                }
             }
         }
 

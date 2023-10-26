@@ -11,7 +11,9 @@
       ],
       "dest": "api",
       "disableGitFeatures": true,
-      "disableDefaultFilter": false
+      "disableDefaultFilter": false,
+      "memberLayout": "samePage",
+      "enumSortOrder": "declaringOrder"
     }
   ],
   "build": {
@@ -21,12 +23,13 @@
       "_appFaviconPath": "images/favicon.ico",
       "_appLogoPath": "images/logo.svg",
       "_appFooter": "<strong>DocFX + OmsiHook = ♥</strong>",
-      "_copyrightFooter": "© Thomas/Adam Mathieson. All rights reserved.",
+      "_copyrightFooter": "© Thomas/Adam Mathieson 2023. All rights reserved.",
       "_enableSearch": true,
       "_disableSideFilter": false,
       "_enableNewTab": true,
       "_disableContribution": true,
-      "_disableBreadcrumb": false
+      "_disableBreadcrumb": false,
+      "_DocumentationVersion": "2.2.0"
     },
     "content": [
       {
