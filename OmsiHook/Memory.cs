@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace OmsiHook
@@ -23,12 +24,12 @@ namespace OmsiHook
         /// Buffer to read remote memory into. 4k should be large enough for any structs we encounter as they
         /// have to fit on the stack anyway.
         /// </summary>
-        private readonly byte[] readBuffer = new byte[4096];
+        private readonly ThreadLocal<byte[]> readBuffer = new(() => new byte[4096], true);
         /// <summary>
         /// Buffer to stage remote memory writes in. 4k should be large enough for any structs we encounter as
         /// they have to fit on the stack anyway.
         /// </summary>
-        private readonly byte[] writeBuffer = new byte[4096];
+        private readonly ThreadLocal<byte[]> writeBuffer = new(() => new byte[4096], false);
 
         /// <summary>
         /// Attempts to attach to a given process as a debugger.
@@ -76,9 +77,9 @@ namespace OmsiHook
         /// correct data type to avoid memory corruption</param>
         public void WriteMemory<T>(int address, T value) where T : unmanaged
         {
-            var size = StructureToByteArray(value, writeBuffer, 0);
+            var size = StructureToByteArray(value, writeBuffer.Value, 0);
 
-            Imports.WriteProcessMemory((int)omsiProcessHandle, address, writeBuffer, size, out _);
+            Imports.WriteProcessMemory((int)omsiProcessHandle, address, writeBuffer.Value, size, out _);
         }
 
         /// <summary>
@@ -118,9 +119,9 @@ namespace OmsiHook
         {
             byte[] buffer = new byte[length];
             if(!Imports.ReadProcessMemory((int)omsiProcessHandle, src, buffer, length, ref length))
-                throw new AccessViolationException($"Couldn't read {length} bytes of process memory @ {src:X}!");
+                throw new MemoryAccessException($"Couldn't read {length} bytes of process memory @ {src:X}!");
             if(!Imports.WriteProcessMemory((int)omsiProcessHandle, dst, buffer, length, out _))
-                throw new AccessViolationException($"Couldn't write {length} bytes to process memory @ {dst:X}!");
+                throw new MemoryAccessException($"Couldn't write {length} bytes to process memory @ {dst:X}!");
         }
 
         /// <summary>
@@ -379,21 +380,39 @@ namespace OmsiHook
         public T ReadMemory<T>(int address) where T : unmanaged
         {
             int byteSize = Marshal.SizeOf(typeof(T));
-            if (byteSize > readBuffer.Length)
+            if (byteSize > readBuffer.Value.Length)
                 throw new ArgumentException($"Couldn't read memory for object of type {typeof(T).Name} @ {address}; it wouldn't fit in the read buffer!");
             int bytesRead = -1;
 
-            if (!Imports.ReadProcessMemory((int)omsiProcessHandle, address, readBuffer, byteSize, ref bytesRead))
+            if (!Imports.ReadProcessMemory((int)omsiProcessHandle, address, readBuffer.Value, byteSize, ref bytesRead))
 #if DEBUG && SILENCE_ACCESS_VIOLATION
             {
                 Debug.WriteLine($"Couldn't read {byteSize} bytes of process memory @ {address:X}!\n{new System.Diagnostics.StackTrace(true)}");
                 return new T();
             }
 #else
-                throw new AccessViolationException($"Couldn't read {byteSize} bytes of process memory @ {address:X}!");
+                throw new MemoryAccessException($"Couldn't read {byteSize} bytes of process memory @ {address:X}!");
 #endif
 
-            return ByteArrayToStructure<T>(readBuffer);
+            return ByteArrayToStructure<T>(readBuffer.Value);
+        }
+
+        /// <summary>
+        /// Reads and constructs an OmsiObject from unmanaged memory.
+        /// </summary>
+        /// <typeparam name="T">The type of OmsiObject to construct</typeparam>
+        /// <param name="address">The address of the pointer to the OmsiObject</param>
+        /// <returns>A new OmsiObject.</returns>
+        public T ReadMemoryObject<T>(int address) where T : OmsiObject, new()
+        {
+            if (address == 0)
+                return null;
+            var addr = ReadMemory<int>(address);
+            if (addr == 0)
+                return null;
+            var obj = new T();
+            obj.InitObject(this, addr);
+            return obj;
         }
 
         /// <summary>
@@ -434,16 +453,18 @@ namespace OmsiHook
                 int strLen = ReadMemory<int>(i - 4);
                 if(wide)
                     strLen *= 2;
-                var bytes = ReadMemory(i, strLen, readBuffer);
+                var bytes = ReadMemory(i, strLen, readBuffer.Value);
                 sb.Append(wide ? Encoding.Unicode.GetString(bytes) : Encoding.ASCII.GetString(bytes));
             }
             else
             {
                 try
                 {
+                    // Cache the read buffer to save a few checks (that the compiler would probably have hoisted out anyway)
+                    var readBuff = readBuffer.Value;
                     while (true)
                     {
-                        var bytes = ReadMemory(i, wide ? 2 : 1, readBuffer);
+                        var bytes = ReadMemory(i, wide ? 2 : 1, readBuff);
                         if (bytes.Count == 0 || (wide ? (bytes[0] | bytes[1]) : bytes[0]) == 0)
                             break;
 
@@ -453,7 +474,7 @@ namespace OmsiHook
                             i++;
                     }
                 }
-                catch (AccessViolationException) { return null; }
+                catch (MemoryAccessException) { return null; }
             }
 
             return sb.ToString();
@@ -473,7 +494,7 @@ namespace OmsiHook
             if (size > buffer.Length)
                 throw new ArgumentException($"Couldn't read memory for object of type byte[] @ {offset}; it wouldn't fit in the read buffer (tried reading {size} bytes into {buffer.Length})!");
             if (!Imports.ReadProcessMemory((int)omsiProcessHandle, offset, buffer, size, ref bytesRead))
-                throw new AccessViolationException($"Couldn't read {size} bytes of process memory @ {offset:X}!");
+                throw new MemoryAccessException($"Couldn't read {size} bytes of process memory @ {offset:X}!");
 
             return new (buffer, 0, bytesRead);
         }
@@ -591,8 +612,15 @@ namespace OmsiHook
             T[] ret = new T[len];
             for (int i = 0; i < len; i++)
             {
+                var objAddr = ReadMemory<int>(arr + i * 4);
+                if (objAddr == 0)
+                {
+                    ret[i] = null;
+                    continue;
+                }
+
                 var n = new T();
-                n.InitObject(this, ReadMemory<int>(arr + i * 4));
+                n.InitObject(this, objAddr);
                 ret[i] = n;
             }
 
@@ -974,7 +1002,7 @@ namespace OmsiHook
                     throw new Exception("OmsiRemoteMethods are not initialised, remote memory allocator cannot be used!");
 #endif
 
-                addr = OmsiRemoteMethods.OmsiGetMem(bytes);
+                addr = (int)OmsiRemoteMethods.OmsiGetMem(bytes);
             }
 
             if (addr == 0)
@@ -1051,5 +1079,14 @@ namespace OmsiHook
             PROCESS_VM_READ = 0x0010,
             PROCESS_VM_WRITE = 0x0020,
         }
+    }
+
+    /// <summary>
+    /// Represents errors which occur when reading or writing to remote memory.
+    /// </summary>
+    public class MemoryAccessException : Exception
+    {
+        public MemoryAccessException() : base() { }
+        public MemoryAccessException(string message) : base(message) { }
     }
 }

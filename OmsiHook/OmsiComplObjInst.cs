@@ -123,9 +123,9 @@ namespace OmsiHook
         {
             get => Memory.ReadMemoryStringArray(Address + 0x4c);
         }*/
-        public OmsiScriptTexture[] ScriptTextures
+        public MemArray<OmsiScriptTextureInternal, OmsiScriptTexture> ScriptTextures
         {
-            get => Memory.MarshalStructs<OmsiScriptTexture, OmsiScriptTextureInternal>(Memory.ReadMemoryStructArray<OmsiScriptTextureInternal>(Address + 0x50));
+            get => new(Memory, Address + 0x50, true);//Memory.MarshalStructs<OmsiScriptTexture, OmsiScriptTextureInternal>(Memory.ReadMemoryStructArray<OmsiScriptTextureInternal>(Address + 0x50));
         }
         public OmsiScriptTexture[] UseScriptTextures
         {

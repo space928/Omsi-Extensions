@@ -27,6 +27,8 @@ namespace OmsiHookRPCPlugin
             { RemoteMethod.TProgManPlaceRandomBus,      35 },
             { RemoteMethod.GetMem,                      4 },
             { RemoteMethod.FreeMem,                     4 },
+            { RemoteMethod.HookD3D,                     0 },
+            { RemoteMethod.CreateTexture,               20 },
         });
     }
 }
