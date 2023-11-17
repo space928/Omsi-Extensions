@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.IO;
 using System.IO.Pipes;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,10 +16,15 @@ namespace OmsiHook
     /// </summary>
 	public static class OmsiRemoteMethods
 	{
-        private static NamedPipeClientStream pipe;
+        private static NamedPipeClientStream pipeRX;
+        private static NamedPipeClientStream pipeTX;
+        private static ConcurrentDictionary<int, TaskCompletionSource<int>> resultPromises;
+        private static Task resultReaderThread;
         private static Memory memory;
 
-        public static bool IsInitialised => pipe?.IsConnected ?? false;
+        private static readonly ThreadLocal<byte[]> asyncWriteBuff = new(() => new byte[256]);
+
+        public static bool IsInitialised => (pipeRX?.IsConnected ?? false) && (pipeTX?.IsConnected ?? false);
 
         // TODO: Okay maybe this shouldn't be static... Singleton?
         internal static async Task InitRemoteMethods(Memory omsiMemory, bool inifiniteTimeout = false)
@@ -24,21 +32,57 @@ namespace OmsiHook
             memory = omsiMemory;
 
 #if !OMSI_PLUGIN
-            pipe = new(".", OmsiHookRPCMethods.PIPE_NAME, PipeDirection.InOut);
+            resultPromises = new();
+
+            // We swap rx and tx here so that it makes semantic sense (since the tx of the client goes to the rx of the server)
+            pipeTX = new(".", OmsiHookRPCMethods.PIPE_NAME_RX, PipeDirection.Out);
+            pipeRX = new(".", OmsiHookRPCMethods.PIPE_NAME_TX, PipeDirection.In);
             //pipe.ReadMode = PipeTransmissionMode.Message;
             try
             {
-                if (inifiniteTimeout)
-                    await pipe.ConnectAsync();
-                else
-                    await pipe.ConnectAsync(20000);
+                await pipeTX.ConnectAsync(inifiniteTimeout ? Timeout.Infinite : 20000);
+                Console.WriteLine("pipeTX Connected!");
+                await pipeRX.ConnectAsync(inifiniteTimeout ? Timeout.Infinite : 20000);
+                Console.WriteLine("pipeRX Connected!");
             }
             catch(TimeoutException)
             {
-                pipe = null;
+                pipeRX = null;
+                pipeTX = null;
                 throw new TimeoutException("Couldn't manage to connect to OmsiHookRPCPlugin within 20 seconds! Check that it is loaded correctly.");
             }
+
+            resultReaderThread = new Task(ResultReaderTask);
+            resultReaderThread.Start();
 #endif
+        }
+
+        /// <summary>
+        /// Creates a new result promise and adds it to the promises dictionary.
+        /// </summary>
+        /// <returns>The hashcode of the new promise.</returns>
+        private static (int promiseHash, TaskCompletionSource<int> promise)CreateResultPromise()
+        {
+            TaskCompletionSource<int> resultPromise = new();
+            int resultHash;
+            do
+            {
+                resultHash = Random.Shared.Next();
+            } while (!resultPromises.TryAdd(resultHash, resultPromise));
+            return (resultHash, resultPromise);
+        }
+
+        private static void ResultReaderTask()
+        {
+            using BinaryReader reader = new(pipeRX);
+            while(pipeRX.IsConnected)
+            {
+                int promiseHash = reader.ReadInt32();
+                int value = reader.ReadInt32();
+
+                resultPromises.TryRemove(promiseHash, out var promise);
+                promise.SetResult(value);
+            }
         }
 
         [Obsolete]
@@ -46,7 +90,7 @@ namespace OmsiHook
         {
             int vehList = TTempRVListCreate(0x0074802C, 1);
             string path = @"Vehicles\GPM_MAN_LionsCity_M\MAN_A47.bus";
-            int mem = memory.AllocateString(path, false);
+            int mem = memory.AllocateString(path, false).Result;
 
             return TProgManMakeVehicle(memory.ReadMemory<int>(0x00862f28), vehList,
                 memory.ReadMemory<int>(0x008615A8), false, false,
@@ -77,9 +121,11 @@ namespace OmsiHook
 
             int argPos = 0;
             var method = OmsiHookRPCMethods.RemoteMethod.TProgManPlaceRandomBus;
-            Span<byte> writeBuffer = stackalloc byte[OmsiHookRPCMethods.RemoteMethodsArgsSizes[method]+4];
-            Span<byte> readBuffer = stackalloc byte[4];
+            Span<byte> writeBuffer = stackalloc byte[OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8];
+            //Span<byte> readBuffer = stackalloc byte[4];
+            (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
             BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)method);
+            BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], resultPromise);
             BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], aiType);
             BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], group);
             BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], 0);
@@ -91,12 +137,12 @@ namespace OmsiHook
             BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], aiType);
             BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], tour);
             BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], line);
-            lock (pipe)
-            {
-                pipe.Write(writeBuffer);
-                pipe.Read(readBuffer);
-            }
-            return BitConverter.ToInt32(readBuffer);
+            lock (pipeTX)
+                pipeTX.Write(writeBuffer);
+            return promise.Task.Result;
+            //lock (pipeRX)
+            //    pipeRX.Read(readBuffer);
+            //return BitConverter.ToInt32(readBuffer);
 #endif
         }
 
@@ -107,63 +153,38 @@ namespace OmsiHook
         /// <param name="length">How many bytes to allocate</param>
         /// <returns>A pointer to the newly allocated memory (note that you made need to
         /// <c>VirtualProtect</c> it to access it).</returns>
-        public static uint OmsiGetMem(int length)
+        public static async Task<uint> OmsiGetMem(int length)
         {
 #if OMSI_PLUGIN
-            return GetMem(length);
+            return (uint)GetMem(length);
 #else
             if(!IsInitialised) 
                 return 0;
 
             int argPos = 0;
             var method = OmsiHookRPCMethods.RemoteMethod.GetMem;
-            Span<byte> writeBuffer = stackalloc byte[OmsiHookRPCMethods.RemoteMethodsArgsSizes[method]+4];
-            Span<byte> readBuffer = stackalloc byte[4];
-            BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)method);
-            BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], length);
-            lock (pipe)
-            {
-                pipe.Write(writeBuffer);
-                pipe.Read(readBuffer);
-            }
-            return BitConverter.ToUInt32(readBuffer);
-#endif
-        }
-
-        private static readonly ThreadLocal<byte[]> asyncReadBuff = new (()=>new byte[16]);
-        private static readonly ThreadLocal<byte[]> asyncWriteBuff = new (()=>new byte[256]);
-
-        /// <summary>
-        /// <inheritdoc cref="OmsiGetMem(int)"/>
-        /// </summary>
-        /// <param name="length"><inheritdoc cref="OmsiGetMem(int)"/></param>
-        /// <returns><inheritdoc cref="OmsiGetMem(int)"/></returns>
-        public static async ValueTask<uint> OmsiGetMemAsync(int length)
-        {
-#if OMSI_PLUGIN
-            return GetMem(length);
-#else
-            if (!IsInitialised)
-                return 0;
-
-            int argPos = 0;
-            var method = OmsiHookRPCMethods.RemoteMethod.GetMem;
-            var readBuffer = asyncReadBuff.Value;
-            var writeBuffer = asyncWriteBuff.Value;
+            int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
+            // This should be thread safe as the asyncWriteBuff is thread local
+            byte[] writeBuffer = asyncWriteBuff.Value;
+            (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
             BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos)..], (int)method);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], resultPromise);
             BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], length);
-            await pipe.WriteAsync(writeBuffer.AsMemory(0, OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 4));
-            await pipe.ReadAsync(readBuffer.AsMemory(0, 4));
-            return BitConverter.ToUInt32(readBuffer);
+            lock (pipeTX)
+                pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+            return (uint)await promise.Task;
+            /*lock (pipeRX)
+                pipeRX.Read(readBuffer);
+            return BitConverter.ToUInt32(readBuffer);*/
 #endif
         }
 
         /// <summary>
-        /// Frees memory in Omsi using it's own memory allocator.
+        /// Frees memory in Omsi using it's own memory allocator. This method might return before the memory has been freed.
         /// EXPERIMENTAL: A lot of messy stuff has to work for this to not crash.
         /// </summary>
         /// <param name="addr">The pointer to the object to deallocate</param>
-        public static void OmsiFreeMem(int addr)
+        public static void OmsiFreeMemAsync(int addr)
         {
 #if OMSI_PLUGIN
             FreeMem(addr);
@@ -173,15 +194,14 @@ namespace OmsiHook
 
             int argPos = 0;
             var method = OmsiHookRPCMethods.RemoteMethod.FreeMem;
-            Span<byte> writeBuffer = stackalloc byte[OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 4];
-            Span<byte> readBuffer = stackalloc byte[4];
+            Span<byte> writeBuffer = stackalloc byte[OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8];
+            (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
             BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)method);
+            BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], resultPromise);
             BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], addr);
-            lock (pipe) 
-            { 
-                pipe.Write(writeBuffer);
-                pipe.Read(readBuffer);
-            }
+            lock (pipeTX)
+                pipeTX.Write(writeBuffer);
+            //promise.AsTask().Wait();
 #endif
         }
 
@@ -197,21 +217,20 @@ namespace OmsiHook
                 throw new NotInitialisedException("OmsiHook RPC plugin is not connected! Did you make sure to call OmsiRemoteMethods.InitRemoteMethods() before this call?");
 
             int argPos = 0;
-            Span<byte> writeBuffer = stackalloc byte[4];
-            Span<byte> readBuffer = stackalloc byte[4];
+            Span<byte> writeBuffer = stackalloc byte[8];
+            (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
             BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)OmsiHookRPCMethods.RemoteMethod.HookD3D);
-            lock (pipe)
-            {
-                pipe.Write(writeBuffer);
-                return pipe.Read(readBuffer) != 0;
-            }
+            BitConverter.TryWriteBytes(writeBuffer[(argPos+=4)..], resultPromise);
+            lock (pipeTX)
+                pipeTX.Write(writeBuffer);
+            return promise.Task.Result != 0;
 #endif
         }
 
         /// <summary>
         /// Attempts to create a new d3d texture which can be shared with an external D3D context.
         /// </summary>
-        public static bool OmsiCreateTexture(uint width, uint height, DXGI_FORMAT format, out uint ppTexture, out uint pSharedHandle)
+        public static async Task<(uint hresult, uint ppTexture, uint pSharedHandle)> OmsiCreateTextureAsync(uint width, uint height, DXGI_FORMAT format)
         {
 #if OMSI_PLUGIN
             return CreateTexture(width, height, (uint)format, ppTexture, pSharedHandle) != 0;
@@ -220,23 +239,27 @@ namespace OmsiHook
                 throw new NotInitialisedException("OmsiHook RPC plugin is not connected! Did you make sure to call OmsiRemoteMethods.InitRemoteMethods() before this call?");
 
             // Allocate the pointers
-            ppTexture = OmsiGetMem(8);
-            pSharedHandle = ppTexture + 4;
+            uint ppTexture = OmsiGetMem(8).Result;
+            uint pSharedHandle = ppTexture + 4;
+            memory.WriteMemory(ppTexture, 0);
+            memory.WriteMemory(pSharedHandle, 0);
 
             int argPos = 0;
-            Span<byte> writeBuffer = stackalloc byte[20];
-            Span<byte> readBuffer = stackalloc byte[4];
-            BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)OmsiHookRPCMethods.RemoteMethod.HookD3D);
-            BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], width);
-            BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], height);
-            BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], (uint)format); 
-            BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], ppTexture);
-            BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], pSharedHandle);
-            lock (pipe)
-            {
-                pipe.Write(writeBuffer);
-                return pipe.Read(readBuffer) != 0;
-            }
+            var method = OmsiHookRPCMethods.RemoteMethod.CreateTexture;
+            // This should be thread safe as the asyncWriteBuff is thread local
+            int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
+            byte[] writeBuffer = asyncWriteBuff.Value;
+            (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos)..], (int)method);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], resultPromise);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], width);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], height);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], (uint)format); 
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], ppTexture);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], pSharedHandle);
+            lock (pipeTX)
+                pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+            return ((uint)await promise.Task, ppTexture, pSharedHandle);
 #endif
         }
 
@@ -261,7 +284,7 @@ namespace OmsiHook
         [DllImport("OmsiHookInvoker.dll")]
         internal static extern int CreateTexture(uint Width, uint Height, uint Format, uint ppTexture, uint pSharedHandle);
 
-        public enum DXGI_FORMAT :uint
+        public enum DXGI_FORMAT : uint
         {
             R16G16B16A16_FLOAT = 10,
             R10G10B10A2_UNORM = 24,

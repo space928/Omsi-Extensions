@@ -84,7 +84,7 @@ namespace OmsiHook
         {
             int arr = Memory.ReadMemory<int>(Address);
             int len = Memory.ReadMemory<int>(arr - 4);
-            int narr = Memory.AllocateStructArray<InternalStruct>(++len);
+            int narr = Memory.AllocateStructArray<InternalStruct>(++len).Result;
             Memory.WriteMemory(Address, narr);
             if (cached)
             {
@@ -108,7 +108,7 @@ namespace OmsiHook
 
         public override void Clear()
         {
-            Memory.WriteMemory(Address, Memory.AllocateStructArray<InternalStruct>(0));
+            base.Clear();
             if(cached)
                 arrayCache = Array.Empty<Struct>();
         }
@@ -124,17 +124,6 @@ namespace OmsiHook
         public override bool Contains(Struct item) => WrappedArray.Contains(item);
 
         public override void CopyTo(Struct[] array, int arrayIndex) => WrappedArray.CopyTo(array, arrayIndex);
-
-        public override void Dispose()
-        {
-            // TODO: Free the old array
-            //Memory.Free(Memory.ReadMemory<int>(Address));
-            // Remove references from current array. TODO: Does this work? Is this safe?
-            Memory.WriteMemory(Memory.ReadMemory<int>(Address) - 8, 0);
-            Memory.WriteMemory(Address, Memory.AllocateStructArray<InternalStruct>(0, 0));
-
-            GC.SuppressFinalize(this);
-        }
     }
 
     /// <summary>
@@ -196,7 +185,7 @@ namespace OmsiHook
         {
             int arr = Memory.ReadMemory<int>(Address);
             int len = Memory.ReadMemory<int>(arr - 4);
-            int narr = Memory.AllocateStructArray<T>(++len);
+            int narr = Memory.AllocateStructArray<T>(++len).Result;
             Memory.WriteMemory(Address, narr);
             if(cached)
             {
@@ -223,7 +212,7 @@ namespace OmsiHook
         /// </summary>
         public override void Clear()
         {
-            Memory.WriteMemory(Address, Memory.AllocateStructArray<T>(0));
+            base.Clear();
             if (cached)
                 arrayCache = Array.Empty<T>();
         }
@@ -233,23 +222,6 @@ namespace OmsiHook
         public override void Insert(int index, T item) => throw new NotImplementedException();
 
         public override void RemoveAt(int index) => throw new NotImplementedException();
-
-        /// <summary>
-        /// Attemps to free the memory allocated to the array if it's no longer referenced by OMSI.
-        /// </summary>
-        /// <remarks>
-        /// For now this just clears the native array and removes all references so that hopefully the GC can clean it up.
-        /// </remarks>
-        public override void Dispose()
-        {
-            // TODO: Free the old array
-            //Memory.Free(Memory.ReadMemory<int>(Address));
-            // Remove references from current array. TODO: Does this work? Is this safe?
-            Memory.WriteMemory(Memory.ReadMemory<int>(Address) - 8, 0);
-            Memory.WriteMemory(Address, Memory.AllocateStructArray<T>(0, 0));
-
-            GC.SuppressFinalize(this);
-        }
     }
 
     /// <summary>
@@ -297,8 +269,9 @@ namespace OmsiHook
         {
             int arr = Memory.ReadMemory<int>(Address);
             int len = Memory.ReadMemory<int>(arr - 4);
-            int narr = Memory.AllocateStructArray<int>(++len);
-            int ndata = Memory.AllocateStruct(item);
+            var allocTask = Task.WhenAll(Memory.AllocateStructArray<int>(++len), Memory.AllocateStruct(item));
+            int narr = allocTask.Result[0];
+            int ndata = allocTask.Result[1];
             Memory.WriteMemory(Address, narr);
             if (cached)
             {
@@ -325,7 +298,7 @@ namespace OmsiHook
         /// </summary>
         public override void Clear()
         {
-            Memory.WriteMemory(Address, Memory.AllocateStructArray<T>(0));
+            base.Clear();
             if (cached)
                 arrayCache = Array.Empty<T>();
         }
@@ -335,23 +308,6 @@ namespace OmsiHook
         public override void Insert(int index, T item) => throw new NotImplementedException();
 
         public override void RemoveAt(int index) => throw new NotImplementedException();
-
-        /// <summary>
-        /// Attemps to free the memory allocated to the array if it's no longer referenced by OMSI.
-        /// </summary>
-        /// <remarks>
-        /// For now this just clears the native array and removes all references so that hopefully the GC can clean it up.
-        /// </remarks>
-        public override void Dispose()
-        {
-            // TODO: Free the old array
-            //Memory.Free(Memory.ReadMemory<int>(Address));
-            // Remove references from current array. TODO: Does this work? Is this safe?
-            Memory.WriteMemory(Memory.ReadMemory<int>(Address) - 8, 0);
-            Memory.WriteMemory(Address, Memory.AllocateStructArray<T>(0, 0));
-
-            GC.SuppressFinalize(this);
-        }
     }
 
     /// <summary>
@@ -376,7 +332,7 @@ namespace OmsiHook
             {
                 if (cached)
                     arrayCache[index] = value;
-                Memory.WriteMemoryArrayItemSafe(Address, Memory.AllocateString(value), index);
+                Memory.WriteMemoryArrayItemSafe(Address, Memory.AllocateString(value).Result, index);
             }
         }
 
@@ -431,13 +387,19 @@ namespace OmsiHook
         {
             int arr = Memory.ReadMemory<int>(Address);
             int len = Memory.ReadMemory<int>(arr - 4);
-            int narr = Memory.AllocateStructArray<int>(++len);
+            int narr = Memory.AllocateStructArray<int>(++len).Result;
             Memory.WriteMemory(Address, narr);
             if (cached)
             {
-                // Copy native array from cache
+                // Copy native array from cache, this will never be faster...
+                /*Span<int> allocatedStrings = stackalloc int[Math.Min(len, arrayCache.Length)];
+                Task.WhenAll();
+                for (int i = 0; i < allocatedStrings.Length; i++)
+                    allocatedStrings[i] = Memory.AllocateString(arrayCache[i]);
                 for (int i = 0; i < Math.Min(len, arrayCache.Length); i++)
-                    Memory.WriteMemoryArrayItem(narr, Memory.AllocateString(arrayCache[i]), i);
+                    Memory.WriteMemoryArrayItem(narr, allocatedStrings[i], i);*/
+                // Copy native array
+                Memory.CopyMemory(arr, narr, (len - 1) * Marshal.SizeOf<int>());
 
                 // Update cached array
                 Array.Resize(ref arrayCache, len);
@@ -450,12 +412,12 @@ namespace OmsiHook
             }
 
             // Add the new item to the native array
-            Memory.WriteMemoryArrayItem(Address, Memory.AllocateString(item), len - 1);
+            Memory.WriteMemoryArrayItem(Address, Memory.AllocateString(item).Result, len - 1);
         }
 
         public override void Clear()
         {
-            Memory.WriteMemory(Address, Memory.AllocateStructArray<int>(0));
+            base.Clear();
             if (cached)
                 arrayCache = Array.Empty<string>();
         }
@@ -474,17 +436,6 @@ namespace OmsiHook
         public override bool Remove(string item) => throw new NotImplementedException();
 
         public override void RemoveAt(int index) => throw new NotImplementedException();
-
-        public override void Dispose()
-        {
-            // TODO: Free the old array
-            //Memory.Free(Memory.ReadMemory<int>(Address));
-            // Remove references from current array. TODO: Does this work? Is this safe?
-            Memory.WriteMemory(Memory.ReadMemory<int>(Address) - 8, 0);
-            Memory.WriteMemory(Address, Memory.AllocateStructArray<int>(0, 0));
-
-            GC.SuppressFinalize(this);
-        }
     }
 
     /// <summary>

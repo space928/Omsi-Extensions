@@ -66,7 +66,7 @@ namespace OmsiExtensionsCLI
     public class DXTests
     {
         private readonly ManualResetEventSlim d3dGotContext = new(false);
-        private readonly OmsiHook.OmsiHook omsi;
+        private OmsiHook.OmsiHook omsi;
         private bool ready = false;
         private SharpDX.Direct3D11.Device device;
         private const int texWidth = 256;
@@ -81,7 +81,9 @@ namespace OmsiExtensionsCLI
 
         public void Init(OmsiHook.OmsiHook omsi)
         {
+            this.omsi = omsi;
             omsi.OnOmsiGotD3DContext += Omsi_OnOmsiGotD3DContext;
+            omsi.OnMapLoaded += Omsi_OnMapLoaded;
         }
 
         private void Hook()
@@ -101,8 +103,9 @@ namespace OmsiExtensionsCLI
             if(!ready)
                 Hook();
 
-            if (!OmsiRemoteMethods.OmsiCreateTexture(texWidth, texHeight, OmsiRemoteMethods.DXGI_FORMAT.R8G8B8A8_UNORM, out uint texturePtr, out uint textureHandle))
-                throw new Exception("Couldn't create D3D texture!");
+            (uint hresult, uint texturePtr, uint textureHandle) = OmsiRemoteMethods.OmsiCreateTextureAsync(texWidth, texHeight, OmsiRemoteMethods.DXGI_FORMAT.R8G8B8A8_UNORM).Result;
+            if (hresult != 0)
+                throw new Exception("Couldn't create D3D texture! Result: " + new SharpDX.Result(hresult));
 
             var scriptTexes = omsi.Globals.PlayerVehicle.ComplObjInst.ScriptTextures;
             for (int i = 0; i < scriptTexes.Count; i++)
@@ -141,6 +144,11 @@ namespace OmsiExtensionsCLI
         }
 
         private void Omsi_OnOmsiGotD3DContext(object sender, EventArgs e)
+        {
+            // d3dGotContext.Set();
+        }
+
+        private void Omsi_OnMapLoaded(object sender, bool e)
         {
             d3dGotContext.Set();
         }

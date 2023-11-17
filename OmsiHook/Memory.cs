@@ -15,7 +15,11 @@ namespace OmsiHook
     /// <summary>
     /// Memory management class for accessing and marshaling OMSI's memory
     /// </summary>
+#if DEBUG
+    public class Memory
+#else
     internal class Memory
+#endif
     {
         private Process omsiProcess;
         private IntPtr omsiProcessHandle;
@@ -47,12 +51,11 @@ namespace OmsiHook
                 Process.EnterDebugMode();
             }
 #if DEBUG
-            catch (Exception e)
+            catch (Exception)
             {
 
                 Console.WriteLine("The plugin couldn't grant itself debug privileges, it may fail to attach to the game.");
-                Console.WriteLine(e);
-
+                //Console.WriteLine(e);
             }
 #else
             catch { }
@@ -80,6 +83,14 @@ namespace OmsiHook
             var size = StructureToByteArray(value, writeBuffer.Value, 0);
 
             Imports.WriteProcessMemory((int)omsiProcessHandle, address, writeBuffer.Value, size, out _);
+        }
+
+        /// <inheritdoc cref="WriteMemory{T}(int, T)"/>
+        public void WriteMemory<T>(uint address, T value) where T : unmanaged
+        {
+            var size = StructureToByteArray(value, writeBuffer.Value, 0);
+
+            Imports.WriteProcessMemory((int)omsiProcessHandle, unchecked((int)address), writeBuffer.Value, size, out _);
         }
 
         /// <summary>
@@ -121,6 +132,16 @@ namespace OmsiHook
             if(!Imports.ReadProcessMemory((int)omsiProcessHandle, src, buffer, length, ref length))
                 throw new MemoryAccessException($"Couldn't read {length} bytes of process memory @ {src:X}!");
             if(!Imports.WriteProcessMemory((int)omsiProcessHandle, dst, buffer, length, out _))
+                throw new MemoryAccessException($"Couldn't write {length} bytes to process memory @ {dst:X}!");
+        }
+
+        /// <inheritdoc cref="CopyMemory(int, int, int)"/>
+        internal void CopyMemory(uint src, uint dst, int length)
+        {
+            byte[] buffer = new byte[length];
+            if (!Imports.ReadProcessMemory((int)omsiProcessHandle, unchecked((int)src), buffer, length, ref length))
+                throw new MemoryAccessException($"Couldn't read {length} bytes of process memory @ {src:X}!");
+            if (!Imports.WriteProcessMemory((int)omsiProcessHandle, unchecked((int)dst), buffer, length, out _))
                 throw new MemoryAccessException($"Couldn't write {length} bytes to process memory @ {dst:X}!");
         }
 
@@ -188,9 +209,12 @@ namespace OmsiHook
         /// <param name="raw">If <see langword="true"/>, treat the <c>address</c> as the pointer to the first element 
         /// of the array instead of as a pointer to the array.</param>
         /// <returns>The pointer to the first item of the newly allocated array</returns>
-        public int AllocateStructArray<T>(T[] data, int references = 1, bool raw = false) where T : unmanaged
+        public async Task<int> AllocateAndInitStructArray<T>(T[] data, int references = 1, bool raw = false) where T : unmanaged
         {
-            int ptr = AllocateStructArray<T>(data.Length, references, raw);
+            if (data == null)
+                return 0;
+
+            int ptr = await AllocateStructArray<T>(data.Length, references, raw);
             WriteMemory(ptr, data);
 
             return ptr;
@@ -211,7 +235,7 @@ namespace OmsiHook
         /// <param name="raw">If <see langword="true"/>, treat the <c>address</c> as the pointer to the first element 
         /// of the array instead of as a pointer to the array.</param>
         /// <returns>The pointer to the first item of the newly allocated array</returns>
-        public int AllocateStructArray<T>(int capacity, int references = 1, bool raw = false) where T : unmanaged
+        public async Task<int> AllocateStructArray<T>(int capacity, int references = 1, bool raw = false) where T : unmanaged
         {
             /*
              * DynArray struct layout:
@@ -234,7 +258,7 @@ namespace OmsiHook
 
             int itemSize = Marshal.SizeOf<T>();
             //var ptr = Marshal.AllocCoTaskMem(capacity * itemSize + 8).ToInt32();
-            int ptr = AllocRemoteMemory(capacity * itemSize + 8);
+            int ptr = await AllocRemoteMemory(capacity * itemSize + 8);
             // Write the array metadata
             WriteMemory(ptr, references);
             WriteMemory(ptr + 0x4, capacity);
@@ -257,7 +281,7 @@ namespace OmsiHook
         /// Used when overwriting existing arrays to prevent the GC from clearing a array referenced 
         /// by multiple objects when one is destroyed.</param>
         /// <returns>The pointer to the start of the newly allocated struct</returns>
-        public int AllocateStruct<T>(T value, int references = 1) where T : unmanaged
+        public async Task<int> AllocateStruct<T>(T value, int references = 1) where T : unmanaged
         {
             /*
              * Managed struct layout:
@@ -270,7 +294,7 @@ namespace OmsiHook
              */
 
             int structSize = Marshal.SizeOf<T>();
-            int ptr = AllocRemoteMemory(structSize + 4);
+            int ptr = await AllocRemoteMemory(structSize + 4);
             // Write the array metadata
             WriteMemory(ptr, references);
             WriteMemory(ptr + 0x4, value);
@@ -292,7 +316,7 @@ namespace OmsiHook
         /// <param name="raw">Treat the address as a pointer to the first character 
         /// (<c>char *</c>) rather than a pointer to a pointer.</param>
         /// <returns>The pointer to the newly allocated string</returns>
-        public int AllocateString(string value, bool wide = false, int references = 1, bool raw = false)
+        public async Task<int> AllocateString(string value, bool wide = false, int references = 1, bool raw = false)
         {
             /*
              * AnsiString/UnicodeString struct layout:
@@ -323,7 +347,7 @@ namespace OmsiHook
             else
                 buffer = Encoding.ASCII.GetBytes(value);
 
-            var ptr = AllocRemoteMemory(buffer.Length + 13);
+            var ptr = await AllocRemoteMemory(buffer.Length + 13);
             int strStart = ptr+12;
             WriteMemory(strStart, buffer);
             //Marshal.Copy(buffer, 0, strStart, buffer.Length);
@@ -354,23 +378,22 @@ namespace OmsiHook
             if(copyReferences)
                 refs = ReadMemory<int>(ReadMemory<int>(address) - 0x8);
 
-            WriteMemory(address, AllocateString(value, wide, refs));
+            WriteMemory(address, AllocateString(value, wide, refs).Result);
             //Imports.WriteProcessMemory((int)omsiProcessHandle, address, buffer, buffer.Length, out _);
+        }
+
+        /// <inheritdoc cref="WriteMemory"/>
+        public async Task WriteMemoryAsync(int address, string value, bool wide = false, bool copyReferences = true)
+        {
+            int refs = 1;
+            if (copyReferences)
+                refs = ReadMemory<int>(ReadMemory<int>(address) - 0x8);
+
+            WriteMemory(address, await AllocateString(value, wide, refs));
         }
         #endregion
 
         #region Memory Reading Methods
-        /// <summary>
-        /// Reads a struct/value from unmanaged memory and returns it.
-        /// </summary>
-        /// <typeparam name="T">The type of the value/struct to read</typeparam>
-        /// <param name="address">The address to read from</param>
-        /// <returns>The value of the struct/value at the given address.</returns>
-        public T ReadMemory<T>(IntPtr address) where T : unmanaged
-        {
-            return ReadMemory<T>(address.ToInt32());
-        }
-
         /// <summary>
         /// Reads a struct/value from unmanaged memory and returns it.
         /// </summary>
@@ -395,6 +418,18 @@ namespace OmsiHook
 #endif
 
             return ByteArrayToStructure<T>(readBuffer.Value);
+        }
+
+        /// <inheritdoc cref="ReadMemory{T}(int)"/>
+        public T ReadMemory<T>(IntPtr address) where T : unmanaged
+        {
+            return ReadMemory<T>(address.ToInt32());
+        }
+
+        /// <inheritdoc cref="ReadMemory{T}(int)"/>
+        public T ReadMemory<T>(uint address) where T : unmanaged
+        {
+            return ReadMemory<T>(unchecked((int)address));
         }
 
         /// <summary>
@@ -876,6 +911,7 @@ namespace OmsiHook
             where OutStruct : unmanaged
             where InStruct : struct
         {
+            // TODO: This whole method could be made async to better take advantage of asynchrounous memory allocation
             object ret = new OutStruct();
             foreach (var field in ret.GetType().GetFields())
             {
@@ -896,7 +932,7 @@ namespace OmsiHook
                             break;
 
                         case OmsiStrPtrAttribute a:
-                            val = AllocateString((string)val, a.Wide);
+                            val = AllocateString((string)val, a.Wide).Result;
                             break;
 
                         case OmsiPtrAttribute:
@@ -910,9 +946,9 @@ namespace OmsiHook
                                 .MakeGenericMethod(a.ObjType, a.InternalType)
                                 .Invoke(this, new object[] { val });
 
-                            val = typeof(Memory).GetMethod(nameof(AllocateStruct))
+                            val = ((Task<int>)typeof(Memory).GetMethod(nameof(AllocateStruct))
                                 .MakeGenericMethod(a.InternalType)
-                                .Invoke(this, new object[] { val, 1 });
+                                .Invoke(this, new object[] { val, 1 })).Result;
                             break;
 
                         case OmsiObjPtrAttribute a:
@@ -926,18 +962,20 @@ namespace OmsiHook
                                 .MakeGenericMethod(a.ObjType, a.InternalType)
                                 .Invoke(this, new object[] { val });
 
-                            val = typeof(Memory).GetMethod(nameof(AllocateStructArray))
+                            val = ((Task<int>)typeof(Memory).GetMethod(nameof(AllocateAndInitStructArray))
                                 .MakeGenericMethod(a.InternalType)
-                                .Invoke(this, new object[] { val, 1, a.Raw });
+                                .Invoke(this, new object[] { val, 1, a.Raw })).Result;
                             break;
 
                         case OmsiObjArrayPtrAttribute a:
-                            val = AllocateStructArray(((OmsiObject[])val).Select(x => x.Address).ToArray());
+                            val = AllocateAndInitStructArray(((OmsiObject[])val).Select(x => x.Address).ToArray()).Result;
                             break;
 
                         case OmsiStrArrayPtrAttribute a:
                             // TODO: I might add a dedicated method for allocating string arrays
-                            val = AllocateStructArray(((string[])val).Select(x => AllocateString(x, a.Wide, 1, a.Raw)).ToArray());
+                            var stringTasks = ((string[])val).Select(x => AllocateString(x, a.Wide, 1, a.Raw));
+                            var strings = Task.WhenAll(stringTasks);
+                            val = AllocateAndInitStructArray(strings.Result).Result;
                             break;
 
                         default:
@@ -982,7 +1020,7 @@ namespace OmsiHook
         /// free memory allocated this way. The slow allocator has a latency of 1 frame when not running as an Omsi plugin.</param>
         /// <returns>The pointer to the allocated memory</returns>
         /// <exception cref="OutOfMemoryException"></exception>
-        private int AllocRemoteMemory(int bytes, bool fastAlloc = false)
+        private async Task<int> AllocRemoteMemory(int bytes, bool fastAlloc = false)
         {
             // Return a nullptr if no memory is needed.
             if (bytes == 0)
@@ -1002,7 +1040,7 @@ namespace OmsiHook
                     throw new Exception("OmsiRemoteMethods are not initialised, remote memory allocator cannot be used!");
 #endif
 
-                addr = (int)OmsiRemoteMethods.OmsiGetMem(bytes);
+                addr = (int)await OmsiRemoteMethods.OmsiGetMem(bytes);
             }
 
             if (addr == 0)

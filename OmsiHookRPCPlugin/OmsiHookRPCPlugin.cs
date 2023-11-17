@@ -11,6 +11,7 @@ using static OmsiHookRPCPlugin.OmsiHookRPCMethods;
 using System.Collections.Concurrent;
 using System.Buffers;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace OmsiHookRPCPlugin
 {
@@ -29,10 +30,12 @@ namespace OmsiHookRPCPlugin
         private static readonly object logLock = new();
         private static readonly object writeMutex = new();
 
-        private record ReturnData
+        internal record struct ReturnPromise(int Val, int Promise);
+
+        private struct ReturnData
         {
             public readonly SemaphoreSlim isReady;
-            public ConcurrentQueue<int> values;
+            public ConcurrentQueue<ReturnPromise> values;
 
             public ReturnData()
             {
@@ -46,12 +49,14 @@ namespace OmsiHookRPCPlugin
             public readonly RemoteMethod method;
             public readonly byte[] args;
             public readonly int threadId;
+            public readonly int returnPromise;
 
-            public MethodData(RemoteMethod method, byte[] args, int threadId)
+            public MethodData(RemoteMethod method, byte[] args, int threadId, int returnPromise)
             {
                 this.method = method;
                 this.args = args;
                 this.threadId = threadId;
+                this.returnPromise = returnPromise;
             }
         }
 
@@ -72,8 +77,9 @@ namespace OmsiHookRPCPlugin
         public static void PluginStart(IntPtr aOwner)
         {
             File.Delete("omsiHookRPCPluginLog.txt");
-            Log("PluginStart()");
-            Log($@"Starting RPC server on named pipe: \\.\pipe\{PIPE_NAME} with {MAX_CLIENTS} threads...");
+            Log("############## Omsi Hook RPC Plugin ##############");
+            Log($"    version: {Assembly.GetExecutingAssembly().GetName().Version}");
+            Log($@"Starting RPC server on named pipe: \\.\pipe\{PIPE_NAME_RX} and \\.\pipe\{PIPE_NAME_TX} with {MAX_CLIENTS} threads...");
 
             argumentArrayPool = ArrayPool<byte>.Create(256,8);
 
@@ -102,61 +108,72 @@ namespace OmsiHookRPCPlugin
                 try
                 {
                     // Log($"[RPC Server {threadId}] Init.");
-                    using NamedPipeServerStream pipe = new(PIPE_NAME, PipeDirection.InOut, MAX_CLIENTS, PipeTransmissionMode.Byte);
-                    pipe.WaitForConnection();
-                    Log($"[RPC Server {threadId}] Client has connected.");
+                    using NamedPipeServerStream pipeRX = new(PIPE_NAME_RX, PipeDirection.In, MAX_CLIENTS, PipeTransmissionMode.Byte);
+                    pipeRX.WaitForConnection();
+                    Log($"[RPC Server {threadId}] Client has connected to rx.");
+                    using NamedPipeServerStream pipeTX = new(PIPE_NAME_TX, PipeDirection.Out, MAX_CLIENTS, PipeTransmissionMode.Byte);
+                    pipeTX.WaitForConnection();
+                    Log($"[RPC Server {threadId}] Client has connected to tx.");
 
-                    byte[] commandBuffer = new byte[4];
-                    var readTask = new Task(() =>
-                    {
-                        using BinaryReader reader = new(pipe);
-                        while (pipe.IsConnected)
-                        {
-                            // Read the message type from the pipe
-                            RemoteMethod method = (RemoteMethod)reader.ReadInt32();
-
-                            int argBytes = RemoteMethodsArgsSizes[method];
-                            byte[] args = argumentArrayPool.Rent(argBytes);
-                            Log($"[RPC Server {threadId}] Remote method execute: '{method}'; reading {argBytes} bytes of arguments...");
-
-                            // Read all the arguments into a byte array
-                            int read = reader.Read(args, 0, argBytes);
-                            if (read < argBytes)
-                            {
-                                Log($"Only read {read} out of {argBytes} bytes of arguments for {method} call!");
-                                continue;
-                            }
-                            callQueue.Enqueue(new(method, args, threadId));
-                            Log($"[RPC Server {threadId}]    method enqueued...");
-                        }
-                    });
-                    var writeTask = new Task(async () =>
-                    {
-                        using BinaryWriter writer = new(pipe);
-                        while (pipe.IsConnected)
-                        {
-                            await returnPool[threadId].isReady.WaitAsync();
-                            Log($"[RPC Server {threadId}]    returning result n={returnPool[threadId].values.Count}...");
-                            lock (writeMutex)
-                            {
-                                if (returnPool[threadId].values.TryDequeue(out int ret))
-                                    writer.Write(ret);
-                                else
-                                    Log($"[RPC Server {threadId}]    tried to return a result, but no result was available!");
-                            }
-                            Log($"[RPC Server {threadId}]    Done!");
-                        }
-                    });
+                    var readTask = new Task(() => ReadTask(threadId, pipeRX));
+                    var writeTask = new Task(() => WriteTask(threadId, pipeTX));
                     readTask.Start();
                     writeTask.Start();
 
                     Task.WaitAll(readTask, writeTask);
                     Thread.Sleep(50);
-                } catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
                     Log(ex);
                 }
                 Log($"[RPC Server {threadId}] Client has disconnected.");
+            }
+        }
+
+        private static void WriteTask(int threadId, NamedPipeServerStream pipeTX)
+        {
+            using BinaryWriter writer = new(pipeTX);
+            while (pipeTX.IsConnected)
+            {
+                returnPool[threadId].isReady.Wait();
+                lock (writeMutex)
+                {
+                    if (returnPool[threadId].values.TryDequeue(out ReturnPromise ret))
+                    {
+                        Log($"[RPC Server {threadId}]    writing: {ret.Val:X} for promise: 0x{ret.Promise:X8}");
+                        writer.Write(ret.Promise);
+                        writer.Write(ret.Val);
+                    }
+                    else
+                        Log($"[RPC Server {threadId}]    tried to return a result, but no result was available!");
+                }
+                Log($"[RPC Server {threadId}]    Done!");
+            }
+        }
+
+        private static void ReadTask(int threadId, NamedPipeServerStream pipeRX)
+        {
+            using BinaryReader reader = new(pipeRX);
+            while (pipeRX.IsConnected)
+            {
+                // Read the message type from the pipe
+                RemoteMethod method = (RemoteMethod)reader.ReadInt32();
+                int returnPromise = reader.ReadInt32();
+
+                int argBytes = RemoteMethodsArgsSizes[method];
+                byte[] args = argumentArrayPool.Rent(argBytes);
+                Log($"[RPC Server {threadId}] Remote method execute: '{method}' promise: 0x{returnPromise:X8}; reading {argBytes} bytes of arguments...");
+
+                // Read all the arguments into a byte array
+                int read = reader.Read(args, 0, argBytes);
+                if (read < argBytes)
+                {
+                    Log($"Only read {read} out of {argBytes} bytes of arguments for {method} call!");
+                    continue;
+                }
+                callQueue.Enqueue(new(method, args, threadId, returnPromise));
+                Log($"[RPC Server {threadId}]    method enqueued...");
             }
         }
 
@@ -248,7 +265,7 @@ namespace OmsiHookRPCPlugin
                     break;
             }
 
-            returnPool[methodData.threadId].values.Enqueue(ret);
+            returnPool[methodData.threadId].values.Enqueue(new (ret, methodData.returnPromise));
             returnPool[methodData.threadId].isReady.Release();
             argumentArrayPool.Return(methodData.args);
         }

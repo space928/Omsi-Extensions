@@ -6,7 +6,8 @@ namespace OmsiHookRPCPlugin
 {
     internal static class OmsiHookRPCMethods
     {
-        public const string PIPE_NAME = @"OmsiHookRPCPipe";
+        public const string PIPE_NAME_RX = @"OmsiHookRPCPipe_RX";
+        public const string PIPE_NAME_TX = @"OmsiHookRPCPipe_TX";
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         internal enum RemoteMethod : int

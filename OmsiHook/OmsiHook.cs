@@ -28,6 +28,13 @@ namespace OmsiHook
         /// </summary>
         public Process OmsiProcess => process;
 
+#if DEBUG
+        /// <summary>
+        /// Gets the remote memory manager. In general you shouldn't need to use this, you should only ever need to interact with OmsiGlobals.
+        /// </summary>
+        public Memory OmsiMemory => omsiMemory;
+#endif
+
         #region Events
         /// <summary>
         /// An event raised when omsi.exe has exited.
@@ -82,12 +89,15 @@ namespace OmsiHook
 
             omsiMemory = new Memory();
 
+            int cursorLine = Console.CursorTop;
+            DateTime startTime = DateTime.Now;
             var found = false;
             while (!found)
             {
                 (found, process) = omsiMemory.Attach("omsi");
                 if (!found) {
-                    Console.WriteLine("Waiting for OMSI.exe...");
+                    Console.WriteLine($"Waiting for OMSI.exe (waited for {(DateTime.Now-startTime).TotalSeconds:0} seconds)...");
+                    Console.SetCursorPosition(0, cursorLine);
                     await Task.Delay(250);
                 }
             }

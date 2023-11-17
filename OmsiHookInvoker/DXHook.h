@@ -3,7 +3,7 @@
 class DXHook
 {
 private:
-	const UINT32 OMSI_D3DCONTEXT_PTR = 0x008627d0;
+	const UINT32 OMSI_D3DDEVICE_PTR = 0x008627d0;
 
 	IDirect3DDevice9* m_device;
     
