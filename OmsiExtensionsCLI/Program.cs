@@ -108,7 +108,7 @@ namespace OmsiExtensionsCLI
             if(!ready)
                 Hook();
 
-            (uint hresult, uint texturePtr) = OmsiRemoteMethods.OmsiCreateTextureAsync(texWidth, texHeight, OmsiRemoteMethods.DXGI_FORMAT.R8G8B8A8_UNORM).Result;
+            (uint hresult, uint texturePtr) = OmsiRemoteMethods.OmsiCreateTextureAsync(texWidth, texHeight, OmsiRemoteMethods.D3DFORMAT.D3DFMT_A8B8G8R8).Result;
             if (hresult != 0)
                 throw new Exception("Couldn't create D3D texture! Result: " + new SharpDX.Result(hresult));
 

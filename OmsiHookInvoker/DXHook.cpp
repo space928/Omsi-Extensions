@@ -38,6 +38,9 @@ HRESULT DXHook::CreateTexture(UINT Width, UINT Height, D3DFORMAT Format, IDirect
 	if ((int)m_device == -2)
 		return -2;
 
+	// Shared handle is only supported with D3D9Ex sadly:
+	// https://www.gamedev.net/forums/topic/638495-shared-resources-eg-textures-between-devicesthreads/5030524/
+	
 	return m_device->CreateTexture(Width, Height, 1, D3DUSAGE_DYNAMIC, Format, D3DPOOL_DEFAULT, ppTexture, NULL);
 }
 
