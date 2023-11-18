@@ -145,7 +145,11 @@ namespace OmsiExtensionsCLI
                     }.data;
                 }
 
+#if DEBUG
             omsi.OmsiMemory.WriteMemory(texMemPtr, managedTextureBuffer);
+#else
+            Console.WriteLine("WARNING: Currently UpdateTexture() only works in debug builds.");
+#endif
 
             int hr = unchecked((int)OmsiRemoteMethods.OmsiUpdateTextureAsync(texturePtr, texMemPtr, texWidth, texHeight).Result);
             if(hr != 0) 
