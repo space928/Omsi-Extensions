@@ -23,6 +23,8 @@ namespace OmsiHookRPCPlugin
         [DllImport("OmsiHookInvoker.dll")]
         internal static extern int HookD3D();
         [DllImport("OmsiHookInvoker.dll")]
-        internal static extern int CreateTexture(uint Width, uint Height, uint Format, uint ppTexture, uint pSharedHandle);
+        internal static extern int CreateTexture(uint Width, uint Height, uint Format, uint ppTexture);
+        [DllImport("OmsiHookInvoker.dll")]
+        internal static extern int UpdateSubresource(uint Texture, uint TextureData, uint Width, uint Height, int UseRect, uint Left, uint Top, uint Right, uint Bottom);
     }
 }

@@ -230,19 +230,19 @@ namespace OmsiHook
         /// <summary>
         /// Attempts to create a new d3d texture which can be shared with an external D3D context.
         /// </summary>
-        public static async Task<(uint hresult, uint ppTexture, uint pSharedHandle)> OmsiCreateTextureAsync(uint width, uint height, DXGI_FORMAT format)
+        public static async Task<(uint hresult, uint ppTexture)> OmsiCreateTextureAsync(uint width, uint height, DXGI_FORMAT format)
         {
 #if OMSI_PLUGIN
-            return CreateTexture(width, height, (uint)format, ppTexture, pSharedHandle) != 0;
+            uint ppTexture = OmsiGetMem(4).Result;
+            uint hresult = unchecked((uint)CreateTexture(width, height, (uint)format, ppTexture));
+            return (hresult, ppTexture);
 #else
             if (!IsInitialised)
                 throw new NotInitialisedException("OmsiHook RPC plugin is not connected! Did you make sure to call OmsiRemoteMethods.InitRemoteMethods() before this call?");
 
             // Allocate the pointers
-            uint ppTexture = OmsiGetMem(8).Result;
-            uint pSharedHandle = ppTexture + 4;
+            uint ppTexture = OmsiGetMem(4).Result;
             memory.WriteMemory(ppTexture, 0);
-            memory.WriteMemory(pSharedHandle, 0);
 
             int argPos = 0;
             var method = OmsiHookRPCMethods.RemoteMethod.CreateTexture;
@@ -256,10 +256,44 @@ namespace OmsiHook
             BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], height);
             BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], (uint)format); 
             BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], ppTexture);
-            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], pSharedHandle);
             lock (pipeTX)
                 pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
-            return ((uint)await promise.Task, ppTexture, pSharedHandle);
+            return (unchecked((uint)await promise.Task), ppTexture);
+#endif
+        }
+
+        /// <summary>
+        /// Attempts to create a new d3d texture which can be shared with an external D3D context.
+        /// </summary>
+        public static async Task<uint> OmsiUpdateTextureAsync(uint texturePtr, uint textureDataPtr, uint width, uint height, Rectangle? updateRect = null)
+        {
+#if OMSI_PLUGIN
+            return unchecked((uint)UpdateSubresource(texturePtr, textureDataPtr, width, height, 
+                updateRect.HasValue ? 1 : 0, updateRect?.left??0, updateRect?.top??0, updateRect?.right??0, updateRect?.bottom??0));
+#else
+            if (!IsInitialised)
+                throw new NotInitialisedException("OmsiHook RPC plugin is not connected! Did you make sure to call OmsiRemoteMethods.InitRemoteMethods() before this call?");
+
+            int argPos = 0;
+            var method = OmsiHookRPCMethods.RemoteMethod.UpdateSubresource;
+            // This should be thread safe as the asyncWriteBuff is thread local
+            int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
+            byte[] writeBuffer = asyncWriteBuff.Value;
+            (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos)..], (int)method);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], resultPromise);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], texturePtr);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], textureDataPtr);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], width);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], height);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], updateRect.HasValue ? 1 : 0);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], updateRect?.left ?? 0);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], updateRect?.top ?? 0);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], updateRect?.right ?? 0);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], updateRect?.bottom ?? 0);
+            lock (pipeTX)
+                pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+            return unchecked((uint)await promise.Task);
 #endif
         }
 
@@ -282,13 +316,23 @@ namespace OmsiHook
         [DllImport("OmsiHookInvoker.dll")]
         internal static extern int HookD3D();
         [DllImport("OmsiHookInvoker.dll")]
-        internal static extern int CreateTexture(uint Width, uint Height, uint Format, uint ppTexture, uint pSharedHandle);
+        internal static extern int CreateTexture(uint Width, uint Height, uint Format, uint ppTexture);
+        [DllImport("OmsiHookInvoker.dll")]
+        internal static extern int UpdateSubresource(uint Texture, uint TextureData, uint Width, uint Height, int UseRect, uint Left, uint Top, uint Right, uint Bottom);
 
         public enum DXGI_FORMAT : uint
         {
             R16G16B16A16_FLOAT = 10,
             R10G10B10A2_UNORM = 24,
             R8G8B8A8_UNORM = 28
+        }
+
+        public struct Rectangle
+        {
+            public uint left;
+            public uint top;
+            public uint right;
+            public uint bottom;
         }
     }
 }

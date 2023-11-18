@@ -18,7 +18,8 @@ namespace OmsiHookRPCPlugin
             GetMem,
             FreeMem,
             HookD3D,
-            CreateTexture
+            CreateTexture,
+            UpdateSubresource
         }
 
         internal static readonly ReadOnlyDictionary<RemoteMethod, int> RemoteMethodsArgsSizes = new(new Dictionary<RemoteMethod, int>()
@@ -29,7 +30,8 @@ namespace OmsiHookRPCPlugin
             { RemoteMethod.GetMem,                      4 },
             { RemoteMethod.FreeMem,                     4 },
             { RemoteMethod.HookD3D,                     0 },
-            { RemoteMethod.CreateTexture,               20 },
+            { RemoteMethod.CreateTexture,               16 },
+            { RemoteMethod.UpdateSubresource,           36 },
         });
     }
 }

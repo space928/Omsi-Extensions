@@ -111,6 +111,7 @@ namespace OmsiHookRPCPlugin
                     using NamedPipeServerStream pipeRX = new(PIPE_NAME_RX, PipeDirection.In, MAX_CLIENTS, PipeTransmissionMode.Byte);
                     pipeRX.WaitForConnection();
                     Log($"[RPC Server {threadId}] Client has connected to rx.");
+                    // TODO: There's still a race condition here for some reason... Sometimes the client connects to the rx of one thread and the tx of another.
                     using NamedPipeServerStream pipeTX = new(PIPE_NAME_TX, PipeDirection.Out, MAX_CLIENTS, PipeTransmissionMode.Byte);
                     pipeTX.WaitForConnection();
                     Log($"[RPC Server {threadId}] Client has connected to tx.");
@@ -256,9 +257,21 @@ namespace OmsiHookRPCPlugin
                         BitConverter.ToUInt32(methodData.args, argInd),
                         BitConverter.ToUInt32(methodData.args, argInd += 4),
                         BitConverter.ToUInt32(methodData.args, argInd += 4),
-                        BitConverter.ToUInt32(methodData.args, argInd += 4),
                         BitConverter.ToUInt32(methodData.args, argInd += 4)
                     );
+                    break;
+                case RemoteMethod.UpdateSubresource:
+                    ret = NativeImports.UpdateSubresource(
+                        BitConverter.ToUInt32(methodData.args, argInd),
+                        BitConverter.ToUInt32(methodData.args, argInd += 4),
+                        BitConverter.ToUInt32(methodData.args, argInd += 4),
+                        BitConverter.ToUInt32(methodData.args, argInd += 4),
+                        BitConverter.ToInt32(methodData.args, argInd += 4),
+                        BitConverter.ToUInt32(methodData.args, argInd += 4),
+                        BitConverter.ToUInt32(methodData.args, argInd += 4),
+                        BitConverter.ToUInt32(methodData.args, argInd += 4),
+                        BitConverter.ToUInt32(methodData.args, argInd += 4)
+                        );
                     break;
                 default:
                     Log($"Unknown message type: {methodData.method} encountered!");

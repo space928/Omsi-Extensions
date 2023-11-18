@@ -119,6 +119,12 @@ namespace OmsiHook
             Imports.WriteProcessMemory((int)omsiProcessHandle, address, buffer, buffer.Length, out _);
         }
 
+        /// <inheritdoc cref="WriteMemory{T}(int, T[])"/>
+        public void WriteMemory<T>(uint address, T[] values) where T : unmanaged
+        {
+            WriteMemory(unchecked((int)address), values);
+        }
+
         /// <summary>
         /// Mildly quickly copies a block of data from one place to another in remote memory. <para/>
         /// Copies the data to a temp buffer before copying to the destination so it's not very fast.

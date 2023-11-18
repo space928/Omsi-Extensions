@@ -73,10 +73,15 @@ namespace OmsiExtensionsCLI
         private const int texHeight = 256;
         private RGBA[] texBuffer = new RGBA[texWidth * texHeight];
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 4)]
+        [StructLayout(LayoutKind.Explicit, Pack = 1, Size = 4)]
         private struct RGBA
         {
-            public byte r, g, b, a;
+            [FieldOffset(0)]public byte r; 
+            [FieldOffset(1)]public byte g; 
+            [FieldOffset(2)]public byte b;
+            [FieldOffset(3)]public byte a;
+
+            [FieldOffset(0)]public uint data;
         }
 
         public void Init(OmsiHook.OmsiHook omsi)
@@ -98,12 +103,12 @@ namespace OmsiExtensionsCLI
             ready = true;
         }
 
-        public Texture2D CreateTexture()
+        public uint CreateTexture()
         {
             if(!ready)
                 Hook();
 
-            (uint hresult, uint texturePtr, uint textureHandle) = OmsiRemoteMethods.OmsiCreateTextureAsync(texWidth, texHeight, OmsiRemoteMethods.DXGI_FORMAT.R8G8B8A8_UNORM).Result;
+            (uint hresult, uint texturePtr) = OmsiRemoteMethods.OmsiCreateTextureAsync(texWidth, texHeight, OmsiRemoteMethods.DXGI_FORMAT.R8G8B8A8_UNORM).Result;
             if (hresult != 0)
                 throw new Exception("Couldn't create D3D texture! Result: " + new SharpDX.Result(hresult));
 
@@ -119,28 +124,32 @@ namespace OmsiExtensionsCLI
                 };
             }
 
-            device = new SharpDX.Direct3D11.Device(SharpDX.Direct3D.DriverType.Hardware, DeviceCreationFlags.None);
-            return device.OpenSharedResource<SharpDX.Direct3D11.Texture2D>((IntPtr)textureHandle);
+            //device = new SharpDX.Direct3D11.Device(SharpDX.Direct3D.DriverType.Hardware, DeviceCreationFlags.None);
+            //return device.OpenSharedResource<SharpDX.Direct3D11.Texture2D>((IntPtr)textureHandle);
+            return texturePtr;
         }
 
-        public void UpdateTexture(Texture2D texture)
+        public void UpdateTexture(uint texturePtr)
         {
-            if (texture?.IsDisposed ?? true)
-                return;
-
-            for(int y = 0; y < texHeight; y++)
+            uint texMemPtr = OmsiRemoteMethods.OmsiGetMem(texWidth * texHeight * 4).Result;
+            uint[] managedTextureBuffer = new uint[texWidth * texHeight * 4];
+            for (int y = 0; y < texHeight; y++)
                 for(int x = 0; x < texWidth; x++)
                 {
-                    texBuffer[x + y * texWidth] = new()
+                    managedTextureBuffer[x + y * texWidth] = new RGBA()
                     {
                         r = (byte)((x * 4) % 256),
                         g = (byte)((y * 4) % 256),
                         b = (byte)(((x + y) * 4) % 256),
                         a = 255
-                    };
+                    }.data;
                 }
 
-            texture.Device.ImmediateContext.UpdateSubresource(texBuffer, texture, rowPitch:texWidth*Marshal.SizeOf<RGBA>());
+            omsi.OmsiMemory.WriteMemory(texMemPtr, managedTextureBuffer);
+
+            int hr = unchecked((int)OmsiRemoteMethods.OmsiUpdateTextureAsync(texturePtr, texMemPtr, texWidth, texHeight).Result);
+            if(hr != 0) 
+                throw new SharpDXException(hr);
         }
 
         private void Omsi_OnOmsiGotD3DContext(object sender, EventArgs e)
