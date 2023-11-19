@@ -10,6 +10,7 @@
 // add headers that you want to pre-compile here
 #include "framework.h"
 
+#define D3D_DISABLE_9EX
 #include "d3d9.h"
 
 #include "OmsiHookRPCErrors.h"

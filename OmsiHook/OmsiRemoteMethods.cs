@@ -100,6 +100,26 @@ namespace OmsiHook
               false, true, true, mem);
         }
 
+        public static void CloseRPCSession(bool killAllConnections)
+        {
+#if !OMSI_PLUGIN
+            if (!IsInitialised)
+                throw new NotInitialisedException("OmsiHook RPC plugin is not connected! Did you make sure to call OmsiRemoteMethods.InitRemoteMethods() before this call?");
+
+            int argPos = 0;
+            var method = OmsiHookRPCMethods.RemoteMethod.CloseRPCConnection;
+            Span<byte> writeBuffer = stackalloc byte[OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8];
+            //Span<byte> readBuffer = stackalloc byte[4];
+            //(int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
+            BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)method);
+            BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], 0);
+            BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], killAllConnections?1:0);
+            lock (pipeTX)
+                pipeTX.Write(writeBuffer);
+            // promise.Task.Wait();
+#endif
+        }
+
         /// <summary>
         /// Spawns a random bus in the map at one of the entry points.
         /// EXPERIMENTAL: The parameters of this method default to known working values, changing them may result in game crashes.
@@ -223,7 +243,8 @@ namespace OmsiHook
             BitConverter.TryWriteBytes(writeBuffer[(argPos+=4)..], resultPromise);
             lock (pipeTX)
                 pipeTX.Write(writeBuffer);
-            return promise.Task.Result != 0;
+            var res = promise.Task.Result;
+            return res != 0;
 #endif
         }
 
@@ -265,8 +286,15 @@ namespace OmsiHook
         }
 
         /// <summary>
-        /// Attempts to create a new d3d texture which can be shared with an external D3D context.
+        /// Attempts to update the contents a d3d texture.
         /// </summary>
+        /// <param name="texturePtr">the pointer to the IDirect3DTexture9 object</param>
+        /// <param name="textureDataPtr">the pointer to the block of texture data to copy into the texture (must belong to the remote process)</param>
+        /// <param name="width">the width of the texture data to copy</param>
+        /// <param name="height">the height of the texture data to copy</param>
+        /// <param name="updateRect">optionally, a rectangle specifying the area to copy into</param>
+        /// <returns>an HRESULT indicating the result of the operation.</returns>
+        /// <exception cref="NotInitialisedException"></exception>
         public static async Task<HRESULT> OmsiUpdateTextureAsync(uint texturePtr, uint textureDataPtr, uint width, uint height, Rectangle? updateRect = null)
         {
 #if OMSI_PLUGIN
@@ -299,6 +327,113 @@ namespace OmsiHook
 #endif
         }
 
+        /// <summary>
+        /// Releases an IDirect3DTexture9 object.
+        /// </summary>
+        /// <param name="texturePtr">the pointer to the IDirect3DTexture9</param>
+        /// <returns>the status of the operation.</returns>
+        /// <exception cref="NotInitialisedException"></exception>
+        public static async Task<HRESULT> OmsiReleaseTextureAsync(uint texturePtr)
+        {
+#if OMSI_PLUGIN
+            return (HRESULT)ReleaseTexture(texturePtr);
+#else
+            if (!IsInitialised)
+                throw new NotInitialisedException("OmsiHook RPC plugin is not connected! Did you make sure to call OmsiRemoteMethods.InitRemoteMethods() before this call?");
+
+            int argPos = 0;
+            var method = OmsiHookRPCMethods.RemoteMethod.ReleaseTexture;
+            // This should be thread safe as the asyncWriteBuff is thread local
+            int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
+            byte[] writeBuffer = asyncWriteBuff.Value;
+            (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos)..], (int)method);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], resultPromise);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], texturePtr);
+            lock (pipeTX)
+                pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+            return (HRESULT)await promise.Task;
+#endif
+        }
+
+        /// <summary>
+        /// Gets the description of an IDirect3DTexture9 object.
+        /// </summary>
+        /// <param name="texturePtr"></param>
+        /// <returns></returns>
+        /// <exception cref="NotInitialisedException"></exception>
+        public static async Task<(HRESULT hresult, uint width, uint height, D3DFORMAT format)> OmsiGetTextureDescAsync(uint texturePtr)
+        {
+            uint descPtr = unchecked((uint)await memory.AllocRemoteMemory(4 * 3, true));
+#if OMSI_PLUGIN
+            HRESULT res = (HRESULT)GetTextureDesc(texturePtr, descPtr, descPtr + 4, descPtr + 8);
+
+            uint width = memory.ReadMemory<uint>(descPtr);
+            uint height = memory.ReadMemory<uint>(descPtr+4);
+            D3DFORMAT format = (D3DFORMAT)memory.ReadMemory<uint>(descPtr+8);
+            memory.FreeRemoteMemory(descPtr, true);
+
+            return (res, width, height, format);
+#else
+            if (!IsInitialised)
+                throw new NotInitialisedException("OmsiHook RPC plugin is not connected! Did you make sure to call OmsiRemoteMethods.InitRemoteMethods() before this call?");
+
+            int argPos = 0;
+            var method = OmsiHookRPCMethods.RemoteMethod.GetTextureDesc;
+            // This should be thread safe as the asyncWriteBuff is thread local
+            int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
+            byte[] writeBuffer = asyncWriteBuff.Value;
+            (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos)..], (int)method);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], resultPromise);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], texturePtr);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], descPtr);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], descPtr+4);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], descPtr+8);
+            lock (pipeTX)
+                pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+
+            HRESULT res = (HRESULT)await promise.Task;
+            uint width = memory.ReadMemory<uint>(descPtr);
+            uint height = memory.ReadMemory<uint>(descPtr + 4);
+            D3DFORMAT format = (D3DFORMAT)memory.ReadMemory<uint>(descPtr + 8);
+            memory.FreeRemoteMemory(descPtr, true);
+
+            return (res, width, height, format);
+#endif
+        }
+
+        /// <summary>
+        /// Checks if a given pointer is an IDirect3DTexture9.
+        /// 
+        /// WARNING: If the pointer is non-null and the object is not a COM object, this method can cause crashes.
+        /// </summary>
+        /// <param name="texturePtr"></param>
+        /// <returns></returns>
+        /// <exception cref="NotInitialisedException"></exception>
+        public static async Task<bool> OmsiIsTextureAsync(uint texturePtr)
+        {
+#if OMSI_PLUGIN
+            return !HRESULTFailed((HRESULT)IsTexture(texturePtr));
+#else
+            if (!IsInitialised)
+                throw new NotInitialisedException("OmsiHook RPC plugin is not connected! Did you make sure to call OmsiRemoteMethods.InitRemoteMethods() before this call?");
+
+            int argPos = 0;
+            var method = OmsiHookRPCMethods.RemoteMethod.IsTexture;
+            // This should be thread safe as the asyncWriteBuff is thread local
+            int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
+            byte[] writeBuffer = asyncWriteBuff.Value;
+            (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos)..], (int)method);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], resultPromise);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], texturePtr);
+            lock (pipeTX)
+                pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+            return !HRESULTFailed((HRESULT)await promise.Task);
+#endif
+        }
+
         [DllImport("OmsiHookInvoker.dll")]
         private static extern int TProgManMakeVehicle(int progMan, int vehList, int _RoadVehicleTypes, bool onlyvehlist, bool CS,
             float TTtime, bool situationload, bool dialog, bool setdriver, bool thread,
@@ -312,15 +447,21 @@ namespace OmsiHook
             int group, float TTtime, bool thread, bool instantCopy, int _typ,
             bool scheduled, int startDay, int tour, int line);
         [DllImport("OmsiHookInvoker.dll")]
-        internal static extern int GetMem(int length);
+        private static extern int GetMem(int length);
         [DllImport("OmsiHookInvoker.dll")]
-        internal static extern void FreeMem(int addr);
+        private static extern void FreeMem(int addr);
         [DllImport("OmsiHookInvoker.dll")]
-        internal static extern int HookD3D();
+        private static extern int HookD3D();
         [DllImport("OmsiHookInvoker.dll")]
-        internal static extern int CreateTexture(uint Width, uint Height, uint Format, uint ppTexture);
+        private static extern int CreateTexture(uint Width, uint Height, uint Format, uint ppTexture);
         [DllImport("OmsiHookInvoker.dll")]
-        internal static extern int UpdateSubresource(uint Texture, uint TextureData, uint Width, uint Height, int UseRect, uint Left, uint Top, uint Right, uint Bottom);
+        private static extern int UpdateSubresource(uint Texture, uint TextureData, uint Width, uint Height, int UseRect, uint Left, uint Top, uint Right, uint Bottom);
+        [DllImport("OmsiHookInvoker.dll")]
+        private static extern int ReleaseTexture(uint Texture);
+        [DllImport("OmsiHookInvoker.dll")]
+        private static extern int GetTextureDesc(uint Texture, uint pWidth, uint pHeight, uint pFormat);
+        [DllImport("OmsiHookInvoker.dll")]
+        private static extern int IsTexture(uint Texture);
 
         public enum D3DFORMAT : uint
         {
@@ -445,7 +586,7 @@ namespace OmsiHook
 
             OHERR_NOD3DDEVICE =                      (1 << 31) | (OH_FAC << 16) | (10),
             OHERR_D3DDEVICEQUERYFAILED =             (1 << 31) | (OH_FAC << 16) | (11),
-            OHERR_UPDATESUBRES_TEXTURENULL =         (1 << 31) | (OH_FAC << 16) | (20),
+            OHERR_TEXTURENULL =                      (1 << 31) | (OH_FAC << 16) | (20),
             OHERR_UPDATESUBRES_DSTTEXTURETOOSMALL =  (1 << 31) | (OH_FAC << 16) | (21),
             OHERR_UPDATESUBRES_INVALIDRECT =         (1 << 31) | (OH_FAC << 16) | (22),
         }

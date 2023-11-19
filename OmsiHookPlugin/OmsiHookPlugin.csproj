@@ -95,6 +95,6 @@
 		<BaseOutputPath></BaseOutputPath>
 	</PropertyGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Command="xcopy &quot;$(SolutionDir)Debug\*.dll&quot; &quot;$(OutDir)&quot; /y&#xD;&#xA;xcopy &quot;$(SolutionDir)Release\*.dll&quot; &quot;$(OutDir)&quot; /y&#xD;&#xA;xcopy &quot;$(OutDir)*.dll&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y&#xD;&#xA;xcopy &quot;$(OutDir)*.opl&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y&#xD;&#xA;xcopy &quot;$(OutDir)*.runtimeconfig.json&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y" />
+	  <Exec Command="xcopy &quot;$(SolutionDir)$(Configuration)\*.dll&quot; &quot;$(OutDir)&quot; /y&#xD;&#xA;xcopy &quot;$(SolutionDir)$(Configuration)\*.pdb&quot; &quot;$(OutDir)&quot; /y&#xD;&#xA;if not defined OmsiDir (&#xD;&#xA;  set &quot;OmsiDir=D:\Program Files\OMSI 2\&quot;&#xD;&#xA;)&#xD;&#xA;if exist &quot;%25OmsiDir%25plugins\&quot; (&#xD;&#xA;  xcopy &quot;$(OutDir)*.dll&quot; &quot;%25OmsiDir%25plugins\&quot; /y /c&#xD;&#xA;  xcopy &quot;$(OutDir)*.pdb&quot; &quot;%25OmsiDir%25plugins\&quot; /y /c&#xD;&#xA;  xcopy &quot;$(OutDir)*.opl&quot; &quot;%25OmsiDir%25plugins\&quot; /y /c &#xD;&#xA;  xcopy &quot;$(OutDir)*.runtimeconfig.json&quot; &quot;%25OmsiDir%25plugins\&quot; /y /c&#xD;&#xA;)" />
 	</Target>
 </Project>

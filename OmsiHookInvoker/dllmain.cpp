@@ -191,3 +191,18 @@ extern "C" __declspec(dllexport) HRESULT UpdateSubresource(IDirect3DTexture9* Te
         return E_FAIL;
     return m_dxHook->UpdateSubresource(Texture, TextureData, Width, Height, UseRect, Left, Top, Right, Bottom);
 }
+
+extern "C" __declspec(dllexport) HRESULT ReleaseTexture(IDirect3DTexture9* Texture)
+{
+    return DXHook::ReleaseTexture(Texture);
+}
+
+extern "C" __declspec(dllexport) HRESULT GetTextureDesc(IDirect3DTexture9 * Texture, UINT * pWidth, UINT * pHeight, UINT * pFormat)
+{
+    return DXHook::GetTextureDesc(Texture, pWidth, pHeight, pFormat);
+}
+
+extern "C" __declspec(dllexport) HRESULT IsTexture(IUnknown* Texture)
+{
+    return DXHook::IsTexture(Texture);
+}

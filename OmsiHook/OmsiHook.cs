@@ -17,6 +17,7 @@ namespace OmsiHook
         private Process process;
         private OmsiGlobals globals;
         private Task stateMonitorTask;
+        private bool isD3DReady;
 
         /// <summary>
         /// Gets the object storing all of Omsi's global variables.
@@ -35,6 +36,8 @@ namespace OmsiHook
         [Obsolete("This property is only available in Debug builds, in general you should never need raw access to remote memory.")]
         public Memory OmsiMemory => omsiMemory;
 #endif
+
+        public bool IsD3DReady => isD3DReady;
 
         #region Events
         /// <summary>
@@ -111,7 +114,43 @@ namespace OmsiHook
             stateMonitorTask = new(MonitorStateTask);
             stateMonitorTask.Start();
 
+            OnOmsiGotD3DContext += OmsiHook_OnOmsiGotD3DContext;
+            OnOmsiLostD3DContext += OmsiHook_OnOmsiLostD3DContext;
+            OnMapChange += OmsiHook_OnMapChange;
+
             Console.WriteLine("Connected succesfully!");
+        }
+
+        /// <summary>
+        /// Factory method for <see cref="D3DTexture"/> objects. The resulting D3DTexture will need to be 
+        /// initiallised before use by calling either <see cref="D3DTexture.CreateFromExisting(uint)"/> or 
+        /// <see cref="D3DTexture.CreateD3DTexture(uint, uint, OmsiRemoteMethods.D3DFORMAT)"/>.
+        /// </summary>
+        /// <returns>a new <see cref="D3DTexture"/> object.</returns>
+        public D3DTexture CreateTextureObject()
+        {
+            return new D3DTexture(omsiMemory, 0);
+        }
+
+        private void OmsiHook_OnMapChange(object sender, EventArgs e)
+        {
+            Task.Run(() => {
+                while(!isD3DReady)
+                    isD3DReady = OmsiRemoteMethods.OmsiHookD3D();
+            });
+        }
+
+        private void OmsiHook_OnOmsiLostD3DContext(object sender, EventArgs e)
+        {
+            isD3DReady = false;
+        }
+
+        private void OmsiHook_OnOmsiGotD3DContext(object sender, EventArgs e)
+        {
+            Task.Run(() => {
+                while (!isD3DReady)
+                    isD3DReady = OmsiRemoteMethods.OmsiHookD3D();
+            });
         }
 
         [Obsolete("This will be obselete once TMyOMSIList is wrapped! The list of vehicles will be moved to OmsiGlobals.")]

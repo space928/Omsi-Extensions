@@ -25,6 +25,7 @@ namespace OmsiHookRPCPlugin
 
         private static List<Thread> threadPool;
         private static ConcurrentQueue<MethodData> callQueue;
+        private static ConcurrentBag<NamedPipeServerStream> pipes;
         private static ArrayPool<byte> argumentArrayPool;
         private static List<ReturnData> returnPool;
         private static readonly object logLock = new();
@@ -85,6 +86,7 @@ namespace OmsiHookRPCPlugin
             Log($@"Starting RPC server on named pipe: \\.\pipe\{PIPE_NAME_RX} and \\.\pipe\{PIPE_NAME_TX} with {MAX_CLIENTS} threads...");
 
             argumentArrayPool = ArrayPool<byte>.Create(256,8);
+            pipes = new();
 
             if (SINGLE_THREADED_EXECTION)
             {
@@ -118,14 +120,22 @@ namespace OmsiHookRPCPlugin
                     using NamedPipeServerStream pipeTX = new(PIPE_NAME_TX, PipeDirection.Out, MAX_CLIENTS, PipeTransmissionMode.Byte);
                     pipeTX.WaitForConnection();
                     Log($"[RPC Server {threadId}] Client has connected to tx.");
+                    pipes.Add(pipeRX);
+                    pipes.Add(pipeTX);
 
-                    var readTask = new Task(() => ReadTask(threadId, pipeRX));
+                    var readTask = new Task(() => ReadTask(threadId, pipeRX, pipeTX));
                     var writeTask = new Task(() => WriteTask(threadId, pipeTX));
                     readTask.Start();
                     writeTask.Start();
 
                     Task.WaitAll(readTask, writeTask);
                     Thread.Sleep(50);
+                } 
+                catch (AggregateException ex)
+                {
+                    // Pipe closed normally, probably...
+                    if (ex.InnerException.GetType() != typeof(EndOfStreamException))
+                        Log(ex.InnerException);
                 }
                 catch (Exception ex)
                 {
@@ -145,18 +155,18 @@ namespace OmsiHookRPCPlugin
                 {
                     if (returnPool[threadId].values.TryDequeue(out ReturnPromise ret))
                     {
-                        Log($"[RPC Server {threadId}]    writing: {ret.Val:X} for promise: 0x{ret.Promise:X8}");
+                        //Log($"[RPC Server {threadId}]    writing: {ret.Val:X} for promise: 0x{ret.Promise:X8}");
                         writer.Write(ret.Promise);
                         writer.Write(ret.Val);
                     }
                     else
                         Log($"[RPC Server {threadId}]    tried to return a result, but no result was available!");
                 }
-                Log($"[RPC Server {threadId}]    Done!");
+                //Log($"[RPC Server {threadId}]    Done!");
             }
         }
 
-        private static void ReadTask(int threadId, NamedPipeServerStream pipeRX)
+        private static void ReadTask(int threadId, NamedPipeServerStream pipeRX, NamedPipeServerStream pipeTX)
         {
             using BinaryReader reader = new(pipeRX);
             while (pipeRX.IsConnected)
@@ -167,7 +177,7 @@ namespace OmsiHookRPCPlugin
 
                 int argBytes = RemoteMethodsArgsSizes[method];
                 byte[] args = argumentArrayPool.Rent(argBytes);
-                Log($"[RPC Server {threadId}] Remote method execute: '{method}' promise: 0x{returnPromise:X8}; reading {argBytes} bytes of arguments...");
+                //Log($"[RPC Server {threadId}] Remote method execute: '{method}' promise: 0x{returnPromise:X8}; reading {argBytes} bytes of arguments...");
 
                 // Read all the arguments into a byte array
                 int read = reader.Read(args, 0, argBytes);
@@ -176,8 +186,24 @@ namespace OmsiHookRPCPlugin
                     Log($"Only read {read} out of {argBytes} bytes of arguments for {method} call!");
                     continue;
                 }
+
+                if(method == RemoteMethod.CloseRPCConnection)
+                {
+                    if (BitConverter.ToUInt32(args, 0) != 0)
+                    {
+                        foreach(var pipe in pipes)
+                            pipe.Close();
+                    }
+                    else
+                    {
+                        pipeRX.Close();
+                        pipeTX.Close();
+                    }
+                    return;
+                }
+
                 callQueue.Enqueue(new(method, args, threadId, returnPromise));
-                Log($"[RPC Server {threadId}]    method enqueued...");
+                //Log($"[RPC Server {threadId}]    method enqueued...");
             }
         }
 
@@ -275,6 +301,24 @@ namespace OmsiHookRPCPlugin
                         BitConverter.ToUInt32(methodData.args, argInd += 4),
                         BitConverter.ToUInt32(methodData.args, argInd += 4)
                         );
+                    break;
+                case RemoteMethod.ReleaseTexture:
+                    ret = NativeImports.ReleaseTexture(
+                        BitConverter.ToUInt32(methodData.args, argInd)
+                    );
+                    break;
+                case RemoteMethod.GetTextureDesc:
+                    ret = NativeImports.GetTextureDesc(
+                        BitConverter.ToUInt32(methodData.args, argInd),
+                        BitConverter.ToUInt32(methodData.args, argInd += 4),
+                        BitConverter.ToUInt32(methodData.args, argInd += 4),
+                        BitConverter.ToUInt32(methodData.args, argInd += 4)
+                        );
+                    break;
+                case RemoteMethod.IsTexture:
+                    ret = NativeImports.IsTexture(
+                        BitConverter.ToUInt32(methodData.args, argInd)
+                    );
                     break;
                 default:
                     Log($"Unknown message type: {methodData.method} encountered!");

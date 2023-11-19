@@ -109,18 +109,37 @@ namespace OmsiHook
         public void WriteMemory<T>(int address, T[] values) where T : unmanaged
         {
             if(typeof(T) == typeof(byte))
-                Imports.WriteProcessMemory((int)omsiProcessHandle, address, (byte[])Convert.ChangeType(values, typeof(byte[])), values.Length, out _);
+                Imports.WriteProcessMemory((int)omsiProcessHandle, address, Unsafe.As<byte[]>(values), values.Length, out _);
 
-            int tSize = Marshal.SizeOf<T>();
-            byte[] buffer = new byte[tSize * values.Length];
-            for(int i = 0; i < values.Length; i++)
-                StructureToByteArray(values[i], buffer, i * tSize);
-
-            Imports.WriteProcessMemory((int)omsiProcessHandle, address, buffer, buffer.Length, out _);
+            // Not very safe, but avoids copying memory if we don't need to
+            var memory = values.AsMemory();
+            using var handle = memory.Pin();
+            var bytes = MemoryMarshal.AsBytes(memory.Span);
+            Imports.WriteProcessMemory((int)omsiProcessHandle, address, ref MemoryMarshal.GetReference(bytes), bytes.Length, out _);
+            
+            // Safer method
+            //int tSize = Marshal.SizeOf<T>();
+            //byte[] buffer = new byte[tSize * values.Length];
+            //Buffer.BlockCopy(values, 0, buffer, 0, buffer.Length);
+            //Imports.WriteProcessMemory((int)omsiProcessHandle, address, buffer, buffer.Length, out _);
         }
 
         /// <inheritdoc cref="WriteMemory{T}(int, T[])"/>
         public void WriteMemory<T>(uint address, T[] values) where T : unmanaged
+        {
+            WriteMemory(unchecked((int)address), values);
+        }
+
+        /// <inheritdoc cref="WriteMemory{T}(int, T[])"/>
+        public void WriteMemory<T>(int address, Memory<T> values) where T : unmanaged
+        {
+            using var handle = values.Pin();
+            var bytes = MemoryMarshal.AsBytes(values.Span);
+            Imports.WriteProcessMemory((int)omsiProcessHandle, address, ref MemoryMarshal.GetReference(bytes), bytes.Length, out _);
+        }
+
+        /// <inheritdoc cref="WriteMemory{T}(int, T[])"/>
+        public void WriteMemory<T>(uint address, Memory<T> values) where T : unmanaged
         {
             WriteMemory(unchecked((int)address), values);
         }
@@ -1014,7 +1033,7 @@ namespace OmsiHook
         }
 
         /// <summary>
-        /// Attempts to allocate memory in the remote process using VirtualAlloc.
+        /// Attempts to allocate memory in the remote process using VirtualAlloc/@GetMem.
         /// </summary>
         /// <remarks>
         /// Returns 0 (nullptr) if no memory is to be allocated. Raises an
@@ -1055,7 +1074,45 @@ namespace OmsiHook
             return addr;
         }
 
-#endregion
+        /// <summary>
+        /// Attempts to free memory in the remote process using VirtualFree/@FreeMem.
+        /// </summary>
+        /// <remarks>
+        /// Returns 0 (nullptr) if no memory is to be allocated. Raises an
+        /// <seealso cref="OutOfMemoryException"/> if no memory could be allocated.
+        /// </remarks>
+        /// <param name="address">A pointer to the starting address of the region of memory to be freed</param>
+        /// <param name="fastAlloc">Use the faster memory allocator. This bypasses the Delphi memory allocator
+        /// and simply calls VirtualAlloc which is much faster. It's generally not recommended as Omsi can't usually
+        /// free memory allocated this way. The slow allocator has a latency of 1 frame when not running as an Omsi plugin.</param>
+        public void FreeRemoteMemory(int address, bool fastAlloc = false)
+        {
+            // Return a nullptr if no memory is needed.
+            if (address == 0)
+                return;
+
+            if (fastAlloc)
+            {
+                Imports.VirtualFreeEx((int)omsiProcessHandle, address, 0, Imports.FreeType.MEM_RELEASE);
+            }
+            else
+            {
+#if !OMSI_PLUGIN
+                if (!OmsiRemoteMethods.IsInitialised)
+                    throw new Exception("OmsiRemoteMethods are not initialised, remote memory allocator cannot be used!");
+#endif
+
+                OmsiRemoteMethods.OmsiFreeMemAsync(address);
+            }
+        }
+
+        /// <inheritdoc cref="FreeRemoteMemory(int, bool)"/>
+        public void FreeRemoteMemory(uint address, bool fastAlloc = false)
+        {
+            FreeRemoteMemory(unchecked((int)address), fastAlloc);
+        }
+
+        #endregion
     }
 
     internal static class Imports
@@ -1070,6 +1127,8 @@ namespace OmsiHook
 
         [DllImport("kernel32.dll")]
         public static extern bool WriteProcessMemory(int hProcess, int lpBaseAddress, byte[] buffer, int size, out int lpNumberOfBytesWritten);
+        [DllImport("kernel32.dll")]
+        public static extern bool WriteProcessMemory(int hProcess, int lpBaseAddress, ref byte buffer, int size, out int lpNumberOfBytesWritten);
 
         /// <summary>
         /// Allocates memory in a remote process's memory space.
@@ -1082,6 +1141,8 @@ namespace OmsiHook
         /// <returns>The address of the allocated memory. Returns 0 if the allocation failed.</returns>
         [DllImport("kernel32.dll")]
         public static extern int VirtualAllocEx(int hProcess, int lpAddress, int dwSize, AllocationType flAllocationType, MemoryProtectionType flProtect);
+        [DllImport("kernel32.dll")]
+        public static extern bool VirtualFreeEx(int hProcess, int lpAddress, int dwSize, FreeType dwFreeType);
         #endregion
 
         [Flags]
@@ -1094,6 +1155,16 @@ namespace OmsiHook
             MEM_LARGE_PAGES = 0x20000000,
             MEM_PHYSICAL = 0x00400000,
             MEM_TOP_DOWN = 0x00100000,
+        }
+
+        [Flags]
+        internal enum FreeType : int
+        {
+            MEM_DECOMMIT = 0x00004000,
+            MEM_RELEASE = 0x00008000,
+
+            MEM_COALESCE_PLACEHOLDERS = 0x00000001,
+            MEM_PRESERVE_PLACEHOLDER = 0x00000002
         }
 
         [Flags]
