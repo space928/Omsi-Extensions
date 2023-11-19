@@ -230,11 +230,11 @@ namespace OmsiHook
         /// <summary>
         /// Attempts to create a new d3d texture which can be shared with an external D3D context.
         /// </summary>
-        public static async Task<(uint hresult, uint ppTexture)> OmsiCreateTextureAsync(uint width, uint height, D3DFORMAT format)
+        public static async Task<(HRESULT hresult, uint ppTexture)> OmsiCreateTextureAsync(uint width, uint height, D3DFORMAT format)
         {
 #if OMSI_PLUGIN
             uint ppTexture = OmsiGetMem(4).Result;
-            uint hresult = unchecked((uint)CreateTexture(width, height, (uint)format, ppTexture));
+            HRESULT hresult = (HRESULT)CreateTexture(width, height, (uint)format, ppTexture);
             return (hresult, ppTexture);
 #else
             if (!IsInitialised)
@@ -258,18 +258,18 @@ namespace OmsiHook
             BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], ppTexture);
             lock (pipeTX)
                 pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
-            return (unchecked((uint)await promise.Task), ppTexture);
+            return ((HRESULT)await promise.Task, ppTexture);
 #endif
         }
 
         /// <summary>
         /// Attempts to create a new d3d texture which can be shared with an external D3D context.
         /// </summary>
-        public static async Task<uint> OmsiUpdateTextureAsync(uint texturePtr, uint textureDataPtr, uint width, uint height, Rectangle? updateRect = null)
+        public static async Task<HRESULT> OmsiUpdateTextureAsync(uint texturePtr, uint textureDataPtr, uint width, uint height, Rectangle? updateRect = null)
         {
 #if OMSI_PLUGIN
-            return unchecked((uint)UpdateSubresource(texturePtr, textureDataPtr, width, height, 
-                updateRect.HasValue ? 1 : 0, updateRect?.left??0, updateRect?.top??0, updateRect?.right??0, updateRect?.bottom??0));
+            return (HRESULT)UpdateSubresource(texturePtr, textureDataPtr, width, height, 
+                updateRect.HasValue ? 1 : 0, updateRect?.left??0, updateRect?.top??0, updateRect?.right??0, updateRect?.bottom??0);
 #else
             if (!IsInitialised)
                 throw new NotInitialisedException("OmsiHook RPC plugin is not connected! Did you make sure to call OmsiRemoteMethods.InitRemoteMethods() before this call?");
@@ -293,7 +293,7 @@ namespace OmsiHook
             BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], updateRect?.bottom ?? 0);
             lock (pipeTX)
                 pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
-            return unchecked((uint)await promise.Task);
+            return (HRESULT)await promise.Task;
 #endif
         }
 
@@ -402,6 +402,50 @@ namespace OmsiHook
             D3DFMT_CxV8U8 = 117,
 
             D3DFMT_FORCE_DWORD = 0x7fffffff
+        }
+
+        private const int D3D_FAC = 0x876;
+        private const int OH_FAC = 0x554;
+
+        public static bool HRESULTFailed(HRESULT hr) => (int)hr < 0;
+
+        public enum HRESULT : int
+        {
+            S_OK = 0,
+            S_FALSE = 1,
+            E_FAIL =                                 (1 << 31) | 0x00004005,
+            E_ABORT =                                (1 << 31) | 0x00004004,
+            E_INVALIDARG =                           (1 << 31) | 0x00070057,
+
+            D3DERR_WRONGTEXTUREFORMAT =              (1 << 31) | (D3D_FAC << 16) | (2072),
+            D3DERR_UNSUPPORTEDCOLOROPERATION =       (1 << 31) | (D3D_FAC << 16) | (2073),
+            D3DERR_UNSUPPORTEDCOLORARG =             (1 << 31) | (D3D_FAC << 16) | (2074),
+            D3DERR_UNSUPPORTEDALPHAOPERATION =       (1 << 31) | (D3D_FAC << 16) | (2075),
+            D3DERR_UNSUPPORTEDALPHAARG =             (1 << 31) | (D3D_FAC << 16) | (2076),
+            D3DERR_TOOMANYOPERATIONS =               (1 << 31) | (D3D_FAC << 16) | (2077),
+            D3DERR_CONFLICTINGTEXTUREFILTER =        (1 << 31) | (D3D_FAC << 16) | (2078),
+            D3DERR_UNSUPPORTEDFACTORVALUE =          (1 << 31) | (D3D_FAC << 16) | (2079),
+            D3DERR_CONFLICTINGRENDERSTATE =          (1 << 31) | (D3D_FAC << 16) | (2081),
+            D3DERR_UNSUPPORTEDTEXTUREFILTER =        (1 << 31) | (D3D_FAC << 16) | (2082),
+            D3DERR_CONFLICTINGTEXTUREPALETTE =       (1 << 31) | (D3D_FAC << 16) | (2086),
+            D3DERR_DRIVERINTERNALERROR =             (1 << 31) | (D3D_FAC << 16) | (2087),                                                
+            D3DERR_NOTFOUND =                        (1 << 31) | (D3D_FAC << 16) | (2150),
+            D3DERR_MOREDATA =                        (1 << 31) | (D3D_FAC << 16) | (2151),
+            D3DERR_DEVICELOST =                      (1 << 31) | (D3D_FAC << 16) | (2152),
+            D3DERR_DEVICENOTRESET =                  (1 << 31) | (D3D_FAC << 16) | (2153),
+            D3DERR_NOTAVAILABLE =                    (1 << 31) | (D3D_FAC << 16) | (2154),
+            D3DERR_OUTOFVIDEOMEMORY =                (1 << 31) | (D3D_FAC << 16) | (380),
+            D3DERR_INVALIDDEVICE =                   (1 << 31) | (D3D_FAC << 16) | (2155),
+            D3DERR_INVALIDCALL =                     (1 << 31) | (D3D_FAC << 16) | (2156),
+            D3DERR_DRIVERINVALIDCALL =               (1 << 31) | (D3D_FAC << 16) | (2157),
+            D3DERR_WASSTILLDRAWING =                 (1 << 31) | (D3D_FAC << 16) | (540),
+            D3DOK_NOAUTOGEN =                        (0 << 31) | (D3D_FAC << 16) | (2159),
+
+            OHERR_NOD3DDEVICE =                      (1 << 31) | (OH_FAC << 16) | (10),
+            OHERR_D3DDEVICEQUERYFAILED =             (1 << 31) | (OH_FAC << 16) | (11),
+            OHERR_UPDATESUBRES_TEXTURENULL =         (1 << 31) | (OH_FAC << 16) | (20),
+            OHERR_UPDATESUBRES_DSTTEXTURETOOSMALL =  (1 << 31) | (OH_FAC << 16) | (21),
+            OHERR_UPDATESUBRES_INVALIDRECT =         (1 << 31) | (OH_FAC << 16) | (22),
         }
 
         public struct Rectangle

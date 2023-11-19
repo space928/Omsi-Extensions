@@ -108,21 +108,22 @@ namespace OmsiExtensionsCLI
             if(!ready)
                 Hook();
 
-            (uint hresult, uint texturePtr) = OmsiRemoteMethods.OmsiCreateTextureAsync(texWidth, texHeight, OmsiRemoteMethods.D3DFORMAT.D3DFMT_A8B8G8R8).Result;
-            if (hresult != 0)
-                throw new Exception("Couldn't create D3D texture! Result: " + new SharpDX.Result(hresult));
+            (OmsiRemoteMethods.HRESULT hresult, uint texturePtr) = OmsiRemoteMethods.OmsiCreateTextureAsync(texWidth, texHeight, OmsiRemoteMethods.D3DFORMAT.D3DFMT_A8R8G8B8).Result;
+            if (OmsiRemoteMethods.HRESULTFailed(hresult))
+                throw new Exception("Couldn't create D3D texture! Result: " + hresult);
 
-            var scriptTexes = omsi.Globals.PlayerVehicle.ComplObjInst.ScriptTextures;
+            /*var scriptTexes = omsi.Globals.PlayerVehicle.ComplObjInst.ScriptTextures;
             for (int i = 0; i < scriptTexes.Count; i++)
             {
                 var old = scriptTexes[i];
+                Console.WriteLine($"Replacing script tex: texPn:uint[{old.TexPn?.Length??-1}], color:{old.color}, tex:{old.tex} with tex:{texturePtr}");
                 scriptTexes[i] = new()
                 {
                     TexPn = old.TexPn,
                     color = old.color,
                     tex = (IntPtr)texturePtr
                 };
-            }
+            }*/
 
             //device = new SharpDX.Direct3D11.Device(SharpDX.Direct3D.DriverType.Hardware, DeviceCreationFlags.None);
             //return device.OpenSharedResource<SharpDX.Direct3D11.Texture2D>((IntPtr)textureHandle);
@@ -131,7 +132,10 @@ namespace OmsiExtensionsCLI
 
         public void UpdateTexture(uint texturePtr)
         {
-            uint texMemPtr = OmsiRemoteMethods.OmsiGetMem(texWidth * texHeight * 4).Result;
+#if !DEBUG
+            Console.WriteLine("WARNING: Currently UpdateTexture() only works in debug builds.");
+#else
+            int texMemPtr = omsi.OmsiMemory.AllocRemoteMemory(texWidth * texHeight * 4, fastAlloc:true).Result; //OmsiRemoteMethods.OmsiGetMem(texWidth * texHeight * 4).Result;
             uint[] managedTextureBuffer = new uint[texWidth * texHeight * 4];
             for (int y = 0; y < texHeight; y++)
                 for(int x = 0; x < texWidth; x++)
@@ -144,16 +148,12 @@ namespace OmsiExtensionsCLI
                         a = 255
                     }.data;
                 }
-
-#if DEBUG
             omsi.OmsiMemory.WriteMemory(texMemPtr, managedTextureBuffer);
-#else
-            Console.WriteLine("WARNING: Currently UpdateTexture() only works in debug builds.");
-#endif
 
-            int hr = unchecked((int)OmsiRemoteMethods.OmsiUpdateTextureAsync(texturePtr, texMemPtr, texWidth, texHeight).Result);
-            if(hr != 0) 
-                throw new SharpDXException(hr);
+            OmsiRemoteMethods.HRESULT hr = OmsiRemoteMethods.OmsiUpdateTextureAsync(texturePtr, unchecked((uint)texMemPtr), texWidth, texHeight).Result;
+            if(OmsiRemoteMethods.HRESULTFailed(hr))
+                throw new Exception("Couldn't update D3D texture! Result: " + hr);
+#endif
         }
 
         private void Omsi_OnOmsiGotD3DContext(object sender, EventArgs e)

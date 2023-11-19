@@ -108,6 +108,6 @@
 		<SignAssembly>False</SignAssembly>
 	</PropertyGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Command="xcopy &quot;$(SolutionDir)$(Configuration)\*.dll&quot; &quot;$(OutDir)&quot; /y&#xD;&#xA;xcopy &quot;$(OutDir)*.dll&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y /c&#xD;&#xA;xcopy &quot;$(OutDir)*.opl&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y /c &#xD;&#xA;xcopy &quot;$(OutDir)*.runtimeconfig.json&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y /c" />
+	  <Exec Command="xcopy &quot;$(SolutionDir)$(Configuration)\*.dll&quot; &quot;$(OutDir)&quot; /y&#xD;&#xA;xcopy &quot;$(SolutionDir)$(Configuration)\*.pdb&quot; &quot;$(OutDir)&quot; /y&#xD;&#xA;xcopy &quot;$(OutDir)*.dll&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y /c&#xD;&#xA;xcopy &quot;$(OutDir)*.pdb&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y /c&#xD;&#xA;xcopy &quot;$(OutDir)*.opl&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y /c &#xD;&#xA;xcopy &quot;$(OutDir)*.runtimeconfig.json&quot; &quot;D:\Program Files\OMSI 2\plugins\&quot; /y /c" />
 	</Target>
 </Project>

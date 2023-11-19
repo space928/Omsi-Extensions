@@ -12,4 +12,6 @@
 
 #include "d3d9.h"
 
+#include "OmsiHookRPCErrors.h"
+
 #endif //PCH_H

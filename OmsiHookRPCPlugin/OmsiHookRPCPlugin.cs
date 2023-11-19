@@ -76,7 +76,10 @@ namespace OmsiHookRPCPlugin
         // ReSharper disable once UnusedMember.Global
         public static void PluginStart(IntPtr aOwner)
         {
-            File.Delete("omsiHookRPCPluginLog.txt");
+            try
+            {
+                File.Delete("omsiHookRPCPluginLog.txt");
+            } catch { }
             Log("############## Omsi Hook RPC Plugin ##############");
             Log($"    version: {Assembly.GetExecutingAssembly().GetName().Version}");
             Log($@"Starting RPC server on named pipe: \\.\pipe\{PIPE_NAME_RX} and \\.\pipe\{PIPE_NAME_TX} with {MAX_CLIENTS} threads...");

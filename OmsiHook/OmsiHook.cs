@@ -32,6 +32,7 @@ namespace OmsiHook
         /// <summary>
         /// Gets the remote memory manager. In general you shouldn't need to use this, you should only ever need to interact with OmsiGlobals.
         /// </summary>
+        [Obsolete("This property is only available in Debug builds, in general you should never need raw access to remote memory.")]
         public Memory OmsiMemory => omsiMemory;
 #endif
 

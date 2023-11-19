@@ -113,8 +113,8 @@ namespace OmsiHook
 
             int tSize = Marshal.SizeOf<T>();
             byte[] buffer = new byte[tSize * values.Length];
-            for(int i = 0; i < buffer.Length; i += tSize)
-                StructureToByteArray(values[i], buffer, i);
+            for(int i = 0; i < values.Length; i++)
+                StructureToByteArray(values[i], buffer, i * tSize);
 
             Imports.WriteProcessMemory((int)omsiProcessHandle, address, buffer, buffer.Length, out _);
         }
@@ -1026,7 +1026,7 @@ namespace OmsiHook
         /// free memory allocated this way. The slow allocator has a latency of 1 frame when not running as an Omsi plugin.</param>
         /// <returns>The pointer to the allocated memory</returns>
         /// <exception cref="OutOfMemoryException"></exception>
-        private async Task<int> AllocRemoteMemory(int bytes, bool fastAlloc = false)
+        public async Task<int> AllocRemoteMemory(int bytes, bool fastAlloc = false)
         {
             // Return a nullptr if no memory is needed.
             if (bytes == 0)
@@ -1046,7 +1046,7 @@ namespace OmsiHook
                     throw new Exception("OmsiRemoteMethods are not initialised, remote memory allocator cannot be used!");
 #endif
 
-                addr = (int)await OmsiRemoteMethods.OmsiGetMem(bytes);
+                addr = unchecked((int)await OmsiRemoteMethods.OmsiGetMem(bytes));
             }
 
             if (addr == 0)

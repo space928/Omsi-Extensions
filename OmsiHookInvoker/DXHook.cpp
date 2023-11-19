@@ -34,9 +34,9 @@ BOOL DXHook::HookD3D()
 HRESULT DXHook::CreateTexture(UINT Width, UINT Height, D3DFORMAT Format, IDirect3DTexture9** ppTexture)
 {
 	if (!m_device)
-		return E_FAIL;
+		return OHERR_NOD3DDEVICE; 
 	if ((int)m_device == -2)
-		return -2;
+		return OHERR_D3DDEVICEQUERYFAILED;
 
 	// Shared handle is only supported with D3D9Ex sadly:
 	// https://www.gamedev.net/forums/topic/638495-shared-resources-eg-textures-between-devicesthreads/5030524/
@@ -48,20 +48,23 @@ HRESULT DXHook::UpdateSubresource(IDirect3DTexture9* Texture, UINT8* TextureData
 {
 	// Check the arguments, users can never be trusted and this is annoying to debug...
 	if (Texture == nullptr || TextureData == nullptr)
-		return E_ABORT;
+		return OHERR_UPDATESUBRES_TEXTURENULL;
 
-	HRESULT hr;
-	D3DSURFACE_DESC surfaceDesc;
-	hr = Texture->GetLevelDesc(0, &surfaceDesc);
-	if(FAILED(hr))
-		return hr;
+	IDirect3D9* d3d;
+	CHECK_FAILURE_RETURN(m_device->GetDirect3D(&d3d));
+	D3DDISPLAYMODE displayMode;
+	CHECK_FAILURE_RETURN(d3d->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &displayMode));
+	D3DSURFACE_DESC desc;
+	// Somehow, this sometimes fails with an access violation exception...
+	CHECK_FAILURE_RETURN(Texture->GetLevelDesc(0, &desc));
+	CHECK_FAILURE_RETURN(d3d->CheckDeviceFormat(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, displayMode.Format, desc.Usage, D3DRTYPE_TEXTURE, desc.Format));
 
-	if (surfaceDesc.Width < Width || surfaceDesc.Height < Height)
-		return E_INVALIDARG;
+	if (desc.Width < Width || desc.Height < Height)
+		return OHERR_UPDATESUBRES_DSTTEXTURETOOSMALL;
 
 	if (UseRect)
 		if (Right - Left != Width || Bottom - Top != Height)
-			return E_INVALIDARG;
+			return OHERR_UPDATESUBRES_INVALIDRECT;
 
 	const RECT rect {
 		Left,
@@ -70,9 +73,7 @@ HRESULT DXHook::UpdateSubresource(IDirect3DTexture9* Texture, UINT8* TextureData
 		Bottom
 	};
 	D3DLOCKED_RECT lockedRect;
-	hr = Texture->LockRect(0, &lockedRect, UseRect ? &rect : NULL, D3DLOCK_DISCARD);
-	if (FAILED(hr))
-		return hr;
+	CHECK_FAILURE_RETURN(Texture->LockRect(0, &lockedRect, UseRect ? &rect : NULL, D3DLOCK_DISCARD));
 
 	for (UINT y = 0; y < Height; y++)
 	{
@@ -80,7 +81,7 @@ HRESULT DXHook::UpdateSubresource(IDirect3DTexture9* Texture, UINT8* TextureData
 		memcpy(dst, (TextureData + Width * y), Width);
 	}
 
-	hr = Texture->UnlockRect(0);
+	CHECK_FAILURE_RETURN(Texture->UnlockRect(0));
 
-	return hr;
+	return S_OK;
 }

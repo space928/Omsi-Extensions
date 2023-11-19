@@ -92,6 +92,7 @@
   <ItemGroup>
     <ClInclude Include="DXHook.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="OmsiHookRPCErrors.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
