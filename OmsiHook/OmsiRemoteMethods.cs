@@ -230,7 +230,7 @@ namespace OmsiHook
         /// <summary>
         /// Attempts to create a new d3d texture which can be shared with an external D3D context.
         /// </summary>
-        public static async Task<(HRESULT hresult, uint ppTexture)> OmsiCreateTextureAsync(uint width, uint height, D3DFORMAT format)
+        public static async Task<(HRESULT hresult, uint pTexture)> OmsiCreateTextureAsync(uint width, uint height, D3DFORMAT format)
         {
 #if OMSI_PLUGIN
             uint ppTexture = OmsiGetMem(4).Result;
@@ -241,7 +241,7 @@ namespace OmsiHook
                 throw new NotInitialisedException("OmsiHook RPC plugin is not connected! Did you make sure to call OmsiRemoteMethods.InitRemoteMethods() before this call?");
 
             // Allocate the pointers
-            uint ppTexture = OmsiGetMem(4).Result;
+            int ppTexture = memory.AllocRemoteMemory(4, true).Result;//OmsiGetMem(4).Result;
             memory.WriteMemory(ppTexture, 0);
 
             int argPos = 0;
@@ -258,7 +258,9 @@ namespace OmsiHook
             BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], ppTexture);
             lock (pipeTX)
                 pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
-            return ((HRESULT)await promise.Task, ppTexture);
+            HRESULT result = (HRESULT)await promise.Task;
+            uint pTexture = memory.ReadMemory<uint>(ppTexture);
+            return (result, pTexture);
 #endif
         }
 

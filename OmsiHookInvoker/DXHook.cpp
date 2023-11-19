@@ -55,7 +55,6 @@ HRESULT DXHook::UpdateSubresource(IDirect3DTexture9* Texture, UINT8* TextureData
 	D3DDISPLAYMODE displayMode;
 	CHECK_FAILURE_RETURN(d3d->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &displayMode));
 	D3DSURFACE_DESC desc;
-	// Somehow, this sometimes fails with an access violation exception...
 	CHECK_FAILURE_RETURN(Texture->GetLevelDesc(0, &desc));
 	CHECK_FAILURE_RETURN(d3d->CheckDeviceFormat(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, displayMode.Format, desc.Usage, D3DRTYPE_TEXTURE, desc.Format));
 

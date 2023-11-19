@@ -72,6 +72,7 @@ namespace OmsiExtensionsCLI
         private const int texWidth = 256;
         private const int texHeight = 256;
         private RGBA[] texBuffer = new RGBA[texWidth * texHeight];
+        private int iter = 0;
 
         [StructLayout(LayoutKind.Explicit, Pack = 1, Size = 4)]
         private struct RGBA
@@ -112,7 +113,7 @@ namespace OmsiExtensionsCLI
             if (OmsiRemoteMethods.HRESULTFailed(hresult))
                 throw new Exception("Couldn't create D3D texture! Result: " + hresult);
 
-            /*var scriptTexes = omsi.Globals.PlayerVehicle.ComplObjInst.ScriptTextures;
+            var scriptTexes = omsi.Globals.PlayerVehicle.ComplObjInst.ScriptTextures;
             for (int i = 0; i < scriptTexes.Count; i++)
             {
                 var old = scriptTexes[i];
@@ -123,7 +124,7 @@ namespace OmsiExtensionsCLI
                     color = old.color,
                     tex = (IntPtr)texturePtr
                 };
-            }*/
+            }
 
             //device = new SharpDX.Direct3D11.Device(SharpDX.Direct3D.DriverType.Hardware, DeviceCreationFlags.None);
             //return device.OpenSharedResource<SharpDX.Direct3D11.Texture2D>((IntPtr)textureHandle);
@@ -140,14 +141,18 @@ namespace OmsiExtensionsCLI
             for (int y = 0; y < texHeight; y++)
                 for(int x = 0; x < texWidth; x++)
                 {
-                    managedTextureBuffer[x + y * texWidth] = new RGBA()
+                    unchecked
                     {
-                        r = (byte)((x * 4) % 256),
-                        g = (byte)((y * 4) % 256),
-                        b = (byte)(((x + y) * 4) % 256),
-                        a = 255
-                    }.data;
+                        managedTextureBuffer[x + y * texWidth] = new RGBA()
+                        {
+                            r = (byte)(((x + iter) * 4) % 256),
+                            g = (byte)(((y + iter) * 4) % 256),
+                            b = (byte)(((x + y + iter * 3) * 4) % 256),
+                            a = (byte)(255 + iter * 127*0)
+                        }.data;
+                    }
                 }
+            iter++;
             omsi.OmsiMemory.WriteMemory(texMemPtr, managedTextureBuffer);
 
             OmsiRemoteMethods.HRESULT hr = OmsiRemoteMethods.OmsiUpdateTextureAsync(texturePtr, unchecked((uint)texMemPtr), texWidth, texHeight).Result;
