@@ -106,6 +106,7 @@
 		<PackageIcon>Logo.png</PackageIcon>
 		<PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>
 		<SignAssembly>False</SignAssembly>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	</PropertyGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 	  <Exec Command="xcopy &quot;$(SolutionDir)$(Configuration)\*.dll&quot; &quot;$(OutDir)&quot; /y&#xD;&#xA;xcopy &quot;$(SolutionDir)$(Configuration)\*.pdb&quot; &quot;$(OutDir)&quot; /y&#xD;&#xA;if not defined OmsiDir (&#xD;&#xA;  set &quot;OmsiDir=D:\Program Files\OMSI 2\&quot;&#xD;&#xA;)&#xD;&#xA;if exist &quot;%25OmsiDir%25plugins\&quot; (&#xD;&#xA;  xcopy &quot;$(OutDir)*.dll&quot; &quot;%25OmsiDir%25plugins\&quot; /y /c&#xD;&#xA;  xcopy &quot;$(OutDir)*.pdb&quot; &quot;%25OmsiDir%25plugins\&quot; /y /c&#xD;&#xA;  xcopy &quot;$(OutDir)*.opl&quot; &quot;%25OmsiDir%25plugins\&quot; /y /c &#xD;&#xA;  xcopy &quot;$(OutDir)*.runtimeconfig.json&quot; &quot;%25OmsiDir%25plugins\&quot; /y /c&#xD;&#xA;)" />

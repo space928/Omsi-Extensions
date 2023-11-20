@@ -42,6 +42,7 @@ class Program
     }
 }
 ```
+See the `OmsiExtensionsCLI` [Program.cs](OmsiExtensionsCLI/Program.cs) for more examples using OmsiHook.
 
 ## Project Structure
 This repository contains the source for the OmsiHook and OmsiHookInvoker libraries as well as template 
@@ -55,6 +56,8 @@ Here's a summary of the project structure:
 ┃                             exposing Omsi's internal data.
 ┠─► \OmsiHookInvoker\      -> C++ plugin for invoking native Omsi methods from OmsiHook, 
 ┃                             only used by OmsiHook.
+┠─► \OmsiHookRPCPlugin\    -> An Omsi plugin which exposes native methods from OmsiHookInvoker 
+┃                             to other processes using OmsiHook.
 ┠─► \OmsiExtensionsCLI\    -> Example command line application that uses OmsiHook; runs
 ┃                             outside of Omsi.
 ┠─► \OmsiExtensionsUI\     -> Example Avalonia UI (similar to WPF) application that uses
@@ -62,3 +65,21 @@ Here's a summary of the project structure:
 ┖─► \OmsiHookPlugin\       -> Example plugin that uses OmsiHook and compiles to a native
                                Omsi plugin by using DNNE.
 ```
+
+## Building
+The project requires .NET 6 SDK to build and only works on Windows x86_32. Because of the nature of 
+the project dependencies, sometimes Visual Studio gets the build order wrong (especially for projects 
+depending on OmsiHookInvoker). When updating to a new version of OmsiHook or if you make changes to 
+OmsiHookInvoker you may need to clean and rebuild the solution; if you're really struggling delete the
+contents of the following directories:
+```
+Omsi-Extensions\Debug
+Omsi-Extensions\Release
+Omsi-Extensions\OmsiExtensionsCLI\bin\
+Omsi-Extensions\OmsiHookPlugin\bin\
+```
+The project can be configured to automatically copy binaries to your Omsi directory. To do so set the 
+`OmsiDir` environment variable to your Omsi directory (eg: `set "OmsiDir=C:\Program Files\OMSI 2\"`).
+You can also set it by editing the Post-build event action in the `OmsiHookRPCPlugin.csproj` and 
+`OmsiHookPlugin.csproj` project files. Note that the binaries are only copied when `OmsiHookRPCPlugin` 
+or `OmsiHookPlugin` is rebuilt.
