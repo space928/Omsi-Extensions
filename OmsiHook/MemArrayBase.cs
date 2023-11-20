@@ -51,10 +51,29 @@ namespace OmsiHook
         }
 
         public abstract void Add(Struct item);
-        public abstract void Clear();
+        public virtual void Clear()
+        {
+            // For an empty struct array, the type doesn't matter
+            Memory.WriteMemory(Address, Memory.AllocateStructArray<int>(0).Result);
+        }
         public abstract bool Contains(Struct item);
         public abstract void CopyTo(Struct[] array, int arrayIndex);
-        public abstract void Dispose();
+        /// <summary>
+        /// Attemps to free the memory allocated to the array if it's no longer referenced by OMSI.
+        /// </summary>
+        /// <remarks>
+        /// For now this just clears the native array and removes all references so that hopefully the GC can clean it up.
+        /// </remarks>
+        public virtual void Dispose()
+        {
+            // TODO: Free the old array
+            //Memory.Free(Memory.ReadMemory<int>(Address));
+            // Remove references from current array. TODO: Does this work? Is this safe?
+            Memory.WriteMemory(Memory.ReadMemory<int>(Address) - 8, 0);
+            Memory.WriteMemory(Address, Memory.AllocateStructArray<int>(0, 0).Result);
+
+            GC.SuppressFinalize(this);
+        }
         public abstract IEnumerator<Struct> GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => WrappedArray.GetEnumerator();
         public abstract int IndexOf(Struct item);

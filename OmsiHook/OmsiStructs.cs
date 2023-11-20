@@ -1259,7 +1259,7 @@ namespace OmsiHook
         public uint color;
     }
 
-    internal struct OmsiScriptTextureInternal
+    public struct OmsiScriptTextureInternal
     {
         [OmsiPtr] public int tex; // IDirect3DTexture9 - No Marshaling implemented
         [OmsiStructArrayPtr(typeof(uint))] public int TexPn;

@@ -33,7 +33,7 @@ namespace OmsiHook
         /// <summary>
         /// Current Map
         /// </summary>
-        public OmsiMap Map => new(Memory, Memory.ReadMemory<int>(0x861588));
+        public OmsiMap Map => Memory.ReadMemoryObject<OmsiMap>(0x861588);
 
         /// <summary>
         /// In game TicketPack List
@@ -63,7 +63,8 @@ namespace OmsiHook
         /// <summary>
         /// Current real weather config
         /// </summary>
-        public OmsiActuWeather ActuWeather => new(Memory, Memory.ReadMemory<int>(0x00861278));
+        public OmsiActuWeather ActuWeather => Memory.ReadMemoryObject<OmsiActuWeather>(0x00861278);
+
         /// <summary>
         /// List of Humans present in the scene
         /// </summary>
@@ -72,16 +73,16 @@ namespace OmsiHook
         /// <summary>
         /// Timetable manager for current session
         /// </summary>
-        public OmsiTimeTableMan TimeTableManager => new(Memory, Memory.ReadMemory<int>(0x008614e8));
+        public OmsiTimeTableMan TimeTableManager => Memory.ReadMemoryObject<OmsiTimeTableMan>(0x008614e8);
 
         /// <summary>
         /// Current Program Manager
         /// </summary>
-        public OmsiProgMan ProgamManager => new(Memory, Memory.ReadMemory<int>(0x00862f28));
+        public OmsiProgMan ProgamManager => Memory.ReadMemoryObject<OmsiProgMan>(0x00862f28);
 
         /// <summary>
         /// Main Camera Object
         /// </summary>
-        public OmsiCamera Camera => new(Memory, Memory.ReadMemory<int>(0x008616e0));
+        public OmsiCamera Camera => Memory.ReadMemoryObject<OmsiCamera>(0x008616e0);
     }
 }

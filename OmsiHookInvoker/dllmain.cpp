@@ -1,5 +1,8 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "pch.h"
+#include "DXHook.h"
+
+DXHook* m_dxHook;
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
@@ -11,7 +14,10 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     case DLL_PROCESS_ATTACH:
     case DLL_THREAD_ATTACH:
     case DLL_THREAD_DETACH:
+        break;
     case DLL_PROCESS_DETACH:
+        if (m_dxHook)
+            delete m_dxHook;
         break;
     }
     return TRUE;
@@ -162,4 +168,41 @@ extern "C" __declspec(dllexport) int FreeMem(int addr)
 {
     return BorlandFastCall(0x00404630, 1, 1,
         addr);
+}
+
+extern "C" __declspec(dllexport) BOOL HookD3D()
+{
+    if (!m_dxHook)
+        m_dxHook = new DXHook();
+
+    return m_dxHook->HookD3D();
+}
+
+extern "C" __declspec(dllexport) HRESULT CreateTexture(UINT Width, UINT Height, D3DFORMAT Format, IDirect3DTexture9** ppTexture)
+{
+    if (!m_dxHook)
+        return E_FAIL;
+    return m_dxHook->CreateTexture(Width, Height, Format, ppTexture);
+}
+
+extern "C" __declspec(dllexport) HRESULT UpdateSubresource(IDirect3DTexture9* Texture, UINT8* TextureData, UINT Width, UINT Height, BOOL UseRect, LONG32 Left, LONG32 Top, LONG32 Right, LONG32 Bottom)
+{
+    if (!m_dxHook)
+        return E_FAIL;
+    return m_dxHook->UpdateSubresource(Texture, TextureData, Width, Height, UseRect, Left, Top, Right, Bottom);
+}
+
+extern "C" __declspec(dllexport) HRESULT ReleaseTexture(IDirect3DTexture9* Texture)
+{
+    return DXHook::ReleaseTexture(Texture);
+}
+
+extern "C" __declspec(dllexport) HRESULT GetTextureDesc(IDirect3DTexture9 * Texture, UINT * pWidth, UINT * pHeight, UINT * pFormat)
+{
+    return DXHook::GetTextureDesc(Texture, pWidth, pHeight, pFormat);
+}
+
+extern "C" __declspec(dllexport) HRESULT IsTexture(IUnknown* Texture)
+{
+    return DXHook::IsTexture(Texture);
 }

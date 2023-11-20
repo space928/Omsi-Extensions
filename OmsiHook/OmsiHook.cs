@@ -16,6 +16,8 @@ namespace OmsiHook
         private Memory omsiMemory;
         private Process process;
         private OmsiGlobals globals;
+        private Task stateMonitorTask;
+        private bool isD3DReady;
 
         /// <summary>
         /// Gets the object storing all of Omsi's global variables.
@@ -26,6 +28,59 @@ namespace OmsiHook
         /// Gets the currently hooked Omsi process.
         /// </summary>
         public Process OmsiProcess => process;
+
+#if DEBUG
+        /// <summary>
+        /// Gets the remote memory manager. In general you shouldn't need to use this, you should only ever need to interact with OmsiGlobals.
+        /// </summary>
+        [Obsolete("This property is only available in Debug builds, in general you should never need raw access to remote memory.")]
+        public Memory OmsiMemory => omsiMemory;
+#endif
+
+        public bool IsD3DReady => isD3DReady;
+
+        #region Events
+        /// <summary>
+        /// An event raised when omsi.exe has exited.
+        /// </summary>
+        /// <remarks>
+        /// Events are not guaranteed to be raised as soon as the action in question occurs; the game's state is only check once every 20ms.
+        /// Events are raised from a worker thread, event handlers should try not to block this thread or future events won't be raised.
+        /// </remarks>
+        public event EventHandler OnOmsiExited;
+        /// <summary>
+        /// An event raised when Omsi gets a DirectX context.
+        /// </summary>
+        /// <remarks>
+        /// <inheritdoc cref="OnOmsiExited"/>
+        /// </remarks>
+        public event EventHandler OnOmsiGotD3DContext;
+        /// <summary>
+        /// An event raised when Omsi gets a DirectX context.
+        /// </summary>
+        /// <remarks>
+        /// <inheritdoc cref="OnOmsiExited"/>
+        /// </remarks>
+        public event EventHandler OnOmsiLostD3DContext;
+        /// <summary>
+        /// An event raised when Omsi starts loading a new map.
+        /// </summary>
+        /// <remarks>
+        /// <inheritdoc cref="OnOmsiExited"/>
+        /// </remarks>
+        public event EventHandler OnMapChange;
+        /// <summary>
+        /// An event raised when Omsi has loaded or unloaded a new map. The <c>EventArgs</c> is a boolean representing whether the map is loaded.
+        /// </summary>
+        /// <remarks>
+        /// <inheritdoc cref="OnOmsiExited"/>
+        /// </remarks>
+        public event EventHandler<bool> OnMapLoaded;
+
+        private int lastD3DState = 0;
+        private int lastMapState = 0;
+        private bool lastMapLoaded = false;
+        #endregion
 
         /// <summary>
         /// Attaches the hooking application to OMSI.exe.
@@ -38,28 +93,71 @@ namespace OmsiHook
 
             omsiMemory = new Memory();
 
+            int cursorLine = Console.CursorTop;
+            DateTime startTime = DateTime.Now;
             var found = false;
             while (!found)
             {
                 (found, process) = omsiMemory.Attach("omsi");
                 if (!found) {
-                    Console.WriteLine("Waiting for OMSI.exe...");
+                    Console.WriteLine($"Waiting for OMSI.exe (waited for {(DateTime.Now-startTime).TotalSeconds:0} seconds)...");
+                    Console.SetCursorPosition(0, cursorLine);
                     await Task.Delay(250);
                 }
             }
 
             if(initialiseRemoteMethods)
             {
-                OmsiRemoteMethods.InitRemoteMethods(omsiMemory);
+                await OmsiRemoteMethods.InitRemoteMethods(omsiMemory);
             }
 
+            stateMonitorTask = new(MonitorStateTask);
+            stateMonitorTask.Start();
+
+            OnOmsiGotD3DContext += OmsiHook_OnOmsiGotD3DContext;
+            OnOmsiLostD3DContext += OmsiHook_OnOmsiLostD3DContext;
+            OnMapChange += OmsiHook_OnMapChange;
+
             Console.WriteLine("Connected succesfully!");
+        }
+
+        /// <summary>
+        /// Factory method for <see cref="D3DTexture"/> objects. The resulting D3DTexture will need to be 
+        /// initiallised before use by calling either <see cref="D3DTexture.CreateFromExisting(uint)"/> or 
+        /// <see cref="D3DTexture.CreateD3DTexture(uint, uint, OmsiRemoteMethods.D3DFORMAT)"/>.
+        /// </summary>
+        /// <returns>a new <see cref="D3DTexture"/> object.</returns>
+        public D3DTexture CreateTextureObject()
+        {
+            return new D3DTexture(omsiMemory, 0);
+        }
+
+        private void OmsiHook_OnMapChange(object sender, EventArgs e)
+        {
+            Task.Run(() => {
+                while(!isD3DReady)
+                    isD3DReady = OmsiRemoteMethods.OmsiHookD3D();
+            });
+        }
+
+        private void OmsiHook_OnOmsiLostD3DContext(object sender, EventArgs e)
+        {
+            isD3DReady = false;
+        }
+
+        private void OmsiHook_OnOmsiGotD3DContext(object sender, EventArgs e)
+        {
+            Task.Run(() => {
+                while (!isD3DReady)
+                    isD3DReady = OmsiRemoteMethods.OmsiHookD3D();
+            });
         }
 
         [Obsolete("This will be obselete once TMyOMSIList is wrapped! The list of vehicles will be moved to OmsiGlobals.")]
         public OmsiRoadVehicleInst GetRoadVehicleInst(int index)
         {
-            return new OmsiRoadVehicleInst(omsiMemory, GetListItem(0x00861508, index));
+            var vehPtr = GetListItem(0x00861508, index);
+            return vehPtr == 0 ? null : new OmsiRoadVehicleInst(omsiMemory, vehPtr);
         }
 
         /// <summary>
@@ -73,7 +171,63 @@ namespace OmsiHook
         [Obsolete("This API will be replaced once TMyOMSIList is wrapped!")]
         private int GetListItem(int addr, int index)
         {
-            return omsiMemory.ReadMemory<int>(omsiMemory.ReadMemory<int>(omsiMemory.ReadMemory<int>(omsiMemory.ReadMemory<int>(addr) + 0x28) + 0x4) + index * 4);
+            try
+            {
+                return omsiMemory.ReadMemory<int>(omsiMemory.ReadMemory<int>(omsiMemory.ReadMemory<int>(omsiMemory.ReadMemory<int>(addr) + 0x28) + 0x4) + index * 4);
+            } catch
+            {
+                return 0;
+            }
         }
+
+        /// <summary>
+        /// This method continously spins to check the state of the game and raise events when the state changes.
+        /// </summary>
+        private void MonitorStateTask()
+        {
+            while(!process.HasExited)
+            {
+                int currentD3DState = omsiMemory.ReadMemory<int>(0x008627d0);
+                if(currentD3DState != lastD3DState)
+                {
+                    if (currentD3DState != 0)
+                        OnOmsiGotD3DContext?.Invoke(this, new());
+                    else
+                        OnOmsiLostD3DContext?.Invoke(this, new());
+                    lastD3DState = currentD3DState;
+                }
+
+                int currentMapAddr = omsiMemory.ReadMemory<int>(0x861588);
+                if (currentMapAddr != 0)
+                {
+                    int currentMapName = omsiMemory.ReadMemory<int>(currentMapAddr + 0x154);
+                    bool currentMapLoaded = omsiMemory.ReadMemory<bool>(currentMapAddr + 0x120);
+                    if(lastMapState != currentMapName)
+                    {
+                        if(currentMapName != 0)
+                            OnMapChange?.Invoke(this, new());
+                        lastMapState = currentMapName;
+                    }
+                    if(lastMapLoaded != currentMapLoaded)
+                    {
+                        OnMapLoaded?.Invoke(this, currentMapLoaded);
+                        lastMapLoaded = currentMapLoaded;
+                    }
+                }
+
+                Thread.Sleep(20);
+            }
+
+            OnOmsiExited?.Invoke(this, new());
+        }
+    }
+
+    /// <summary>
+    /// Indicates that OmsiHook was not connected to the remote application when the method was called.
+    /// </summary>
+    public class NotInitialisedException : Exception 
+    {
+        public NotInitialisedException() : base() { }
+        public NotInitialisedException(string message) : base(message) { }
     }
 }
