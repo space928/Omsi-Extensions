@@ -1,6 +1,6 @@
 # Building Native Omsi Plugins
 Some features of OmsiHook such as remote method calls require the library using OmsiHook to be running as a 
-native Omsi plugin. This guide covers some of the basics of building a native Omsi plugin using .NET 5.
+native Omsi plugin. This guide covers some of the basics of building a native Omsi plugin using .NET 6 (and above).
 An example plugin is available at 
 [https://github.com/space928/Omsi-Extensions/tree/main/OmsiHookPlugin](https://github.com/space928/Omsi-Extensions/tree/main/OmsiHookPlugin).
 
@@ -70,8 +70,8 @@ public static void AccessSystemVariable(ushort variableIndex, [C99Type("float*")
 In this example, the exported methods have been written in C# with necessary attributes decorating the methods so
 that they get exported correctly later when we include the native export library. 
 
-## Setting Up a .NET 5 Project to Use as a Plugin
-1. Create a new .NET 5 project with an output type of `Class Library`.
+## Setting Up a .NET 6 Project to Use as a Plugin
+1. Create a new .NET 6 project with an output type of `Class Library`.
 1. Install the [DNNE](https://www.nuget.org/packages/DNNE/) NuGet package.
 1. Install the [OmsiHook](https://www.nuget.org/packages/OmsiHook/) NuGet package.
 1. Set the platform target to `x86` (Omsi runs exclusively in 32 bit and as such, so must your plugin).

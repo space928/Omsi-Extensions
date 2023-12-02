@@ -169,6 +169,7 @@ namespace OmsiHook
                 case D3DFORMAT.D3DFMT_A8:
                 case D3DFORMAT.D3DFMT_P8:
                 case D3DFORMAT.D3DFMT_L8:
+                    return 8;
                 // 16 bpp
                 case D3DFORMAT.D3DFMT_R5G6B5:
                 case D3DFORMAT.D3DFMT_X1R5G5B5:
