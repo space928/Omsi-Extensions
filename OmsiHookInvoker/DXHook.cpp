@@ -72,7 +72,7 @@ HRESULT DXHook::UpdateSubresource(IDirect3DTexture9* Texture, UINT8* TextureData
 		Bottom
 	};
 	D3DLOCKED_RECT lockedRect;
-	CHECK_FAILURE_RETURN(Texture->LockRect(0, &lockedRect, UseRect ? &rect : NULL, D3DLOCK_DISCARD));
+	CHECK_FAILURE_RETURN(Texture->LockRect(0, &lockedRect, UseRect ? &rect : NULL, 0));
 
     int bpp = BitsPerPixel(desc.Format) / 8;
 	for (UINT y = 0; y < Height; y++)
@@ -132,6 +132,7 @@ constexpr size_t DXHook::BitsPerPixel(D3DFORMAT fmt) noexcept
     case D3DFMT_A8:
     case D3DFMT_P8:
     case D3DFMT_L8:
+        return 8;
         // 16 bpp
     case D3DFMT_R5G6B5:
     case D3DFMT_X1R5G5B5:

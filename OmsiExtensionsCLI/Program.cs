@@ -128,7 +128,7 @@ namespace OmsiExtensionsCLI
                 }
             iter++;
             
-            texture.UpdateTexture(texBuffer.AsMemory());
+            texture.UpdateTexture(texBuffer.AsMemory(), new OmsiRemoteMethods.Rectangle() { left=0, top=0, right=texWidth/2, bottom=texHeight/2});
         }
 
         private void Omsi_OnOmsiGotD3DContext(object sender, EventArgs e)

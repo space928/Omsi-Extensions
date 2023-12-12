@@ -129,7 +129,10 @@ namespace OmsiHook
                 throw new ArgumentOutOfRangeException(nameof(textureData));
             Memory.WriteMemory(remoteStagingBufferPtr, textureData);
 
-            HRESULT hr = OmsiUpdateTextureAsync(TextureAddress, remoteStagingBufferPtr, width, height, updateArea).Result;
+            uint dataWidth = (updateArea?.right - updateArea?.left) ?? width;
+            uint dataHeight = (updateArea?.bottom - updateArea?.top) ?? height;
+
+            HRESULT hr = OmsiUpdateTextureAsync(TextureAddress, remoteStagingBufferPtr, dataWidth, dataHeight, updateArea).Result;
             if (HRESULTFailed(hr))
                 throw new Exception("Couldn't update D3D texture! Result: " + hr);
         }

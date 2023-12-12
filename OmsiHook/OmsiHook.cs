@@ -89,19 +89,24 @@ namespace OmsiHook
         /// </summary>
         public async Task AttachToOMSI(bool initialiseRemoteMethods = true)
         {
-            Console.WriteLine("Attaching to OMSI.exe...");
-
             omsiMemory = new Memory();
 
-            int cursorLine = Console.CursorTop;
+            int cursorLine = int.MinValue;
+            try
+            {
+                cursorLine = Console.CursorTop;
+            } catch { }
             DateTime startTime = DateTime.Now;
             var found = false;
             while (!found)
             {
                 (found, process) = omsiMemory.Attach("omsi");
                 if (!found) {
-                    Console.WriteLine($"Waiting for OMSI.exe (waited for {(DateTime.Now-startTime).TotalSeconds:0} seconds)...");
-                    Console.SetCursorPosition(0, cursorLine);
+                    if (cursorLine != int.MinValue)
+                    {
+                        Console.WriteLine($"Waiting for OMSI.exe (waited for {(DateTime.Now - startTime).TotalSeconds:0} seconds)...");
+                        Console.SetCursorPosition(0, cursorLine);
+                    }
                     await Task.Delay(250);
                 }
             }
@@ -117,8 +122,6 @@ namespace OmsiHook
             OnOmsiGotD3DContext += OmsiHook_OnOmsiGotD3DContext;
             OnOmsiLostD3DContext += OmsiHook_OnOmsiLostD3DContext;
             OnMapChange += OmsiHook_OnMapChange;
-
-            Console.WriteLine("Connected succesfully!");
         }
 
         /// <summary>
