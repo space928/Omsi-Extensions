@@ -57,6 +57,8 @@ namespace OmsiHook
         public event EventHandler OnOmsiGotD3DContext;
         /// <summary>
         /// An event raised when Omsi gets a DirectX context.
+        /// 
+        /// Note that this is one of the last events raised when exiting the game; it's raised after PluginFinalize is called.
         /// </summary>
         /// <remarks>
         /// <inheritdoc cref="OnOmsiExited"/>
@@ -71,6 +73,10 @@ namespace OmsiHook
         public event EventHandler OnMapChange;
         /// <summary>
         /// An event raised when Omsi has loaded or unloaded a new map. The <c>EventArgs</c> is a boolean representing whether the map is loaded.
+        /// 
+        /// Note that while this event is raised when the map has finished loading; other systems may still be 
+        /// loading (timetables, weather, humans, ai vehicles, and the map camera are loaded later). If you want to be sure 
+        /// everything has loaded, the best bet would be to wait for an <c>AccessVariable()</c> call.
         /// </summary>
         /// <remarks>
         /// <inheritdoc cref="OnOmsiExited"/>
@@ -85,8 +91,8 @@ namespace OmsiHook
         /// <summary>
         /// Attaches the hooking application to OMSI.exe.
         /// Always call this at some point before trying to read and write data.
-        /// <param name="initialiseRemoteMethods">Try to initialise the connection to OmsiHookRPCPlugin, which is needed if you intend to call Omsi code or allocate memory.</param>
         /// </summary>
+        /// <param name="initialiseRemoteMethods">Try to initialise the connection to OmsiHookRPCPlugin, which is needed if you intend to call Omsi code or allocate memory.</param>
         public async Task AttachToOMSI(bool initialiseRemoteMethods = true)
         {
             omsiMemory = new Memory();
@@ -113,7 +119,7 @@ namespace OmsiHook
 
             if(initialiseRemoteMethods)
             {
-                await OmsiRemoteMethods.InitRemoteMethods(omsiMemory);
+                await OmsiRemoteMethods.InitRemoteMethods(omsiMemory, isLocalPlugin: Process.GetCurrentProcess().ProcessName == process.ProcessName);
             }
 
             stateMonitorTask = new(MonitorStateTask);

@@ -1,8 +1,10 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "pch.h"
 #include "DXHook.h"
+#include "FunctionHooks.h"
 
 DXHook* m_dxHook;
+FunctionHooks* m_functionHooks;
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
@@ -14,10 +16,13 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     case DLL_PROCESS_ATTACH:
     case DLL_THREAD_ATTACH:
     case DLL_THREAD_DETACH:
+        m_functionHooks = new FunctionHooks();
         break;
     case DLL_PROCESS_DETACH:
         if (m_dxHook)
             delete m_dxHook;
+        if (m_functionHooks)
+            delete m_functionHooks;
         break;
     }
     return TRUE;
@@ -205,4 +210,9 @@ extern "C" __declspec(dllexport) HRESULT GetTextureDesc(IDirect3DTexture9 * Text
 extern "C" __declspec(dllexport) HRESULT IsTexture(IUnknown* Texture)
 {
     return DXHook::IsTexture(Texture);
+}
+
+extern "C" __declspec(dllexport) void OnTrigger(void (*callback) (LPCSTR trigger, int value))
+{
+
 }

@@ -4,27 +4,62 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using OmsiHook;
-using System.Security;
-using System.Diagnostics;
 
 namespace OmsiHookPlugin
 {
     public class OmsiHookPlugin
     {
         private static OmsiHook.OmsiHook hook;
-        private static bool spawned = false;
 
         private static void Log(object msg) => File.AppendAllText("omsiHookPluginLog.txt", $"[{DateTime.Now:dd/MM/yy HH:mm:ss:ff}] {msg}\n");
 
         [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) }, EntryPoint = nameof(PluginStart))]
         public static void PluginStart(IntPtr aOwner)
         {
-            File.Delete("omsiHookPluginLog.txt");
+            try
+            {
+                File.Delete("omsiHookPluginLog.txt");
+            } catch { }
             Log("PluginStart()");
             Log("Loading OmsiHook...");
             hook = new();
-            _ = hook.AttachToOMSI();
-            Log("Didn't crash!");
+            try
+            {
+                hook.AttachToOMSI().Wait();
+            } catch (Exception e) 
+            { 
+                Log($"Failed to attach to Omsi:\n{e}");
+            }
+            hook.OnMapLoaded += Hook_OnMapLoaded;
+            hook.OnMapChange += Hook_OnMapChange;
+            hook.OnOmsiExited += Hook_OnOmsiExited;
+            hook.OnOmsiGotD3DContext += Hook_OnOmsiGotD3DContext;
+            hook.OnOmsiLostD3DContext += Hook_OnOmsiLostD3DContext;
+        }
+
+        private static void Hook_OnOmsiLostD3DContext(object sender, EventArgs e)
+        {
+            Log($"Lost D3D context!");
+        }
+
+        private static void Hook_OnOmsiGotD3DContext(object sender, EventArgs e)
+        {
+            Log($"Got D3D context!");
+        }
+
+        private static void Hook_OnOmsiExited(object sender, EventArgs e)
+        {
+            Log($"Omsi exited!");
+        }
+
+        private static void Hook_OnMapChange(object sender, EventArgs e)
+        {
+            Log($"Map changed!");
+        }
+
+        private static void Hook_OnMapLoaded(object sender, bool e)
+        {
+            Log($"Map loaded! {e}");
         }
 
         [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) }, EntryPoint = nameof(PluginFinalize))]
@@ -36,27 +71,7 @@ namespace OmsiHookPlugin
         [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) }, EntryPoint = nameof(AccessVariable))]
         public static void AccessVariable(ushort variableIndex, [C99Type("float*")] IntPtr value, [C99Type("__crt_bool*")] IntPtr writeValue)
         {
-            var val = Marshal.PtrToStructure<float>(value);
-            if (val > 0.9 && !spawned)
-            {
-                spawned = true;
-                Log("Spawning bus!");
-                try
-                {
-                    //hook.Globals.RemoteMethods.PlaceRandomBus();
-                } catch (Exception e)
-                {
-                    Log("Uh oh:");
-                    Log(e.Message);
-                    Log(e.ToString());
-                }
-                
-                Log("The bus might have spawned!");
-            } else
-            {
-                if (val < 0.1)
-                    spawned = false;
-            }
+            
         }
 
         [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) }, EntryPoint = nameof(AccessTrigger))]

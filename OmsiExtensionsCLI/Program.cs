@@ -92,7 +92,7 @@ namespace OmsiExtensionsCLI
 
             try
             {
-                texture.CreateD3DTexture(texWidth, texHeight);
+                texture.CreateD3DTexture(texWidth, texHeight).Wait();
             } catch (Exception ex)
             {
                 Console.WriteLine(ex);
@@ -128,17 +128,19 @@ namespace OmsiExtensionsCLI
                 }
             iter++;
             
-            texture.UpdateTexture(texBuffer.AsMemory(), new OmsiRemoteMethods.Rectangle() { left=0, top=0, right=texWidth/2, bottom=texHeight/2});
+            texture.UpdateTexture(texBuffer.AsMemory(), new OmsiRemoteMethods.Rectangle() { left=0, top=0, right=texWidth, bottom=texHeight}).Wait();
         }
 
         private void Omsi_OnOmsiGotD3DContext(object sender, EventArgs e)
         {
             // d3dGotContext.Set();
+            Console.WriteLine("Got D3D Context!");
         }
 
         private void Omsi_OnMapLoaded(object sender, bool e)
         {
             d3dGotContext.Set();
+            Console.WriteLine("Map Loaded!");
         }
     }
 }
