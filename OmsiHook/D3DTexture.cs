@@ -52,7 +52,7 @@ namespace OmsiHook
         /// <param name="address">the address of the existing texture</param>
         /// <exception cref="NullReferenceException"></exception>
         /// <exception cref="Exception"></exception>
-        public async void CreateFromExisting(uint address)
+        public async Task CreateFromExisting(uint address)
         {
             if (Address == 0)
                 throw new NullReferenceException("Texture was already null!");
@@ -77,10 +77,10 @@ namespace OmsiHook
         /// <param name="height">the height of the texture</param>
         /// <param name="format">the <see cref="D3DFORMAT"/> of the texture</param>
         /// <exception cref="Exception"></exception>
-        public async void CreateD3DTexture(uint width, uint height, D3DFORMAT format = D3DFORMAT.D3DFMT_A8R8G8B8)
+        public async Task CreateD3DTexture(uint width, uint height, D3DFORMAT format = D3DFORMAT.D3DFMT_A8R8G8B8)
         {
             if(Address != 0)
-                ReleaseTexture();
+                await ReleaseTexture();
 
             var (hresult, pTexture) = await OmsiCreateTextureAsync(width, height, format);
             if (HRESULTFailed(hresult))
@@ -100,7 +100,7 @@ namespace OmsiHook
         /// </summary>
         /// <exception cref="NullReferenceException"></exception>
         /// <exception cref="Exception"></exception>
-        public async void ReleaseTexture()
+        public async Task ReleaseTexture()
         {
             if(Address == 0)
                 throw new NullReferenceException("Texture was already null!");
@@ -123,13 +123,16 @@ namespace OmsiHook
         /// must match the size of this rectangle; pass in <see langword="null"/> to update the whole texture</param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <exception cref="Exception"></exception>
-        public void UpdateTexture<T>(Memory<T> textureData, Rectangle? updateArea = null) where T : unmanaged
+        public async Task UpdateTexture<T>(Memory<T> textureData, Rectangle? updateArea = null) where T : unmanaged
         {
             if((textureData.Length * Marshal.SizeOf<T>()) > stagingBufferSize)
                 throw new ArgumentOutOfRangeException(nameof(textureData));
             Memory.WriteMemory(remoteStagingBufferPtr, textureData);
 
-            HRESULT hr = OmsiUpdateTextureAsync(TextureAddress, remoteStagingBufferPtr, width, height, updateArea).Result;
+            uint dataWidth = (updateArea?.right - updateArea?.left) ?? width;
+            uint dataHeight = (updateArea?.bottom - updateArea?.top) ?? height;
+
+            HRESULT hr = await OmsiUpdateTextureAsync(TextureAddress, remoteStagingBufferPtr, dataWidth, dataHeight, updateArea);
             if (HRESULTFailed(hr))
                 throw new Exception("Couldn't update D3D texture! Result: " + hr);
         }
