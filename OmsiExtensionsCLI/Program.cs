@@ -33,7 +33,6 @@ namespace OmsiExtensionsCLI
                 var camPos = cam?.Pos ?? default;
                 var weather = omsi.Globals.Weather;
                 var tickets = omsi.Globals.TicketPack;
-                var humans = omsi.Globals.Humans;
 
                 Console.SetCursorPosition(0, 0);
                 Console.WriteLine(($"Read data: x:{pos.x:F3}   y:{pos.y:F3}   z:{pos.z:F3}      " +
@@ -76,12 +75,12 @@ namespace OmsiExtensionsCLI
                 }
                 OmsiAnimSubMesh clickMesh = null;
                 OmsiAnimSubMeshInst clickMeshInst = null;
-                string mouseEventName = "door0";
+                string mouseEventName = "INEO_Click";
                 if(meshes != null)
                     clickMesh = meshes.FirstOrDefault(mesh => mesh.MausEvent == mouseEventName);
                 if (clickMesh != null)
                     clickMeshInst = meshInsts[meshes.IndexOf(clickMesh)];
-                if (clickMesh != null && progMan.Maus_MeshEvent == mouseEventName && (progMan.Maus_Clicked || true)) 
+                if (clickMesh != null && progMan.Maus_MeshEvent == mouseEventName && (progMan.Maus_Clicked)) 
                 {
                     // Work out object space coords of the mouse click
                     // Note that (if wrapped) we could use D3DXIntersect to find the UV coords given the submesh's d3d mesh
@@ -92,16 +91,18 @@ namespace OmsiExtensionsCLI
                     //    invMat = clickMesh.CharMatrixInv;
                     //else
                     Matrix4x4.Invert((Matrix4x4)clickMeshInst.Matrix, out invMat);
+                    Matrix4x4.Invert(clickMesh.OriginMatrix, out Matrix4x4 invOriginMat);
+                    invMat = Matrix4x4.Multiply(invMat, invOriginMat);
 
                     var rayStart = Vector3.Transform(progMan.MausLine3DPos, invMat);
                     var rayDir = Vector3.Transform(progMan.MausLine3DDir, invMat);
                     // Now trace the ray, in our simplification we assume the surface of the mesh we want to hit is coplanar to the xz plane
                     // Taken from: https://stackoverflow.com/a/18543221
-                    Vector3 planeNrm = new(1, 0, 0);
+                    Vector3 planeNrm = new(0, 1, 0);
                     float planeD = 0;
                     float dot = Vector3.Dot(planeNrm, rayDir);
                     var intersect = new Vector3();
-                    if(dot > 1e-9)
+                    if(Math.Abs(dot) > 1e-9)
                     {
                         var w = rayStart - planeNrm * planeD;
                         var fac = -Vector3.Dot(planeNrm, w) / dot;
