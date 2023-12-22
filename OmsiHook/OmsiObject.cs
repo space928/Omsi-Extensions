@@ -14,6 +14,8 @@
         internal Memory Memory { get; private set; }
         internal int Address { get; set; }
 
+        public bool IsNull => Address == 0;
+
         public OmsiObject() { }
         internal OmsiObject(Memory memory, int address) 
         {

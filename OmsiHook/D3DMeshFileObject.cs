@@ -15,8 +15,8 @@
         }
         public string Filename
         {
-            get => Memory.ReadMemoryString(Address + 0x178);
-            set => Memory.WriteMemory(Address + 0x178, value);
+            get => Memory.ReadMemoryString(Address + 0x17c, StrPtrType.DelphiAnsiString);
+            set => Memory.WriteMemory(Address + 0x17c, value);
         }
         public OmsiWeightData[] WeightData
         {

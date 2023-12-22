@@ -407,6 +407,19 @@ namespace OmsiHook
             //Imports.WriteProcessMemory((int)omsiProcessHandle, address, buffer, buffer.Length, out _);
         }
 
+        /// <summary>
+        /// Sets the value of a string at a given address.
+        /// </summary>
+        /// <param name="address">The address of the data to set</param>
+        /// <param name="value">The new value of the string to set; this must be of the 
+        /// correct encoding to avoid memory corruption</param>
+        /// <param name="strType">The type of string to copy to</param>
+        public void WriteMemory(int address, string value, StrPtrType strType)
+        {
+            WriteMemory(address, value,
+                (strType & StrPtrType.Wide) != 0);
+        }
+
         /// <inheritdoc cref="WriteMemory"/>
         public async Task WriteMemoryAsync(int address, string value, bool wide = false, bool copyReferences = true)
         {

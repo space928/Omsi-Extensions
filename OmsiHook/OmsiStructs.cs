@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 #pragma warning disable CS0649
@@ -11,10 +12,17 @@ namespace OmsiHook
     public struct D3DVector
     {
         public float x, y, z;
+
+        public override readonly string ToString() => $"[{x:F3}, {y:F3}, {z:F3}]";
+
+        public static implicit operator Vector3(D3DVector v) => new(v.x, v.y, v.z);
+        public static implicit operator D3DVector(Vector3 v) => new() { x=v.X, y=v.Y, z=v.Z };
     }
     public struct D3DXVector2
     {
         public float x, y;
+
+        public override readonly string ToString() => $"[{x:F3}, {y:F3}]";
     }
 
     /// <summary>
@@ -26,6 +34,56 @@ namespace OmsiHook
                      _10, _11, _12, _13,
                      _20, _21, _22, _23,
                      _30, _31, _32, _33;
+        public override readonly string ToString() => $"[ [{_00:F3}, {_01:F3}, {_02:F3}, {_03:F3}],\n" +
+            $"[{_10:F3}, {_11:F3}, {_12:F3}, {_13:F3}],\n" +
+            $"[{_20:F3}, {_21:F3}, {_22:F3}, {_23:F3}],\n" +
+            $"[{_30:F3}, {_31:F3}, {_32:F3}, {_33:F3}] ]";
+
+        public static implicit operator Matrix4x4(D3DMatrix m)
+        {
+            return new Matrix4x4()
+            {
+                M11 = m._00,
+                M12 = m._01,
+                M13 = m._02,
+                M14 = m._03,
+                M21 = m._10,
+                M22 = m._11,
+                M23 = m._12,
+                M24 = m._13,
+                M31 = m._20,
+                M32 = m._21,
+                M33 = m._22,
+                M34 = m._23,
+                M41 = m._30,
+                M42 = m._31,
+                M43 = m._32,
+                M44 = m._33
+            };
+        }
+
+        public static implicit operator D3DMatrix(Matrix4x4 m)
+        {
+            return new()
+            {
+                _00 = m.M11,
+                _01 = m.M12,
+                _02 = m.M13,
+                _03 = m.M14,
+                _10 = m.M21,
+                _11 = m.M22,
+                _12 = m.M23,
+                _13 = m.M24,
+                _20 = m.M31,
+                _21 = m.M32,
+                _22 = m.M33,
+                _23 = m.M34,
+                _30 = m.M41,
+                _31 = m.M42,
+                _32 = m.M43,
+                _33 = m.M44
+            };
+        }
     }
 
     /// <summary>
@@ -34,6 +92,8 @@ namespace OmsiHook
     public struct D3DXQuaternion
     {
         public float x, y, z, w;
+
+        public override readonly string ToString() => $"[{x:F3}, {y:F3}, {z:F3}, {w:F3}]";
     }
 
     /// <summary>
@@ -42,6 +102,8 @@ namespace OmsiHook
     public struct D3DXPlane
     {
         public float a, b, c, d;
+
+        public override readonly string ToString() => $"[{a:F3}, {b:F3}, {c:F3}, {d:F3}]";
     }
 
     /// <summary>
@@ -50,6 +112,8 @@ namespace OmsiHook
     public struct D3DColorValue
     {
         public float r, g, b, a;
+
+        public override readonly string ToString() => $"[{r:F3}, {g:F3}, {b:F3}, {a:F3}]";
     }
 
     /// <summary>

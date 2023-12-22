@@ -503,4 +503,122 @@ namespace OmsiHook
             return true;
         }
     }
+
+    /// <summary>
+    /// Wrapper for Lists in OMSI's Memory.
+    /// </summary>
+    /// <remarks>
+    /// This is a heavyweight wrapper for native arrays that provides methods for reading and writing to arrays as well as 
+    /// helping with memory management. For fast, low-level access, use the methods in the <seealso cref="Memory"/> class. <para/>
+    /// For better performance in c# the contents of the wrapped array can be copied to managed memory when constructed
+    /// or whenever <seealso cref="UpdateFromHook"/> is called. <para/>
+    /// Cached arrays are generally faster when accessed or searched frequently by C#, but they are slower to update and 
+    /// the user is responsible for ensuring that they are synchronised with the native array it wraps.
+    /// </remarks>
+    /// <typeparam name="T">The type of object to wrap.</typeparam>
+    public class MemArrayList<T> : MemArrayBase<T> where T : OmsiObject, new()
+    {
+        private T[] ReadList()
+        {
+            uint arr = Memory.ReadMemory<uint>(Address);
+            if (arr == 0)
+                return Array.Empty<T>();
+            uint len = Memory.ReadMemory<uint>(arr + 8);
+            uint arrayData = Memory.ReadMemory<uint>(arr + 4);
+            T[] ret = new T[len];
+            for (uint i = 0; i < len; i++)
+            {
+                var objAddr = Memory.ReadMemory<uint>(arrayData + i * 4);
+                if (objAddr == 0)
+                {
+                    ret[i] = null;
+                    continue;
+                }
+
+                var n = new T();
+                n.InitObject(Memory, (int)objAddr);
+                ret[i] = n;
+            }
+
+            return ret;
+        }
+
+        private T ReadListItem(int index)
+        {
+            int arr = Memory.ReadMemory<int>(Address);
+            if (arr == 0)
+                return null;
+
+            int len = Memory.ReadMemory<int>(arr + 8);
+            int arrayData = Memory.ReadMemory<int>(arr + 4);
+
+            if(index >= len || index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index));
+
+            var objAddr = Memory.ReadMemory<int>(arrayData + index * 4);
+            if (objAddr == 0)
+                return null;
+
+            var n = new T();
+            n.InitObject(Memory, objAddr);
+
+            return n;
+        }
+
+        /// <summary>
+        /// Gets the current contents of the wrapped array. On non-cached arrays this is slow.
+        /// </summary>
+        public override T[] WrappedArray => cached ? arrayCache : ReadList();
+
+        public MemArrayList() : base() { }
+
+        internal MemArrayList(Memory memory, int address, bool cached = true) : base(memory, address, cached) { }
+
+        public override void UpdateFromHook(int index = -1)
+        {
+            if (cached)
+            {
+                if (index < 0)
+                    arrayCache = ReadList();
+                else
+                    arrayCache[index] = ReadListItem(index);
+            }
+        }
+
+        public override T this[int index]
+        {
+            get => cached ? arrayCache[index] : ReadListItem(index);
+            set => throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// TODO: Implement efficient enumerator for non-cached arrays.
+        /// </summary>
+        /// <returns></returns>
+        public override IEnumerator<T> GetEnumerator() => ((IEnumerable<T>)WrappedArray).GetEnumerator();
+
+        public override void Add(T item)
+        {
+            throw new NotSupportedException();
+        }
+
+        public override void Clear()
+        {
+            base.Clear();
+            if (cached)
+                arrayCache = Array.Empty<T>();
+        }
+
+        public override bool Remove(T item) => throw new NotImplementedException();
+
+        public override void Insert(int index, T item) => throw new NotImplementedException();
+
+        public override void RemoveAt(int index) => throw new NotImplementedException();
+
+        public override int IndexOf(T item) => Array.IndexOf(WrappedArray, item);
+
+        public override bool Contains(T item) => WrappedArray.Contains(item);
+
+        public override void CopyTo(T[] array, int arrayIndex) => WrappedArray.CopyTo(array, arrayIndex);
+    }
 }

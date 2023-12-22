@@ -83,8 +83,8 @@ namespace OmsiHook
                 int promiseHash = reader.ReadInt32();
                 int value = reader.ReadInt32();
 
-                resultPromises.TryRemove(promiseHash, out var promise);
-                promise.SetResult(value);
+                if(resultPromises.TryRemove(promiseHash, out var promise))
+                    promise.SetResult(value);
             }
         }
 

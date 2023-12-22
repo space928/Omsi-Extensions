@@ -3,9 +3,7 @@
 
 FunctionHooks::FunctionHooks()
 {
-	DWORD oldProtect;
-	VirtualProtect(hookTrampolineFunc, sizeof(hookTrampolineFunc), PAGE_EXECUTE_READWRITE, &oldProtect);
-	ZeroMemory(hookTrampolineFunc, sizeof(hookTrampolineFunc));
+
 }
 
 FunctionHooks::~FunctionHooks()
@@ -13,7 +11,7 @@ FunctionHooks::~FunctionHooks()
 
 }
 
-void FunctionHooks::InstallHook(UINT32 funcToHook)
+void FunctionHooks::InstallHook(UINT32 funcToHook, BYTE* hookTrampolineFunc)
 {
 	DWORD oldProtect;
 	VirtualProtect((LPVOID)funcToHook, 256, PAGE_EXECUTE_READWRITE, &oldProtect);
@@ -28,11 +26,21 @@ void FunctionHooks::InstallHook(UINT32 funcToHook)
 
 #define AsLEBytes(addr) ((addr>>3)&0xff), ((addr>>2)&0xff), ((addr>>1)&0xff), ((addr>>0)&0xff)
 
-void FunctionHooks::OnTrigger(void(*callback)(LPCSTR trigger, int value))
+void FunctionHooks::OnTrigger(void(*callback)(int complMapObjInst, LPCSTR trigger, int value))
 {
+	// TComplMapObjInst.TriggerXML(TComplMapObjInst *this,PascalString255 *trigger,int value)
+	UINT32 funcAddr = 0x007bae90;
+	UINT32 retAddr = 0x007bae96;
+
+	DWORD oldProtect;
+	byte* hookTrampolineFunc = (byte*)malloc(256);
+	if (hookTrampolineFunc == 0)
+		return;
+	VirtualProtect(hookTrampolineFunc, sizeof(hookTrampolineFunc), PAGE_EXECUTE_READWRITE, &oldProtect);
+	ZeroMemory(hookTrampolineFunc, sizeof(hookTrampolineFunc));
 	// Bouncy bounce
 	UINT32 callbackRelAddr = (UINT32)callback - ((UINT32)hookTrampolineFunc + 11);
-	UINT32 returnRelAddr = (UINT32)0x007bae96 - ((UINT32)hookTrampolineFunc + 25);
+	UINT32 returnRelAddr = (UINT32)retAddr - ((UINT32)hookTrampolineFunc + 25);
 	// Setup the hook handler so that it calls the callback and then jumps back to the original function
 	byte hookTrampolineTemp[] = {
 		// Save the register args for later
@@ -59,5 +67,5 @@ void FunctionHooks::OnTrigger(void(*callback)(LPCSTR trigger, int value))
 	};
 	memcpy(hookTrampolineFunc, hookTrampolineTemp, sizeof(hookTrampolineTemp));
 
-	InstallHook(0x007bae90);
+	InstallHook(funcAddr, hookTrampolineFunc);
 }

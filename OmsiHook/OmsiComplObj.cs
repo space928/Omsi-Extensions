@@ -20,14 +20,14 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x4, value);
         }
         // TODO: Check this data type, should be a TStringList
-        public string[] FileText
+        /*public string[] FileText
         {
             get => Memory.ReadMemoryStringArray(Address + 0x8);
             //set => Memory.WriteMemory(Address + 0x4, value);
-        }
+        }*/
         public string Code
         {
-            get => Memory.ReadMemoryString(Address + 0xc);
+            get => Memory.ReadMemoryString(Address + 0xc, StrPtrType.DelphiAnsiString);
             set => Memory.WriteMemory(Address + 0xc, value);
         }
         public D3DVector VFDMax
@@ -42,12 +42,12 @@ namespace OmsiHook
         }
         public string FileName
         {
-            get => Memory.ReadMemoryString(Address + 0x28);
+            get => Memory.ReadMemoryString(Address + 0x28, StrPtrType.DelphiAnsiString);
             set => Memory.WriteMemory(Address + 0x28, value);
         }
         public string MyPath
         {
-            get => Memory.ReadMemoryString(Address + 0x2c);
+            get => Memory.ReadMemoryString(Address + 0x2c, StrPtrType.DelphiAnsiString);
             set => Memory.WriteMemory(Address + 0x2c, value);
         }
         public int FileVersion
@@ -60,12 +60,10 @@ namespace OmsiHook
             get => Memory.ReadMemory<int>(Address + 0x34);
             set => Memory.WriteMemory(Address + 0x34, value);
         }
-        /* TODO: 
-        public OmsiAnimSubMesh[] Meshs
+        public MemArrayList<OmsiAnimSubMesh> Meshes
         {
-            get => Memory.ReadMemoryObjArray<OmsiAnimSubMesh>(Address + 0x38);
-            //set => Memory.WriteMemory(Address + 0x34, value);
-        }*/
+            get => new(Memory, Address + 0x38);
+        }
         /* TODO:
         public OmsiTexChangeMaster[] TexChangeMasters
         {
@@ -149,7 +147,7 @@ namespace OmsiHook
         }
         public string TerrainHole_FileName
         {
-            get => Memory.ReadMemoryString(Address + 0xb0);
+            get => Memory.ReadMemoryString(Address + 0xb0, StrPtrType.DelphiAnsiString);
             set => Memory.WriteMemory(Address + 0xb0, value);
         }
         public bool GotAllTerrainHoles

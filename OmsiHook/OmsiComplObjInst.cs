@@ -61,7 +61,7 @@ namespace OmsiHook
         }
         public OmsiComplObj ComplObj
         {
-            get => new(Memory, Address + 0x20);
+            get => new(Memory, Memory.ReadMemory<int>(Address + 0x20));
         }
         public byte ViewPoint_Opt
         {
@@ -151,11 +151,10 @@ namespace OmsiHook
             get => Memory.ReadMemory<D3DMatrix>(Address + 0x9d);
             set => Memory.WriteMemory(Address + 0x9d, value);
         }
-        /* TODO:
-        public OmsiAnimSubMeshInst[] AnimSubMeshInsts
+        public MemArrayList<OmsiAnimSubMeshInst> AnimSubMeshInsts
         {
-            get => Memory.ReadMemoryObjArray<OmsiAnimSubMeshInst>(Address + 0xe0);
-        }*/
+            get => new(Memory, Address + 0xe0);
+        }
         /* TODO:
         public OmsiInteriorLightInst[] AnimSubMeshInsts
         {
