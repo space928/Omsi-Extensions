@@ -26,7 +26,7 @@ namespace Basic_CLI
 
                 Console.SetCursorPosition(0, 1);
                 Console.WriteLine($"Map: {map?.FriendlyName}".PadRight(Console.WindowWidth - 17) + $"Date: {time.Day:00}/{time.Month:00}/{time.Year:0000}");
-                Console.WriteLine($"Weather: {weatherEmoji(weather)}".PadRight(Console.WindowWidth - 15) + $"Time: {time.Hour:00}:{time.Minute:00}:{time.Second:00}");
+                Console.WriteLine($"Weather: {WeatherEmoji(weather)}".PadRight(Console.WindowWidth - 15) + $"Time: {time.Hour:00}:{time.Minute:00}:{time.Second:00}");
                 Console.WriteLine($"Bus: {playerVehicle?.RoadVehicle?.FileName}".PadRight(Console.WindowWidth - 1));
                 Console.WriteLine(($"Position: {pos.x:F2},{pos.y:F2},{pos.z:F2}".PadRight(Console.WindowWidth - 8) +
                     $"Tile: {playerVehicle?.Kachel ?? 0}"));
@@ -35,7 +35,7 @@ namespace Basic_CLI
                 Thread.Sleep(20);
             }
         }
-        static string weatherEmoji(OmsiWeather weather)
+        static string WeatherEmoji(OmsiWeather weather)
         {
             if (weather?.ActWeather.fogDensity < 900)
                 return "🌫️";
