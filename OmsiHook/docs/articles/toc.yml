@@ -4,3 +4,7 @@
   href: building-native-plugins.md
 - name: Performance Tips
   href: performance-tips.md
+- name: Examples
+  items:
+    - name: Basic CLI Example
+      href: examples\Basic_CLI.md
