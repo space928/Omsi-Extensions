@@ -25,7 +25,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'" />
-
+	
 	<PropertyGroup>
 		<BuildDocFx>true</BuildDocFx>
 		<DocfxConfigFile>$(MSBuildProjectDirectory)/docs/docfx.json</DocfxConfigFile>
@@ -66,15 +66,12 @@
 			<PackagePath>\lib\net6.0</PackagePath>
 		</None>
 	</ItemGroup>
-
+	
 	<ItemGroup>
-		<!-- <PackageReference Include="DhyMik.DocFx.UpdateDocFxVersionAttributeTask" Version="1.1.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>-->
-		<PackageReference Include="docfx.console" Condition="'$(Configuration)'!='Debug'" Version="2.59.4">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		<PackageReference Include="docfx.console" Version="2.59.4">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<GeneratePathProperty>True</GeneratePathProperty>
 		</PackageReference>
 		<PackageReference Include="memberpage" Version="2.59.4" />
 	</ItemGroup>
@@ -85,5 +82,11 @@
 		</ProjectReference>
 		<ProjectReference Include="..\OmsiHookRPCPlugin\OmsiHookRPCPlugin.csproj" />
 	</ItemGroup>
+
+	<!--Hack to fix docfx build bug... For some reason sometimes docfx tries to load the wrong version of System.Memory.dll; as 
+		a workaround we can delete docfx's copy of System.Memory.dll and let it use MSBuild's one which *should* work.-->
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+	  <Exec Command="set &quot;DocFXMemory=$(Pkgdocfx_console)\tools\System.Memory.dll&quot;&#xD;&#xA;if exist &quot;%25DocFXMemory%25&quot; (&#xD;&#xA;  echo &quot;Applying docfx build workaround (deleting docfx's copy of System.Memory.dll)...&quot;&#xD;&#xA;  del /q &quot;%25DocFXMemory%25&quot;&#xD;&#xA;) else (&#xD;&#xA;  echo &quot;DBG: File doesn't exist %25DocFXMemory%25&quot;&#xD;&#xA;)" />
+	</Target>
 
 </Project>

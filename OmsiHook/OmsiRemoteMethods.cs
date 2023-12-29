@@ -511,7 +511,7 @@ namespace OmsiHook
         {
             var triggerPtr = memory.AllocateString(trigger);
             var filenamePtr = memory.AllocateString(filename);
-            Task.WaitAll(triggerPtr, filenamePtr);
+            await Task.WhenAll(triggerPtr, filenamePtr);
             await OmsiSoundTrigger(mapObj, triggerPtr.Result, filenamePtr.Result);
         }
 
