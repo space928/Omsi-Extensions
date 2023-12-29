@@ -14,8 +14,14 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OmsiHookInvoker", "OmsiHookInvoker\OmsiHookInvoker.vcxproj", "{CBCB99EF-DD1A-4D4D-A9A8-9BF251FDCD1B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OmsiHookRPCPlugin", "OmsiHookRPCPlugin\OmsiHookRPCPlugin.csproj", "{CDB17143-5653-48BE-AAC8-8419D5B4FD2C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{CBCB99EF-DD1A-4D4D-A9A8-9BF251FDCD1B} = {CBCB99EF-DD1A-4D4D-A9A8-9BF251FDCD1B}
+	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OHExamples - Basic_CLI", "_OmsiHookExamples\Basic_CLI\Basic_CLI.csproj", "{BA833C68-E8BD-4C86-9555-85542DF02015}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Basic_CLI", "_OmsiHookExamples\Basic_CLI\Basic_CLI.csproj", "{BA833C68-E8BD-4C86-9555-85542DF02015}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2E750CBE-F868-4AB7-96C2-27560F53E06B} = {2E750CBE-F868-4AB7-96C2-27560F53E06B}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,7 +55,6 @@ Global
 		{28DA0165-EAA7-4171-A065-319409682BD1}.Release|x64.ActiveCfg = Release|Any CPU
 		{28DA0165-EAA7-4171-A065-319409682BD1}.Release|x64.Build.0 = Release|Any CPU
 		{28DA0165-EAA7-4171-A065-319409682BD1}.Release|x86.ActiveCfg = Release|Any CPU
-		{28DA0165-EAA7-4171-A065-319409682BD1}.Release|x86.Build.0 = Release|Any CPU
 		{FDA9A525-9722-46D3-B80C-8D2A76ABCA2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FDA9A525-9722-46D3-B80C-8D2A76ABCA2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FDA9A525-9722-46D3-B80C-8D2A76ABCA2D}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -61,7 +66,6 @@ Global
 		{FDA9A525-9722-46D3-B80C-8D2A76ABCA2D}.Release|x64.ActiveCfg = Release|Any CPU
 		{FDA9A525-9722-46D3-B80C-8D2A76ABCA2D}.Release|x64.Build.0 = Release|Any CPU
 		{FDA9A525-9722-46D3-B80C-8D2A76ABCA2D}.Release|x86.ActiveCfg = Release|Any CPU
-		{FDA9A525-9722-46D3-B80C-8D2A76ABCA2D}.Release|x86.Build.0 = Release|Any CPU
 		{D5CA6EEA-D436-456E-BCA5-34C3DFD5BFC7}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{D5CA6EEA-D436-456E-BCA5-34C3DFD5BFC7}.Debug|Any CPU.Build.0 = Debug|x86
 		{D5CA6EEA-D436-456E-BCA5-34C3DFD5BFC7}.Debug|x64.ActiveCfg = Debug|x86
@@ -106,7 +110,6 @@ Global
 		{BA833C68-E8BD-4C86-9555-85542DF02015}.Release|x64.ActiveCfg = Release|Any CPU
 		{BA833C68-E8BD-4C86-9555-85542DF02015}.Release|x64.Build.0 = Release|Any CPU
 		{BA833C68-E8BD-4C86-9555-85542DF02015}.Release|x86.ActiveCfg = Release|Any CPU
-		{BA833C68-E8BD-4C86-9555-85542DF02015}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

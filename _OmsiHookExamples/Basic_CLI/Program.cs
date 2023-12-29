@@ -15,14 +15,14 @@ namespace Basic_CLI
             omsi.AttachToOMSI().Wait();
             var playerVehicle = omsi.Globals.PlayerVehicle;
             var time = omsi.Globals.Time;
+            var map = omsi.Globals.Map;
+            var weather = omsi.Globals.Weather;
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             while (true)
             {
                 playerVehicle ??= omsi.Globals.PlayerVehicle;
                 var pos = playerVehicle?.Position ?? default;
                 var rot = playerVehicle?.Rotation ?? default;
-                var map = omsi.Globals.Map;
-                var weather = omsi.Globals.Weather;
 
                 Console.SetCursorPosition(0, 1);
                 Console.WriteLine($"Map: {map?.FriendlyName}".PadRight(Console.WindowWidth - 17) + $"Date: {time.Day:00}/{time.Month:00}/{time.Year:0000}");
