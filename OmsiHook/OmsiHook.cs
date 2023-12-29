@@ -82,10 +82,18 @@ namespace OmsiHook
         /// <inheritdoc cref="OnOmsiExited"/>
         /// </remarks>
         public event EventHandler<bool> OnMapLoaded;
+        /// <summary>
+        /// An event raised when the active vehicle is changed. The <c>EventArgs</c> is a <c>OmsiRoadVehicleInst</c> of the new bus.
+        /// </summary>
+        /// <remarks>
+        /// <inheritdoc cref="OnOmsiExited"/>
+        /// </remarks>
+        public event EventHandler<OmsiRoadVehicleInst> OnActiveVehicleChanged;
 
         private int lastD3DState = 0;
         private int lastMapState = 0;
         private bool lastMapLoaded = false;
+        private int lastVehiclePtr = 0;
         #endregion
 
         /// <summary>
@@ -222,6 +230,12 @@ namespace OmsiHook
                         OnMapLoaded?.Invoke(this, currentMapLoaded);
                         lastMapLoaded = currentMapLoaded;
                     }
+                }
+                var vehPtr = GetListItem(0x00861508, omsiMemory.ReadMemory<int>(0x00861740));
+                if (vehPtr != lastVehiclePtr)
+                {
+                    lastVehiclePtr = vehPtr;
+                    OnActiveVehicleChanged?.Invoke(this, Globals.PlayerVehicle);
                 }
 
                 Thread.Sleep(20);

@@ -83,6 +83,11 @@ namespace OmsiHookRPCPlugin
             } catch { }
             Log("############## Omsi Hook RPC Plugin ##############");
             Log($"    version: {Assembly.GetExecutingAssembly().GetName().Version}");
+            Log($"    copyright Thomas Mathieson 2023");
+            Log($"~ Omsi Hook RPC plugin is a simple plugin allowing OMSI mods which use the OmsiHook SDK ~");
+            Log($"~ to interact with OMSI from an external process. The source code is available at:      ~");
+            Log($"~  https://github.com/space928/Omsi-Extensions                                          ~");
+            Log($"");
             Log($@"Starting RPC server on named pipe: \\.\pipe\{PIPE_NAME_RX} and \\.\pipe\{PIPE_NAME_TX} with {MAX_CLIENTS} threads...");
 
             argumentArrayPool = ArrayPool<byte>.Create(256,8);
@@ -318,6 +323,22 @@ namespace OmsiHookRPCPlugin
                 case RemoteMethod.IsTexture:
                     ret = NativeImports.IsTexture(
                         BitConverter.ToUInt32(methodData.args, argInd)
+                    );
+                    break;
+                case RemoteMethod.RVTriggerXML:
+                    ret = 0;
+                    NativeImports.RVTriggerXML(
+                        BitConverter.ToInt32(methodData.args, argInd),
+                        BitConverter.ToInt32(methodData.args, argInd += 4),
+                        BitConverter.ToInt32(methodData.args, argInd += 4)
+                    );
+                    break;
+                case RemoteMethod.SoundTrigger:
+                    ret = 0;
+                    NativeImports.SoundTrigger(
+                        BitConverter.ToInt32(methodData.args, argInd),
+                        BitConverter.ToInt32(methodData.args, argInd += 4),
+                        BitConverter.ToInt32(methodData.args, argInd += 4)
                     );
                     break;
                 default:

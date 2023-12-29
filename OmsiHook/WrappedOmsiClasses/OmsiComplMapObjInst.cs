@@ -204,5 +204,11 @@ namespace OmsiHook
                 throw new KeyNotFoundException($"String Variable '{varName}' not found in object. - Index Out Of Bounds");
             stringVars[index] = new(value);
         }
+
+        /// <inheritdoc cref="OmsiRemoteMethods.OmsiSoundTrigger(OmsiComplMapObjInst, string, string)"/>
+        public async void SoundTrigger(string trigger, string filename)
+        {
+            await OmsiRemoteMethods.OmsiSoundTrigger(this, trigger, filename);
+        }
     }
 }

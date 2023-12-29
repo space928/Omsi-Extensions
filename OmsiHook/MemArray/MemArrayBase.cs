@@ -4,6 +4,18 @@ using System.Collections.Generic;
 
 namespace OmsiHook
 {
+    /// <summary>
+    /// Base class for wrappers for Arrays / Lists in OMSI's Memory.
+    /// </summary>
+    /// <remarks>
+    /// This is a heavyweight wrapper for native arrays that provides methods for reading and writing to arrays as well as 
+    /// helping with memory management. For fast, low-level access, use the methods in the <seealso cref="Memory"/> class. <para/>
+    /// For better performance in c# the contents of the wrapped array can be copied to managed memory when constructed
+    /// or whenever <seealso cref="UpdateFromHook"/> is called. <para/>
+    /// Cached arrays are generally faster when accessed or searched frequently by C#, but they are slower to update and 
+    /// the user is responsible for ensuring that they are synchronised with the native array it wraps.
+    /// </remarks>
+    /// <typeparam name="Struct">The type of struct to wrap</typeparam>
     public abstract class MemArrayBase<Struct> : OmsiObject, IDisposable, IEnumerable<Struct>, ICollection<Struct>, IList<Struct>
     {
         internal bool cached;
@@ -23,12 +35,13 @@ namespace OmsiHook
             get
             {
                 if (cached)
-                    return arrayCache.Length;
+                    return arrayCache?.Length ?? 0;
                 else
                 {
                     int start = Memory.ReadMemory<int>(Address);
                     if (start == 0)
-                        throw new NullReferenceException();
+                        return 0;
+                        //throw new NullReferenceException();
                     return Memory.ReadMemory<int>(start - 4);
                 }
             }

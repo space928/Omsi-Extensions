@@ -424,5 +424,15 @@ namespace OmsiHook
             get => Memory.ReadMemory<bool>(Address + 0x8ec);
             set => Memory.WriteMemory(Address + 0x8ec, value);
         }
+
+        /// <summary>
+        /// <inheritdoc cref="OmsiRemoteMethods.OmsiSetTrigger(OmsiRoadVehicleInst, string, bool)"/>
+        /// </summary>
+        /// <param name="trigger">The name of the trigger to set</param>
+        /// <param name="enabled">Whether to enable or disable the trigger</param>
+        public async void SetTrigger(string trigger, bool enabled)
+        {
+            await OmsiRemoteMethods.OmsiSetTrigger(this, trigger, enabled);
+        }
     }
 }

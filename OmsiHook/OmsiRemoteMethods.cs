@@ -454,6 +454,102 @@ namespace OmsiHook
             }
         }
 
+        /// <summary>
+        /// Sets a trigger on a given road vehicle.
+        /// </summary>
+        /// <param name="roadVehicle">The <c>OmsiRoadVehicleInst</c> to set the trigger on</param>
+        /// <param name="trigger">The name of the trigger to set</param>
+        /// <param name="enabled">Whether to enable or disable the trigger</param>
+        public static async Task OmsiSetTrigger(OmsiRoadVehicleInst roadVehicle, string trigger, bool enabled)
+        {
+            var triggerPtr = await memory.AllocateString(trigger);
+            await OmsiSetTrigger(roadVehicle, triggerPtr, enabled);
+        }
+
+        /// <summary>
+        /// Sets a trigger on a given road vehicle.
+        /// </summary>
+        /// <param name="roadVehicle">The <c>OmsiRoadVehicleInst</c> to set the trigger on</param>
+        /// <param name="triggerPtr">A pointer to an Omsi string containing the name of the trigger to set</param>
+        /// <param name="enabled">Whether to enable or disable the trigger</param>
+        public static async Task OmsiSetTrigger(OmsiRoadVehicleInst roadVehicle, int triggerPtr, bool enabled)
+        {
+            if (localPlugin)
+            {
+                RVTriggerXML(roadVehicle.Address, triggerPtr, enabled?1:0);
+                return;
+            }
+            else
+            {
+                if (!IsInitialised)
+                    throw new NotInitialisedException("OmsiHook RPC plugin is not connected! Did you make sure to call OmsiRemoteMethods.InitRemoteMethods() before this call?");
+
+                int argPos = 0;
+                var method = OmsiHookRPCMethods.RemoteMethod.RVTriggerXML;
+                int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
+                // This should be thread safe as the asyncWriteBuff is thread local
+                byte[] writeBuffer = asyncWriteBuff.Value;
+                (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
+                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos)..], (int)method);
+                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], resultPromise);
+                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], roadVehicle.Address);
+                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], triggerPtr);
+                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], enabled ? 1 : 0);
+                lock (pipeTX)
+                    pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                await promise.Task;
+            }
+        }
+
+        /// <summary>
+        /// Triggers a sound for a given <c>OmsiComplMapObjInst</c>
+        /// </summary>
+        /// <param name="mapObj">The <c>OmsiComplMapObjInst</c> to trigger the sound from</param>
+        /// <param name="trigger">The name of the sound pack</param>
+        /// <param name="filename">The filename of the sound to play</param>
+        public static async Task OmsiSoundTrigger(OmsiComplMapObjInst mapObj, string trigger, string filename)
+        {
+            var triggerPtr = memory.AllocateString(trigger);
+            var filenamePtr = memory.AllocateString(filename);
+            Task.WaitAll(triggerPtr, filenamePtr);
+            await OmsiSoundTrigger(mapObj, triggerPtr.Result, filenamePtr.Result);
+        }
+
+        /// <summary>
+        /// Triggers a sound for a given <c>OmsiComplMapObjInst</c>
+        /// </summary>
+        /// <param name="mapObj">The <c>OmsiComplMapObjInst</c> to trigger the sound from</param>
+        /// <param name="triggerPtr">A pointer to an Omsi string containing the name of the sound pack</param>
+        /// <param name="filenamePtr">A pointer to an Omsi string containing the filename of the sound to play</param>
+        public static async Task OmsiSoundTrigger(OmsiComplMapObjInst mapObj, int triggerPtr, int filenamePtr)
+        {
+            if (localPlugin)
+            {
+                SoundTrigger(mapObj.Address, triggerPtr, filenamePtr);
+                return;
+            }
+            else
+            {
+                if (!IsInitialised)
+                    throw new NotInitialisedException("OmsiHook RPC plugin is not connected! Did you make sure to call OmsiRemoteMethods.InitRemoteMethods() before this call?");
+
+                int argPos = 0;
+                var method = OmsiHookRPCMethods.RemoteMethod.SoundTrigger;
+                int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
+                // This should be thread safe as the asyncWriteBuff is thread local
+                byte[] writeBuffer = asyncWriteBuff.Value;
+                (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
+                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos)..], (int)method);
+                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], resultPromise);
+                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], mapObj.Address);
+                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], triggerPtr);
+                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], filenamePtr);
+                lock (pipeTX)
+                    pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                await promise.Task;
+            }
+        }
+
         [DllImport("OmsiHookInvoker.dll")]
         private static extern int TProgManMakeVehicle(int progMan, int vehList, int _RoadVehicleTypes, bool onlyvehlist, bool CS,
             float TTtime, bool situationload, bool dialog, bool setdriver, bool thread,
@@ -482,6 +578,10 @@ namespace OmsiHook
         private static extern int GetTextureDesc(uint Texture, uint pWidth, uint pHeight, uint pFormat);
         [DllImport("OmsiHookInvoker.dll")]
         private static extern int IsTexture(uint Texture);
+        [DllImport("OmsiHookInvoker.dll")]
+        private static extern void RVTriggerXML(int roadVehicle, int trigger, int value);
+        [DllImport("OmsiHookInvoker.dll")]
+        internal static extern void SoundTrigger(int complMapObj, int trigger, int filename);
 
         public enum D3DFORMAT : uint
         {

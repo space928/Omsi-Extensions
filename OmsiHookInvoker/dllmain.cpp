@@ -175,6 +175,18 @@ extern "C" __declspec(dllexport) int FreeMem(int addr)
         addr);
 }
 
+extern "C" __declspec(dllexport) void RVTriggerXML(int roadVehicle, int trigger, int value)
+{
+    BorlandFastCall(0x007e9338, 3, 3,
+        roadVehicle, trigger, value);
+}
+
+extern "C" __declspec(dllexport) void SoundTrigger(int complMapObj, int trigger, int filename)
+{
+    BorlandFastCall(0x007bb1a8, 3, 3,
+        complMapObj, trigger, filename);
+}
+
 extern "C" __declspec(dllexport) BOOL HookD3D()
 {
     if (!m_dxHook)

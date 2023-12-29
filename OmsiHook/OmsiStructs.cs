@@ -701,57 +701,66 @@ namespace OmsiHook
     }
 
     //TODO: Bug when dereferencing this
+    [StructLayout(LayoutKind.Explicit, Size = 0x110)]
     internal struct OmsiPathInfoInternal
     {
-        public byte veh_type;
-        public byte uvg;
-        public bool railroad;
-        public bool freeOrLarge;
-        public D3DVector pathPos;
-        public OmsiPathID path;
-        public int subPath;
-        public bool reverse;
-        public float hdg;
-        [OmsiStructPtr(typeof(uint))] public int idCode;
-        [OmsiObjPtr(typeof(OmsiObject))] public int vehicle;
-        public float veloc;
-        public float x_L, x_R, z_B, z_F;
-        public float radius;
-        public float drehpunkt;
-        [OmsiStructPtr(typeof(D3DMatrix))] public int absPosition;
-        public byte waitMode;
-        public int reserveGroup;
-        public byte blinker;
-        public byte einOrdnen;//TODO: Check data type
-        public bool prevVisible_logical;
+        [FieldOffset(0x0)] public byte veh_type;
+        [FieldOffset(0x1)] public byte uvg;
+        [FieldOffset(0x2)] public bool railroad;
+        [FieldOffset(0x3)] public bool freeOrLarge;
+        [FieldOffset(0x4)] public D3DVector pathPos;
+        [FieldOffset(0x10)] public OmsiPathID path;
+        [FieldOffset(0x18)] public int subPath;
+        [FieldOffset(0x1c)] public bool reverse;
+        [FieldOffset(0x20)] public float hdg;
+        [FieldOffset(0x24)] [OmsiStructPtr(typeof(uint))] public int idCode;
+        [FieldOffset(0x28)] [OmsiObjPtr(typeof(OmsiObject))] public int vehicle;
+        [FieldOffset(0x2c)] public float veloc;
+        [FieldOffset(0x30)] public float x_L;
+        [FieldOffset(0x34)] public float x_R;
+        [FieldOffset(0x38)] public float z_B;
+        [FieldOffset(0x3c)] public float z_F;
+        [FieldOffset(0x40)] public float radius;
+        [FieldOffset(0x44)] public float drehpunkt;
+        [FieldOffset(0x48)] [OmsiStructPtr(typeof(D3DMatrix))] public int absPosition;
+        [FieldOffset(0x4c)] public byte waitMode;
+        [FieldOffset(0x50)] public int reserveGroup;
+        [FieldOffset(0x54)] public byte blinker;
+        [FieldOffset(0x55)] public byte einOrdnen;//TODO: Check data type
+        [FieldOffset(0x56)] public bool prevVisible_logical;
         //TODO: Determine actual type
-        public int nextPath_a, nextPath_b, nextPath_c, nextPath_d, nextPath_e;
-        public OmsiNextPathSegment nextPathSeg;
-        public OmsiNextPathID nextPathID;
-        [OmsiStructArrayPtr(typeof(OmsiPathID))]
-        public int reservePaths;
-        public int spurwechsel; //TODO: Check data type
-        public uint spurwechselTime;
-        public bool spurwechselAuto;
-        public bool noScheduledSpurwechsel;
-        public bool on_crossing;
-        public float leftFree, rightFree;
-        public byte relPosError; //TODO: Check data type
-        public bool setPosOnNearTile;
-        public float rowdy_factor;
-        public bool eilig;
-        public bool einSatzFahrzeug;
-        public float martinshorn;
-        public float getrieben_von_einSatz;
-        public uint getrieben_von_einSatz_time;
-        public byte setSoll;
-        public int track;
-        public int trackEntry;
-        public int stnLink;
-        public int next_stnLink;
-        public bool zwangsEinsetzen;
-        public bool allowHupen;
-        [OmsiStrPtr] public int debug_aiData_limit;
+        [FieldOffset(0x58)] public int nextPath_a;
+        [FieldOffset(0x5c)] public int nextPath_b;
+        [FieldOffset(0x60)] public int nextPath_c;
+        [FieldOffset(0x64)] public int nextPath_d;
+        [FieldOffset(0x68)] public int nextPath_e;
+        [FieldOffset(0x6c)] public OmsiNextPathSegment nextPathSeg;
+        [FieldOffset(0x94)] public OmsiNextPathID nextPathID;
+        [FieldOffset(0xbc)] [OmsiStructArrayPtr(typeof(OmsiPathID))] public int reservePaths;
+        [FieldOffset(0xc0)] public int spurwechsel; //TODO: Check data type
+        [FieldOffset(0xc4)] public uint spurwechselTime;
+        [FieldOffset(0xc8)] public bool spurwechselAuto;
+        [FieldOffset(0xc9)] public bool noScheduledSpurwechsel;
+        [FieldOffset(0xca)] public bool on_crossing;
+        [FieldOffset(0xcc)] public float leftFree;
+        [FieldOffset(0xd0)] public float rightFree;
+        [FieldOffset(0xd4)] public byte relPosError; //TODO: Check data type
+        [FieldOffset(0xd5)] public bool setPosOnNearTile;
+        [FieldOffset(0xd8)] public float rowdy_factor;
+        [FieldOffset(0xdc)] public bool eilig;
+        [FieldOffset(0xdd)] public bool einSatzFahrzeug;
+        [FieldOffset(0xe0)] public float martinshorn;
+        [FieldOffset(0xe4)] public float getrieben_von_einSatz;
+        [FieldOffset(0xe8)] public uint getrieben_von_einSatz_time;
+        [FieldOffset(0xec)] public byte setSoll;
+        [FieldOffset(0xf0)] public int track;
+        [FieldOffset(0xf4)] public int trackEntry;
+        [FieldOffset(0xf8)] public int stnLink;
+        [FieldOffset(0xfc)] public int next_stnLink;
+        [FieldOffset(0x100)] public bool zwangsEinsetzen;
+        [FieldOffset(0x104)] public float normBrakedDist;
+        [FieldOffset(0x108)] public bool allowHupen;
+        [FieldOffset(0x10c)] [OmsiStrPtr] public int debug_aiData_limit;
     }
 
     public struct OmsiPathInfo
@@ -844,6 +853,7 @@ namespace OmsiHook
         /// Forced insertion?
         /// </summary>
         public bool zwangsEinsetzen;
+        public float normBrakedDist;
         /// <summary>
         /// Allow horns
         /// </summary>
@@ -2005,5 +2015,34 @@ namespace OmsiHook
         [OmsiStructArrayPtr(typeof(OmsiPathRule), typeof(OmsiPathRuleInternal))] public int Rules;
     }
 
+    [StructLayout(LayoutKind.Explicit)]
+    public struct OmsiBoogieInternal
+    {
+        [OmsiStruct(typeof(OmsiPathInfo), typeof(OmsiPathInfoInternal))]
+        [FieldOffset(0x0)]internal OmsiPathInfoInternal pathInfo;
+        [FieldOffset(0x110)]internal D3DVector pos;
+        [FieldOffset(0x11c)]internal D3DXVector2 y_soll;
+        [FieldOffset(0x124)]internal D3DXVector2 y_harmon;
+        [FieldOffset(0x12c)]internal float y_gleisfehler;
+        [FieldOffset(0x130)]internal float z_gleisfehler;
+    }
+
+    public struct OmsiBoogie
+    {
+        public OmsiPathInfo pathInfo;
+        public D3DVector pos;
+        public D3DXVector2 y_soll;
+        public D3DXVector2 y_harmon;
+        public float y_gleisfehler;
+        public float z_gleisfehler;
+    }
+
+    /// <summary>
+    /// Omsi Path Setpoints
+    /// </summary>
+    public struct OmsiPathSollwerte
+    {
+        public float v, x, curve_x_offset, ai_stdbrems;
+    }
 }
 
