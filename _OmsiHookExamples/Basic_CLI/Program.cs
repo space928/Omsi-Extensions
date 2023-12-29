@@ -35,6 +35,8 @@ namespace Basic_CLI
                 Thread.Sleep(20);
             }
         }
+
+        // Pick an emoji to show for the weather
         static string WeatherEmoji(OmsiWeather weather)
         {
             if (weather?.ActWeather.fogDensity < 900)
