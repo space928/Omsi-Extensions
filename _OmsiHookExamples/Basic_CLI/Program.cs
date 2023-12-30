@@ -20,6 +20,7 @@ namespace Basic_CLI
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             while (true)
             {
+                weather ??= omsi.Globals.Weather;
                 playerVehicle ??= omsi.Globals.PlayerVehicle;
                 var pos = playerVehicle?.Position ?? default;
                 var rot = playerVehicle?.Rotation ?? default;
