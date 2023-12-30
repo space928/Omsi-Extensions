@@ -8,3 +8,5 @@
   items:
     - name: Basic CLI Example
       href: examples\Basic_CLI.md
+    - name: Basic Mouse Trigger & Sound Trigger Example
+      href: examples\Triggers.md
