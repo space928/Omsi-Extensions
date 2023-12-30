@@ -1,4 +1,4 @@
-# Basic CLI Example
+# Basic Trigger & Sound Trigger Example
 
 This article provides a basic understanding to a basic C# .NET example leveraging the OMSIHook library. The example focuses on retrieving crucial information about the map, weather, date, and the current vehicle.
 
