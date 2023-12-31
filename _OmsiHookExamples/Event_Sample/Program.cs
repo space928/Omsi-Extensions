@@ -16,6 +16,10 @@ namespace Event_Sample
             omsi.AttachToOMSI().Wait();
             omsi.OnMapChange += Omsi_OnMapChange;
             omsi.OnMapLoaded += Omsi_OnMapLoaded;
+            omsi.OnActiveVehicleChanged += Omsi_OnActiveVehicleChanged;
+            omsi.OnOmsiExited += Omsi_OnOmsiExited;
+            omsi.OnOmsiGotD3DContext += Omsi_OnOmsiGotD3DContext;
+            omsi.OnOmsiLostD3DContext += Omsi_OnOmsiLostD3DContext;
             // Await callbacks
             while (true)
             {
@@ -50,10 +54,6 @@ namespace Event_Sample
             {
                 var omsi = sender as OmsiHook.OmsiHook;
                 Console.WriteLine($"🗺️ Map Changed: {omsi.Globals.Map.FriendlyName}");
-                omsi.OnActiveVehicleChanged += Omsi_OnActiveVehicleChanged;
-                omsi.OnOmsiExited += Omsi_OnOmsiExited;
-                omsi.OnOmsiGotD3DContext += Omsi_OnOmsiGotD3DContext;
-                omsi.OnOmsiLostD3DContext += Omsi_OnOmsiLostD3DContext;
             }
         }
 
