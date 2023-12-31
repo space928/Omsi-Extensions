@@ -173,8 +173,9 @@ namespace OmsiHook
         [Obsolete("This will be obselete once TMyOMSIList is wrapped! The list of vehicles will be moved to OmsiGlobals.")]
         public OmsiRoadVehicleInst GetRoadVehicleInst(int index)
         {
+            // TODO: A More permanant fix should be done at some point.
             var vehPtr = GetListItem(0x00861508, index);
-            return vehPtr == 0 ? null : new OmsiRoadVehicleInst(omsiMemory, vehPtr);
+            return vehPtr < 1000 ? null : new OmsiRoadVehicleInst(omsiMemory, vehPtr);
         }
 
         /// <summary>
