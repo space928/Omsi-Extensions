@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Threading;
 using OmsiHook;
 
@@ -33,6 +34,10 @@ namespace OmsiExtensionsCLI
                 var camPos = cam?.Pos ?? default;
                 var weather = omsi.Globals.Weather;
                 var tickets = omsi.Globals.TicketPack;
+                var materialMan = omsi.Globals.MaterialMan;
+                var reflMatl = materialMan.StdMaterial;
+                reflMatl.emissive.r = 0.0f;
+                materialMan.StdMaterial = reflMatl;
 
                 Console.SetCursorPosition(0, 0);
                 Console.WriteLine(($"Read data: x:{pos.x:F3}   y:{pos.y:F3}   z:{pos.z:F3}      " +

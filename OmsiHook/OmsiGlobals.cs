@@ -84,5 +84,10 @@ namespace OmsiHook
         /// Main Camera Object
         /// </summary>
         public OmsiCamera Camera => Memory.ReadMemoryObject<OmsiCamera>(0x008616e0);
+
+        /// <summary>
+        /// Central Material Manager
+        /// </summary>
+        public OmsiMaterialMan MaterialMan => Memory.ReadMemoryObject<OmsiMaterialMan>(0x00861ca8);
     }
 }

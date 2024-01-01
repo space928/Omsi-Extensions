@@ -151,7 +151,8 @@ namespace OmsiHook
         public bool horizontal;
         public bool water;
         public bool useEnvirReflx, useEnvirMask, useBumpMap, useRainDropAreaMap,
-            useTransMap, useTextTexture, useScriptTexture;
+            useTransMap;
+        public int useTextTexture, useScriptTexture;
         public int texCoordTransX, texCoordTransY;
         public int raindropAreaMapVar;
         public int alphaScale_Var;
@@ -192,7 +193,8 @@ namespace OmsiHook
         public bool horizontal;
         public bool water;
         public bool useEnvirReflx, useEnvirMask, useBumpMap, useRainDropAreaMap,
-            useTransMap, useTextTexture, useScriptTexture;
+            useTransMap;
+        public int useTextTexture, useScriptTexture;
         public int texCoordTransX, texCoordTransY;
         public int raindropAreaMapVar;
         public int alphaScale_Var;
@@ -2043,6 +2045,15 @@ namespace OmsiHook
     public struct OmsiPathSollwerte
     {
         public float v, x, curve_x_offset, ai_stdbrems;
+    }
+
+    internal struct OmsiMaterialItemInternal {
+        [OmsiStruct(typeof(OmsiMaterialProp), typeof(OmsiMaterialPropInternal))]
+        public OmsiMaterialPropInternal Properties;
+    }
+
+    public struct OmsiMaterialItem {
+        public OmsiMaterialProp Properties;
     }
 }
 
