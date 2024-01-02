@@ -33,7 +33,7 @@ namespace OmsiHook
         }
         public OmsiObject MyFileObject
         {
-            get => new(Memory, Address + 0x1e8);
+            get => Memory.ReadMemoryObject<OmsiObject>(Address, 0x1e8);
         }
         public float EinsVar
         {
@@ -81,12 +81,12 @@ namespace OmsiHook
         }
         public OmsiComplMapObj ComplMapObj
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x210));
+            get => Memory.ReadMemoryObject<OmsiComplMapObj>(Address, 0x210, false);
         }
 
         public OmsiComplObjInst ComplObjInst
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x214));
+            get => Memory.ReadMemoryObject<OmsiComplObjInst>(Address, 0x214, false);
         }
         public bool UseSound
         {
@@ -95,7 +95,7 @@ namespace OmsiHook
         }
         public OmsiSoundPack SoundPack
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x21c));
+            get => Memory.ReadMemoryObject<OmsiSoundPack>(Address, 0x21c, false);
         }
         public OmsiCamera[] ReflCameras
         {
@@ -121,7 +121,7 @@ namespace OmsiHook
         }
         public OmsiComplMapObjInst ScriptShareParent
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x240));
+            get => Memory.ReadMemoryObject<OmsiComplMapObjInst>(Address, 0x240, false);
         }
         public float[] UserVars
         {

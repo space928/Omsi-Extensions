@@ -130,6 +130,6 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x1d8, value);
         }
 
-        public OmsiCamera Camera => new(Memory, Memory.ReadMemory<int>(Address + 0x1dc));
+        public OmsiCamera Camera => Memory.ReadMemoryObject<OmsiCamera>(Address, 0x1dc, false);
     }
 }

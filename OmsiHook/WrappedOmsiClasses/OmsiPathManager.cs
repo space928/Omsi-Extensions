@@ -14,7 +14,7 @@
         }
         public OmsiPathPointBasic MyClass
         {
-            get => new OmsiPathPointBasic(Memory, Memory.ReadMemory<int>(Address + 0x8));
+            get => Memory.ReadMemoryObject<OmsiPathPointBasic>(Address, 0x8, false);
         }
         /* TODO: 
         public OmsiPathPoint[] PathPoints

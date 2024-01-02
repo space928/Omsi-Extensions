@@ -2,12 +2,11 @@
 using System.Threading;
 using OmsiHook;
 
-namespace Trigger_Sample
+namespace TriggersSample
 {
     // Basic sample of Triggers with OMSIHook
     class Program
     {
-        OmsiHook.OmsiHook omsi;
         static void Main(string[] args)
         {
             Console.WriteLine("#=#=#=#=#=# OMSIHook Trigger Sample #=#=#=#=#=#");
@@ -15,19 +14,19 @@ namespace Trigger_Sample
 
             OmsiHook.OmsiHook omsi = new();
             omsi.AttachToOMSI().Wait();
-            var playerVehicle = omsi.Globals.PlayerVehicle;
-            bool trigger_state = false;
 
-            Thread.Sleep(500);
+            var playerVehicle = omsi.Globals.PlayerVehicle;
+            bool triggerState = false;
+
             while (true)
             {
                 playerVehicle ??= omsi.Globals.PlayerVehicle;
                 Console.SetCursorPosition(0, 1);
-                Console.WriteLine($"Trigger State: {trigger_state}".PadRight(Console.WindowWidth - 1));
+                Console.WriteLine($"Trigger State: {triggerState}".PadRight(Console.WindowWidth - 1));
                 Console.WriteLine($"Playing Sound...".PadRight(Console.WindowWidth - 1));
-                playerVehicle.SetTrigger("bus_doorfront0", trigger_state);
+                playerVehicle.SetTrigger("bus_doorfront0", triggerState);
                 playerVehicle.SoundTrigger("ev_IBIS_Ansagen", @"..\..\MAN_NL_NG\Sound\Matrix_Ziel.wav");
-                trigger_state = !trigger_state;
+                triggerState = !triggerState;
                 Thread.Sleep(1000);
             }
         }

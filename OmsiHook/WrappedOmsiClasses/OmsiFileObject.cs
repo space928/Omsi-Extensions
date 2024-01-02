@@ -11,7 +11,7 @@
         
         public OmsiComplMapObj MyComplMapObj
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x4));
+            get => Memory.ReadMemoryObject<OmsiComplMapObj>(Address, 0x4, false);
         }
         public uint IDCode
         {
@@ -70,11 +70,11 @@
         }
         public OmsiFileObject AttObj
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x34));
+            get => Memory.ReadMemoryObject<OmsiFileObject>(Address, 0x34, false);
         }
         public OmsiFileSpline AttSpln
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x38));
+            get => Memory.ReadMemoryObject<OmsiFileSpline>(Address, 0x38, false);
         }
         public int AttPnt
         {
@@ -149,7 +149,7 @@
         }
         public OmsiObjChronoVars Chrono_Active
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x70));
+            get => Memory.ReadMemoryObject<OmsiObjChronoVars>(Address, 0x70, false);
         }
         public bool Chrono_Own
         {

@@ -2,7 +2,7 @@
 
 This article provides a basic understanding to a basic C# .NET example leveraging the OMSIHook library. The example focuses on retrieving crucial information about the map, weather, date, and the current vehicle.
 
-_This article is in direct relation to the Sample Project available [here](https://github.com/space928/Omsi-Extensions/tree/main/_OmsiHookExamples/Basic_CLI)._
+_This article is in direct relation to the Sample Project available [here](https://github.com/space928/Omsi-Extensions/tree/main/_OmsiHookExamples/BasicCLI)._
 
 ## Initialization
 

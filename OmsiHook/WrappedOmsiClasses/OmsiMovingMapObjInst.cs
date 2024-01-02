@@ -199,19 +199,19 @@
         }
         public OmsiMovingMapObjInst VB_First
         {
-            get => new (Memory, Memory.ReadMemory<int>(Address + 0x4d0));
+            get => Memory.ReadMemoryObject<OmsiMovingMapObjInst>(Address, 0x4d0, false);
         }
         public OmsiMovingMapObjInst VB_Last
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x4d4));
+            get => Memory.ReadMemoryObject<OmsiMovingMapObjInst>(Address, 0x4d4, false);
         }
         public OmsiMovingMapObjInst VB_Next
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x4d8));
+            get => Memory.ReadMemoryObject<OmsiMovingMapObjInst>(Address, 0x4d8, false);
         }
         public OmsiMovingMapObjInst VB_Prev
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x4dc));
+            get => Memory.ReadMemoryObject<OmsiMovingMapObjInst>(Address, 0x4dc, false);
         }
         public bool VB_Me_Reverse
         {
@@ -230,7 +230,7 @@
         }
         public OmsiMovingMapObjInst VB_SoundRef
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x4e4));
+            get => Memory.ReadMemoryObject<OmsiMovingMapObjInst>(Address, 0x4e4, false);
         }
         public bool RL_ExitReq
         {
