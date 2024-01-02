@@ -19,12 +19,13 @@ omsi.OnOmsiLostD3DContext += Omsi_OnOmsiLostD3DContext;
 
 ## Event Descriptions
 The events all provide the current `OMSIHook` object as well as several of them provide references to the object that has changed.
+
 ### _MapChange_ Event
 Triggered any time the current map has changed.
 ```cs
-Omsi_OnMapChange(object? sender, EventArgs e)
+Omsi_OnMapChange(object? sender, OmsiMap e)
 ```
-The `sender` object as with all the other events refers to the current `OMSIHook` object, the `e` object is not used for this event.
+The `sender` object as with all the other events refers to the current `OMSIHook` object, the `e` object is a reference to the new `OmsiMap` object or `null`.
 
 ### _MapLoaded_ Event
 Triggered any time a map is loaded or unloaded.

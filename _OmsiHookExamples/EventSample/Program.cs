@@ -2,7 +2,7 @@
 using System.Threading;
 using OmsiHook;
 
-namespace Event_Sample
+namespace EventSample
 {
     // Most Basic example of reading various values exposed by OMSIHook
     class Program
@@ -14,6 +14,9 @@ namespace Event_Sample
 
             OmsiHook.OmsiHook omsi = new();
             omsi.AttachToOMSI().Wait();
+
+            Console.WriteLine("Waiting for events...");
+
             omsi.OnMapChange += Omsi_OnMapChange;
             omsi.OnMapLoaded += Omsi_OnMapLoaded;
             omsi.OnActiveVehicleChanged += Omsi_OnActiveVehicleChanged;
@@ -48,13 +51,10 @@ namespace Event_Sample
                 Console.WriteLine($"🗺️ Map Loaded: {e}");
         }
 
-        private static void Omsi_OnMapChange(object? sender, EventArgs e)
+        private static void Omsi_OnMapChange(object? sender, OmsiMap e)
         {
-            if (sender != null)
-            {
-                var omsi = sender as OmsiHook.OmsiHook;
-                Console.WriteLine($"🗺️ Map Changed: {omsi.Globals.Map.FriendlyName}");
-            }
+            if (e != null)
+                Console.WriteLine($"🗺️ Map Changed: {e.FriendlyName}");
         }
 
         private static void Omsi_OnActiveVehicleChanged(object? sender, OmsiRoadVehicleInst e)

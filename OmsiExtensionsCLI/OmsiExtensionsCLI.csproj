@@ -1,14 +1,19 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
     <PlatformTarget>x86</PlatformTarget>
     <Platforms>x86</Platforms>
+	<ApplicationIcon>favicon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\OmsiHook\OmsiHook.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="favicon.ico" />
   </ItemGroup>
 
 </Project>

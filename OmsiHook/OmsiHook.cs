@@ -70,7 +70,7 @@ namespace OmsiHook
         /// <remarks>
         /// <inheritdoc cref="OnOmsiExited"/>
         /// </remarks>
-        public event EventHandler OnMapChange;
+        public event EventHandler<OmsiMap> OnMapChange;
         /// <summary>
         /// An event raised when Omsi has loaded or unloaded a new map. The <c>EventArgs</c> is a boolean representing whether the map is loaded.
         /// 
@@ -149,7 +149,7 @@ namespace OmsiHook
             return new D3DTexture(omsiMemory, 0);
         }
 
-        private void OmsiHook_OnMapChange(object sender, EventArgs e)
+        private void OmsiHook_OnMapChange(object sender, OmsiMap e)
         {
             Task.Run(() => {
                 while(!isD3DReady)
@@ -223,7 +223,7 @@ namespace OmsiHook
                     if(lastMapState != currentMapName)
                     {
                         if(currentMapName != 0)
-                            OnMapChange?.Invoke(this, new());
+                            OnMapChange?.Invoke(this, Globals.Map);
                         lastMapState = currentMapName;
                     }
                     if(lastMapLoaded != currentMapLoaded)
