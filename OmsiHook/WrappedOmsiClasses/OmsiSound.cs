@@ -179,7 +179,7 @@ namespace OmsiHook
         }
         public OmsiBoolClass BoolClass
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x78));
+            get => Memory.ReadMemoryObject<OmsiBoolClass>(Address, 0x78, false);
         }
         public bool Playing
         {
@@ -204,9 +204,5 @@ namespace OmsiHook
             get => new(Memory.ReadMemory<int>(Address + 0x80));
             set => Memory.WriteMemory(Address + 0x80, value.ToInt32());
         }
-
-
-
-
     }
 }

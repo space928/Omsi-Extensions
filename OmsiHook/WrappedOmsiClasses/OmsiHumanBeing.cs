@@ -8,7 +8,7 @@ namespace OmsiHook
     public class OmsiHumanBeing : OmsiComplMapObj
     {
         internal OmsiHumanBeing(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
-        internal OmsiHumanBeing() : base() { }
+        public OmsiHumanBeing() : base() { }
 
         public string Voice
         {

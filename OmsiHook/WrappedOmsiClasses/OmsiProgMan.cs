@@ -51,7 +51,7 @@ namespace OmsiHook
         }*/
         public OmsiCamera MapCam
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x14));
+            get => Memory.ReadMemoryObject<OmsiCamera>(Address, 0x14, false);
         }
         public D3DVector MapCamTargetPos
         {
@@ -205,15 +205,15 @@ namespace OmsiHook
         }
         public OmsiFileObject SelObjPri
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0xf0));
+            get => Memory.ReadMemoryObject<OmsiFileObject>(Address, 0xf0, false);
         }
         public OmsiFileObject SelObjSec
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0xf4));
+            get => Memory.ReadMemoryObject<OmsiFileObject>(Address, 0xf4, false);
         }
         public OmsiFileObject OrgObj
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0xf8));
+            get => Memory.ReadMemoryObject<OmsiFileObject>(Address, 0xf8, false);
         }
         public int SelObjEscInst
         {
@@ -222,15 +222,15 @@ namespace OmsiHook
         }
         public OmsiFileSpline SelSplPri
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x100));
+            get => Memory.ReadMemoryObject<OmsiFileSpline>(Address, 0x100, false);
         }
         public OmsiFileSpline SelSplSec
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x104));
+            get => Memory.ReadMemoryObject<OmsiFileSpline>(Address, 0x104, false);
         }
         public OmsiFileSpline OrgSpl
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x108));
+            get => Memory.ReadMemoryObject<OmsiFileSpline>(Address, 0x108, false);
         }
         public OmsiFileSpline[] SelSplExp
         {
@@ -287,7 +287,7 @@ namespace OmsiHook
         }
         public D3DMeshFileObject SplHelper
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x134));
+            get => Memory.ReadMemoryObject<D3DMeshFileObject>(Address, 0x134, false);
         }
         public D3DOBB SplHelperBounding
         {
@@ -296,7 +296,7 @@ namespace OmsiHook
         }
         public OmsiDynHelperMan DynHelperMan
         {
-            get => new(Memory, Memory.ReadMemory<int>(0x174));
+            get => Memory.ReadMemoryObject<OmsiDynHelperMan>(Address, 0x174, false);
         }
         /* TODO:
         public OmsiSplineObject PathHelperSplines
@@ -321,7 +321,7 @@ namespace OmsiHook
         }
         public OmsiVisu_OBB Visu_OBB
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x19c));
+            get => Memory.ReadMemoryObject<OmsiVisu_OBB>(Address, 0x19c, false);
         }
         public float Coll_Pos_X_Var
         {
@@ -345,7 +345,7 @@ namespace OmsiHook
         }
         public OmsiObjBlackRect ScreenRect
         {
-            get => new(Memory, Memory.ReadMemory<int>(0x1b0));
+            get => Memory.ReadMemoryObject<OmsiObjBlackRect>(Address, 0x1b0, false);
         }
         // TODO: Write internal structs for these so that they can be marhsalled
         /*public OmsiCriticalSection CS_MakeVehicle

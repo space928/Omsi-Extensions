@@ -27,7 +27,7 @@ namespace OmsiHook
         }
         public OmsiObject Parent
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x140));
+            get => Memory.ReadMemoryObject<OmsiObject>(Address, 0x140, false);
         }
         public byte Type
         {
@@ -36,7 +36,7 @@ namespace OmsiHook
         }
         public OmsiCoordSystem CoordSystem
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x148));
+            get => Memory.ReadMemoryObject<OmsiCoordSystem>(Address, 0x148, false);
         }
         public bool CoordSystemIsMine
         {
@@ -199,7 +199,7 @@ namespace OmsiHook
         }*/
         public OmsiSplineSegment Helper
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x1c4));
+            get => Memory.ReadMemoryObject<OmsiSplineSegment>(Address, 0x1c4, false);
         }
         /* WAITING FOR PR#25
         public OmsiPathRule[] Rules

@@ -41,6 +41,6 @@
         }
         public OmsiTree[] Trees =>
             Memory.ReadMemoryStructArray<OmsiTree>(Address + 0x18);
-        public D3DMeshObject MeshObject => new(Memory, Memory.ReadMemory<int>(Address + 0x1c));
+        public D3DMeshObject MeshObject => Memory.ReadMemoryObject<D3DMeshObject>(Address, 0x1c, false);
     }
 }

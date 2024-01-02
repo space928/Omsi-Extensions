@@ -28,7 +28,7 @@ namespace OmsiHook
         /// <summary>
         /// Current Weather
         /// </summary>
-        public OmsiWeather Weather => new(Memory, Memory.ReadMemory<int>(0x008617D0));
+        public OmsiWeather Weather => Memory.ReadMemoryObject<OmsiWeather>(0x008617D0);
 
         /// <summary>
         /// Current Map
