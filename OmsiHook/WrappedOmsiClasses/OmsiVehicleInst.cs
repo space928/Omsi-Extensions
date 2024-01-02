@@ -70,9 +70,9 @@
 
         public OmsiCamera[] Cameras_Pax => Memory.ReadMemoryObjArray<OmsiCamera>(Address + 0x5b4);
 
-        public OmsiCamera Camera_Driver => new(Memory, Memory.ReadMemory<int>(Address + 0x5b8));
+        public OmsiCamera Camera_Driver => Memory.ReadMemoryObject<OmsiCamera>(Address, 0x5b8, false);
 
-        public OmsiCamera Camera_Pax => new(Memory, Memory.ReadMemory<int>(Address + 0x5bc));
+        public OmsiCamera Camera_Pax => Memory.ReadMemoryObject<OmsiCamera>(Address, 0x5bc, false);
 
         public int Act_Camera_Driver
         {
@@ -215,7 +215,7 @@
             set => Memory.WriteMemory(Address + 0x614, value);
         }
 
-        public OmsiCamera OutsideCamera => new(Memory, Memory.ReadMemory<int>(Address + 0x620));
+        public OmsiCamera OutsideCamera => Memory.ReadMemoryObject<OmsiCamera>(Address, 0x620, false);
 
         public bool PAI
         {

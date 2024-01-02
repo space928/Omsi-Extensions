@@ -64,7 +64,7 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x24, value);
         }
 
-        public OmsiChrono Chrono => new(Memory, Memory.ReadMemory<int>(Address + 0x28));
+        public OmsiChrono Chrono => Memory.ReadMemoryObject<OmsiChrono>(Address, 0x28, false);
 
         public bool Splines_Refreshed
         {
@@ -127,12 +127,12 @@ namespace OmsiHook
 
         public OmsiFuncClass Func_TrafficDensity_Passenger
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x104));
+            get => Memory.ReadMemoryObject<OmsiFuncClass>(Address, 0x104, false);
         }
 
         public OmsiFuncClass Func_TrafficDensity_Road
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x108));
+            get => Memory.ReadMemoryObject<OmsiFuncClass>(Address, 0x108, false);
         }
 
         public float Acct_TrafficDensity_Passenger
@@ -279,13 +279,13 @@ namespace OmsiHook
         //TODO: This is meant to be an array of pointers to floats, which can't be marshalled yet
         //public float[] WellenAnimation_P => Memory.ReadMemoryStructArray<float>(Address + 0x190);
 
-        public OmsiStringList Registers => new(Memory, Memory.ReadMemory<int>(Address + 0x194));
+        public OmsiStringList Registers => Memory.ReadMemoryObject<OmsiStringList>(Address, 0x194, false);
 
         public OmsiStringList[] CarsParked_Array => Memory.ReadMemoryObjArray<OmsiStringList>(Address + 0x198);
 
-        public OmsiStringList Humans => new(Memory, Memory.ReadMemory<int>(Address + 0x19c));
+        public OmsiStringList Humans => Memory.ReadMemoryObject<OmsiStringList>(Address, 0x19c, false);
 
-        public OmsiStringList Drivers => new(Memory, Memory.ReadMemory<int>(Address + 0x1a0));
+        public OmsiStringList Drivers => Memory.ReadMemoryObject<OmsiStringList>(Address, 0x1a0, false);
 
         /*TODO: There's a bug when dereferencing this 
         public OmsiAIList AIList

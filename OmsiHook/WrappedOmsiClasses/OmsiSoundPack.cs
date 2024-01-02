@@ -6,7 +6,7 @@
     public class OmsiSoundPack : OmsiObject
     {
         internal OmsiSoundPack(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
-        internal OmsiSoundPack() : base() { }
+        public OmsiSoundPack() : base() { }
 
         /*public DirectSound8 Device
         {

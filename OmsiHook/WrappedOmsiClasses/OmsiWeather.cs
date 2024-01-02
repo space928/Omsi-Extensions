@@ -8,7 +8,7 @@ namespace OmsiHook
     public class OmsiWeather : OmsiObject
     {
         internal OmsiWeather(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
-        internal OmsiWeather() : base() { }
+        public OmsiWeather() : base() { }
 
         //Todo: WeatherSchemes - OmsiWeatherProp[] @ 0x4
 
