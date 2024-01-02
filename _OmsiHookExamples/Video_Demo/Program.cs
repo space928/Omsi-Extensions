@@ -9,7 +9,7 @@ namespace Video_Demo
 {
     class Program
     {
-        const string VIDEO_PATH = @"sample.mp4";
+        const string VIDEO_PATH = @"https://adam.mathieson.dev/sample.mp4";
         const string FFMPEG_PATH = @"ffmpeg-shared\bin";
         const int ST_INDEX = 0;
         static void Main(string[] args)
