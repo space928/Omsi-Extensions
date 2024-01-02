@@ -16,7 +16,7 @@ namespace OmsiHook
 
         public D3DTransformObject ShadowObject // TODO: Should be a D3DShadowObject
         {
-            get => new(Memory, Address + 0x4);
+            get => Memory.ReadMemoryObject<D3DTransformObject>(Address, 0x4);
         }
         public D3DMatrix Matrix
         {

@@ -98,8 +98,8 @@
         }
         public OmsiFileObject[] ObjectsFromFile => 
             Memory.ReadMemoryObjArray<OmsiFileObject>(Address + 0x48);
-        public OmsiFileTerrain TerrainFromFile => new(Memory, Memory.ReadMemory<int>(Address + 0x4c));
-        public OmsiFileWater WaterFromFile => new(Memory, Memory.ReadMemory<int>(Address + 0x50));
+        public OmsiFileTerrain TerrainFromFile => Memory.ReadMemoryObject<OmsiFileTerrain>(Address, 0x4c, false);
+        public OmsiFileWater WaterFromFile => Memory.ReadMemoryObject<OmsiFileWater>(Address, 0x50, false);
         public OmsiFileSpline[] SplinesFromFile =>
             Memory.ReadMemoryObjArray<OmsiFileSpline>(Address + 0x54);
         public bool Splines_Refreshed
@@ -130,7 +130,7 @@
         }
         public OmsiAmpelGroup[] AmpelGroups => Memory.MarshalStructs<OmsiAmpelGroup, OmsiAmpelGroupInternal>(
             Memory.ReadMemoryStructArray<OmsiAmpelGroupInternal>(Address + 0x6c));
-        public D3DMeshFileObject TileMesh => new(Memory, Memory.ReadMemory<int>(Address + 0x70));
+        public D3DMeshFileObject TileMesh => Memory.ReadMemoryObject<D3DMeshFileObject>(Address, 0x70, false);
         public string TexPath
         {
             get => Memory.ReadMemoryString(Address + 0x74);
@@ -145,8 +145,8 @@
             get => Memory.ReadMemory<bool>(Address + 0x80);
             set => Memory.WriteMemory(Address + 0x80, value);
         }
-        public OmsiKachelForest MyForest => new(Memory, Memory.ReadMemory<int>(Address + 0x84));
-        public OmsiKachelForest MyScrubs => new(Memory, Memory.ReadMemory<int>(Address + 0x88));
+        public OmsiKachelForest MyForest => Memory.ReadMemoryObject<OmsiKachelForest>(Address, 0x84, false);
+        public OmsiKachelForest MyScrubs => Memory.ReadMemoryObject<OmsiKachelForest>(Address, 0x88, false);
         //TODO: Many more...
     }
 }

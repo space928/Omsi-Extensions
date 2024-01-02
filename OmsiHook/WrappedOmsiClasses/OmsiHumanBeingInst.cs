@@ -31,14 +31,14 @@ namespace OmsiHook
             get => Memory.ReadMemory<bool>(Address + 0x5a8);
             set => Memory.WriteMemory(Address + 0x5a8, value);
         }
-        public int Index
+        public int HBIndex
         {
             get => Memory.ReadMemory<int>(Address + 0x5ac);
             set => Memory.WriteMemory(Address + 0x5ac, value);
         }
         public OmsiHumanBeing Human
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x5b0));
+            get => Memory.ReadMemoryObject<OmsiHumanBeing>(Address, 0x5b0, false);
         }
         public float FreeDist
         {
@@ -92,19 +92,19 @@ namespace OmsiHook
         }
         public OmsiPathManager PathManager
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x5dc));
+            get => Memory.ReadMemoryObject<OmsiPathManager>(Address, 0x5dc, false);
         }
         public OmsiPathPointBasic PathPointTarget
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x5e0));
+            get => Memory.ReadMemoryObject<OmsiPathPointBasic>(Address, 0x5e0, false);
         }
         public OmsiPathPointBasic PathPointNext
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x5e4));
+            get => Memory.ReadMemoryObject<OmsiPathPointBasic>(Address, 0x5e4, false);
         }
         public OmsiPathPointBasic ActPathPoint
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x5e8));
+            get => Memory.ReadMemoryObject<OmsiPathPointBasic>(Address, 0x5e8, false);
         }
         public bool WaitBeforeEnd
         {
@@ -380,7 +380,7 @@ namespace OmsiHook
         }
         public OmsiRoadVehicleInst MyBus
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x6b4));
+            get => Memory.ReadMemoryObject<OmsiRoadVehicleInst>(Address, 0x6b4, false);
         }
         public uint MyBusCode
         {

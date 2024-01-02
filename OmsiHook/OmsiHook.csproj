@@ -3,16 +3,16 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0-windows</TargetFramework>
 		<Authors>Thomas Mathieson et al</Authors>
-		<Copyright>Copyright Thomas Mathieson 2023 all rights reserved</Copyright>
+		<Copyright>Copyright Thomas Mathieson 2022-2024 all rights reserved</Copyright>
 		<PackageProjectUrl>https://github.com/space928/Omsi-Extensions</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/space928/Omsi-Extensions</RepositoryUrl>
 		<PackageLicenseFile></PackageLicenseFile>
 		<Description>OmsiHook is a simple library for hooking into Omsi's memory for modding.</Description>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<AssemblyVersion>2.4.1.1</AssemblyVersion>
-		<FileVersion>2.4.1.1</FileVersion>
-		<Version>2.4.1</Version>
+		<AssemblyVersion>2.4.4.1</AssemblyVersion>
+		<FileVersion>2.4.4.1</FileVersion>
+		<Version>2.4.4</Version>
 		<PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>
 		<SignAssembly>False</SignAssembly>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -22,18 +22,34 @@
 		<Nullable>disable</Nullable>
 		<Platforms>x86</Platforms>
 		<GenerateDocumentationFile>False</GenerateDocumentationFile>
+		<Configurations>Debug;Release;ReleaseAndDocs</Configurations>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'" />
-	
-	<PropertyGroup>
-		<BuildDocFx>true</BuildDocFx>
-		<DocfxConfigFile>$(MSBuildProjectDirectory)/docs/docfx.json</DocfxConfigFile>
-		<PreviewOutputFolder>$(MSBuildProjectDirectory)/docs/_site</PreviewOutputFolder>
-		<MetadataOutputFolder>$(MSBuildProjectDirectory)/docs</MetadataOutputFolder>
-		<LogFile>$(MSBuildProjectDirectory)/docs/docfx_log.txt</LogFile>
-		<LogLevel>Info</LogLevel>
-	</PropertyGroup>
+
+	<!--Handle all the ReleaseAndDocs specific config. Beware when using the project properties editor, as it might accidentally mess up this bit of the csproj...-->
+	<Choose>
+		<When Condition="'$(Configuration)'!='ReleaseAndDocs'">
+			<PropertyGroup>
+				<_ConfigurationNormalized>$(Configuration)</_ConfigurationNormalized>
+				<BuildDocFx>false</BuildDocFx>
+			</PropertyGroup>
+		</When>
+		<Otherwise>
+			<PropertyGroup>
+				<_ConfigurationNormalized>Release</_ConfigurationNormalized>
+				<OutDir>$(MSBuildProjectDirectory)/bin/$(Platform)/Release/$(TargetFramework)/</OutDir>
+				<PackageOutputPath>$(MSBuildProjectDirectory)/bin/$(Platform)/Release/</PackageOutputPath>
+
+				<BuildDocFx>true</BuildDocFx>
+				<DocfxConfigFile>$(MSBuildProjectDirectory)/docs/docfx.json</DocfxConfigFile>
+				<PreviewOutputFolder>$(MSBuildProjectDirectory)/docs/_site</PreviewOutputFolder>
+				<MetadataOutputFolder>$(MSBuildProjectDirectory)/docs</MetadataOutputFolder>
+				<LogFile>$(MSBuildProjectDirectory)/docs/docfx_log.txt</LogFile>
+				<LogLevel>Info</LogLevel>
+			</PropertyGroup>
+		</Otherwise>
+	</Choose>
 
 	<ItemGroup>
 		<None Include="..\.editorconfig" Link=".editorconfig" />
@@ -45,22 +61,22 @@
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
-		<None Include="..\$(Configuration)\OmsiHookInvoker.dll" Link="OmsiHookInvoker.dll">
+		<None Include="..\$(_ConfigurationNormalized)\OmsiHookInvoker.dll" Link="OmsiHookInvoker.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Pack>True</Pack>
 			<PackagePath>\lib\net6.0</PackagePath>
 		</None>
-		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(Configuration)\$(TargetFramework)\OmsiHookRPCPlugin.dll" Link="OmsiHookRPCPlugin.dll">
+		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(_ConfigurationNormalized)\$(TargetFramework)\OmsiHookRPCPlugin.dll" Link="OmsiHookRPCPlugin.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Pack>True</Pack>
 			<PackagePath>\lib\net6.0</PackagePath>
 		</None>
-		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(Configuration)\$(TargetFramework)\OmsiHookRPCPluginNE.dll" Link="OmsiHookRPCPluginNE.dll">
+		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(_ConfigurationNormalized)\$(TargetFramework)\OmsiHookRPCPluginNE.dll" Link="OmsiHookRPCPluginNE.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Pack>True</Pack>
 			<PackagePath>\lib\net6.0</PackagePath>
 		</None>
-		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(Configuration)\$(TargetFramework)\OmsiHookRPCPlugin.opl" Link="OmsiHookRPCPlugin.opl">
+		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(_ConfigurationNormalized)\$(TargetFramework)\OmsiHookRPCPlugin.opl" Link="OmsiHookRPCPlugin.opl">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Pack>True</Pack>
 			<PackagePath>\lib\net6.0</PackagePath>
@@ -85,7 +101,7 @@
 
 	<!--Hack to fix docfx build bug... For some reason sometimes docfx tries to load the wrong version of System.Memory.dll; as 
 		a workaround we can delete docfx's copy of System.Memory.dll and let it use MSBuild's one which *should* work.-->
-	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="'$(Configuration)'=='ReleaseAndDocs'">
 	  <Exec Command="set &quot;DocFXMemory=$(Pkgdocfx_console)\tools\System.Memory.dll&quot;&#xD;&#xA;if exist &quot;%25DocFXMemory%25&quot; (&#xD;&#xA;  echo &quot;Applying docfx build workaround (deleting docfx's copy of System.Memory.dll)...&quot;&#xD;&#xA;  del /q &quot;%25DocFXMemory%25&quot;&#xD;&#xA;) else (&#xD;&#xA;  echo &quot;DBG: File doesn't exist %25DocFXMemory%25&quot;&#xD;&#xA;)" />
 	</Target>
 
