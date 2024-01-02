@@ -6,7 +6,7 @@
     public class OmsiChrono : OmsiObject
     {
         internal OmsiChrono(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
-        internal OmsiChrono() : base() { }
+        public OmsiChrono() : base() { }
 
         /*
         TODO: public Array? Timeline

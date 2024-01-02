@@ -61,7 +61,7 @@ namespace OmsiHook
         }
         public OmsiComplObj ComplObj
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x20));
+            get => Memory.ReadMemoryObject<OmsiComplObj>(Address, 0x20, false);
         }
         public byte ViewPoint_Opt
         {
