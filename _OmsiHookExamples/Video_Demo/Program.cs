@@ -10,7 +10,7 @@ namespace Video_Demo
     class Program
     {
         const string VIDEO_PATH = @"sample.mp4";
-        const string FFMPEG_PATH = @"C:\Users\AdamM\source\repos\space928\Omsi-Extensions\_OmsiHookExamples\Video_Demo\bin\Debug\net6.0-windows\ffmpeg-shared\bin";
+        const string FFMPEG_PATH = @"ffmpeg-shared\bin";
         const int ST_INDEX = 0;
         static void Main(string[] args)
         {
