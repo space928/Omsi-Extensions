@@ -227,19 +227,27 @@ namespace OmsiHook
             return consts[index];
         }
 
+        /// <summary>
+        /// Get a value at a point for a predifined curve for an object from its name.
+        /// </summary>
+        /// <param name="varName">Const Name</param>
+        /// <param name="x">X Coordinate to read on curve</param>
+        /// <returns>requested float value</returns>
+        /// <exception cref="KeyNotFoundException"/>
         public float GetCurve(string varName, float x)
         {
             int index = funcsStrings[varName];
             if (index >= consts.Length || index < 0)
                 throw new KeyNotFoundException($"Curve Variable '{varName}' not found in object. - Index Out Of Bounds");
 
-            for (int i = 0; i < funcs[index].Pnts.Length - 1; i++)
+            var curve = funcs[index].Pnts;
+            for (int i = 0; i < curve.Length - 1; i++)
             {
-                float x1 = funcs[index].Pnts[i].x;
-                float y1 = funcs[index].Pnts[i].y;
+                float x1 = curve[i].x;
+                float y1 = curve[i].y;
 
-                float x2 = funcs[index].Pnts[i + 1].x;
-                float y2 = funcs[index].Pnts[i + 1].y;
+                float x2 = curve[i + 1].x;
+                float y2 = curve[i + 1].y;
 
                 if (x >= x1 && x <= x2)
                 {
@@ -248,10 +256,10 @@ namespace OmsiHook
                     return y;
                 }
             }
-            if (x <= funcs[index].Pnts[0].x)
-                return funcs[index].Pnts[0].y;
-            if (x >= funcs[index].Pnts[funcs[index].Pnts.Length-1].x)
-                return funcs[index].Pnts[funcs[index].Pnts.Length - 1].y;
+            if (x <= curve[0].x)
+                return curve[0].y;
+            if (x >= curve[curve.Length-1].x)
+                return curve[curve.Length - 1].y;
             return float.NaN;
         }
 
