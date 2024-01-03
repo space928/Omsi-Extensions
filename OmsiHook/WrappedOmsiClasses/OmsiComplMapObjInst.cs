@@ -229,7 +229,7 @@ namespace OmsiHook
 
         public float GetCurve(string varName, float x)
         {
-            int index = constStrings[varName];
+            int index = funcsStrings[varName];
             if (index >= consts.Length || index < 0)
                 throw new KeyNotFoundException($"Curve Variable '{varName}' not found in object. - Index Out Of Bounds");
 
@@ -248,7 +248,10 @@ namespace OmsiHook
                     return y;
                 }
             }
-
+            if (x <= funcs[index].Pnts[0].x)
+                return funcs[index].Pnts[0].y;
+            if (x >= funcs[index].Pnts[funcs[index].Pnts.Length-1].x)
+                return funcs[index].Pnts[funcs[index].Pnts.Length - 1].y;
             return float.NaN;
         }
 
