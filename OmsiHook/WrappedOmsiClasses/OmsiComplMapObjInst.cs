@@ -11,6 +11,10 @@ namespace OmsiHook
         private MemArrayStringDict varStrings;
         private MemArrayPtr<float> publicVars;
         private MemArrayStringDict sVarStrings;
+        private MemArrayStringDict constStrings;
+        private MemArrayStringDict funcsStrings;
+        private OmsiFuncClass[] funcs;
+        private float[] consts;
         private MemArray<OmsiWStringInternal, OmsiWString> stringVars;
 
         internal OmsiComplMapObjInst(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
@@ -24,6 +28,10 @@ namespace OmsiHook
             publicVars = PublicVars;
             sVarStrings = ComplMapObj.SVarStrings;
             stringVars = ComplObjInst.StringVars;
+            constStrings = ComplMapObj.Script_ConstBlock.Consts_str;
+            funcsStrings = ComplMapObj.Script_ConstBlock.Funcs_str;
+            consts = ComplMapObj.Script_ConstBlock.Consts;
+            funcs = ComplMapObj.Script_ConstBlock.Funcs;
         }
 
         public uint IDCode
@@ -203,6 +211,45 @@ namespace OmsiHook
             if (index >= stringVars.Count || index < 0)
                 throw new KeyNotFoundException($"String Variable '{varName}' not found in object. - Index Out Of Bounds");
             stringVars[index] = new(value);
+        }
+
+        /// <summary>
+        /// Get a constant for an object from its name.
+        /// </summary>
+        /// <param name="varName">Const Name</param>
+        /// <returns>requested float value</returns>
+        /// <exception cref="KeyNotFoundException"/>
+        public float GetConst(string varName)
+        {
+            int index = constStrings[varName];
+            if (index >= consts.Length || index < 0)
+                throw new KeyNotFoundException($"Const Variable '{varName}' not found in object. - Index Out Of Bounds");
+            return consts[index];
+        }
+
+        public float GetCurve(string varName, float x)
+        {
+            int index = constStrings[varName];
+            if (index >= consts.Length || index < 0)
+                throw new KeyNotFoundException($"Curve Variable '{varName}' not found in object. - Index Out Of Bounds");
+
+            for (int i = 0; i < funcs[index].Pnts.Length - 1; i++)
+            {
+                float x1 = funcs[index].Pnts[i].x;
+                float y1 = funcs[index].Pnts[i].y;
+
+                float x2 = funcs[index].Pnts[i + 1].x;
+                float y2 = funcs[index].Pnts[i + 1].y;
+
+                if (x >= x1 && x <= x2)
+                {
+                    // Perform linear interpolation
+                    float y = y1 + (x - x1) * (y2 - y1) / (x2 - x1);
+                    return y;
+                }
+            }
+
+            return float.NaN;
         }
 
         /// <inheritdoc cref="OmsiRemoteMethods.OmsiSoundTrigger(OmsiComplMapObjInst, string, string)"/>
