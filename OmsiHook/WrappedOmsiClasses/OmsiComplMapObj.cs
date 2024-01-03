@@ -190,12 +190,11 @@ namespace OmsiHook
             get => Memory.ReadMemory<OmsiXPC_CreateReturn>(Address + 0x208);
             set => Memory.WriteMemory(Address + 0x208, value);
         } */
-        /* TODO:
-        public OmsiXPC_ConstBlock Script_ConstBlock
+
+        public OmsiConstBlock Script_ConstBlock
         {
-            get => Memory.ReadMemory<OmsiXPC_Create_Return>(Address + 0x220);
-            set => Memory.WriteMemory(Address + 0x220, value);
-        } */
+            get => Memory.ReadMemoryObject<OmsiConstBlock>(Address, 0x220, false);
+        }
         public D3DMatrix[] AttatchmentPnts
         {
             get => Memory.ReadMemoryStructArray<D3DMatrix>(Address + 0x224);
