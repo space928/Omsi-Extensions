@@ -16,7 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Generate docs
-      uses: nunit/docfx-action@v2.4.0
+      uses: nunit/docfx-action@v1.11.0
       with:
         args: OmsiHook/docs/docfx.json
 
