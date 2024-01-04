@@ -123,7 +123,7 @@
             get => Memory.ReadMemory<bool>(Address + 0x58);
             set => Memory.WriteMemory(Address + 0x58, value);
         }
-        public OmsiSplineSegment MySegment => new(Memory, Memory.ReadMemory<int>(Address + 0x5c));
+        public OmsiSplineSegment MySegment => Memory.ReadMemoryObject<OmsiSplineSegment>(Address, 0x5c, false);
         public MemArray<OmsiFileSplinePathInfoInternal, OmsiFileSplinePathInfo> Paths => new(Memory, Memory.ReadMemory<int>(Address + 0x60), true);
         public int Chrono_Origin
         {
@@ -131,6 +131,6 @@
             set => Memory.WriteMemory(Address + 0x64, value);
         }
         public OmsiChronoChange[] Chrono_Changes => Memory.ReadMemoryObjArray<OmsiChronoChange>(Address + 0x68);
-        public OmsiObjChronoVars Chrono_Active => new(Memory, Memory.ReadMemory<int>(Address + 0x6c));
+        public OmsiObjChronoVars Chrono_Active => Memory.ReadMemoryObject<OmsiObjChronoVars>(Address, 0x6c, false);
     }
 }

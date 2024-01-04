@@ -70,7 +70,7 @@ namespace OmsiHook
         /// <remarks>
         /// <inheritdoc cref="OnOmsiExited"/>
         /// </remarks>
-        public event EventHandler OnMapChange;
+        public event EventHandler<OmsiMap> OnMapChange;
         /// <summary>
         /// An event raised when Omsi has loaded or unloaded a new map. The <c>EventArgs</c> is a boolean representing whether the map is loaded.
         /// 
@@ -149,7 +149,7 @@ namespace OmsiHook
             return new D3DTexture(omsiMemory, 0);
         }
 
-        private void OmsiHook_OnMapChange(object sender, EventArgs e)
+        private void OmsiHook_OnMapChange(object sender, OmsiMap e)
         {
             Task.Run(() => {
                 while(!isD3DReady)
@@ -173,8 +173,9 @@ namespace OmsiHook
         [Obsolete("This will be obselete once TMyOMSIList is wrapped! The list of vehicles will be moved to OmsiGlobals.")]
         public OmsiRoadVehicleInst GetRoadVehicleInst(int index)
         {
+            // TODO: A More permanant fix should be done at some point.
             var vehPtr = GetListItem(0x00861508, index);
-            return vehPtr == 0 ? null : new OmsiRoadVehicleInst(omsiMemory, vehPtr);
+            return vehPtr < 1000 ? null : new OmsiRoadVehicleInst(omsiMemory, vehPtr);
         }
 
         /// <summary>
@@ -222,7 +223,7 @@ namespace OmsiHook
                     if(lastMapState != currentMapName)
                     {
                         if(currentMapName != 0)
-                            OnMapChange?.Invoke(this, new());
+                            OnMapChange?.Invoke(this, Globals.Map);
                         lastMapState = currentMapName;
                     }
                     if(lastMapLoaded != currentMapLoaded)

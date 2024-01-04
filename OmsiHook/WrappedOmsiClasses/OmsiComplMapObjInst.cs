@@ -11,6 +11,10 @@ namespace OmsiHook
         private MemArrayStringDict varStrings;
         private MemArrayPtr<float> publicVars;
         private MemArrayStringDict sVarStrings;
+        private MemArrayStringDict constStrings;
+        private MemArrayStringDict funcsStrings;
+        private OmsiFuncClass[] funcs;
+        private float[] consts;
         private MemArray<OmsiWStringInternal, OmsiWString> stringVars;
 
         internal OmsiComplMapObjInst(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
@@ -24,6 +28,10 @@ namespace OmsiHook
             publicVars = PublicVars;
             sVarStrings = ComplMapObj.SVarStrings;
             stringVars = ComplObjInst.StringVars;
+            constStrings = ComplMapObj.Script_ConstBlock.Consts_str;
+            funcsStrings = ComplMapObj.Script_ConstBlock.Funcs_str;
+            consts = ComplMapObj.Script_ConstBlock.Consts;
+            funcs = ComplMapObj.Script_ConstBlock.Funcs;
         }
 
         public uint IDCode
@@ -33,7 +41,7 @@ namespace OmsiHook
         }
         public OmsiObject MyFileObject
         {
-            get => new(Memory, Address + 0x1e8);
+            get => Memory.ReadMemoryObject<OmsiObject>(Address, 0x1e8);
         }
         public float EinsVar
         {
@@ -81,12 +89,12 @@ namespace OmsiHook
         }
         public OmsiComplMapObj ComplMapObj
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x210));
+            get => Memory.ReadMemoryObject<OmsiComplMapObj>(Address, 0x210, false);
         }
 
         public OmsiComplObjInst ComplObjInst
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x214));
+            get => Memory.ReadMemoryObject<OmsiComplObjInst>(Address, 0x214, false);
         }
         public bool UseSound
         {
@@ -95,7 +103,7 @@ namespace OmsiHook
         }
         public OmsiSoundPack SoundPack
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x21c));
+            get => Memory.ReadMemoryObject<OmsiSoundPack>(Address, 0x21c, false);
         }
         public OmsiCamera[] ReflCameras
         {
@@ -121,7 +129,7 @@ namespace OmsiHook
         }
         public OmsiComplMapObjInst ScriptShareParent
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x240));
+            get => Memory.ReadMemoryObject<OmsiComplMapObjInst>(Address, 0x240, false);
         }
         public float[] UserVars
         {
@@ -203,6 +211,56 @@ namespace OmsiHook
             if (index >= stringVars.Count || index < 0)
                 throw new KeyNotFoundException($"String Variable '{varName}' not found in object. - Index Out Of Bounds");
             stringVars[index] = new(value);
+        }
+
+        /// <summary>
+        /// Get a constant for an object from its name.
+        /// </summary>
+        /// <param name="varName">Const Name</param>
+        /// <returns>requested float value</returns>
+        /// <exception cref="KeyNotFoundException"/>
+        public float GetConst(string varName)
+        {
+            int index = constStrings[varName];
+            if (index >= consts.Length || index < 0)
+                throw new KeyNotFoundException($"Const Variable '{varName}' not found in object. - Index Out Of Bounds");
+            return consts[index];
+        }
+
+        /// <summary>
+        /// Get a value at a point for a predifined curve for an object from its name.
+        /// </summary>
+        /// <param name="varName">Const Name</param>
+        /// <param name="x">X Coordinate to read on curve</param>
+        /// <returns>requested float value</returns>
+        /// <exception cref="KeyNotFoundException"/>
+        public float GetCurve(string varName, float x)
+        {
+            int index = funcsStrings[varName];
+            if (index >= consts.Length || index < 0)
+                throw new KeyNotFoundException($"Curve Variable '{varName}' not found in object. - Index Out Of Bounds");
+
+            var curve = funcs[index].Pnts;
+            for (int i = 0; i < curve.Length - 1; i++)
+            {
+                float x1 = curve[i].x;
+                float y1 = curve[i].y;
+
+                float x2 = curve[i + 1].x;
+                float y2 = curve[i + 1].y;
+
+                if (x >= x1 && x <= x2)
+                {
+                    // Perform linear interpolation
+                    float y = y1 + (x - x1) * (y2 - y1) / (x2 - x1);
+                    return y;
+                }
+            }
+            if (x <= curve[0].x)
+                return curve[0].y;
+            if (x >= curve[curve.Length-1].x)
+                return curve[curve.Length - 1].y;
+            return float.NaN;
         }
 
         /// <inheritdoc cref="OmsiRemoteMethods.OmsiSoundTrigger(OmsiComplMapObjInst, string, string)"/>

@@ -20,7 +20,7 @@ namespace OmsiHook
             get => Memory.ReadMemoryString(Address + 0x18c);
             set => Memory.WriteMemory(Address + 0x18c, value);
         }
-        public OmsiPassengerCabin PassengerCabin => new(Memory, Memory.ReadMemory<int>(Address + 0x190));
+        public OmsiPassengerCabin PassengerCabin => Memory.ReadMemoryObject<OmsiPassengerCabin>(Address, 0x190, false);
         public bool AbsHeight
         {
             get => Memory.ReadMemory<bool>(Address + 0x194);
@@ -102,7 +102,7 @@ namespace OmsiHook
             get => Memory.ReadMemory<bool>(Address + 0x1c5);
             set => Memory.WriteMemory(Address + 0x1c5, value);
         }
-        public D3DMeshFileObject HeightDeform => new(Memory, Address + 0x1c8);
+        public D3DMeshFileObject HeightDeform => Memory.ReadMemoryObject<D3DMeshFileObject>(Address, 0x1c8);
         public string HeightDeform_FileName
         {
             get => Memory.ReadMemoryString(Address + 0x1cc);
@@ -190,12 +190,11 @@ namespace OmsiHook
             get => Memory.ReadMemory<OmsiXPC_CreateReturn>(Address + 0x208);
             set => Memory.WriteMemory(Address + 0x208, value);
         } */
-        /* TODO:
-        public OmsiXPC_ConstBlock Script_ConstBlock
+
+        public OmsiConstBlock Script_ConstBlock
         {
-            get => Memory.ReadMemory<OmsiXPC_Create_Return>(Address + 0x220);
-            set => Memory.WriteMemory(Address + 0x220, value);
-        } */
+            get => Memory.ReadMemoryObject<OmsiConstBlock>(Address, 0x220, false);
+        }
         public D3DMatrix[] AttatchmentPnts
         {
             get => Memory.ReadMemoryStructArray<D3DMatrix>(Address + 0x224);
@@ -241,7 +240,7 @@ namespace OmsiHook
         }*/
         public OmsiPathManager ComplObj
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x250));
+            get => Memory.ReadMemoryObject<OmsiPathManager>(Address, 0x250, false);
         }
         public MemArray<OmsiObjectPathInfoInternal, OmsiObjectPathInfo> Paths
         {

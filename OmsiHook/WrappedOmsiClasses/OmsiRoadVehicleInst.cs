@@ -8,7 +8,7 @@ namespace OmsiHook
     public class OmsiRoadVehicleInst : OmsiVehicleInst
     {
         internal OmsiRoadVehicleInst(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
-        internal OmsiRoadVehicleInst() : base() { }
+        public OmsiRoadVehicleInst() : base() { }
         /* TODO:
         public OmsiCriticalSection CS_Ticket_Items
         {
@@ -17,7 +17,7 @@ namespace OmsiHook
         }*/
         public OmsiRoadVehicle RoadVehicle
         {
-            get => new(Memory, Memory.ReadMemory<int>(Address + 0x710));
+            get => Memory.ReadMemoryObject<OmsiRoadVehicle>(Address, 0x710, false);
         }
         public bool OnLoadedKachel
         {
@@ -393,7 +393,7 @@ namespace OmsiHook
             get => Memory.ReadMemory<float>(Address + 0x8bc);
             set => Memory.WriteMemory(Address + 0x8bc, value);
         }
-        public OmsiRoadVehicleInst ScriptParent => new(Memory, Memory.ReadMemory<int>(Address + 0x8c0));
+        public OmsiRoadVehicleInst ScriptParent => Memory.ReadMemoryObject<OmsiRoadVehicleInst>(Address, 0x8c0, false);
         public D3DXVector2 Wagenkasten_RotZPhys
         {
             get => Memory.ReadMemory<D3DXVector2>(Address + 0x8c4);

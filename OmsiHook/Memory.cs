@@ -489,6 +489,36 @@ namespace OmsiHook
         }
 
         /// <summary>
+        /// Reads and constructs an OmsiObject from unmanaged memory.
+        /// </summary>
+        /// <remarks>
+        /// This version of the method performs a null-check on the base address before the offset is applied 
+        /// to prevent attempting to dereference an objject belonging to a null-parent.
+        /// </remarks>
+        /// <typeparam name="T">The type of OmsiObject to construct</typeparam>
+        /// <param name="address">The address of the object this field belongs to.</param>
+        /// <param name="offset">The offset from the base address of the object.</param>
+        /// <param name="raw">When false, dereferences the object pointer again before construcing the new object.</param>
+        /// <returns>A new OmsiObject.</returns>
+        public T ReadMemoryObject<T>(int address, int offset, bool raw=true) where T : OmsiObject, new()
+        {
+            if (address == 0)
+                return null;
+            var addr = ReadMemory<int>(address + offset);
+            if (addr == 0)
+                return null;
+            if (raw)
+            {
+                addr = ReadMemory<int>(addr);
+                if (addr == 0)
+                    return null;
+            }
+            var obj = new T();
+            obj.InitObject(this, addr);
+            return obj;
+        }
+
+        /// <summary>
         /// Returns the value of a null terminated/length prefixed string at a given address.
         /// </summary>
         /// <param name="address">The address to read from</param>
