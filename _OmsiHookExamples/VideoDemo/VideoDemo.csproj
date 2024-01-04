@@ -5,13 +5,14 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <StartupObject>Video_Demo.Program</StartupObject>
+    <StartupObject>VideoDemo.Program</StartupObject>
     <PlatformTarget>x86</PlatformTarget>
+	<Platforms>x86</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="FFMediaToolkit" Version="4.5.1" />
-    <PackageReference Include="OmsiHook" Version="2.4.1" />
+    <PackageReference Include="OmsiHook" Version="2.4.4" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,7 @@
 ﻿using FFMediaToolkit.Decoding;
 using OmsiHook;
 
-namespace Video_Demo
+namespace VideoDemo
 {
     public class DXTextureManager
     {
@@ -27,7 +27,7 @@ namespace Video_Demo
         }
 
         // Method to create a Direct3D texture based on video stream information
-        public bool CreateTexture(VideoStreamInfo info, int script_texture_index)
+        public bool CreateTexture(VideoStreamInfo info, int scriptTextureIndex)
         {
             if (omsi == null || !omsi.IsD3DReady || texture == null)
                 return false;
@@ -50,12 +50,12 @@ namespace Video_Demo
             var scriptTexes = omsi.Globals.PlayerVehicle.ComplObjInst.ScriptTextures;
 
             // Check if the provided script_texture_index is within bounds
-            if (script_texture_index >= scriptTexes.Count)
+            if (scriptTextureIndex >= scriptTexes.Count)
                 return false;
 
             // Update the script texture at the specified index with the new Direct3D texture information
-            var old = scriptTexes[script_texture_index];
-            scriptTexes[script_texture_index] = new()
+            var old = scriptTexes[scriptTextureIndex];
+            scriptTexes[scriptTextureIndex] = new()
             {
                 TexPn = old.TexPn,
                 color = old.color,

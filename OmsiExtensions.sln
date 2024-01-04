@@ -23,7 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{3F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TriggersSample", "_OmsiHookExamples\TriggersSample\TriggersSample.csproj", "{1DF326AE-4D10-4545-B36A-5622B76987EC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoDemo", "_OmsiHookExamples\Video_Demo\VideoDemo.csproj", "{D94FF6D3-08AA-41CB-B9B9-F82E860E6E96}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoDemo", "_OmsiHookExamples\VideoDemo\VideoDemo.csproj", "{D94FF6D3-08AA-41CB-B9B9-F82E860E6E96}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
