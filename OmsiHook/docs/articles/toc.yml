@@ -13,4 +13,4 @@
     - name: Basic Events Example
       href: examples\event-sample.md
     - name: Video Playback Demo
-      href: examples\Video_Demo.md
+      href: examples\video-demo.md
