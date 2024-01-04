@@ -27,12 +27,12 @@ jobs:
     - name: Restore dependencies
       shell: pwsh
       run: |
-          foreach($proj in (ConvertFrom-JSON $env.BuildProjects)) {
+          foreach($proj in (ConvertFrom-JSON "${{env.BuildProjects}}")) {
             dotnet restore ${{ github.workspace }}$proj
           }
     - name: Build
       shell: pwsh
       run: |
-          foreach($proj in (ConvertFrom-JSON $env.BuildProjects)) {
+          foreach($proj in (ConvertFrom-JSON "${{env.BuildProjects}}")) {
             msbuild ${{ github.workspace }}$proj -t:rebuild -property:Configuration=Release
           }
