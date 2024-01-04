@@ -4,7 +4,6 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
 	<Platforms>x86</Platforms>
-	<Configurations>Debug;Release;Examples</Configurations>
   </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />

@@ -52,7 +52,7 @@ namespace OmsiHookPlugin
             Log($"Omsi exited!");
         }
 
-        private static void Hook_OnMapChange(object sender, OmsiMap e)
+        private static void Hook_OnMapChange(object sender, EventArgs e)
         {
             Log($"Map changed!");
         }

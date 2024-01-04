@@ -6,7 +6,6 @@
     <PlatformTarget>x86</PlatformTarget>
     <Platforms>x86</Platforms>
 	<ApplicationIcon>favicon.ico</ApplicationIcon>
-	<Configurations>Debug;Release;Examples</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
