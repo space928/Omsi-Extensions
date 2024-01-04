@@ -12,3 +12,5 @@
       href: examples\triggers-sample.md
     - name: Basic Events Example
       href: examples\event-sample.md
+    - name: Video Playback Demo
+      href: examples\Video_Demo.md
