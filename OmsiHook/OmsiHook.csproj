@@ -22,7 +22,7 @@
 		<Nullable>disable</Nullable>
 		<Platforms>x86</Platforms>
 		<GenerateDocumentationFile>False</GenerateDocumentationFile>
-		<Configurations>Debug;Release;ReleaseAndDocs</Configurations>
+		<Configurations>Debug;Release;ReleaseAndDocs;Examples</Configurations>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'" />

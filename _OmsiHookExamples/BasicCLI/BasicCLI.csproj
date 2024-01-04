@@ -7,6 +7,7 @@
     <Nullable>enable</Nullable>
     <Platforms>x86</Platforms>
     <StartupObject>BasicCLI.Program</StartupObject>
+    <Configurations>Debug;Release;Examples</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
