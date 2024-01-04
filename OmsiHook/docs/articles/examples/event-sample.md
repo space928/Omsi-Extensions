@@ -2,7 +2,7 @@
 
 This article provides a basic understanding to a basic C# .NET example leveraging the OMSIHook library. The example focuses using the event handlers provided by OMSIHook.
 
-_This article is in direct relation to the Sample Project available [here](https://github.com/space928/Omsi-Extensions/tree/main/_OmsiHookExamples/Event_Sample)._
+_This article is in direct relation to the Sample Project available [here](https://github.com/space928/Omsi-Extensions/tree/main/_OmsiHookExamples/EventSample)._
 
 ## Basic Usage
 Similar to most C# .NET event handlers, you simply need to append the handler to the field as demonstraited below.
