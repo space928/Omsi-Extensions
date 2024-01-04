@@ -751,7 +751,7 @@ namespace OmsiHook
         [FieldOffset(0x68)] public int nextPath_e;
         [FieldOffset(0x6c)] public OmsiNextPathSegment nextPathSeg;
         [FieldOffset(0x94)] public OmsiNextPathID nextPathID;
-        [FieldOffset(0xbc)][OmsiStructArrayPtr(typeof(OmsiPathID))] public int reservePaths;
+        [FieldOffset(0xbc)][OmsiStructArrayPtr(typeof(OmsiPathID), raw: true)] public int reservePaths;
         [FieldOffset(0xc0)] public int spurwechsel; //TODO: Check data type
         [FieldOffset(0xc4)] public uint spurwechselTime;
         [FieldOffset(0xc8)] public bool spurwechselAuto;
@@ -775,7 +775,7 @@ namespace OmsiHook
         [FieldOffset(0x100)] public bool zwangsEinsetzen;
         [FieldOffset(0x104)] public float normBrakedDist;
         [FieldOffset(0x108)] public bool allowHupen;
-        [FieldOffset(0x10c)][OmsiStrPtr] public int debug_aiData_limit;
+        [FieldOffset(0x10c)][OmsiStrPtr(StrPtrType.RawDelphiString)] public int debug_aiData_limit;
     }
 
     public struct OmsiPathInfo
@@ -808,7 +808,7 @@ namespace OmsiHook
         /// <summary>
         /// Order
         /// </summary>
-        public byte einordnen;//TODO: Check data type
+        public byte einOrdnen;//TODO: Check data type
         public bool prevVisible_logical;
         //TODO: Determine actual type
         public int nextPath_a, nextPath_b, nextPath_c, nextPath_d, nextPath_e;
@@ -843,7 +843,7 @@ namespace OmsiHook
         /// <summary>
         /// Emergency vehicles
         /// </summary>
-        public bool einsatzfahrzeug;
+        public bool einSatzFahrzeug;
         /// <summary>
         /// Siren
         /// </summary>
@@ -851,7 +851,7 @@ namespace OmsiHook
         /// <summary>
         /// Driven by emergency?
         /// </summary>
-        public float getrieben_von_einsatz;
+        public float getrieben_von_einSatz;
         /// <summary>
         /// Driven by emergency time?
         /// </summary>
@@ -1952,9 +1952,13 @@ namespace OmsiHook
     {
         public OmsiPoint size;
     }
-    /// <summary>
-    /// This is a place holder struct, confirmation of exact struct data TBC
-    /// </summary>
+    [StructLayout(LayoutKind.Explicit, Size = 0x20)]
+    public struct OmsiCriticalSectionInternal
+    {
+        [FieldOffset(0x00)] public RTL_CRITICAL_SECTION cs;
+        [FieldOffset(0x18)] [OmsiStrPtr(StrPtrType.RawDelphiString)] public int name;
+        [FieldOffset(0x1c)] public uint ident;
+    }
     public struct OmsiCriticalSection
     {
         public RTL_CRITICAL_SECTION cs;

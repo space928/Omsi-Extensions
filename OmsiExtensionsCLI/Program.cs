@@ -30,6 +30,7 @@ namespace OmsiExtensionsCLI
             var materialMan = omsi.Globals.MaterialMan;
             var textureMan = omsi.Globals.TextureMan;
             var textures = textureMan?.TextureItems;
+            var roadVehicles = omsi.Globals.RoadVehicles;
             while (true)
             {
                 playerVehicle ??= omsi.Globals.PlayerVehicle;
@@ -43,6 +44,7 @@ namespace OmsiExtensionsCLI
                 materialMan ??= omsi.Globals.MaterialMan;
                 textureMan ??= omsi.Globals.TextureMan;
                 textures ??= textureMan?.TextureItems;
+                roadVehicles ??= omsi.Globals.RoadVehicles;
 
                 Console.SetCursorPosition(0, 0);
                 Console.WriteLine($"Vehicle pos: {playerVehicle.Position}    tile: {playerVehicle?.Kachel ?? 0}".PadRight(Console.WindowWidth - 1));
@@ -65,6 +67,7 @@ namespace OmsiExtensionsCLI
                 CheckClickPos(progMan, meshes, meshInsts);
 
                 Console.WriteLine($"Loaded textures: {textures.Count}");
+                Console.WriteLine($"Path id: {playerVehicle.PathInfo.path.path}");
 
                 /*Console.WriteLine("".PadRight(Console.WindowWidth-1));
                 try

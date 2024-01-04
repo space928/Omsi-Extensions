@@ -16,10 +16,15 @@ namespace OmsiHook
 
         private OmsiHook hook;
 
+        private MemArrayList<OmsiRoadVehicleInst> roadVehicles = null;
+        /// <summary>
+        /// Gets the list of active road vehicles.
+        /// </summary>
+        public OmsiMyOmsiList<OmsiRoadVehicleInst> RoadVehicles => Memory.ReadMemoryObject<OmsiMyOmsiList<OmsiRoadVehicleInst>>(0x00861508);
         /// <summary>
         /// Gets the vehicle instance being driven by the player.
         /// </summary>
-        public OmsiRoadVehicleInst PlayerVehicle => hook.GetRoadVehicleInst(PlayerVehicleIndex);
+        public OmsiRoadVehicleInst PlayerVehicle => roadVehicles == null ? (roadVehicles = RoadVehicles.FList)[PlayerVehicleIndex] : roadVehicles[PlayerVehicleIndex];
         /// <summary>
         /// Gets the current vehicle index driven by the player.
         /// </summary>
