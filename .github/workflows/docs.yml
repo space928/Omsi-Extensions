@@ -31,7 +31,7 @@ jobs:
           --exclude=.github \
           .
       env:
-        INPUT_PATH: OmsiHook/_site # docfx's default output directory is _site
+        INPUT_PATH: OmsiHook/docs/_site # docfx's default output directory is _site
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
