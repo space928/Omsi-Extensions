@@ -27,6 +27,9 @@
     <ClInclude Include="OmsiHookRPCErrors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FunctionHooks.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -36,6 +39,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DXHook.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FunctionHooks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
