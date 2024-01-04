@@ -16,10 +16,15 @@ namespace OmsiHook
 
         private OmsiHook hook;
 
+        private MemArrayList<OmsiRoadVehicleInst> roadVehicles = null;
+        /// <summary>
+        /// Gets the list of active road vehicles.
+        /// </summary>
+        public OmsiMyOmsiList<OmsiRoadVehicleInst> RoadVehicles => Memory.ReadMemoryObject<OmsiMyOmsiList<OmsiRoadVehicleInst>>(0x00861508);
         /// <summary>
         /// Gets the vehicle instance being driven by the player.
         /// </summary>
-        public OmsiRoadVehicleInst PlayerVehicle => hook.GetRoadVehicleInst(PlayerVehicleIndex);
+        public OmsiRoadVehicleInst PlayerVehicle => roadVehicles == null ? (roadVehicles = RoadVehicles.FList)[PlayerVehicleIndex] : roadVehicles[PlayerVehicleIndex];
         /// <summary>
         /// Gets the current vehicle index driven by the player.
         /// </summary>
@@ -84,5 +89,15 @@ namespace OmsiHook
         /// Main Camera Object
         /// </summary>
         public OmsiCamera Camera => Memory.ReadMemoryObject<OmsiCamera>(0x008616e0);
+
+        /// <summary>
+        /// Central Material Manager
+        /// </summary>
+        public OmsiMaterialMan MaterialMan => Memory.ReadMemoryObject<OmsiMaterialMan>(0x00861ca8);
+
+        /// <summary>
+        /// Central Texture Manager
+        /// </summary>
+        public OmsiTextureMan TextureMan => Memory.ReadMemoryObject<OmsiTextureMan>(0x00861bc4);
     }
 }
