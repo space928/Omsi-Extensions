@@ -160,7 +160,7 @@ namespace OmsiHook
     }
 
     /// <summary>
-    /// Marks a field to be converted from an <c>int</c> to an <seealso cref="OmsiObject[]"/>.<para/>
+    /// Marks a field to be converted from an <c>int</c> to an <c>OmsiObject[]</c>.<para/>
     /// Used by <seealso cref="Memory.MarshalStruct{OutStruct, InStruct}(InStruct)"/>
     /// </summary>
     [System.AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]

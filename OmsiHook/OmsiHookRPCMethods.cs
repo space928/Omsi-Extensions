@@ -23,7 +23,9 @@ namespace OmsiHookRPCPlugin
             UpdateSubresource,
             ReleaseTexture,
             GetTextureDesc,
-            IsTexture
+            IsTexture,
+            RVTriggerXML,
+            SoundTrigger
         }
 
         internal static readonly ReadOnlyDictionary<RemoteMethod, int> RemoteMethodsArgsSizes = new(new Dictionary<RemoteMethod, int>()
@@ -40,6 +42,8 @@ namespace OmsiHookRPCPlugin
             { RemoteMethod.ReleaseTexture,              4 },
             { RemoteMethod.GetTextureDesc,              32 },
             { RemoteMethod.IsTexture,                   4 },
+            { RemoteMethod.RVTriggerXML,                12 },
+            { RemoteMethod.SoundTrigger,                12 },
         });
     }
 }

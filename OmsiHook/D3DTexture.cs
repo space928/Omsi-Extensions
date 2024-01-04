@@ -44,15 +44,32 @@ namespace OmsiHook
         /// <summary>
         /// Returns true if this object is initialised.
         /// </summary>
-        public bool IsValid => TextureAddress != 0;
+        public bool IsValid => TextureAddress != 0 && isCreated;
+        /// <summary>
+        /// Returns true if this texture is valid and can be written too.
+        /// </summary>
+        public bool CanWrite => IsValid && remoteStagingBufferPtr != 0;
+
+        private volatile bool isCreated = false;
+
+        internal override void InitObject(Memory memory, int address)
+        {
+            base.InitObject(memory, address);
+            // This method may be called repeadedly when marshalling an array of textures. To save performance,
+            // we don't await the texture creation (which reads the width/height/... of the texture) and don't
+            // enable writing by default.
+            if(address != 0)
+                _ = CreateFromExisting((uint)address, false);
+        }
 
         /// <summary>
         /// Initialises this <see cref="D3DTexture"/> from an existing <c>IDirect3DTexture9</c>.
         /// </summary>
         /// <param name="address">the address of the existing texture</param>
+        /// <param name="initialiseForWriting">whether to allow writing to this texture</param>
         /// <exception cref="NullReferenceException"></exception>
         /// <exception cref="Exception"></exception>
-        public async Task CreateFromExisting(uint address)
+        public async Task CreateFromExisting(uint address, bool initialiseForWriting = true)
         {
             if (Address == 0)
                 throw new NullReferenceException("Texture was already null!");
@@ -67,6 +84,18 @@ namespace OmsiHook
             Address = unchecked((int)address);
             stagingBufferSize = (int)width * (int)height * BitsPerPixel(format) / 8;
             //stagingBuffer = new byte[stagingBufferSize];
+            if(initialiseForWriting)
+                remoteStagingBufferPtr = unchecked((uint)await Memory.AllocRemoteMemory(stagingBufferSize, fastAlloc: true));
+            isCreated = true;
+        }
+
+        /// <summary>
+        /// Initialises the texture for writing operations.
+        /// </summary>
+        public async Task InitialiseForWriting()
+        {
+            if (!IsValid)
+                throw new NotInitialisedException("The texture has not been created yet! Make sure to call CreateD3DTexture().");
             remoteStagingBufferPtr = unchecked((uint)await Memory.AllocRemoteMemory(stagingBufferSize, fastAlloc: true));
         }
 
@@ -76,8 +105,9 @@ namespace OmsiHook
         /// <param name="width">the width of the texture</param>
         /// <param name="height">the height of the texture</param>
         /// <param name="format">the <see cref="D3DFORMAT"/> of the texture</param>
+        /// <param name="initialiseForWriting">whether to allow writing to this texture</param>
         /// <exception cref="Exception"></exception>
-        public async Task CreateD3DTexture(uint width, uint height, D3DFORMAT format = D3DFORMAT.D3DFMT_A8R8G8B8)
+        public async Task CreateD3DTexture(uint width, uint height, D3DFORMAT format = D3DFORMAT.D3DFMT_A8R8G8B8, bool initialiseForWriting = true)
         {
             if(Address != 0)
                 await ReleaseTexture();
@@ -92,7 +122,9 @@ namespace OmsiHook
             Address = unchecked((int)pTexture);
             stagingBufferSize = (int)width * (int)height * BitsPerPixel(format) / 8;
             //stagingBuffer = new byte[stagingBufferSize];
-            remoteStagingBufferPtr = unchecked((uint)await Memory.AllocRemoteMemory(stagingBufferSize, fastAlloc: true));
+            if (initialiseForWriting)
+                remoteStagingBufferPtr = unchecked((uint)await Memory.AllocRemoteMemory(stagingBufferSize, fastAlloc: true));
+            isCreated = true;
         }
 
         /// <summary>
@@ -105,6 +137,7 @@ namespace OmsiHook
             if(Address == 0)
                 throw new NullReferenceException("Texture was already null!");
 
+            isCreated = false;
             HRESULT hr = await OmsiReleaseTextureAsync(unchecked((uint)Address));
             if(HRESULTFailed(hr))
                 throw new Exception(hr.ToString());
@@ -125,6 +158,8 @@ namespace OmsiHook
         /// <exception cref="Exception"></exception>
         public async Task UpdateTexture<T>(Memory<T> textureData, Rectangle? updateArea = null) where T : unmanaged
         {
+            if (!IsInitialised || remoteStagingBufferPtr == 0)
+                throw new NotInitialisedException("D3DTexture object must be initialised for write before it can be updated! ");
             if((textureData.Length * Marshal.SizeOf<T>()) > stagingBufferSize)
                 throw new ArgumentOutOfRangeException(nameof(textureData));
             Memory.WriteMemory(remoteStagingBufferPtr, textureData);

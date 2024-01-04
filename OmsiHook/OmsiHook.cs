@@ -70,7 +70,7 @@ namespace OmsiHook
         /// <remarks>
         /// <inheritdoc cref="OnOmsiExited"/>
         /// </remarks>
-        public event EventHandler OnMapChange;
+        public event EventHandler<OmsiMap> OnMapChange;
         /// <summary>
         /// An event raised when Omsi has loaded or unloaded a new map. The <c>EventArgs</c> is a boolean representing whether the map is loaded.
         /// 
@@ -82,10 +82,18 @@ namespace OmsiHook
         /// <inheritdoc cref="OnOmsiExited"/>
         /// </remarks>
         public event EventHandler<bool> OnMapLoaded;
+        /// <summary>
+        /// An event raised when the active vehicle is changed. The <c>EventArgs</c> is a <c>OmsiRoadVehicleInst</c> of the new bus.
+        /// </summary>
+        /// <remarks>
+        /// <inheritdoc cref="OnOmsiExited"/>
+        /// </remarks>
+        public event EventHandler<OmsiRoadVehicleInst> OnActiveVehicleChanged;
 
         private int lastD3DState = 0;
         private int lastMapState = 0;
         private bool lastMapLoaded = false;
+        private int lastVehiclePtr = 0;
         #endregion
 
         /// <summary>
@@ -141,7 +149,7 @@ namespace OmsiHook
             return new D3DTexture(omsiMemory, 0);
         }
 
-        private void OmsiHook_OnMapChange(object sender, EventArgs e)
+        private void OmsiHook_OnMapChange(object sender, OmsiMap e)
         {
             Task.Run(() => {
                 while(!isD3DReady)
@@ -165,8 +173,9 @@ namespace OmsiHook
         [Obsolete("This will be obselete once TMyOMSIList is wrapped! The list of vehicles will be moved to OmsiGlobals.")]
         public OmsiRoadVehicleInst GetRoadVehicleInst(int index)
         {
+            // TODO: A More permanant fix should be done at some point.
             var vehPtr = GetListItem(0x00861508, index);
-            return vehPtr == 0 ? null : new OmsiRoadVehicleInst(omsiMemory, vehPtr);
+            return vehPtr < 1000 ? null : new OmsiRoadVehicleInst(omsiMemory, vehPtr);
         }
 
         /// <summary>
@@ -214,7 +223,7 @@ namespace OmsiHook
                     if(lastMapState != currentMapName)
                     {
                         if(currentMapName != 0)
-                            OnMapChange?.Invoke(this, new());
+                            OnMapChange?.Invoke(this, Globals.Map);
                         lastMapState = currentMapName;
                     }
                     if(lastMapLoaded != currentMapLoaded)
@@ -222,6 +231,12 @@ namespace OmsiHook
                         OnMapLoaded?.Invoke(this, currentMapLoaded);
                         lastMapLoaded = currentMapLoaded;
                     }
+                }
+                var vehPtr = GetListItem(0x00861508, omsiMemory.ReadMemory<int>(0x00861740));
+                if (vehPtr != lastVehiclePtr)
+                {
+                    lastVehiclePtr = vehPtr;
+                    OnActiveVehicleChanged?.Invoke(this, Globals.PlayerVehicle);
                 }
 
                 Thread.Sleep(20);

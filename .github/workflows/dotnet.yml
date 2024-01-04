@@ -11,6 +11,9 @@ jobs:
 
     runs-on: windows-2022
 
+    env:
+      BuildProjects: "['OmsiExtensionsCLI/OmsiExtensionsCLI.csproj', 'OmsiExtensionsUI/OmsiExtensionsUI.csproj','OmsiHookRPCPlugin/OmsiHookRPCPlugin.csproj']"
+
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
@@ -22,6 +25,14 @@ jobs:
     - name: Setup Windows 10 SDK
       uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.4
     - name: Restore dependencies
-      run: dotnet restore
+      shell: pwsh
+      run: |
+          foreach($proj in (ConvertFrom-JSON "${{env.BuildProjects}}")) {
+            dotnet restore ${{ github.workspace }}/$proj
+          }
     - name: Build
-      run: msbuild D:\a\Omsi-Extensions\Omsi-Extensions\OmsiExtensions.sln -t:rebuild -property:Configuration=Release
+      shell: pwsh
+      run: |
+          foreach($proj in (ConvertFrom-JSON "${{env.BuildProjects}}")) {
+            msbuild ${{ github.workspace }}/$proj -t:rebuild -property:Configuration=Release
+          }

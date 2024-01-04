@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.Numerics;
+using System.Reflection;
 using System.Threading;
 using OmsiHook;
 
@@ -17,34 +20,54 @@ namespace OmsiExtensionsCLI
             dXTests.Init(omsi);
             bool toggle = false;
             var playerVehicle = omsi.Globals.PlayerVehicle;
+            var progMan = omsi.Globals.ProgamManager;
+            var meshes = playerVehicle?.ComplObjInst?.ComplObj?.Meshes;
+            var meshInsts = playerVehicle?.ComplObjInst?.AnimSubMeshInsts;
+            var map = omsi.Globals.Map;
+            var cam = omsi.Globals.Camera;
+            var weather = omsi.Globals.Weather;
+            var tickets = omsi.Globals.TicketPack;
+            var materialMan = omsi.Globals.MaterialMan;
+            var textureMan = omsi.Globals.TextureMan;
+            var textures = textureMan?.TextureItems;
+            var roadVehicles = omsi.Globals.RoadVehicles;
             while (true)
             {
                 playerVehicle ??= omsi.Globals.PlayerVehicle;
-                var pos = playerVehicle?.Position ?? default;
-                var posa = playerVehicle?.AbsPosition ?? default;
-                var vel = playerVehicle?.Velocity ?? default;
-                var map = omsi.Globals.Map;
-                var cam = omsi.Globals.Camera;
-                var camPos = cam?.Pos ?? default;
-                var weather = omsi.Globals.Weather;
-                var tickets = omsi.Globals.TicketPack;
-                var humans = omsi.Globals.Humans;
+                progMan ??= omsi.Globals.ProgamManager;
+                meshes ??= playerVehicle?.ComplObjInst?.ComplObj?.Meshes;
+                meshInsts ??= playerVehicle?.ComplObjInst?.AnimSubMeshInsts;
+                map ??= omsi.Globals.Map;
+                cam ??= omsi.Globals.Camera;
+                weather ??= omsi.Globals.Weather;
+                tickets = omsi.Globals.TicketPack;
+                materialMan ??= omsi.Globals.MaterialMan;
+                textureMan ??= omsi.Globals.TextureMan;
+                textures ??= textureMan?.TextureItems;
+                roadVehicles ??= omsi.Globals.RoadVehicles;
 
                 Console.SetCursorPosition(0, 0);
-                Console.WriteLine(($"Read data: x:{pos.x:F3}   y:{pos.y:F3}   z:{pos.z:F3}      " +
-                    $"tile:{playerVehicle?.Kachel??0}").PadRight(Console.WindowWidth - 1));
-                Console.WriteLine($"Read data: vx:{vel.x:F3}   vy:{vel.y:F3}   vz:{vel.z:F3}".PadRight(Console.WindowWidth-1));
-                Console.WriteLine($"Read data: ax:{posa._30:F3}   ay:{posa._31:F3}   az:{posa._32:F3}".PadRight(Console.WindowWidth-1));
+                Console.WriteLine($"Vehicle pos: {playerVehicle.Position}    tile: {playerVehicle?.Kachel ?? 0}".PadRight(Console.WindowWidth - 1));
+                Console.WriteLine($"Vehicle vel: {playerVehicle.Velocity}".PadRight(Console.WindowWidth - 1));
+                Console.WriteLine($"Vehicle pos_abs: {playerVehicle.AbsPosition.Position}".PadRight(Console.WindowWidth - 1));
 
-                Console.WriteLine($"Read data: map:{map?.Name}   path:{map?.Filename}   friendly:{map?.FriendlyName}".PadRight(Console.WindowWidth-1));
-                Console.WriteLine($"{omsi.Globals.Time.Day}/{omsi.Globals.Time.Month}/{omsi.Globals.Time.Year} - {omsi.Globals.Time.Hour}:{omsi.Globals.Time.Minute}:{omsi.Globals.Time.Second:F2}");
-                Console.WriteLine($"Camera data: x:{camPos.x:F3}   y:{camPos.y:F3}   z:{camPos.z:F3}      ".PadRight(Console.WindowWidth - 1));
+                Console.WriteLine($"Read data: map:{map?.Name}   path:{map?.Filename}   friendly:{map?.FriendlyName}".PadRight(Console.WindowWidth - 1));
+                Console.WriteLine($"Time: {omsi.Globals.Time.Day}/{omsi.Globals.Time.Month}/{omsi.Globals.Time.Year} - {omsi.Globals.Time.Hour}:{omsi.Globals.Time.Minute}:{omsi.Globals.Time.Second:F2}     ");
+                Console.WriteLine($"Camera pos: {cam.Pos}      ".PadRight(Console.WindowWidth - 1));
                 Console.WriteLine($"{omsi.Globals.Drivers}".PadRight(Console.WindowWidth - 1));
 
-                if(!dXTests.IsReady)
+                /*if(!dXTests.IsReady)
                     dXTests.CreateTexture();
                 if(dXTests.IsReady)
-                    dXTests.UpdateTexture();
+                    dXTests.UpdateTexture();*/
+
+                Console.WriteLine($"[MOUSE] pos: {progMan.MausPos}".PadRight(Console.WindowWidth - 1));
+                Console.WriteLine($"[MOUSE] ray_pos: {progMan.MausLine3DPos} ray_dir: {progMan.MausLine3DDir}".PadRight(Console.WindowWidth - 1));
+                Console.WriteLine($"[MOUSE] mouse_mesh_event: {progMan.Maus_MeshEvent}".PadRight(Console.WindowWidth - 1));
+                CheckClickPos(progMan, meshes, meshInsts);
+
+                Console.WriteLine($"Loaded textures: {textures.Count}");
+                Console.WriteLine($"Path id: {playerVehicle.PathInfo.path.path}");
 
                 /*Console.WriteLine("".PadRight(Console.WindowWidth-1));
                 try
@@ -61,6 +84,63 @@ namespace OmsiExtensionsCLI
                 catch (Exception e) { Console.WriteLine(e.Message); }*/
 
                 Thread.Sleep(20);
+            }
+        }
+
+        private static void CheckClickPos(OmsiProgMan progMan, MemArrayList<OmsiAnimSubMesh> meshes, MemArrayList<OmsiAnimSubMeshInst> meshInsts)
+        {
+            // A small experiment, with the aim of being able to determine where the user clicks on an object in local space.
+            if (meshes != null)
+            {
+                /*int i = 0;
+                foreach (var mesh in meshes)
+                {
+                    if (mesh.MausEvent != null)
+                    {
+                        Console.WriteLine($"  Mesh '{mesh.Filename_Int}' has event: {mesh.MausEvent}");
+                        i++;
+                    }
+                    if (i > 20)
+                    {
+                        Console.WriteLine("  ...");
+                        break;
+                    }
+                }*/
+            }
+            OmsiAnimSubMesh clickMesh = null;
+            OmsiAnimSubMeshInst clickMeshInst = null;
+            string mouseEventName = "INEO_Click";
+            if (meshes != null)
+                clickMesh = meshes.FirstOrDefault(mesh => mesh.MausEvent == mouseEventName);
+            if (clickMesh != null)
+                clickMeshInst = meshInsts[meshes.IndexOf(clickMesh)];
+            if (clickMesh != null && progMan.Maus_MeshEvent == mouseEventName && (progMan.Maus_Clicked))
+            {
+                // Work out object space coords of the mouse click
+                // Note that (if wrapped) we could use D3DXIntersect to find the UV coords given the submesh's d3d mesh
+
+                // Transform the mouse ray from world space to object space
+                Matrix4x4.Invert((Matrix4x4)clickMeshInst.Matrix, out Matrix4x4 invMat);
+                Matrix4x4.Invert(clickMesh.OriginMatrix, out Matrix4x4 invOriginMat);
+                invMat = Matrix4x4.Multiply(invMat, invOriginMat);
+
+                var rayStart = Vector3.Transform(progMan.MausLine3DPos, invMat);
+                var rayDir = Vector3.Transform(progMan.MausLine3DDir, invMat);
+                // Now trace the ray, in our simplification we assume the surface of the mesh we want to hit is coplanar to the xz plane
+                // Taken from: https://stackoverflow.com/a/18543221
+                Vector3 planeNrm = new(0, 1, 0);
+                float planeD = 0;
+                float dot = Vector3.Dot(planeNrm, rayDir);
+                var intersect = new Vector3();
+                if (Math.Abs(dot) > 1e-9)
+                {
+                    var w = rayStart - planeNrm * planeD;
+                    var fac = -Vector3.Dot(planeNrm, w) / dot;
+                    var u = rayDir * fac;
+                    intersect = rayStart + u;
+                }
+
+                Console.WriteLine($"  Clicked on {clickMesh.Filename_Int} at local coords: {(D3DVector)intersect}");
             }
         }
     }
@@ -115,6 +195,9 @@ namespace OmsiExtensionsCLI
 
         public void UpdateTexture()
         {
+            // Note that writing texture data like this is very slow, if possible, try to use SIMD accelerated
+            // operations (such as those in System.Numerics) or if you need to copy data into a texture buffer
+            // System.Buffer.BlockCopy() is extremely fast.
             for (int y = 0; y < texHeight; y++)
                 for(int x = 0; x < texWidth; x++)
                 {

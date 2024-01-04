@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 #pragma warning disable CS0649
@@ -11,10 +12,28 @@ namespace OmsiHook
     public struct D3DVector
     {
         public float x, y, z;
+
+        public D3DVector() 
+        { 
+            x = y = z = 0;
+        }
+        public D3DVector(float x, float y, float z)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+        public override readonly string ToString() => $"[{x,8:F3}, {y,8:F3}, {z,8:F3}]";
+
+        public static implicit operator Vector3(D3DVector v) => new(v.x, v.y, v.z);
+        public static implicit operator D3DVector(Vector3 v) => new() { x = v.X, y = v.Y, z = v.Z };
     }
     public struct D3DXVector2
     {
         public float x, y;
+
+        public override readonly string ToString() => $"[{x,8:F3}, {y,8:F3}]";
     }
 
     /// <summary>
@@ -26,6 +45,58 @@ namespace OmsiHook
                      _10, _11, _12, _13,
                      _20, _21, _22, _23,
                      _30, _31, _32, _33;
+        public override readonly string ToString() => $"[ [{_00,8:F3}, {_01,8:F3}, {_02,8:F3}, {_03,8:F3}],\n" +
+            $"[{_10,8:F3}, {_11,8:F3}, {_12,8:F3}, {_13,8:F3}],\n" +
+            $"[{_20,8:F3}, {_21,8:F3}, {_22,8:F3}, {_23,8:F3}],\n" +
+            $"[{_30,8:F3}, {_31,8:F3}, {_32,8:F3}, {_33,8:F3}] ]";
+
+        public readonly D3DVector Position => new(_30, _31, _32);
+
+        public static implicit operator Matrix4x4(D3DMatrix m)
+        {
+            return new Matrix4x4()
+            {
+                M11 = m._00,
+                M12 = m._01,
+                M13 = m._02,
+                M14 = m._03,
+                M21 = m._10,
+                M22 = m._11,
+                M23 = m._12,
+                M24 = m._13,
+                M31 = m._20,
+                M32 = m._21,
+                M33 = m._22,
+                M34 = m._23,
+                M41 = m._30,
+                M42 = m._31,
+                M43 = m._32,
+                M44 = m._33
+            };
+        }
+
+        public static implicit operator D3DMatrix(Matrix4x4 m)
+        {
+            return new()
+            {
+                _00 = m.M11,
+                _01 = m.M12,
+                _02 = m.M13,
+                _03 = m.M14,
+                _10 = m.M21,
+                _11 = m.M22,
+                _12 = m.M23,
+                _13 = m.M24,
+                _20 = m.M31,
+                _21 = m.M32,
+                _22 = m.M33,
+                _23 = m.M34,
+                _30 = m.M41,
+                _31 = m.M42,
+                _32 = m.M43,
+                _33 = m.M44
+            };
+        }
     }
 
     /// <summary>
@@ -34,6 +105,8 @@ namespace OmsiHook
     public struct D3DXQuaternion
     {
         public float x, y, z, w;
+
+        public override readonly string ToString() => $"[{x,8:F3}, {y,8:F3}, {z,8:F3}, {w,8:F3}]";
     }
 
     /// <summary>
@@ -42,6 +115,8 @@ namespace OmsiHook
     public struct D3DXPlane
     {
         public float a, b, c, d;
+
+        public override readonly string ToString() => $"[{a,8:F3}, {b,8:F3}, {c,8:F3}, {d,8:F3}]";
     }
 
     /// <summary>
@@ -50,6 +125,8 @@ namespace OmsiHook
     public struct D3DColorValue
     {
         public float r, g, b, a;
+
+        public override readonly string ToString() => $"[{r,8:F3}, {g,8:F3}, {b,8:F3}, {a,8:F3}]";
     }
 
     /// <summary>
@@ -77,7 +154,7 @@ namespace OmsiHook
         public int x, y;
     }
 
-    internal struct OmsiMaterialPropInternal
+    public struct OmsiMaterialPropInternal
     {
         public int mainTexture;
         public bool standard;
@@ -87,7 +164,8 @@ namespace OmsiHook
         public bool horizontal;
         public bool water;
         public bool useEnvirReflx, useEnvirMask, useBumpMap, useRainDropAreaMap,
-            useTransMap, useTextTexture, useScriptTexture;
+            useTransMap;
+        public int useTextTexture, useScriptTexture;
         public int texCoordTransX, texCoordTransY;
         public int raindropAreaMapVar;
         public int alphaScale_Var;
@@ -128,7 +206,8 @@ namespace OmsiHook
         public bool horizontal;
         public bool water;
         public bool useEnvirReflx, useEnvirMask, useBumpMap, useRainDropAreaMap,
-            useTransMap, useTextTexture, useScriptTexture;
+            useTransMap;
+        public int useTextTexture, useScriptTexture;
         public int texCoordTransX, texCoordTransY;
         public int raindropAreaMapVar;
         public int alphaScale_Var;
@@ -372,17 +451,17 @@ namespace OmsiHook
     internal struct OmsiTicketInternal
     {
         //TODO: I don't think these are decoding correctly (I saw nothing when I looked), check this actually works.
-        [FieldOffset(0x0)] [OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int name;
-        [FieldOffset(0x4)] [OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int name_english;
-        [FieldOffset(0x8)] [OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int name_display;
+        [FieldOffset(0x0)][OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int name;
+        [FieldOffset(0x4)][OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int name_english;
+        [FieldOffset(0x8)][OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int name_display;
         [FieldOffset(0xc)] public int max_stations;
         [FieldOffset(0x10)] public int age_min;
         [FieldOffset(0x14)] public int age_max;
         [FieldOffset(0x18)] public float value;
         [FieldOffset(0x1c)] public bool dayTicket;
         [FieldOffset(0x20)] public float propability;
-        [FieldOffset(0x24)] [OmsiObjPtr(typeof(D3DMeshFileObject))] public int mesh_block;
-        [FieldOffset(0x28)] [OmsiObjPtr(typeof(D3DMeshFileObject))] public int mesh_single;
+        [FieldOffset(0x24)][OmsiObjPtr(typeof(D3DMeshFileObject))] public int mesh_block;
+        [FieldOffset(0x28)][OmsiObjPtr(typeof(D3DMeshFileObject))] public int mesh_single;
     }
 
     public struct OmsiTicket
@@ -637,57 +716,66 @@ namespace OmsiHook
     }
 
     //TODO: Bug when dereferencing this
+    [StructLayout(LayoutKind.Explicit, Size = 0x110)]
     internal struct OmsiPathInfoInternal
     {
-        public byte veh_type;
-        public byte uvg;
-        public bool railroad;
-        public bool freeOrLarge;
-        public D3DVector pathPos;
-        public OmsiPathID path;
-        public int subPath;
-        public bool reverse;
-        public float hdg;
-        [OmsiStructPtr(typeof(uint))] public int idCode;
-        [OmsiObjPtr(typeof(OmsiObject))] public int vehicle;
-        public float veloc;
-        public float x_L, x_R, z_B, z_F;
-        public float radius;
-        public float drehpunkt;
-        [OmsiStructPtr(typeof(D3DMatrix))] public int absPosition;
-        public byte waitMode;
-        public int reserveGroup;
-        public byte blinker;
-        public byte einOrdnen;//TODO: Check data type
-        public bool prevVisible_logical;
+        [FieldOffset(0x0)] public byte veh_type;
+        [FieldOffset(0x1)] public byte uvg;
+        [FieldOffset(0x2)] public bool railroad;
+        [FieldOffset(0x3)] public bool freeOrLarge;
+        [FieldOffset(0x4)] public D3DVector pathPos;
+        [FieldOffset(0x10)] public OmsiPathID path;
+        [FieldOffset(0x18)] public int subPath;
+        [FieldOffset(0x1c)] public bool reverse;
+        [FieldOffset(0x20)] public float hdg;
+        [FieldOffset(0x24)][OmsiStructPtr(typeof(uint))] public int idCode;
+        [FieldOffset(0x28)][OmsiObjPtr(typeof(OmsiObject))] public int vehicle;
+        [FieldOffset(0x2c)] public float veloc;
+        [FieldOffset(0x30)] public float x_L;
+        [FieldOffset(0x34)] public float x_R;
+        [FieldOffset(0x38)] public float z_B;
+        [FieldOffset(0x3c)] public float z_F;
+        [FieldOffset(0x40)] public float radius;
+        [FieldOffset(0x44)] public float drehpunkt;
+        [FieldOffset(0x48)][OmsiStructPtr(typeof(D3DMatrix))] public int absPosition;
+        [FieldOffset(0x4c)] public byte waitMode;
+        [FieldOffset(0x50)] public int reserveGroup;
+        [FieldOffset(0x54)] public byte blinker;
+        [FieldOffset(0x55)] public byte einOrdnen;//TODO: Check data type
+        [FieldOffset(0x56)] public bool prevVisible_logical;
         //TODO: Determine actual type
-        public int nextPath_a, nextPath_b, nextPath_c, nextPath_d, nextPath_e;
-        public OmsiNextPathSegment nextPathSeg;
-        public OmsiNextPathID nextPathID;
-        [OmsiStructArrayPtr(typeof(OmsiPathID))]
-        public int reservePaths;
-        public int spurwechsel; //TODO: Check data type
-        public uint spurwechselTime;
-        public bool spurwechselAuto;
-        public bool noScheduledSpurwechsel;
-        public bool on_crossing;
-        public float leftFree, rightFree;
-        public byte relPosError; //TODO: Check data type
-        public bool setPosOnNearTile;
-        public float rowdy_factor;
-        public bool eilig;
-        public bool einSatzFahrzeug;
-        public float martinshorn;
-        public float getrieben_von_einSatz;
-        public uint getrieben_von_einSatz_time;
-        public byte setSoll;
-        public int track;
-        public int trackEntry;
-        public int stnLink;
-        public int next_stnLink;
-        public bool zwangsEinsetzen;
-        public bool allowHupen;
-        [OmsiStrPtr] public int debug_aiData_limit;
+        [FieldOffset(0x58)] public int nextPath_a;
+        [FieldOffset(0x5c)] public int nextPath_b;
+        [FieldOffset(0x60)] public int nextPath_c;
+        [FieldOffset(0x64)] public int nextPath_d;
+        [FieldOffset(0x68)] public int nextPath_e;
+        [FieldOffset(0x6c)] public OmsiNextPathSegment nextPathSeg;
+        [FieldOffset(0x94)] public OmsiNextPathID nextPathID;
+        [FieldOffset(0xbc)][OmsiStructArrayPtr(typeof(OmsiPathID), raw: true)] public int reservePaths;
+        [FieldOffset(0xc0)] public int spurwechsel; //TODO: Check data type
+        [FieldOffset(0xc4)] public uint spurwechselTime;
+        [FieldOffset(0xc8)] public bool spurwechselAuto;
+        [FieldOffset(0xc9)] public bool noScheduledSpurwechsel;
+        [FieldOffset(0xca)] public bool on_crossing;
+        [FieldOffset(0xcc)] public float leftFree;
+        [FieldOffset(0xd0)] public float rightFree;
+        [FieldOffset(0xd4)] public byte relPosError; //TODO: Check data type
+        [FieldOffset(0xd5)] public bool setPosOnNearTile;
+        [FieldOffset(0xd8)] public float rowdy_factor;
+        [FieldOffset(0xdc)] public bool eilig;
+        [FieldOffset(0xdd)] public bool einSatzFahrzeug;
+        [FieldOffset(0xe0)] public float martinshorn;
+        [FieldOffset(0xe4)] public float getrieben_von_einSatz;
+        [FieldOffset(0xe8)] public uint getrieben_von_einSatz_time;
+        [FieldOffset(0xec)] public byte setSoll;
+        [FieldOffset(0xf0)] public int track;
+        [FieldOffset(0xf4)] public int trackEntry;
+        [FieldOffset(0xf8)] public int stnLink;
+        [FieldOffset(0xfc)] public int next_stnLink;
+        [FieldOffset(0x100)] public bool zwangsEinsetzen;
+        [FieldOffset(0x104)] public float normBrakedDist;
+        [FieldOffset(0x108)] public bool allowHupen;
+        [FieldOffset(0x10c)][OmsiStrPtr(StrPtrType.RawDelphiString)] public int debug_aiData_limit;
     }
 
     public struct OmsiPathInfo
@@ -720,7 +808,7 @@ namespace OmsiHook
         /// <summary>
         /// Order
         /// </summary>
-        public byte einordnen;//TODO: Check data type
+        public byte einOrdnen;//TODO: Check data type
         public bool prevVisible_logical;
         //TODO: Determine actual type
         public int nextPath_a, nextPath_b, nextPath_c, nextPath_d, nextPath_e;
@@ -755,7 +843,7 @@ namespace OmsiHook
         /// <summary>
         /// Emergency vehicles
         /// </summary>
-        public bool einsatzfahrzeug;
+        public bool einSatzFahrzeug;
         /// <summary>
         /// Siren
         /// </summary>
@@ -763,7 +851,7 @@ namespace OmsiHook
         /// <summary>
         /// Driven by emergency?
         /// </summary>
-        public float getrieben_von_einsatz;
+        public float getrieben_von_einSatz;
         /// <summary>
         /// Driven by emergency time?
         /// </summary>
@@ -780,6 +868,7 @@ namespace OmsiHook
         /// Forced insertion?
         /// </summary>
         public bool zwangsEinsetzen;
+        public float normBrakedDist;
         /// <summary>
         /// Allow horns
         /// </summary>
@@ -1114,13 +1203,13 @@ namespace OmsiHook
     internal struct OmsiHOFTargetInternal
     {
         public int nummer;
-        [OmsiStrPtr(raw:true)] public int name; // ANSI String
+        [OmsiStrPtr(raw: true)] public int name; // ANSI String
         /// <summary>
         /// Terminus
         /// </summary>
         [OmsiStrPtr(raw: true)] public int endstelle; // ANSI String
         public int texNummer;
-        [OmsiStrArrayPtr(wide:true, raw:true)] public int strings;
+        [OmsiStrArrayPtr(wide: true, raw: true)] public int strings;
         public byte allExit;
     }
 
@@ -1149,7 +1238,7 @@ namespace OmsiHook
         [OmsiStrPtr(raw: true)] public int name; // ANSI String
         public int target;
         [OmsiStrPtr(raw: true)] public int line; // ANSI String
-        [OmsiStrArrayPtr(raw:true)] public int busstops;
+        [OmsiStrArrayPtr(raw: true)] public int busstops;
     }
     public struct OmsiCollFeedback
     {
@@ -1331,7 +1420,7 @@ namespace OmsiHook
         [FieldOffset(0x54)] public uint passCount;
         [FieldOffset(0x58)] public uint ticket_cnt;
         [FieldOffset(0x5c)] public float tickets_cash;
-        [FieldOffset(0x60)][OmsiStructArrayPtr(typeof(OmsiPerbus),typeof(OmsiPerbusInternal), true)] public int perbus;
+        [FieldOffset(0x60)][OmsiStructArrayPtr(typeof(OmsiPerbus), typeof(OmsiPerbusInternal), true)] public int perbus;
     }
     public struct OmsiTTLogDetailed
     {
@@ -1426,9 +1515,9 @@ namespace OmsiHook
         [FieldOffset(0x14)] public float dist;
         [FieldOffset(0x18)] public bool valid;
         [FieldOffset(0x19)] public byte pathOrderCheck;
-        [FieldOffset(0x1c)] [OmsiStructArrayPtr(typeof(int), raw: true)] public int fstrn_allowed;
+        [FieldOffset(0x1c)][OmsiStructArrayPtr(typeof(int), raw: true)] public int fstrn_allowed;
         [FieldOffset(0x20)] public int chronon_origin;
-        [FieldOffset(0x24)] [OmsiStrArrayPtr(raw: true)] public int chronos_bad;
+        [FieldOffset(0x24)][OmsiStrArrayPtr(raw: true)] public int chronos_bad;
     }
 
     public struct OmsiTTTrack
@@ -1482,7 +1571,7 @@ namespace OmsiHook
         public uint IDCode_real;
         public int index;
         public int index_ownList;
-        [OmsiStructArrayPtr(typeof(int), raw:true)] public int index_alternatives;
+        [OmsiStructArrayPtr(typeof(int), raw: true)] public int index_alternatives;
         public float preset_Aussteiger; // Dropouts?
         [OmsiStruct(typeof(OmsiPathID))] public OmsiPathID pathIndex;
         public int trackEntry;
@@ -1514,7 +1603,7 @@ namespace OmsiHook
         [OmsiStrPtr(raw: true)] public int name;
         public float time_all;
         [OmsiStructArrayPtr(typeof(OmsiTTStopTime), raw: true)] public int stop_times;
-        [OmsiStructArrayPtr(typeof(float), raw:true)] public int TrackEntryTime;
+        [OmsiStructArrayPtr(typeof(float), raw: true)] public int TrackEntryTime;
         public bool serviceTrip;
     }
 
@@ -1534,7 +1623,7 @@ namespace OmsiHook
     }
     internal struct OmsiTTTripInternal
     {
-        [OmsiStrPtr(raw:true)] public int filename;
+        [OmsiStrPtr(raw: true)] public int filename;
         public int chrono_origin;
         [OmsiStrPtr(raw: true)] public int target;
         [OmsiStrPtr(raw: true)] public int linie;
@@ -1726,10 +1815,10 @@ namespace OmsiHook
     internal struct OmsiTTLineInternal
     {
         [FieldOffset(0x0)][OmsiStrPtr(raw: true)] public int name;
-        [FieldOffset(0x4)]public byte userAllowed;
-        [FieldOffset(0x5)]public byte priority;
+        [FieldOffset(0x4)] public byte userAllowed;
+        [FieldOffset(0x5)] public byte priority;
         [FieldOffset(0x8)][OmsiStructArrayPtr(typeof(OmsiTTTour), typeof(OmsiTTTourInternal), raw: true)] public int tours;
-        [FieldOffset(0xc)]public int chrono_origin;
+        [FieldOffset(0xc)] public int chrono_origin;
     }
 
     public struct OmsiRVNumTour
@@ -1863,9 +1952,13 @@ namespace OmsiHook
     {
         public OmsiPoint size;
     }
-    /// <summary>
-    /// This is a place holder struct, confirmation of exact struct data TBC
-    /// </summary>
+    [StructLayout(LayoutKind.Explicit, Size = 0x20)]
+    public struct OmsiCriticalSectionInternal
+    {
+        [FieldOffset(0x00)] public RTL_CRITICAL_SECTION cs;
+        [FieldOffset(0x18)] [OmsiStrPtr(StrPtrType.RawDelphiString)] public int name;
+        [FieldOffset(0x1c)] public uint ident;
+    }
     public struct OmsiCriticalSection
     {
         public RTL_CRITICAL_SECTION cs;
@@ -1941,5 +2034,126 @@ namespace OmsiHook
         [OmsiStructArrayPtr(typeof(OmsiPathRule), typeof(OmsiPathRuleInternal))] public int Rules;
     }
 
+    [StructLayout(LayoutKind.Explicit)]
+    public struct OmsiBoogieInternal
+    {
+        [OmsiStruct(typeof(OmsiPathInfo), typeof(OmsiPathInfoInternal))]
+        [FieldOffset(0x0)] internal OmsiPathInfoInternal pathInfo;
+        [FieldOffset(0x110)] internal D3DVector pos;
+        [FieldOffset(0x11c)] internal D3DXVector2 y_soll;
+        [FieldOffset(0x124)] internal D3DXVector2 y_harmon;
+        [FieldOffset(0x12c)] internal float y_gleisfehler;
+        [FieldOffset(0x130)] internal float z_gleisfehler;
+    }
+
+    public struct OmsiBoogie
+    {
+        public OmsiPathInfo pathInfo;
+        public D3DVector pos;
+        public D3DXVector2 y_soll;
+        public D3DXVector2 y_harmon;
+        public float y_gleisfehler;
+        public float z_gleisfehler;
+    }
+
+    /// <summary>
+    /// Omsi Path Setpoints
+    /// </summary>
+    public struct OmsiPathSollwerte
+    {
+        public float v, x, curve_x_offset, ai_stdbrems;
+    }
+
+    public struct OmsiMaterialItemInternal
+    {
+        [OmsiStruct(typeof(OmsiMaterialProp), typeof(OmsiMaterialPropInternal))]
+        public OmsiMaterialPropInternal Properties;
+    }
+
+    public struct OmsiMaterialItem
+    {
+        public OmsiMaterialProp Properties;
+    }
+
+    [StructLayout(LayoutKind.Explicit, Size = 0x68)]
+    public struct OmsiTextureItemInternal
+    {
+        [FieldOffset(0x0)] public ushort size_x;
+        [FieldOffset(0x2)] public ushort size_y;
+        [FieldOffset(0x8)] public double mem;
+        [FieldOffset(0x10)] public int datasize;
+        [FieldOffset(0x14)] public bool dataready;
+        [FieldOffset(0x18)] [OmsiObjPtr(typeof(D3DTexture))] public int Texture;
+        [FieldOffset(0x1c)] [OmsiObjPtr(typeof(D3DTexture))] public int oldTexture;
+        [FieldOffset(0x20)] [OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int path;
+        [FieldOffset(0x24)] [OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int justfilename;
+        [FieldOffset(0x28)] [OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int loadpath;
+        [FieldOffset(0x2c)] public byte loaded;
+        [FieldOffset(0x2d)] public byte load_request;
+        [FieldOffset(0x2e)] public bool managed;
+        [FieldOffset(0x30)] public uint failed;
+        [FieldOffset(0x34)] public ushort used;
+        [FieldOffset(0x36)] public ushort used_highres;
+        [FieldOffset(0x38)] public bool threadloading;
+        [FieldOffset(0x39)] public bool hasspecials;
+        [FieldOffset(0x3a)] public bool no_unload;
+        [FieldOffset(0x3b)] public bool onlyalpha;
+        [FieldOffset(0x3c)] public int NightMap;
+        [FieldOffset(0x40)] public int WinterSnowMap;
+        [FieldOffset(0x44)] public int WinterSnowfallMap;
+        [FieldOffset(0x48)] public int FallMap;
+        [FieldOffset(0x4c)] public int SpringMap;
+        [FieldOffset(0x50)] public int WinterMap;
+        [FieldOffset(0x54)] public int SummerDryMap;
+        [FieldOffset(0x58)] public int SurfMap;
+        [FieldOffset(0x5c)] public bool moisture;
+        [FieldOffset(0x5d)] public bool puddles;
+        [FieldOffset(0x5e)] public bool moisture_ic;
+        [FieldOffset(0x5f)] public bool puddles_ic;
+        [FieldOffset(0x60)] public byte surface;
+        [FieldOffset(0x61)] public byte surface_ic;
+        [FieldOffset(0x62)] public bool terrainmapping;
+        [FieldOffset(0x63)] public bool terrainmapping_alpha;
+    }
+
+    public struct OmsiTextureItem
+    {
+        public ushort size_x;
+        public ushort size_y;
+        public double mem;
+        public int datasize;
+        public bool dataready;
+        public D3DTexture Texture;
+        public D3DTexture oldTexture;
+        public string path;
+        public string justfilename;
+        public string loadpath;
+        public byte loaded;
+        public byte load_request;
+        public bool managed;
+        public uint failed;
+        public ushort used;
+        public ushort used_highres;
+        public bool threadloading;
+        public bool hasspecials;
+        public bool no_unload;
+        public bool onlyalpha;
+        public int NightMap;
+        public int WinterSnowMap;
+        public int WinterSnowfallMap;
+        public int FallMap;
+        public int SpringMap;
+        public int WinterMap;
+        public int SummerDryMap;
+        public int SurfMap;
+        public bool moisture;
+        public bool puddles;
+        public bool moisture_ic;
+        public bool puddles_ic;
+        public byte surface;
+        public byte surface_ic;
+        public bool terrainmapping;
+        public bool terrainmapping_alpha;
+    }
 }
 

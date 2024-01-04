@@ -2,9 +2,10 @@
 Omsi hooking and modding sdk.
 
 [![.NET](https://github.com/space928/Omsi-Extensions/actions/workflows/dotnet.yml/badge.svg)](https://github.com/space928/Omsi-Extensions/actions/workflows/dotnet.yml)
-[![DocFX](https://github.com/space928/Omsi-Extensions/actions/workflows/docs.yml/badge.svg)](https://github.com/space928/Omsi-Extensions/actions/workflows/docs.yml)
-[![Nuget](https://img.shields.io/nuget/v/omsihook)](https://www.nuget.org/packages/OmsiHook/)
-[![OMSI Version](https://img.shields.io/badge/OMSI%20Version-2.3.004-orange)](https://store.steampowered.com/app/252530/OMSI_2_Steam_Edition/)
+[![DocFX](https://github.com/space928/Omsi-Extensions/actions/workflows/docs.yml/badge.svg)](https://space928.github.io/Omsi-Extensions/index.html)
+[![Discord](https://img.shields.io/discord/1192462752527163503?logo=Discord&logoColor=fff&label=Discord)](https://discord.gg/FG9P6PW23w)
+[![Nuget](https://img.shields.io/nuget/v/omsihook?logo=Nuget&logoColor=fff)](https://www.nuget.org/packages/OmsiHook/)
+[![OMSI Version](https://img.shields.io/badge/OMSI%20Version-2.3.004-orange?logo=steam&logoColor=fff)](https://store.steampowered.com/app/252530/OMSI_2_Steam_Edition/)
 
 The dead simple way to hook into Omsi and fiddle with it's memory. In it's current state we only have 
 mappings for a limited number of Omsi objects, but it's easy to extend. Allows both reading and writing 
@@ -25,9 +26,9 @@ class Program
 {
     static void Main(string[] args)
     {
-        // Create an OmsiHook and attach to any running instance of Omsi
+        // Create an OmsiHook and attach to any running instance of OMSI
         OmsiHook.OmsiHook omsi = new();
-        omsi.AttachToOMSI();
+        omsi.AttachToOMSI().Wait();
 
         while (true)
         {
@@ -35,7 +36,7 @@ class Program
             var pos = omsi.Globals.PlayerVehicle.Position;
             
             // Print the position to the console
-            Console.WriteLine($"Player vehicle pos: x:{pos.x:F3}\ty:{pos.y:F3}\tz:{pos.z:F3}");
+            Console.WriteLine($"Player vehicle pos: {pos}");
 
             Thread.Sleep(500);
         }
@@ -52,6 +53,8 @@ Here's a summary of the project structure:
 ```
 \Omsi-Extensions\
 ┃
+┠─► \_OmsiHookExamples\    -> A collection of sample projects demonstrating various OmsiHook
+┃                             features.
 ┠─► \OmsiHook\             -> Base library containing all the Omsi hooking code and 
 ┃                             exposing Omsi's internal data.
 ┠─► \OmsiHookInvoker\      -> C++ plugin for invoking native Omsi methods from OmsiHook, 
@@ -63,7 +66,7 @@ Here's a summary of the project structure:
 ┠─► \OmsiExtensionsUI\     -> Example Avalonia UI (similar to WPF) application that uses
 ┃                             OmsiHook; runs outside of Omsi.
 ┖─► \OmsiHookPlugin\       -> Example plugin that uses OmsiHook and compiles to a native
-                               Omsi plugin by using DNNE.
+                              Omsi plugin by using DNNE.
 ```
 
 ## Building

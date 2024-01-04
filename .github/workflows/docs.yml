@@ -16,9 +16,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Generate docs
-      uses: nikeee/docfx-action@v1.0.0
+      uses: nunit/docfx-action@v2.4.0
       with:
-        args: OmsiHook/docfx.json
+        args: OmsiHook/docs/docfx.json
 
     # Archive the generated site as an artifact
     - name: Archive artifact

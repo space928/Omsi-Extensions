@@ -32,5 +32,9 @@ namespace OmsiHookRPCPlugin
         internal static extern int GetTextureDesc(uint Texture, uint pWidth, uint pHeight, uint pFormat);
         [DllImport("OmsiHookInvoker.dll")]
         internal static extern int IsTexture(uint Texture);
+        [DllImport("OmsiHookInvoker.dll")]
+        internal static extern void RVTriggerXML(int roadVehicle, int trigger, int value);
+        [DllImport("OmsiHookInvoker.dll")]
+        internal static extern void SoundTrigger(int complMapObj, int trigger, int filename);
     }
 }

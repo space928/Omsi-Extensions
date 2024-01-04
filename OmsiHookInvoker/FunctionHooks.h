@@ -4,11 +4,9 @@ class FunctionHooks
 public:
 	FunctionHooks();
 	~FunctionHooks();
-	void OnTrigger(void (*callback) (LPCSTR trigger, int value));
+	void OnTrigger(void(*callback)(int complMapObjInst, LPCSTR trigger, int value));
 
 private:
-	void InstallHook(UINT32 funcToHook);
-
-	byte hookTrampolineFunc[256];
+	void InstallHook(UINT32 funcToHook, BYTE* hookTrampolineFunc);
 };
 

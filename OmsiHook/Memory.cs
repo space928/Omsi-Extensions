@@ -407,6 +407,19 @@ namespace OmsiHook
             //Imports.WriteProcessMemory((int)omsiProcessHandle, address, buffer, buffer.Length, out _);
         }
 
+        /// <summary>
+        /// Sets the value of a string at a given address.
+        /// </summary>
+        /// <param name="address">The address of the data to set</param>
+        /// <param name="value">The new value of the string to set; this must be of the 
+        /// correct encoding to avoid memory corruption</param>
+        /// <param name="strType">The type of string to copy to</param>
+        public void WriteMemory(int address, string value, StrPtrType strType)
+        {
+            WriteMemory(address, value,
+                (strType & StrPtrType.Wide) != 0);
+        }
+
         /// <inheritdoc cref="WriteMemory"/>
         public async Task WriteMemoryAsync(int address, string value, bool wide = false, bool copyReferences = true)
         {
@@ -429,17 +442,17 @@ namespace OmsiHook
         {
             int byteSize = Marshal.SizeOf(typeof(T));
             if (byteSize > readBuffer.Value.Length)
-                throw new ArgumentException($"Couldn't read memory for object of type {typeof(T).Name} @ {address}; it wouldn't fit in the read buffer!");
+                throw new ArgumentException($"Couldn't read memory for object of type {typeof(T).Name} @ 0x{address:X8}; it wouldn't fit in the read buffer!");
             int bytesRead = -1;
 
             if (!Imports.ReadProcessMemory((int)omsiProcessHandle, address, readBuffer.Value, byteSize, ref bytesRead))
 #if DEBUG && SILENCE_ACCESS_VIOLATION
             {
-                Debug.WriteLine($"Couldn't read {byteSize} bytes of process memory @ {address:X}!\n{new System.Diagnostics.StackTrace(true)}");
+                Debug.WriteLine($"Couldn't read {byteSize} bytes of process memory @ 0x{address:X8}!\n{new System.Diagnostics.StackTrace(true)}");
                 return new T();
             }
 #else
-                throw new MemoryAccessException($"Couldn't read {byteSize} bytes of process memory @ {address:X}!");
+                throw new MemoryAccessException($"Couldn't read {byteSize} bytes of process memory @ 0x{address:X8}!");
 #endif
 
             return ByteArrayToStructure<T>(readBuffer.Value);
@@ -470,6 +483,36 @@ namespace OmsiHook
             var addr = ReadMemory<int>(address);
             if (addr == 0)
                 return null;
+            var obj = new T();
+            obj.InitObject(this, addr);
+            return obj;
+        }
+
+        /// <summary>
+        /// Reads and constructs an OmsiObject from unmanaged memory.
+        /// </summary>
+        /// <remarks>
+        /// This version of the method performs a null-check on the base address before the offset is applied 
+        /// to prevent attempting to dereference an objject belonging to a null-parent.
+        /// </remarks>
+        /// <typeparam name="T">The type of OmsiObject to construct</typeparam>
+        /// <param name="address">The address of the object this field belongs to.</param>
+        /// <param name="offset">The offset from the base address of the object.</param>
+        /// <param name="raw">When false, dereferences the object pointer again before construcing the new object.</param>
+        /// <returns>A new OmsiObject.</returns>
+        public T ReadMemoryObject<T>(int address, int offset, bool raw=true) where T : OmsiObject, new()
+        {
+            if (address == 0)
+                return null;
+            var addr = ReadMemory<int>(address + offset);
+            if (addr == 0)
+                return null;
+            if (raw)
+            {
+                addr = ReadMemory<int>(addr);
+                if (addr == 0)
+                    return null;
+            }
             var obj = new T();
             obj.InitObject(this, addr);
             return obj;
@@ -510,10 +553,12 @@ namespace OmsiHook
 
             if (pascalString)
             {
-                int strLen = ReadMemory<int>(i - 4);
+                uint strLen = ReadMemory<uint>(i - 4);
+                if (strLen > 4096)
+                    throw new MemoryAccessException($"Tried reading a very long string ({strLen} > 4096 characters long). This is probably not a valid string");
                 if(wide)
                     strLen *= 2;
-                var bytes = ReadMemory(i, strLen, readBuffer.Value);
+                var bytes = ReadMemory(i, (int)strLen, readBuffer.Value);
                 sb.Append(wide ? Encoding.Unicode.GetString(bytes) : Encoding.ASCII.GetString(bytes));
             }
             else
