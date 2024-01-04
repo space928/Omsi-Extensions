@@ -3,8 +3,9 @@ Omsi hooking and modding sdk.
 
 [![.NET](https://github.com/space928/Omsi-Extensions/actions/workflows/dotnet.yml/badge.svg)](https://github.com/space928/Omsi-Extensions/actions/workflows/dotnet.yml)
 [![DocFX](https://github.com/space928/Omsi-Extensions/actions/workflows/docs.yml/badge.svg)](https://space928.github.io/Omsi-Extensions/index.html)
-[![Nuget](https://img.shields.io/nuget/v/omsihook)](https://www.nuget.org/packages/OmsiHook/)
-[![OMSI Version](https://img.shields.io/badge/OMSI%20Version-2.3.004-orange)](https://store.steampowered.com/app/252530/OMSI_2_Steam_Edition/)
+[![Discord](https://img.shields.io/discord/1192462752527163503?logo=Discord&logoColor=fff&label=Discord)](https://discord.gg/FG9P6PW23w)
+[![Nuget](https://img.shields.io/nuget/v/omsihook?logo=Nuget&logoColor=fff)](https://www.nuget.org/packages/OmsiHook/)
+[![OMSI Version](https://img.shields.io/badge/OMSI%20Version-2.3.004-orange?logo=steam&logoColor=fff)](https://store.steampowered.com/app/252530/OMSI_2_Steam_Edition/)
 
 The dead simple way to hook into Omsi and fiddle with it's memory. In it's current state we only have 
 mappings for a limited number of Omsi objects, but it's easy to extend. Allows both reading and writing 
