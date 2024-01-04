@@ -12,7 +12,7 @@ jobs:
     runs-on: windows-2022
 
     env:
-      BuildProjects: \'OmsiExtensionsCLI/OmsiExtensionsCLI.csproj\',\'OmsiExtensionsUI/OmsiExtensionsUI.csproj\',\'OmsiHookRPCPlugin/OmsiHookRPCPlugin.csproj\'
+      BuildProjects: "['OmsiExtensionsCLI/OmsiExtensionsCLI.csproj', 'OmsiExtensionsUI/OmsiExtensionsUI.csproj','OmsiHookRPCPlugin/OmsiHookRPCPlugin.csproj']"
 
     steps:
     - uses: actions/checkout@v3
@@ -27,12 +27,12 @@ jobs:
     - name: Restore dependencies
       shell: pwsh
       run: |
-          foreach($proj in $env.BuildProjects) {
+          foreach($proj in @($env.BuildProjects)) {
             dotnet restore ${{ github.workspace }}$proj
           }
     - name: Build
       shell: pwsh
       run: |
-          foreach($proj in $env.BuildProjects) {
+          foreach($proj in @($env.BuildProjects)) {
             msbuild ${{ github.workspace }}$proj -t:rebuild -property:Configuration=Release
           }
