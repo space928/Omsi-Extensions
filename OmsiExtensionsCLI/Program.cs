@@ -23,31 +23,35 @@ namespace OmsiExtensionsCLI
             var progMan = omsi.Globals.ProgamManager;
             var meshes = playerVehicle?.ComplObjInst?.ComplObj?.Meshes;
             var meshInsts = playerVehicle?.ComplObjInst?.AnimSubMeshInsts;
+            var map = omsi.Globals.Map;
+            var cam = omsi.Globals.Camera;
+            var weather = omsi.Globals.Weather;
+            var tickets = omsi.Globals.TicketPack;
+            var materialMan = omsi.Globals.MaterialMan;
+            var textureMan = omsi.Globals.TextureMan;
+            var textures = textureMan?.TextureItems;
             while (true)
             {
                 playerVehicle ??= omsi.Globals.PlayerVehicle;
-                var pos = playerVehicle?.Position ?? default;
-                var posa = playerVehicle?.AbsPosition ?? default;
-                var vel = playerVehicle?.Velocity ?? default;
-                var map = omsi.Globals.Map;
-                var cam = omsi.Globals.Camera;
-                var camPos = cam?.Pos ?? default;
-                var weather = omsi.Globals.Weather;
-                var tickets = omsi.Globals.TicketPack;
-                var materialMan = omsi.Globals.MaterialMan;
-                var reflMatl = materialMan.StdMaterial;
-                reflMatl.emissive.r = 0.0f;
-                materialMan.StdMaterial = reflMatl;
+                progMan ??= omsi.Globals.ProgamManager;
+                meshes ??= playerVehicle?.ComplObjInst?.ComplObj?.Meshes;
+                meshInsts ??= playerVehicle?.ComplObjInst?.AnimSubMeshInsts;
+                map ??= omsi.Globals.Map;
+                cam ??= omsi.Globals.Camera;
+                weather ??= omsi.Globals.Weather;
+                tickets = omsi.Globals.TicketPack;
+                materialMan ??= omsi.Globals.MaterialMan;
+                textureMan ??= omsi.Globals.TextureMan;
+                textures ??= textureMan?.TextureItems;
 
                 Console.SetCursorPosition(0, 0);
-                Console.WriteLine(($"Read data: x:{pos.x:F3}   y:{pos.y:F3}   z:{pos.z:F3}      " +
-                    $"tile:{playerVehicle?.Kachel ?? 0}").PadRight(Console.WindowWidth - 1));
-                Console.WriteLine($"Read data: vx:{vel.x:F3}   vy:{vel.y:F3}   vz:{vel.z:F3}".PadRight(Console.WindowWidth - 1));
-                Console.WriteLine($"Read data: ax:{posa._30:F3}   ay:{posa._31:F3}   az:{posa._32:F3}".PadRight(Console.WindowWidth - 1));
+                Console.WriteLine($"Vehicle pos: {playerVehicle.Position}    tile: {playerVehicle?.Kachel ?? 0}".PadRight(Console.WindowWidth - 1));
+                Console.WriteLine($"Vehicle vel: {playerVehicle.Velocity}".PadRight(Console.WindowWidth - 1));
+                Console.WriteLine($"Vehicle pos_abs: {playerVehicle.AbsPosition.Position}".PadRight(Console.WindowWidth - 1));
 
                 Console.WriteLine($"Read data: map:{map?.Name}   path:{map?.Filename}   friendly:{map?.FriendlyName}".PadRight(Console.WindowWidth - 1));
-                Console.WriteLine($"{omsi.Globals.Time.Day}/{omsi.Globals.Time.Month}/{omsi.Globals.Time.Year} - {omsi.Globals.Time.Hour}:{omsi.Globals.Time.Minute}:{omsi.Globals.Time.Second:F2}");
-                Console.WriteLine($"Camera data: x:{camPos.x:F3}   y:{camPos.y:F3}   z:{camPos.z:F3}      ".PadRight(Console.WindowWidth - 1));
+                Console.WriteLine($"Time: {omsi.Globals.Time.Day}/{omsi.Globals.Time.Month}/{omsi.Globals.Time.Year} - {omsi.Globals.Time.Hour}:{omsi.Globals.Time.Minute}:{omsi.Globals.Time.Second:F2}     ");
+                Console.WriteLine($"Camera pos: {cam.Pos}      ".PadRight(Console.WindowWidth - 1));
                 Console.WriteLine($"{omsi.Globals.Drivers}".PadRight(Console.WindowWidth - 1));
 
                 /*if(!dXTests.IsReady)
@@ -55,13 +59,12 @@ namespace OmsiExtensionsCLI
                 if(dXTests.IsReady)
                     dXTests.UpdateTexture();*/
 
-                progMan ??= omsi.Globals.ProgamManager;
-                meshes ??= playerVehicle?.ComplObjInst?.ComplObj?.Meshes;
-                meshInsts ??= playerVehicle?.ComplObjInst?.AnimSubMeshInsts;
-
-                Console.WriteLine($"[MOUSE] pos: {progMan.MausPos} ray_pos: {progMan.MausLine3DPos} ray_dir: {progMan.MausLine3DDir}".PadRight(Console.WindowWidth - 1));
-                Console.WriteLine($"[MOUSE] {progMan.MausCrossObjFlat} {progMan.MausCrossObjFlat_ObjHeight} {progMan.Maus_MeshEvent}".PadRight(Console.WindowWidth - 1));
+                Console.WriteLine($"[MOUSE] pos: {progMan.MausPos}".PadRight(Console.WindowWidth - 1));
+                Console.WriteLine($"[MOUSE] ray_pos: {progMan.MausLine3DPos} ray_dir: {progMan.MausLine3DDir}".PadRight(Console.WindowWidth - 1));
+                Console.WriteLine($"[MOUSE] mouse_mesh_event: {progMan.Maus_MeshEvent}".PadRight(Console.WindowWidth - 1));
                 CheckClickPos(progMan, meshes, meshInsts);
+
+                Console.WriteLine($"Loaded textures: {textures.Count}");
 
                 /*Console.WriteLine("".PadRight(Console.WindowWidth-1));
                 try
@@ -86,7 +89,7 @@ namespace OmsiExtensionsCLI
             // A small experiment, with the aim of being able to determine where the user clicks on an object in local space.
             if (meshes != null)
             {
-                int i = 0;
+                /*int i = 0;
                 foreach (var mesh in meshes)
                 {
                     if (mesh.MausEvent != null)
@@ -99,7 +102,7 @@ namespace OmsiExtensionsCLI
                         Console.WriteLine("  ...");
                         break;
                     }
-                }
+                }*/
             }
             OmsiAnimSubMesh clickMesh = null;
             OmsiAnimSubMeshInst clickMeshInst = null;

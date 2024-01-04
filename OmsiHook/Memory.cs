@@ -442,17 +442,17 @@ namespace OmsiHook
         {
             int byteSize = Marshal.SizeOf(typeof(T));
             if (byteSize > readBuffer.Value.Length)
-                throw new ArgumentException($"Couldn't read memory for object of type {typeof(T).Name} @ {address}; it wouldn't fit in the read buffer!");
+                throw new ArgumentException($"Couldn't read memory for object of type {typeof(T).Name} @ 0x{address:X8}; it wouldn't fit in the read buffer!");
             int bytesRead = -1;
 
             if (!Imports.ReadProcessMemory((int)omsiProcessHandle, address, readBuffer.Value, byteSize, ref bytesRead))
 #if DEBUG && SILENCE_ACCESS_VIOLATION
             {
-                Debug.WriteLine($"Couldn't read {byteSize} bytes of process memory @ {address:X}!\n{new System.Diagnostics.StackTrace(true)}");
+                Debug.WriteLine($"Couldn't read {byteSize} bytes of process memory @ 0x{address:X8}!\n{new System.Diagnostics.StackTrace(true)}");
                 return new T();
             }
 #else
-                throw new MemoryAccessException($"Couldn't read {byteSize} bytes of process memory @ {address:X}!");
+                throw new MemoryAccessException($"Couldn't read {byteSize} bytes of process memory @ 0x{address:X8}!");
 #endif
 
             return ByteArrayToStructure<T>(readBuffer.Value);
@@ -553,10 +553,12 @@ namespace OmsiHook
 
             if (pascalString)
             {
-                int strLen = ReadMemory<int>(i - 4);
+                uint strLen = ReadMemory<uint>(i - 4);
+                if (strLen > 4096)
+                    throw new MemoryAccessException($"Tried reading a very long string ({strLen} > 4096 characters long). This is probably not a valid string");
                 if(wide)
                     strLen *= 2;
-                var bytes = ReadMemory(i, strLen, readBuffer.Value);
+                var bytes = ReadMemory(i, (int)strLen, readBuffer.Value);
                 sb.Append(wide ? Encoding.Unicode.GetString(bytes) : Encoding.ASCII.GetString(bytes));
             }
             else

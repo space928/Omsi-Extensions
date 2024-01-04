@@ -1,15 +1,17 @@
 ﻿namespace OmsiHook
 {
     /// <summary>
-    /// In game camera object
+    /// In material manager
     /// </summary>
     public class OmsiMaterialMan : OmsiObject
     {
         internal OmsiMaterialMan(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
         public OmsiMaterialMan() : base() { }
 
-        public OmsiMaterialItem[] MaterialItems => Memory.MarshalStructs<OmsiMaterialItem, OmsiMaterialItemInternal>(Memory.ReadMemoryStructPtrArray<OmsiMaterialItemInternal>(Address + 0x4));
-
+        /// <summary>
+        /// Note that this field seems to be mostly unused by Omsi, hence it's always empty...
+        /// </summary>
+        public MemArray<OmsiMaterialItemInternal, OmsiMaterialItem> MaterialItems => new(Memory, Address + 0x4);
         public D3DMaterial9 StdMaterial
         {
             get => Memory.ReadMemory<D3DMaterial9>(Address + 0x8);

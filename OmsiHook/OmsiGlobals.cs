@@ -89,5 +89,10 @@ namespace OmsiHook
         /// Central Material Manager
         /// </summary>
         public OmsiMaterialMan MaterialMan => Memory.ReadMemoryObject<OmsiMaterialMan>(0x00861ca8);
+
+        /// <summary>
+        /// Central Texture Manager
+        /// </summary>
+        public OmsiTextureMan TextureMan => Memory.ReadMemoryObject<OmsiTextureMan>(0x00861bc4);
     }
 }
