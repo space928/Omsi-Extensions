@@ -28,11 +28,11 @@ jobs:
       shell: pwsh
       run: |
           foreach($proj in (ConvertFrom-JSON "${{env.BuildProjects}}")) {
-            dotnet restore ${{ github.workspace }}$proj
+            dotnet restore ${{ github.workspace }}/$proj
           }
     - name: Build
       shell: pwsh
       run: |
           foreach($proj in (ConvertFrom-JSON "${{env.BuildProjects}}")) {
-            msbuild ${{ github.workspace }}$proj -t:rebuild -property:Configuration=Release
+            msbuild ${{ github.workspace }}/$proj -t:rebuild -property:Configuration=Release
           }
