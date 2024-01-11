@@ -23,7 +23,18 @@ namespace ClickablePlaneDemo
             var progMan = omsi.Globals.ProgamManager;
             var meshes = playerVehicle?.ComplObjInst?.ComplObj?.Meshes;
             var meshInsts = playerVehicle?.ComplObjInst?.AnimSubMeshInsts;
+            var texture = omsi.CreateTextureObject();
+            try
+            {
+                texture.CreateD3DTexture(512, 512);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return;
+            }
             string mouseEventName = "OH_Click";
+            int scriptTextureIndex = 2;
 
 
             while (true)
@@ -36,6 +47,17 @@ namespace ClickablePlaneDemo
                 {
                     Thread.Sleep(20);
                     continue;
+                }
+                Console.SetCursorPosition(0, 0);
+                var old = playerVehicle.ComplObjInst.ScriptTextures[scriptTextureIndex];
+                if (old.tex != (IntPtr)texture.TextureAddress)
+                {
+                    playerVehicle.ComplObjInst.ScriptTextures[scriptTextureIndex] = new()
+                    {
+                        TexPn = old.TexPn,
+                        color = old.color,
+                        tex = unchecked((IntPtr)texture.TextureAddress)
+                    };
                 }
 
                 Console.WriteLine($"[MOUSE] pos: {progMan.MausPos} ray_pos: {progMan.MausLine3DPos} ray_dir: {progMan.MausLine3DDir}".PadRight(Console.WindowWidth - 1));
