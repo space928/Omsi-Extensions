@@ -43,7 +43,7 @@ namespace ClickablePlaneDemo
                 progMan ??= omsi.Globals.ProgamManager;
                 meshes ??= playerVehicle?.ComplObjInst?.ComplObj?.Meshes;
                 meshInsts ??= playerVehicle?.ComplObjInst?.AnimSubMeshInsts;
-                if (meshes == null || meshInsts == null)
+                if (meshes == null || meshInsts == null || playerVehicle == null)
                 {
                     Thread.Sleep(20);
                     continue;
