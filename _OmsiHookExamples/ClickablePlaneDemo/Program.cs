@@ -60,6 +60,7 @@ namespace ClickablePlaneDemo
                     };
                 }
 
+
                 Console.WriteLine($"[MOUSE] pos: {progMan.MausPos} ray_pos: {progMan.MausLine3DPos} ray_dir: {progMan.MausLine3DDir}".PadRight(Console.WindowWidth - 1));
                 Console.WriteLine($"[MOUSE] {progMan.MausCrossObjFlat} {progMan.MausCrossObjFlat_ObjHeight} {progMan.Maus_MeshEvent}".PadRight(Console.WindowWidth - 1));
                 OmsiAnimSubMesh clickMesh = null;
@@ -96,6 +97,9 @@ namespace ClickablePlaneDemo
                     }
 
                     Console.WriteLine($"  Clicked on {clickMesh.Filename_Int} at local coords: {(D3DVector)intersect}");
+                    D3DTexture.RGBA[] texBuffer = new D3DTexture.RGBA[1];
+                    texBuffer[0] = new D3DTexture.RGBA() { data=0xffffffff};
+                    texture.UpdateTexture(texBuffer.AsMemory(), new OmsiRemoteMethods.Rectangle() { left = (uint)Math.Round(512*((intersect.X+1)/2)), top = (uint)Math.Round(512 * ((intersect.Z + 1) / 2)), right = (uint)Math.Round(512 * ((intersect.X + 1) / 2)), bottom = (uint)Math.Round(512 * ((intersect.Z + 1) / 2)) }).Wait();
                 }
 
                 Thread.Sleep(20);
