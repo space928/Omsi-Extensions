@@ -24,6 +24,9 @@ namespace ClickablePlaneDemo
             var meshes = playerVehicle?.ComplObjInst?.ComplObj?.Meshes;
             var meshInsts = playerVehicle?.ComplObjInst?.AnimSubMeshInsts;
             var texture = omsi.CreateTextureObject();
+            D3DTexture.RGBA[] texBuffer = new D3DTexture.RGBA[512*512];
+            var curCol = new D3DTexture.RGBA() { data = 0xffff0000 };
+
             try
             {
                 texture.CreateD3DTexture(512, 512);
@@ -59,6 +62,16 @@ namespace ClickablePlaneDemo
                         tex = unchecked((IntPtr)texture.TextureAddress)
                     };
                 }
+
+                for (uint y = 0; y < 512;  y++)
+                {
+                    var col = GetStaticRainbowColor(y);
+                    for (uint x = 0; x <= 32; x++)
+                    {
+                        texBuffer[y * 512 + x] = col;
+                    }
+                }
+                texture.UpdateTexture(texBuffer.AsMemory()).Wait();
 
 
                 Console.WriteLine($"[MOUSE] pos: {progMan.MausPos} ray_pos: {progMan.MausLine3DPos} ray_dir: {progMan.MausLine3DDir}".PadRight(Console.WindowWidth - 1));
@@ -97,13 +110,55 @@ namespace ClickablePlaneDemo
                     }
 
                     Console.WriteLine($"  Clicked on {clickMesh.Filename_Int} at local coords: {(D3DVector)intersect}");
-                    D3DTexture.RGBA[] texBuffer = new D3DTexture.RGBA[1];
-                    texBuffer[0] = new D3DTexture.RGBA() { data=0xffffffff};
-                    texture.UpdateTexture(texBuffer.AsMemory(), new OmsiRemoteMethods.Rectangle() { left = (uint)Math.Round(512*((intersect.X+1)/2)), top = (uint)Math.Round(512 * ((intersect.Z + 1) / 2)), right = (uint)Math.Round(512 * ((intersect.X + 1) / 2)), bottom = (uint)Math.Round(512 * ((intersect.Z + 1) / 2)) }).Wait();
+                    var curX = (uint)Math.Max(0, Math.Round(512 * ((intersect.X + 0.5))));
+                    var curY = (uint)Math.Max(0, Math.Round(512 * (1 - (intersect.Z + 0.5))));
+                    Console.WriteLine($"  Clicked on {curX},{curY}".PadRight(Console.WindowWidth-1));
+                    if (curX > 32)
+                        SetCirclePixels(ref texBuffer, curX, curY, 8, curCol);
+                    else
+                        curCol = GetStaticRainbowColor(curY);
+                    texture.UpdateTexture(texBuffer.AsMemory()).Wait();
                 }
 
                 Thread.Sleep(20);
             }
+        }
+
+        public static void SetCirclePixels(ref D3DTexture.RGBA[] texBuffer, uint centerX, uint centerY, uint radius, D3DTexture.RGBA color)
+        {
+            for (uint y = centerY - radius; y <= centerY + radius; y++)
+            {
+                for (uint x = centerX - radius; x <= centerX + radius; x++)
+                {
+                    // Check if the current pixel is within the circle
+                    if ((x - centerX) * (x - centerX) + (y - centerY) * (y - centerY) <= radius * radius)
+                    {
+                        // Check if the current pixel is within the bounds of the array
+                        if (x >= 33 && x < 512 && y >= 0 && y < 512)
+                        {
+                            texBuffer[x + (512 * y)] = color;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        static D3DTexture.RGBA GetStaticRainbowColor(uint curY)
+        {
+
+            // Define the static colors in the rainbow
+            uint[] staticColors = { 0xffff0000, 0xffffff00, 0xff00ff00, 0xff00ffff, 0xff0000ff, 0xffff00ff, 0xff000000 };
+            // Calculate the index of the static color based on the current Y value
+            int colorIndex = (int)((float)curY / 512 * (staticColors.Length));
+
+            // Get the corresponding static color based on the index
+            uint selectedColor = staticColors[Math.Min(Math.Max(colorIndex, 0), staticColors.Length - 1)];
+
+            // Create RGBA color from the selected static color
+            D3DTexture.RGBA curCol = new D3DTexture.RGBA() { data = selectedColor };
+
+            return curCol;
         }
     }
 }
