@@ -1,17 +1,11 @@
-﻿// Ignore Spelling: Clickable
-
-using System;
-using System.Linq;
+﻿using System;
 using System.Numerics;
-using System.Reflection;
-using System.Threading;
 using OmsiHook;
 
 namespace ClickablePlaneDemo
 {
     class Program
     {
-
         static void Main(string[] args)
         {
             Console.WriteLine("#=#=#=#=#=# OmsiExtensions Paint Sample #=#=#=#=#=#");
@@ -19,42 +13,48 @@ namespace ClickablePlaneDemo
             OmsiHook.OmsiHook omsi = new();
             omsi.AttachToOMSI().Wait();
             Console.Clear();
-            Paint paint = new();
-            paint.initialise(omsi);
+            Paint paint = new(omsi);
 
             while (true)
             {
-                paint.run();
+                paint.Update();
                 Thread.Sleep(15);
             }
         }
     }
+
     class Paint
     {
-        const string mouseEventName = "OH_Click";
-        const int scriptTextureIndex = 2;
-        OmsiRoadVehicleInst playerVehicle;
-        OmsiProgMan progMan;
-        MemArrayList<OmsiAnimSubMesh> meshes;
-        MemArrayList<OmsiAnimSubMeshInst> meshInsts;
-        D3DTexture texture;
-        D3DTexture.RGBA[] texBuffer;
-        D3DTexture.RGBA curCol;
-        OmsiHook.OmsiHook omsi;
+        const string MOUSE_EVENT_NAME = "OH_Click";
+        const int SCRIPT_TEXTURE_INDEX = 2;
+        const int TEXTURE_SIZE = 512;
 
-        public void initialise(OmsiHook.OmsiHook omsi)
+        private readonly OmsiHook.OmsiHook omsi;
+        private readonly D3DTexture texture;
+        private OmsiRoadVehicleInst? playerVehicle;
+        private OmsiProgMan? progMan;
+        private MemArrayList<OmsiAnimSubMesh>? meshes;
+        private MemArrayList<OmsiAnimSubMeshInst>? meshInsts;
+        private D3DTexture.RGBA[] texBuffer;
+        private D3DTexture.RGBA curCol;
+
+        public Paint(OmsiHook.OmsiHook omsi)
         {
+            // Try to get the vehicle from Omsi; if this is executed before the map has loaded then these will
+            // be null and will be read later.
             this.playerVehicle = omsi.Globals.PlayerVehicle;
             this.progMan = omsi.Globals.ProgamManager;
             this.meshes = playerVehicle?.ComplObjInst?.ComplObj?.Meshes;
             this.meshInsts = playerVehicle?.ComplObjInst?.AnimSubMeshInsts;
+
+            // Create and initialise a new D3DTexture and allocate a buffer to write into.
             this.texture = omsi.CreateTextureObject();
-            this.texBuffer = new D3DTexture.RGBA[512 * 512];
+            this.texBuffer = new D3DTexture.RGBA[TEXTURE_SIZE * TEXTURE_SIZE];
             this.curCol = new D3DTexture.RGBA() { data = 0xffff0000 };
             this.omsi = omsi;
             try
             {
-                texture.CreateD3DTexture(512, 512);
+                texture.CreateD3DTexture(TEXTURE_SIZE, TEXTURE_SIZE);
             }
             catch (Exception ex)
             {
@@ -63,19 +63,23 @@ namespace ClickablePlaneDemo
             }
         }
 
-        public void run()
+        public void Update()
         {
+            // If the vehicle data hasn't yet been read, try getting it now
             playerVehicle ??= omsi.Globals.PlayerVehicle;
             progMan ??= omsi.Globals.ProgamManager;
             meshes ??= playerVehicle?.ComplObjInst?.ComplObj?.Meshes;
             meshInsts ??= playerVehicle?.ComplObjInst?.AnimSubMeshInsts;
+
             if (meshes == null || meshInsts == null || playerVehicle == null || texture == null)
                 return;
+
             Console.SetCursorPosition(0, 0);
-            var old = playerVehicle.ComplObjInst.ScriptTextures[scriptTextureIndex];
+            // Replace the bus' script texture with our newly created texture. This only needs to be done once per session.
+            var old = playerVehicle.ComplObjInst.ScriptTextures[SCRIPT_TEXTURE_INDEX];
             if (old.tex != (IntPtr)texture.TextureAddress)
             {
-                playerVehicle.ComplObjInst.ScriptTextures[scriptTextureIndex] = new()
+                playerVehicle.ComplObjInst.ScriptTextures[SCRIPT_TEXTURE_INDEX] = new()
                 {
                     TexPn = old.TexPn,
                     color = old.color,
@@ -83,38 +87,57 @@ namespace ClickablePlaneDemo
                 };
             }
 
-            for (uint y = 0; y < 512; y++)
+            // Draw the colour picker
+            for (uint y = 0; y < TEXTURE_SIZE; y++)
             {
                 var col = GetStaticRainbowColor(y);
                 for (uint x = 0; x <= 32; x++)
                 {
-                    texBuffer[y * 512 + x] = col;
+                    texBuffer[y * TEXTURE_SIZE + x] = col;
                 }
             }
-            var intersect = Compute_Cursor();
+            // Handle colour picking and painting
+            var intersect = ComputeCursor();
             if (!float.IsNaN(intersect.X))
             {
-                var curX = (uint)Math.Max(0, Math.Round(512 * ((intersect.X + 0.5))));
-                var curY = (uint)Math.Max(0, Math.Round(512 * (1 - (intersect.Z + 0.5))));
+                var curX = (uint)Math.Max(0, Math.Round(TEXTURE_SIZE * ((intersect.X + 0.5))));
+                var curY = (uint)Math.Max(0, Math.Round(TEXTURE_SIZE * (1 - (intersect.Z + 0.5))));
                 Console.WriteLine($"  Clicked on {curX},{curY}".PadRight(Console.WindowWidth - 1));
-                if (curX > 32)
+                if (curX > 32)  // Paint colour
                     SetCirclePixels(ref texBuffer, curX, curY, 8, this.curCol);
-                else
+                else  // Pick colour
                     this.curCol = GetStaticRainbowColor(curY);
             }
+
             texture.UpdateTexture(texBuffer.AsMemory()).Wait();
         }
 
-        private Vector3 Compute_Cursor()
+        /// <summary>
+        /// This method works out where the mouse is clicking on a given mesh.
+        /// <br/>
+        /// This does not use a proper mesh-raycast to work out where on the mesh the user is clicking; rather it 
+        /// transforms the mouse ray (the ray going out from the camera pointing towards whatever the mouse is 
+        /// pointing at) by the inverse of mesh's transformation matrix and then performs a simple ray-plane 
+        /// intersection calculation. In the case where the mesh is a simple unit-length plane created at the 
+        /// origin and then transformed (ie: a plane with an origin matrix that's centred, rotated, and scaled 
+        /// to the plane) then the coordinates returned by this are effectively the same as the UVs of the mesh.
+        /// </summary>
+        /// <returns>A vector with the relative mouse coordinates, or NaN if the object was not clicked.</returns>
+        private Vector3 ComputeCursor()
         {
             Console.WriteLine($"[MOUSE] pos: {progMan.MausPos} ray_pos: {progMan.MausLine3DPos} ray_dir: {progMan.MausLine3DDir}".PadRight(Console.WindowWidth - 1));
-            Console.WriteLine($"[MOUSE] {progMan.MausCrossObjFlat} {progMan.MausCrossObjFlat_ObjHeight} {progMan.Maus_MeshEvent}".PadRight(Console.WindowWidth - 1));
-            OmsiAnimSubMesh clickMesh = null;
-            OmsiAnimSubMeshInst clickMeshInst = null;
-            clickMesh = meshes.FirstOrDefault(mesh => mesh.MausEvent == mouseEventName);
+            Console.WriteLine($"[MOUSE] {progMan.MausCrossObjFlat} {progMan.MausCrossObjFlat_ObjHeight} mouse_event: {progMan.Maus_MeshEvent}".PadRight(Console.WindowWidth - 1));
+            
+            OmsiAnimSubMesh? clickMesh = null;
+            OmsiAnimSubMeshInst? clickMeshInst = null;
+            // Find the mesh with the mouse event we're interested in
+            clickMesh = meshes.FirstOrDefault(mesh => mesh.MausEvent == MOUSE_EVENT_NAME);
             if (clickMesh != null)
                 clickMeshInst = meshInsts[meshes.IndexOf(clickMesh)];
-            if (clickMesh != null && clickMeshInst != null && progMan.Maus_MeshEvent == mouseEventName && (progMan.Maus_Clicked))
+
+            if (clickMesh != null && clickMeshInst != null  // Check we found the mesh with the desired mouse event
+                && progMan.Maus_MeshEvent == MOUSE_EVENT_NAME  // Check that the user is currently hovering over the object
+                && progMan.Maus_Clicked) // Check that the mouse button is down
             {
                 // Work out object space coords of the mouse click
                 // Note that (if wrapped) we could use D3DXIntersect to find the UV coords given the sub-mesh's d3d mesh
@@ -155,20 +178,20 @@ namespace ClickablePlaneDemo
             {
                 for (uint x = centerX - radius; x <= centerX + radius; x++)
                 {
-                    // Calculate the distance from the center of the circle
-                    float distance = (x - centerX) * (x - centerX) + (y - centerY) * (y - centerY);
+                    // Calculate the distanceSquared from the center of the circle
+                    uint distanceSquared = (x - centerX) * (x - centerX) + (y - centerY) * (y - centerY);
 
                     // Check if the current pixel is within the circle
-                    if (distance <= radius * radius)
+                    if (distanceSquared <= radius * radius)
                     {
                         // Check if the current pixel is within the bounds of the array
-                        if (x >= 0 && x < 512 && y >= 0 && y < 512)
+                        if (x >= 0 && x < TEXTURE_SIZE && y >= 0 && y < TEXTURE_SIZE)
                         {
-                            // Apply anti-aliasing by using supersampling
-                            float weight = 1.0f - (float)Math.Sqrt(distance) * invRadius;
-                            D3DTexture.RGBA blendedColor = BlendColors(texBuffer[x + (512 * y)], color, weight);
+                            // Apply falloff
+                            float weight = 1.0f - MathF.Sqrt(distanceSquared) * invRadius;
+                            D3DTexture.RGBA blendedColor = BlendColors(texBuffer[x + (TEXTURE_SIZE * y)], color, weight);
 
-                            texBuffer[x + (512 * y)] = blendedColor;
+                            texBuffer[x + (TEXTURE_SIZE * y)] = blendedColor;
                         }
                     }
                 }
@@ -189,17 +212,16 @@ namespace ClickablePlaneDemo
 
         static D3DTexture.RGBA GetStaticRainbowColor(uint curY)
         {
-
             // Define the static colors in the rainbow
             uint[] staticColors = { 0xffff0000, 0xffffff00, 0xff00ff00, 0xff00ffff, 0xff0000ff, 0xffff00ff, 0xff000000 };
             // Calculate the index of the static color based on the current Y value
-            int colorIndex = (int)((float)curY / 512 * (staticColors.Length));
+            int colorIndex = (int)((float)curY / TEXTURE_SIZE * (staticColors.Length));
 
             // Get the corresponding static color based on the index
             uint selectedColor = staticColors[Math.Min(Math.Max(colorIndex, 0), staticColors.Length - 1)];
 
             // Create RGBA color from the selected static color
-            D3DTexture.RGBA curCol = new D3DTexture.RGBA() { data = selectedColor };
+            D3DTexture.RGBA curCol = new() { data = selectedColor };
 
             return curCol;
         }
