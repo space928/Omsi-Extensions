@@ -1,11 +1,11 @@
 # Clickable Plane Demo
 
 This article provides a basic understanding to a basic C# .NET example leveraging the OMSIHook library. This demo is a more advanced 
-demo using a specially made mesh (available [here](/doc-resources/ClickablePlaneDemo/_touch_surface.o3d)) and some of the model data properties to paint onto a script texture.
+demo using a specially made mesh (available [here](https://adam.mathieson.dev/_touch_surface.o3d)) and some of the model data properties to paint onto a script texture.
 
 _This article is in direct relation to the Sample Project available [here](https://github.com/space928/Omsi-Extensions/tree/main/_OmsiHookExamples/ClickablePlaneDemo)._
 
-![Paint Demo](/images/Paint-demo.png)
+![Paint Demo](https://adam.mathieson.dev/Paint-demo.png)
 
 ## Coordinate calculation
 To achieve the click detection, the global mouse events are monitored, a ray is cast from the cursor onto the plane, it's intersection is computed and converted into a local coordinate space.
