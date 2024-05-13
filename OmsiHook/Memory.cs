@@ -16,13 +16,23 @@ namespace OmsiHook
     /// Memory management class for accessing and marshaling OMSI's memory
     /// </summary>
 #if DEBUG
-    public class Memory
+    public class Memory : IDisposable
 #else
-    internal class Memory
+    internal class Memory : IDisposable
 #endif
     {
         private Process omsiProcess;
         private IntPtr omsiProcessHandle;
+        private bool isLocalPlugin;
+        private OmsiRemoteMethods remoteMethods;
+
+        public Process OmsiProcess => omsiProcess;
+        public IntPtr OmsiProcessHandle => omsiProcessHandle;
+        public OmsiRemoteMethods RemoteMethods
+        {
+            get => remoteMethods;
+            internal set => remoteMethods = value;
+        }
 
         /// <summary>
         /// Buffer to read remote memory into. 4k should be large enough for any structs we encounter as they
@@ -39,11 +49,11 @@ namespace OmsiHook
         /// Attempts to attach to a given process as a debugger.
         /// </summary>
         /// <param name="procName">The name of the process to attach to eg: "OMSI.exe"</param>
-        /// <returns>A tuple containing whether or not the process attached successfully and the Process instance</returns>
-        public (bool, Process proc) Attach(string procName)
+        /// <returns>Whether the process attached successfully</returns>
+        public bool Attach(string procName)
         {
             if (Process.GetProcessesByName(procName).Length <= 0) 
-                return (false, null);
+                return false;
 
             omsiProcess = Process.GetProcessesByName(procName)[0];
             try
@@ -60,13 +70,19 @@ namespace OmsiHook
 #else
             catch { }
 #endif
-            omsiProcessHandle =
-                Imports.OpenProcess(
-                    (int) (Imports.OpenProcessFlags.PROCESS_VM_OPERATION |
-                           Imports.OpenProcessFlags.PROCESS_VM_READ | Imports.OpenProcessFlags.PROCESS_VM_WRITE),
-                    false, omsiProcess.Id);
+            isLocalPlugin = Process.GetCurrentProcess().ProcessName == omsiProcess.ProcessName;
+            if (!isLocalPlugin)
+                omsiProcessHandle =
+                    Imports.OpenProcess(
+                        (int) (Imports.OpenProcessFlags.PROCESS_VM_OPERATION |
+                               Imports.OpenProcessFlags.PROCESS_VM_READ | Imports.OpenProcessFlags.PROCESS_VM_WRITE),
+                        false, omsiProcess.Id);
+            #if DEBUG
+            if (!isLocalPlugin && omsiProcessHandle == IntPtr.Zero)
+                Console.WriteLine("Couldn't open a handle to the process! Some memory operations may fail!");
+            #endif
 
-            return (true, omsiProcess);
+            return true;
         }
 
         #region Memory Writing Methods
@@ -80,6 +96,15 @@ namespace OmsiHook
         /// correct data type to avoid memory corruption</param>
         public void WriteMemory<T>(int address, T value) where T : unmanaged
         {
+            if (isLocalPlugin)
+            {
+                unsafe
+                {
+                    Unsafe.Copy((void*)address, ref value);
+                    return;
+                }
+            }
+
             var size = StructureToByteArray(value, writeBuffer.Value, 0);
 
             Imports.WriteProcessMemory((int)omsiProcessHandle, address, writeBuffer.Value, size, out _);
@@ -88,6 +113,15 @@ namespace OmsiHook
         /// <inheritdoc cref="WriteMemory{T}(int, T)"/>
         public void WriteMemory<T>(uint address, T value) where T : unmanaged
         {
+            if (isLocalPlugin)
+            {
+                unsafe
+                {
+                    Unsafe.Copy((void*)address, ref value);
+                    return;
+                }
+            }
+
             var size = StructureToByteArray(value, writeBuffer.Value, 0);
 
             Imports.WriteProcessMemory((int)omsiProcessHandle, unchecked((int)address), writeBuffer.Value, size, out _);
@@ -108,15 +142,36 @@ namespace OmsiHook
         /// correct data type to avoid memory corruption</param>
         public void WriteMemory<T>(int address, T[] values) where T : unmanaged
         {
-            if(typeof(T) == typeof(byte))
+            if (isLocalPlugin)
+            {
+                unsafe
+                {
+                    if (values is byte[] valuesBytes)
+                    {
+                        Buffer.MemoryCopy(Unsafe.AsPointer(ref MemoryMarshal.AsRef<byte>(valuesBytes.AsSpan())), (void*)address, valuesBytes.Length, valuesBytes.Length);
+                        return;
+                    }
+                    fixed (T* valuesPtr = values)
+                    {
+                        int size = sizeof(T) * values.Length;
+                        Buffer.MemoryCopy(valuesPtr, (void*)address, size, size);
+                    }
+                    return;
+                }
+            }
+
+            if (typeof(T) == typeof(byte))
+            {
                 Imports.WriteProcessMemory((int)omsiProcessHandle, address, Unsafe.As<byte[]>(values), values.Length, out _);
+                return;
+            }
 
             // Not very safe, but avoids copying memory if we don't need to
             var memory = values.AsMemory();
             using var handle = memory.Pin();
             var bytes = MemoryMarshal.AsBytes(memory.Span);
             Imports.WriteProcessMemory((int)omsiProcessHandle, address, ref MemoryMarshal.GetReference(bytes), bytes.Length, out _);
-            
+
             // Safer method
             //int tSize = Marshal.SizeOf<T>();
             //byte[] buffer = new byte[tSize * values.Length];
@@ -133,6 +188,19 @@ namespace OmsiHook
         /// <inheritdoc cref="WriteMemory{T}(int, T[])"/>
         public void WriteMemory<T>(int address, Memory<T> values) where T : unmanaged
         {
+            if (isLocalPlugin)
+            {
+                unsafe
+                { 
+                    fixed (T* valuesPtr = values.Span)
+                    {
+                        int size = sizeof(T) * values.Length;
+                        Buffer.MemoryCopy(valuesPtr, (void*)address, size, size);
+                    }
+                    return;
+                }
+            }
+
             using var handle = values.Pin();
             var bytes = MemoryMarshal.AsBytes(values.Span);
             Imports.WriteProcessMemory((int)omsiProcessHandle, address, ref MemoryMarshal.GetReference(bytes), bytes.Length, out _);
@@ -153,6 +221,15 @@ namespace OmsiHook
         /// <param name="length">Number of bytes to copy</param>
         internal void CopyMemory(int src, int dst, int length)
         {
+            if (isLocalPlugin)
+            {
+                unsafe
+                {
+                    Buffer.MemoryCopy((void*)src, (void*)dst, length, length);
+                    return;
+                }
+            }
+
             byte[] buffer = new byte[length];
             if(!Imports.ReadProcessMemory((int)omsiProcessHandle, src, buffer, length, ref length))
                 throw new MemoryAccessException($"Couldn't read {length} bytes of process memory @ {src:X}!");
@@ -163,6 +240,15 @@ namespace OmsiHook
         /// <inheritdoc cref="CopyMemory(int, int, int)"/>
         internal void CopyMemory(uint src, uint dst, int length)
         {
+            if (isLocalPlugin)
+            {
+                unsafe
+                {
+                    Buffer.MemoryCopy((void*)src, (void*)dst, length, length);
+                    return;
+                }
+            }
+
             byte[] buffer = new byte[length];
             if (!Imports.ReadProcessMemory((int)omsiProcessHandle, unchecked((int)src), buffer, length, ref length))
                 throw new MemoryAccessException($"Couldn't read {length} bytes of process memory @ {src:X}!");
@@ -404,7 +490,6 @@ namespace OmsiHook
                 refs = ReadMemory<int>(ReadMemory<int>(address) - 0x8);
 
             WriteMemory(address, AllocateString(value, wide, refs).Result);
-            //Imports.WriteProcessMemory((int)omsiProcessHandle, address, buffer, buffer.Length, out _);
         }
 
         /// <summary>
@@ -440,6 +525,14 @@ namespace OmsiHook
         /// <returns>The value of the struct/value at the given address.</returns>
         public T ReadMemory<T>(int address) where T : unmanaged
         {
+            if(isLocalPlugin)
+            {
+                unsafe
+                {
+                    return *(T*)address;
+                }
+            }
+
             int byteSize = Marshal.SizeOf(typeof(T));
             if (byteSize > readBuffer.Value.Length)
                 throw new ArgumentException($"Couldn't read memory for object of type {typeof(T).Name} @ 0x{address:X8}; it wouldn't fit in the read buffer!");
@@ -598,8 +691,16 @@ namespace OmsiHook
                 return new(buffer, 0, 0);
             if (size > buffer.Length)
                 throw new ArgumentException($"Couldn't read memory for object of type byte[] @ {offset}; it wouldn't fit in the read buffer (tried reading {size} bytes into {buffer.Length})!");
-            if (!Imports.ReadProcessMemory((int)omsiProcessHandle, offset, buffer, size, ref bytesRead))
-                throw new MemoryAccessException($"Couldn't read {size} bytes of process memory @ {offset:X}!");
+            if (isLocalPlugin)
+            {
+                Marshal.Copy((nint)offset, buffer, 0, size);
+                bytesRead = size;
+            }
+            else
+            {
+                if (!Imports.ReadProcessMemory((int)omsiProcessHandle, offset, buffer, size, ref bytesRead))
+                    throw new MemoryAccessException($"Couldn't read {size} bytes of process memory @ {offset:X}!");
+            }
 
             return new (buffer, 0, bytesRead);
         }
@@ -1099,18 +1200,19 @@ namespace OmsiHook
             int addr;
             if (fastAlloc)
             {
-                addr = Imports.VirtualAllocEx((int)omsiProcessHandle, 0, bytes, 
-                Imports.AllocationType.MEM_COMMIT | Imports.AllocationType.MEM_RESERVE, 
-                Imports.MemoryProtectionType.PAGE_READWRITE);
+                if (isLocalPlugin)
+                    addr = (int)Marshal.AllocHGlobal(bytes);
+                else
+                    addr = Imports.VirtualAllocEx((int)omsiProcessHandle, 0, bytes, 
+                        Imports.AllocationType.MEM_COMMIT | Imports.AllocationType.MEM_RESERVE, 
+                        Imports.MemoryProtectionType.PAGE_READWRITE);
             }
             else
             {
-#if !OMSI_PLUGIN
-                if (!OmsiRemoteMethods.IsInitialised)
+                if (!remoteMethods.IsInitialised)
                     throw new Exception("OmsiRemoteMethods are not initialised, remote memory allocator cannot be used!");
-#endif
 
-                addr = unchecked((int)await OmsiRemoteMethods.OmsiGetMem(bytes));
+                addr = unchecked((int)await remoteMethods.OmsiGetMem(bytes));
             }
 
             if (addr == 0)
@@ -1138,16 +1240,17 @@ namespace OmsiHook
 
             if (fastAlloc)
             {
-                Imports.VirtualFreeEx((int)omsiProcessHandle, address, 0, Imports.FreeType.MEM_RELEASE);
+                if (isLocalPlugin)
+                    Marshal.FreeHGlobal((nint)address);
+                else
+                    Imports.VirtualFreeEx((int)omsiProcessHandle, address, 0, Imports.FreeType.MEM_RELEASE);
             }
             else
             {
-#if !OMSI_PLUGIN
-                if (!OmsiRemoteMethods.IsInitialised)
+                if (!remoteMethods.IsInitialised)
                     throw new Exception("OmsiRemoteMethods are not initialised, remote memory allocator cannot be used!");
-#endif
 
-                OmsiRemoteMethods.OmsiFreeMemAsync(address);
+                remoteMethods.OmsiFreeMemAsync(address);
             }
         }
 
@@ -1155,6 +1258,14 @@ namespace OmsiHook
         public void FreeRemoteMemory(uint address, bool fastAlloc = false)
         {
             FreeRemoteMemory(unchecked((int)address), fastAlloc);
+        }
+
+        public void Dispose()
+        {
+            omsiProcess.Dispose();
+            remoteMethods.Dispose();
+            if (omsiProcessHandle != IntPtr.Zero)
+                Imports.CloseHandle(omsiProcessHandle);
         }
 
         #endregion
@@ -1166,6 +1277,8 @@ namespace OmsiHook
 
         [DllImport("kernel32.dll")]
         public static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr CloseHandle(IntPtr handle);
 
         [DllImport("kernel32.dll")]
         public static extern bool ReadProcessMemory(int hProcess, int lpBaseAddress, byte[] buffer, int size, ref int lpNumberOfBytesRead);

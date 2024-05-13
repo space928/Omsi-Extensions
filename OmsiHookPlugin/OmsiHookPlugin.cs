@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using OmsiHook;
+using static OmsiHook.D3DTexture;
 
 namespace OmsiHookPlugin
 {
@@ -11,7 +12,12 @@ namespace OmsiHookPlugin
     {
         private static OmsiHook.OmsiHook hook;
 
-        private static void Log(object msg) => File.AppendAllText("omsiHookPluginLog.txt", $"[{DateTime.Now:dd/MM/yy HH:mm:ss:ff}] {msg}\n");
+        private static void Log(object msg)
+        {
+            string msgStr = $"[{DateTime.Now:dd/MM/yy HH:mm:ss:ff}] {msg}\n";
+            File.AppendAllText("omsiHookPluginLog.txt", msgStr);
+            Console.Write(msgStr);
+        }
 
         [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) }, EntryPoint = nameof(PluginStart))]
         public static void PluginStart(IntPtr aOwner)
@@ -20,6 +26,7 @@ namespace OmsiHookPlugin
             {
                 File.Delete("omsiHookPluginLog.txt");
             } catch { }
+            AllocConsole();
             Log("PluginStart()");
             Log("Loading OmsiHook...");
             hook = new();
@@ -68,10 +75,68 @@ namespace OmsiHookPlugin
             Log("PluginFinalize()");
         }
 
+        private static D3DTexture texture;
+        private static int counter;
+
         [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) }, EntryPoint = nameof(AccessVariable))]
         public static void AccessVariable(ushort variableIndex, [C99Type("float*")] IntPtr value, [C99Type("__crt_bool*")] IntPtr writeValue)
         {
-            
+            // TEMP
+            Console.WriteLine("Update");
+
+            if (!Console.KeyAvailable)
+                return;
+
+            var lastKey = Console.ReadKey(true);
+
+            try
+            {
+                uint width = 1024, height = 1024;
+                OmsiRemoteMethods.D3DFORMAT fmt = OmsiRemoteMethods.D3DFORMAT.D3DFMT_A8R8G8B8;
+                if (null == texture)
+                {
+                    texture = hook.CreateTextureObject();
+                    texture.CreateD3DTexture(width, height, fmt, true).Wait();
+                    //_texture.InitialiseForWriting().Wait();
+
+                    var scriptTextures = hook.Globals.PlayerVehicle.ComplObjInst.ScriptTextures;
+                    foreach (var texture in scriptTextures)
+                    {
+                        Log($"  st {texture.tex}");
+                    }
+
+                    var oldTexture = scriptTextures[0];
+                    scriptTextures[0] = new() { color = oldTexture.color, tex = (IntPtr)texture.TextureAddress, TexPn = oldTexture.TexPn };
+                }
+
+                //var image = Image.Load<Rgba32>(@"D:\Program Files\OMSI 2\Vehicles\GPM_C2\Texture\envmap_unscharf.bmp");
+
+                byte[] pixels = new byte[width * height * 4];
+                int index = 0;
+                for (int y = 0; y < height; y++)
+                {
+                    for (int x = 0; x < width; x++)
+                    {
+                        //Rgba32 pixel = image[x, y];
+                        pixels[index++] = (byte)(x%256);
+                        pixels[index++] = (byte)(y%256);
+                        pixels[index++] = (byte)(((x+y+counter) %16)*16);
+                        pixels[index++] = 255;
+                    }
+                }
+                counter++;
+
+                texture.UpdateTexture(pixels.AsMemory()).Wait();
+
+                //image.Dispose();
+
+                Log("Success!");
+            }
+            catch (Exception ex)
+            {
+                Log(ex);
+            }
+            // TEMP
         }
 
         [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) }, EntryPoint = nameof(AccessTrigger))]
@@ -82,5 +147,9 @@ namespace OmsiHookPlugin
 
         [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
         public static void AccessSystemVariable(ushort variableIndex, [C99Type("float*")] IntPtr value, [C99Type("__crt_bool*")] IntPtr writeValue) { }
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool AllocConsole();
     }
 }

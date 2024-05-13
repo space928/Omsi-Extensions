@@ -24,7 +24,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DNNE" Version="1.0.30" />
+    <PackageReference Include="DNNE" Version="2.0.6" />
   </ItemGroup>
   <ItemGroup>
     <None Include="OmsiHookRPCPlugin.opl">

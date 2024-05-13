@@ -13,7 +13,7 @@
 	<DefineConstants>OMSI_PLUGIN</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="DNNE" Version="1.0.30" />
+    <PackageReference Include="DNNE" Version="2.0.6" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OmsiHook\OmsiHook.csproj" />
