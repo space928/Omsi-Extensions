@@ -10,9 +10,9 @@
 		<Description>OmsiHook is a simple library for hooking into Omsi's memory for modding.</Description>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<AssemblyVersion>2.4.4.1</AssemblyVersion>
-		<FileVersion>2.4.4.1</FileVersion>
-		<Version>2.4.4</Version>
+		<AssemblyVersion>2.5.1.1</AssemblyVersion>
+		<FileVersion>2.5.1.1</FileVersion>
+		<Version>2.5.1</Version>
 		<PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>
 		<SignAssembly>False</SignAssembly>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
