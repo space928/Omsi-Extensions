@@ -13,6 +13,10 @@ DXHook::~DXHook()
 
 BOOL DXHook::HookD3D()
 {
+    if (m_device != nullptr)
+        return TRUE;
+        //m_device->Release();
+
 	IUnknown* device = (IUnknown*)*((void**)OMSI_D3DDEVICE_PTR);
 	if (device->QueryInterface<IDirect3DDevice9>(&m_device) != S_OK)
 	{

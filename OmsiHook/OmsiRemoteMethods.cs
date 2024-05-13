@@ -14,21 +14,21 @@ namespace OmsiHook
     /// All of these methods will only work if called from a native Omsi plugin or if the OmsiHookRPCPlugin is installed.
     /// These methods also rely on OmsiHookInvoker.dll which must be in the Omsi plugins folder.
     /// </summary>
-	public static class OmsiRemoteMethods
+	public class OmsiRemoteMethods : IDisposable
 	{
-        private static NamedPipeClientStream pipeRX;
-        private static NamedPipeClientStream pipeTX;
-        private static ConcurrentDictionary<int, TaskCompletionSource<int>> resultPromises;
-        private static Task resultReaderThread;
-        private static Memory memory;
-        private static bool localPlugin;
+        private NamedPipeClientStream pipeRX;
+        private NamedPipeClientStream pipeTX;
+        private ConcurrentDictionary<int, TaskCompletionSource<int>> resultPromises;
+        private Task resultReaderThread;
+        private Memory memory;
+        private bool localPlugin;
 
-        private static readonly ThreadLocal<byte[]> asyncWriteBuff = new(() => new byte[256]);
+        private readonly ThreadLocal<byte[]> asyncWriteBuff = new(() => new byte[256]);
 
-        public static bool IsInitialised => (pipeRX?.IsConnected ?? false) && (pipeTX?.IsConnected ?? false);
+        public bool IsInitialised => localPlugin || (pipeRX?.IsConnected ?? false) && (pipeTX?.IsConnected ?? false);
 
         // TODO: Okay maybe this shouldn't be static... Singleton?
-        internal static async Task InitRemoteMethods(Memory omsiMemory, bool inifiniteTimeout = false, bool isLocalPlugin = false)
+        internal async Task InitRemoteMethods(Memory omsiMemory, bool inifiniteTimeout = false, bool isLocalPlugin = false)
         {
             memory = omsiMemory;
             localPlugin = isLocalPlugin;
@@ -60,11 +60,22 @@ namespace OmsiHook
             resultReaderThread.Start();
         }
 
+        public void Dispose()
+        {
+            if (localPlugin)
+                return;
+
+            resultReaderThread?.Dispose();
+
+            pipeRX?.Dispose();
+            pipeTX?.Dispose();
+        }
+
         /// <summary>
         /// Creates a new result promise and adds it to the promises dictionary.
         /// </summary>
         /// <returns>The hashcode of the new promise.</returns>
-        private static (int promiseHash, TaskCompletionSource<int> promise)CreateResultPromise()
+        private (int promiseHash, TaskCompletionSource<int> promise)CreateResultPromise()
         {
             TaskCompletionSource<int> resultPromise = new();
             int resultHash;
@@ -75,7 +86,7 @@ namespace OmsiHook
             return (resultHash, resultPromise);
         }
 
-        private static void ResultReaderTask()
+        private void ResultReaderTask()
         {
             using BinaryReader reader = new(pipeRX);
             while(pipeRX.IsConnected)
@@ -89,7 +100,7 @@ namespace OmsiHook
         }
 
         [Obsolete]
-        public static int MakeVehicle()
+        public int MakeVehicle()
         {
             int vehList = TTempRVListCreate(0x0074802C, 1);
             string path = @"Vehicles\GPM_MAN_LionsCity_M\MAN_A47.bus";
@@ -103,7 +114,7 @@ namespace OmsiHook
               false, true, true, mem);
         }
 
-        public static void CloseRPCSession(bool killAllConnections)
+        public void CloseRPCSession(bool killAllConnections)
         {
             if (!localPlugin)
                 return;
@@ -134,7 +145,7 @@ namespace OmsiHook
         /// <param name="tour"></param>
         /// <param name="line"></param>
         /// <returns>The index of the vehicle that was placed.</returns>
-        public static int PlaceRandomBus(int aiType = 0, int group = 1, int type = -1, bool scheduled = false, int tour = 0, int line = 0)
+        public int PlaceRandomBus(int aiType = 0, int group = 1, int type = -1, bool scheduled = false, int tour = 0, int line = 0)
         {
             if (localPlugin)
             {
@@ -179,7 +190,7 @@ namespace OmsiHook
         /// <param name="length">How many bytes to allocate</param>
         /// <returns>A pointer to the newly allocated memory (note that you made need to
         /// <c>VirtualProtect</c> it to access it).</returns>
-        public static async Task<uint> OmsiGetMem(int length)
+        public async Task<uint> OmsiGetMem(int length)
         {
             if (localPlugin)
                 return (uint)GetMem(length);
@@ -211,7 +222,7 @@ namespace OmsiHook
         /// EXPERIMENTAL: A lot of messy stuff has to work for this to not crash.
         /// </summary>
         /// <param name="addr">The pointer to the object to deallocate</param>
-        public static void OmsiFreeMemAsync(int addr)
+        public void OmsiFreeMemAsync(int addr)
         {
             if (localPlugin)
                 FreeMem(addr);
@@ -236,7 +247,7 @@ namespace OmsiHook
         /// <summary>
         /// Attempts to get the current D3D context from Omsi, required before any of the graphics methods can be called.
         /// </summary>
-        public static bool OmsiHookD3D()
+        public bool OmsiHookD3D()
         {
             if (localPlugin)
                 return HookD3D() != 0;
@@ -260,13 +271,13 @@ namespace OmsiHook
         /// <summary>
         /// Attempts to create a new d3d texture which can be shared with an external D3D context.
         /// </summary>
-        public static async Task<(HRESULT hresult, uint pTexture)> OmsiCreateTextureAsync(uint width, uint height, D3DFORMAT format)
+        public async Task<(HRESULT hresult, uint pTexture)> OmsiCreateTextureAsync(uint width, uint height, D3DFORMAT format)
         {
             if (localPlugin)
             {
                 uint ppTexture = OmsiGetMem(4).Result;
                 HRESULT hresult = (HRESULT)CreateTexture(width, height, (uint)format, ppTexture);
-                return (hresult, ppTexture);
+                return (hresult, memory.ReadMemory<uint>(ppTexture));
             }
             else
             {
@@ -307,7 +318,7 @@ namespace OmsiHook
         /// <param name="updateRect">optionally, a rectangle specifying the area to copy into</param>
         /// <returns>an HRESULT indicating the result of the operation.</returns>
         /// <exception cref="NotInitialisedException"></exception>
-        public static async Task<HRESULT> OmsiUpdateTextureAsync(uint texturePtr, uint textureDataPtr, uint width, uint height, Rectangle? updateRect = null)
+        public async Task<HRESULT> OmsiUpdateTextureAsync(uint texturePtr, uint textureDataPtr, uint width, uint height, Rectangle? updateRect = null)
         {
             if (localPlugin)
             {
@@ -348,7 +359,7 @@ namespace OmsiHook
         /// <param name="texturePtr">the pointer to the IDirect3DTexture9</param>
         /// <returns>the status of the operation.</returns>
         /// <exception cref="NotInitialisedException"></exception>
-        public static async Task<HRESULT> OmsiReleaseTextureAsync(uint texturePtr)
+        public async Task<HRESULT> OmsiReleaseTextureAsync(uint texturePtr)
         {
             if (localPlugin)
                 return (HRESULT)ReleaseTexture(texturePtr);
@@ -378,7 +389,7 @@ namespace OmsiHook
         /// <param name="texturePtr"></param>
         /// <returns></returns>
         /// <exception cref="NotInitialisedException"></exception>
-        public static async Task<(HRESULT hresult, uint width, uint height, D3DFORMAT format)> OmsiGetTextureDescAsync(uint texturePtr)
+        public async Task<(HRESULT hresult, uint width, uint height, D3DFORMAT format)> OmsiGetTextureDescAsync(uint texturePtr)
         {
             uint descPtr = unchecked((uint)await memory.AllocRemoteMemory(4 * 3, true));
             if (localPlugin)
@@ -430,7 +441,7 @@ namespace OmsiHook
         /// <param name="texturePtr"></param>
         /// <returns></returns>
         /// <exception cref="NotInitialisedException"></exception>
-        public static async Task<bool> OmsiIsTextureAsync(uint texturePtr)
+        public async Task<bool> OmsiIsTextureAsync(uint texturePtr)
         {
             if (localPlugin)
                 return !HRESULTFailed((HRESULT)IsTexture(texturePtr));
@@ -460,7 +471,7 @@ namespace OmsiHook
         /// <param name="roadVehicle">The <c>OmsiRoadVehicleInst</c> to set the trigger on</param>
         /// <param name="trigger">The name of the trigger to set</param>
         /// <param name="enabled">Whether to enable or disable the trigger</param>
-        public static async Task OmsiSetTrigger(OmsiRoadVehicleInst roadVehicle, string trigger, bool enabled)
+        public async Task OmsiSetTrigger(OmsiRoadVehicleInst roadVehicle, string trigger, bool enabled)
         {
             var triggerPtr = await memory.AllocateString(trigger);
             await OmsiSetTrigger(roadVehicle, triggerPtr, enabled);
@@ -472,7 +483,7 @@ namespace OmsiHook
         /// <param name="roadVehicle">The <c>OmsiRoadVehicleInst</c> to set the trigger on</param>
         /// <param name="triggerPtr">A pointer to an Omsi string containing the name of the trigger to set</param>
         /// <param name="enabled">Whether to enable or disable the trigger</param>
-        public static async Task OmsiSetTrigger(OmsiRoadVehicleInst roadVehicle, int triggerPtr, bool enabled)
+        public async Task OmsiSetTrigger(OmsiRoadVehicleInst roadVehicle, int triggerPtr, bool enabled)
         {
             if (localPlugin)
             {
@@ -507,7 +518,7 @@ namespace OmsiHook
         /// <param name="mapObj">The <c>OmsiComplMapObjInst</c> to trigger the sound from</param>
         /// <param name="trigger">The name of the sound pack</param>
         /// <param name="filename">The filename of the sound to play</param>
-        public static async Task OmsiSoundTrigger(OmsiComplMapObjInst mapObj, string trigger, string filename)
+        public async Task OmsiSoundTrigger(OmsiComplMapObjInst mapObj, string trigger, string filename)
         {
             var triggerPtr = memory.AllocateString(trigger);
             var filenamePtr = memory.AllocateString(filename);
@@ -521,7 +532,7 @@ namespace OmsiHook
         /// <param name="mapObj">The <c>OmsiComplMapObjInst</c> to trigger the sound from</param>
         /// <param name="triggerPtr">A pointer to an Omsi string containing the name of the sound pack</param>
         /// <param name="filenamePtr">A pointer to an Omsi string containing the filename of the sound to play</param>
-        public static async Task OmsiSoundTrigger(OmsiComplMapObjInst mapObj, int triggerPtr, int filenamePtr)
+        public async Task OmsiSoundTrigger(OmsiComplMapObjInst mapObj, int triggerPtr, int filenamePtr)
         {
             if (localPlugin)
             {

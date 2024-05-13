@@ -432,7 +432,7 @@ namespace OmsiHook
         /// <param name="enabled">Whether to enable or disable the trigger</param>
         public async void SetTrigger(string trigger, bool enabled)
         {
-            await OmsiRemoteMethods.OmsiSetTrigger(this, trigger, enabled);
+            await Memory.RemoteMethods.OmsiSetTrigger(this, trigger, enabled);
         }
     }
 }

@@ -266,7 +266,7 @@ namespace OmsiHook
         /// <inheritdoc cref="OmsiRemoteMethods.OmsiSoundTrigger(OmsiComplMapObjInst, string, string)"/>
         public async void SoundTrigger(string trigger, string filename)
         {
-            await OmsiRemoteMethods.OmsiSoundTrigger(this, trigger, filename);
+            await Memory.RemoteMethods.OmsiSoundTrigger(this, trigger, filename);
         }
     }
 }

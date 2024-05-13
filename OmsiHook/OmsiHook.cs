@@ -11,13 +11,13 @@ namespace OmsiHook
     /// Base OmsiHook class - use this to hook into OMSI's memory and access its data, all the recognised OMSI globals are defined in the Globals property. 
     /// For example usage see <seealso href="https://space928.github.io/Omsi-Extensions/articles/intro.html">our docs</seealso>.
     /// </summary>
-    public class OmsiHook
+    public class OmsiHook : IDisposable
     {
         private Memory omsiMemory;
-        private Process process;
         private OmsiGlobals globals;
         private Task stateMonitorTask;
         private bool isD3DReady;
+        private bool isLocalPlugin;
 
         /// <summary>
         /// Gets the object storing all of Omsi's global variables.
@@ -27,7 +27,12 @@ namespace OmsiHook
         /// <summary>
         /// Gets the currently hooked Omsi process.
         /// </summary>
-        public Process OmsiProcess => process;
+        public Process OmsiProcess => omsiMemory?.OmsiProcess;
+
+        /// <summary>
+        /// Gets the instance of OmsiRemoteMethods.
+        /// </summary>
+        public OmsiRemoteMethods RemoteMethods => omsiMemory?.RemoteMethods;
 
 #if DEBUG
         /// <summary>
@@ -114,7 +119,7 @@ namespace OmsiHook
             var found = false;
             while (!found)
             {
-                (found, process) = omsiMemory.Attach("omsi");
+                found = omsiMemory.Attach("omsi");
                 if (!found) {
                     if (cursorLine != int.MinValue)
                     {
@@ -125,9 +130,14 @@ namespace OmsiHook
                 }
             }
 
-            if(initialiseRemoteMethods)
+            isLocalPlugin = Process.GetCurrentProcess().ProcessName == OmsiProcess.ProcessName;
+
+            if (initialiseRemoteMethods)
             {
-                await OmsiRemoteMethods.InitRemoteMethods(omsiMemory, isLocalPlugin: Process.GetCurrentProcess().ProcessName == process.ProcessName);
+                var remoteMethods = new OmsiRemoteMethods();
+                await remoteMethods.InitRemoteMethods(omsiMemory, isLocalPlugin: isLocalPlugin);
+                omsiMemory.RemoteMethods = remoteMethods;
+                isD3DReady = remoteMethods.OmsiHookD3D();
             }
 
             stateMonitorTask = new(MonitorStateTask);
@@ -149,12 +159,17 @@ namespace OmsiHook
             return new D3DTexture(omsiMemory, 0);
         }
 
+        public void Dispose()
+        {
+            omsiMemory.Dispose();
+        }
+
         private void OmsiHook_OnMapChange(object sender, OmsiMap e)
         {
-            Task.Run(() => {
+            /*Task.Run(() => {
                 while(!isD3DReady)
                     isD3DReady = OmsiRemoteMethods.OmsiHookD3D();
-            });
+            });*/
         }
 
         private void OmsiHook_OnOmsiLostD3DContext(object sender, EventArgs e)
@@ -165,8 +180,8 @@ namespace OmsiHook
         private void OmsiHook_OnOmsiGotD3DContext(object sender, EventArgs e)
         {
             Task.Run(() => {
-                while (!isD3DReady)
-                    isD3DReady = OmsiRemoteMethods.OmsiHookD3D();
+                while (RemoteMethods.IsInitialised && !isD3DReady)
+                    isD3DReady = RemoteMethods.OmsiHookD3D();
             });
         }
 
@@ -203,7 +218,7 @@ namespace OmsiHook
         /// </summary>
         private void MonitorStateTask()
         {
-            while(!process.HasExited)
+            while(!OmsiProcess.HasExited)
             {
                 int currentD3DState = omsiMemory.ReadMemory<int>(0x008627d0);
                 if(currentD3DState != lastD3DState)
@@ -218,6 +233,9 @@ namespace OmsiHook
                 int currentMapAddr = omsiMemory.ReadMemory<int>(0x861588);
                 if (currentMapAddr != 0)
                 {
+                    if(RemoteMethods.IsInitialised && !isD3DReady) 
+                        isD3DReady = RemoteMethods.OmsiHookD3D();
+
                     int currentMapName = omsiMemory.ReadMemory<int>(currentMapAddr + 0x154);
                     bool currentMapLoaded = omsiMemory.ReadMemory<bool>(currentMapAddr + 0x120);
                     if(lastMapState != currentMapName)
