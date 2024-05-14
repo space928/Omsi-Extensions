@@ -21,6 +21,7 @@ namespace OmsiHook
 
         private uint width, height;
         private D3DFORMAT format;
+        private uint levels;
         private int stagingBufferSize;
         // private byte[] stagingBuffer;
         private uint remoteStagingBufferPtr;
@@ -42,6 +43,10 @@ namespace OmsiHook
         /// Gets the D3DFormat of the texture.
         /// </summary>
         public D3DFORMAT Format => format;
+        /// <summary>
+        /// Gets the number of mipmap levels in the texture.
+        /// </summary>
+        public uint Levels => levels;
         /// <summary>
         /// Returns true if this object is initialised.
         /// </summary>
@@ -75,19 +80,19 @@ namespace OmsiHook
             if (Address == 0)
                 throw new NullReferenceException("Texture was already null!");
 
-            var desc = await Memory.RemoteMethods.OmsiGetTextureDescAsync(address);
+            var desc = await Memory.RemoteMethods.OmsiGetTextureDescAsync(address, 0);
             if (HRESULTFailed(desc.hresult))
                 throw new Exception(desc.hresult.ToString());
 
             width = desc.width; 
             height = desc.height;
             format = desc.format;
+            levels = await Memory.RemoteMethods.OmsiGetTextureLevelCountAsync(address);
             Address = unchecked((int)address);
             stagingBufferSize = (int)width * (int)height * BitsPerPixel(format) / 8;
-            //stagingBuffer = new byte[stagingBufferSize];
-            if(initialiseForWriting)
-                remoteStagingBufferPtr = unchecked((uint)await Memory.AllocRemoteMemory(stagingBufferSize, fastAlloc: useFastAlloc));
             isCreated = true;
+            if (initialiseForWriting)
+                await InitialiseForWriting();
         }
 
         /// <summary>
@@ -111,26 +116,27 @@ namespace OmsiHook
         /// <param name="width">the width of the texture</param>
         /// <param name="height">the height of the texture</param>
         /// <param name="format">the <see cref="D3DFORMAT"/> of the texture</param>
+        /// <param name="levels">the number of mipmap levels to create</param>
         /// <param name="initialiseForWriting">whether to allow writing to this texture</param>
         /// <exception cref="Exception"></exception>
-        public async Task CreateD3DTexture(uint width, uint height, D3DFORMAT format = D3DFORMAT.D3DFMT_A8R8G8B8, bool initialiseForWriting = true)
+        public async Task CreateD3DTexture(uint width, uint height, D3DFORMAT format = D3DFORMAT.D3DFMT_A8R8G8B8, uint levels = 1, bool initialiseForWriting = true)
         {
             if(Address != 0)
                 await ReleaseTexture();
 
-            var (hresult, pTexture) = await Memory.RemoteMethods.OmsiCreateTextureAsync(width, height, format);
+            var (hresult, pTexture) = await Memory.RemoteMethods.OmsiCreateTextureAsync(width, height, format, levels);
             if (HRESULTFailed(hresult))
                 throw new Exception("Couldn't create D3D texture! Result: " + hresult);
 
             this.width = width;
             this.height = height;
             this.format = format;
+            this.levels = levels;
             Address = unchecked((int)pTexture);
             stagingBufferSize = (int)width * (int)height * BitsPerPixel(format) / 8;
-            //stagingBuffer = new byte[stagingBufferSize];
-            if (initialiseForWriting)
-                remoteStagingBufferPtr = unchecked((uint)await Memory.AllocRemoteMemory(stagingBufferSize, fastAlloc: useFastAlloc));
             isCreated = true;
+            if (initialiseForWriting)
+                await InitialiseForWriting();
         }
 
         /// <summary>
@@ -157,24 +163,29 @@ namespace OmsiHook
         /// <summary>
         /// Updates the contents of the <c>IDirect3DTexture9</c> object from a buffer.
         /// </summary>
+        /// <remarks>
+        /// This method can cause crashes if the texture becomes invalidated by Omsi. This can in certain circumstances 
+        /// happen if the script texture is updated in OmsiScript.
+        /// </remarks>
         /// <typeparam name="T">The pixel element type</typeparam>
         /// <param name="textureData">a buffer of memory containing the new texture data layed out sequentially in row-major order</param>
         /// <param name="updateArea">optionally, a rectangle specifying the area of the texture to update; the <paramref name="textureData"/> 
         /// must match the size of this rectangle; pass in <see langword="null"/> to update the whole texture</param>
+        /// <param name="level">optionally, the mipmap level to update</param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <exception cref="Exception"></exception>
-        public async Task UpdateTexture<T>(Memory<T> textureData, Rectangle? updateArea = null) where T : unmanaged
+        public async Task UpdateTexture<T>(Memory<T> textureData, Rectangle? updateArea = null, uint level = 0) where T : unmanaged
         {
             if (!Memory.RemoteMethods.IsInitialised || remoteStagingBufferPtr == 0)
                 throw new NotInitialisedException("D3DTexture object must be initialised for write before it can be updated! ");
-            if((textureData.Length * Marshal.SizeOf<T>()) > stagingBufferSize)
+            if((textureData.Length * Unsafe.SizeOf<T>()) > stagingBufferSize)
                 throw new ArgumentOutOfRangeException(nameof(textureData));
             Memory.WriteMemory(remoteStagingBufferPtr, textureData);
 
             uint dataWidth = (updateArea?.right - updateArea?.left) ?? width;
             uint dataHeight = (updateArea?.bottom - updateArea?.top) ?? height;
 
-            HRESULT hr = await Memory.RemoteMethods.OmsiUpdateTextureAsync(TextureAddress, remoteStagingBufferPtr, dataWidth, dataHeight, updateArea);
+            HRESULT hr = await Memory.RemoteMethods.OmsiUpdateTextureAsync(TextureAddress, remoteStagingBufferPtr, dataWidth, dataHeight, updateArea, level);
             if (HRESULTFailed(hr))
                 throw new Exception("Couldn't update D3D texture! Result: " + hr);
         }

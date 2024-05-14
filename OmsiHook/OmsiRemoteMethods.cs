@@ -15,7 +15,7 @@ namespace OmsiHook
     /// These methods also rely on OmsiHookInvoker.dll which must be in the Omsi plugins folder.
     /// </summary>
 	public class OmsiRemoteMethods : IDisposable
-	{
+    {
         private NamedPipeClientStream pipeRX;
         private NamedPipeClientStream pipeTX;
         private ConcurrentDictionary<int, TaskCompletionSource<int>> resultPromises;
@@ -49,7 +49,7 @@ namespace OmsiHook
                 await pipeRX.ConnectAsync(inifiniteTimeout ? Timeout.Infinite : 20000);
                 Console.WriteLine("pipeRX Connected!");
             }
-            catch(TimeoutException)
+            catch (TimeoutException)
             {
                 pipeRX = null;
                 pipeTX = null;
@@ -65,6 +65,9 @@ namespace OmsiHook
             if (localPlugin)
                 return;
 
+            if (IsInitialised)
+                CloseRPCSession(false).Wait();
+
             resultReaderThread?.Dispose();
 
             pipeRX?.Dispose();
@@ -75,7 +78,7 @@ namespace OmsiHook
         /// Creates a new result promise and adds it to the promises dictionary.
         /// </summary>
         /// <returns>The hashcode of the new promise.</returns>
-        private (int promiseHash, TaskCompletionSource<int> promise)CreateResultPromise()
+        private (int promiseHash, TaskCompletionSource<int> promise) CreateResultPromise()
         {
             TaskCompletionSource<int> resultPromise = new();
             int resultHash;
@@ -88,14 +91,22 @@ namespace OmsiHook
 
         private void ResultReaderTask()
         {
-            using BinaryReader reader = new(pipeRX);
-            while(pipeRX.IsConnected)
+            try
             {
-                int promiseHash = reader.ReadInt32();
-                int value = reader.ReadInt32();
+                using BinaryReader reader = new(pipeRX);
+                while (pipeRX.IsConnected)
+                {
+                    int promiseHash = reader.ReadInt32();
+                    int value = reader.ReadInt32();
 
-                if(resultPromises.TryRemove(promiseHash, out var promise))
-                    promise.SetResult(value);
+                    if (resultPromises.TryRemove(promiseHash, out var promise))
+                        promise.SetResult(value);
+                }
+            } catch
+            {
+                // TODO: This shouldn't really fail silently if it isn't meant to
+                //       but closing the RPC session results in ReadInt32 throwing
+                //       an exception, so we should catch that...
             }
         }
 
@@ -114,7 +125,7 @@ namespace OmsiHook
               false, true, true, mem);
         }
 
-        public void CloseRPCSession(bool killAllConnections)
+        public async Task CloseRPCSession(bool killAllConnections)
         {
             if (!localPlugin)
                 return;
@@ -123,14 +134,16 @@ namespace OmsiHook
 
             int argPos = 0;
             var method = OmsiHookRPCMethods.RemoteMethod.CloseRPCConnection;
-            Span<byte> writeBuffer = stackalloc byte[OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8];
-            //Span<byte> readBuffer = stackalloc byte[4];
-            //(int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
-            BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)method);
-            BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], 0);
-            BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], killAllConnections?1:0);
+            //Span<byte> writeBuffer = stackalloc byte[OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8];
+            int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
+            byte[] writeBuffer = asyncWriteBuff.Value;
+            (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos)..], (int)method);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], 0);
+            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], killAllConnections ? 1 : 0);
             lock (pipeTX)
-                pipeTX.Write(writeBuffer);
+                pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+            await promise.Task;
             // promise.Task.Wait();
         }
 
@@ -271,12 +284,12 @@ namespace OmsiHook
         /// <summary>
         /// Attempts to create a new d3d texture which can be shared with an external D3D context.
         /// </summary>
-        public async Task<(HRESULT hresult, uint pTexture)> OmsiCreateTextureAsync(uint width, uint height, D3DFORMAT format)
+        public async Task<(HRESULT hresult, uint pTexture)> OmsiCreateTextureAsync(uint width, uint height, D3DFORMAT format, uint levels = 1)
         {
             if (localPlugin)
             {
                 uint ppTexture = OmsiGetMem(4).Result;
-                HRESULT hresult = (HRESULT)CreateTexture(width, height, (uint)format, ppTexture);
+                HRESULT hresult = (HRESULT)CreateTexture(width, height, (uint)format, levels, ppTexture);
                 return (hresult, memory.ReadMemory<uint>(ppTexture));
             }
             else
@@ -299,6 +312,7 @@ namespace OmsiHook
                 BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], width);
                 BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], height);
                 BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], (uint)format);
+                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], levels);
                 BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], ppTexture);
                 lock (pipeTX)
                     pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
@@ -316,16 +330,18 @@ namespace OmsiHook
         /// <param name="width">the width of the texture data to copy</param>
         /// <param name="height">the height of the texture data to copy</param>
         /// <param name="updateRect">optionally, a rectangle specifying the area to copy into</param>
+        /// <param name="level">optionally, the mip-map level of the texture to update</param>
         /// <returns>an HRESULT indicating the result of the operation.</returns>
         /// <exception cref="NotInitialisedException"></exception>
-        public async Task<HRESULT> OmsiUpdateTextureAsync(uint texturePtr, uint textureDataPtr, uint width, uint height, Rectangle? updateRect = null)
+        public async Task<HRESULT> OmsiUpdateTextureAsync(uint texturePtr, uint textureDataPtr, uint width, uint height, Rectangle? updateRect = null, uint level = 0)
         {
             if (localPlugin)
             {
                 return (HRESULT)UpdateSubresource(texturePtr, textureDataPtr, width, height,
-                    updateRect.HasValue ? 1 : 0, updateRect?.left ?? 0, updateRect?.top ?? 0, updateRect?.right ?? 0, updateRect?.bottom ?? 0);
-            } 
-            else 
+                    updateRect.HasValue ? 1 : 0, updateRect?.left ?? 0, updateRect?.top ?? 0, updateRect?.right ?? 0, updateRect?.bottom ?? 0,
+                    level);
+            }
+            else
             {
                 if (!IsInitialised)
                     throw new NotInitialisedException("OmsiHook RPC plugin is not connected! Did you make sure to call OmsiRemoteMethods.InitRemoteMethods() before this call?");
@@ -347,6 +363,7 @@ namespace OmsiHook
                 BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], updateRect?.top ?? 0);
                 BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], updateRect?.right ?? 0);
                 BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], updateRect?.bottom ?? 0);
+                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], level);
                 lock (pipeTX)
                     pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
                 return (HRESULT)await promise.Task;
@@ -386,15 +403,16 @@ namespace OmsiHook
         /// <summary>
         /// Gets the description of an IDirect3DTexture9 object.
         /// </summary>
-        /// <param name="texturePtr"></param>
+        /// <param name="texturePtr">the pointer to the IDirect3DTexture9</param>
+        /// <param name="level">the mip-map index to get the description of</param>
         /// <returns></returns>
         /// <exception cref="NotInitialisedException"></exception>
-        public async Task<(HRESULT hresult, uint width, uint height, D3DFORMAT format)> OmsiGetTextureDescAsync(uint texturePtr)
+        public async Task<(HRESULT hresult, uint width, uint height, D3DFORMAT format)> OmsiGetTextureDescAsync(uint texturePtr, uint level)
         {
             uint descPtr = unchecked((uint)await memory.AllocRemoteMemory(4 * 3, true));
             if (localPlugin)
             {
-                HRESULT res = (HRESULT)GetTextureDesc(texturePtr, descPtr, descPtr + 4, descPtr + 8);
+                HRESULT res = (HRESULT)GetTextureDesc(texturePtr, level, descPtr, descPtr + 4, descPtr + 8);
 
                 uint width = memory.ReadMemory<uint>(descPtr);
                 uint height = memory.ReadMemory<uint>(descPtr + 4);
@@ -417,6 +435,7 @@ namespace OmsiHook
                 BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos)..], (int)method);
                 BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], resultPromise);
                 BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], texturePtr);
+                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], level);
                 BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], descPtr);
                 BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], descPtr + 4);
                 BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], descPtr + 8);
@@ -430,6 +449,36 @@ namespace OmsiHook
                 memory.FreeRemoteMemory(descPtr, true);
 
                 return (res, width, height, format);
+            }
+        }
+
+        /// <summary>
+        /// Gets the number of mipmap levels in an IDirect3DTexture9.
+        /// </summary>
+        /// <param name="texturePtr"></param>
+        /// <returns>The number of mipmap levels in the given texture.</returns>
+        /// <exception cref="NotInitialisedException"></exception>
+        public async Task<uint> OmsiGetTextureLevelCountAsync(uint texturePtr)
+        {
+            if (localPlugin)
+                return GetTextureLevelCount(texturePtr);
+            else
+            {
+                if (!IsInitialised)
+                    throw new NotInitialisedException("OmsiHook RPC plugin is not connected! Did you make sure to call OmsiRemoteMethods.InitRemoteMethods() before this call?");
+
+                int argPos = 0;
+                var method = OmsiHookRPCMethods.RemoteMethod.GetTextureLevelCount;
+                // This should be thread safe as the asyncWriteBuff is thread local
+                int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
+                byte[] writeBuffer = asyncWriteBuff.Value;
+                (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
+                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos)..], (int)method);
+                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], resultPromise);
+                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], texturePtr);
+                lock (pipeTX)
+                    pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                return unchecked((uint)await promise.Task);
             }
         }
 
@@ -487,7 +536,7 @@ namespace OmsiHook
         {
             if (localPlugin)
             {
-                RVTriggerXML(roadVehicle.Address, triggerPtr, enabled?1:0);
+                RVTriggerXML(roadVehicle.Address, triggerPtr, enabled ? 1 : 0);
                 return;
             }
             else
@@ -580,13 +629,15 @@ namespace OmsiHook
         [DllImport("OmsiHookInvoker.dll")]
         private static extern int HookD3D();
         [DllImport("OmsiHookInvoker.dll")]
-        private static extern int CreateTexture(uint Width, uint Height, uint Format, uint ppTexture);
+        private static extern int CreateTexture(uint Width, uint Height, uint Format, uint Levels, uint ppTexture);
         [DllImport("OmsiHookInvoker.dll")]
-        private static extern int UpdateSubresource(uint Texture, uint TextureData, uint Width, uint Height, int UseRect, uint Left, uint Top, uint Right, uint Bottom);
+        private static extern int UpdateSubresource(uint Texture, uint TextureData, uint Width, uint Height, int UseRect, uint Left, uint Top, uint Right, uint Bottom, uint Level);
         [DllImport("OmsiHookInvoker.dll")]
         private static extern int ReleaseTexture(uint Texture);
         [DllImport("OmsiHookInvoker.dll")]
-        private static extern int GetTextureDesc(uint Texture, uint pWidth, uint pHeight, uint pFormat);
+        private static extern int GetTextureDesc(uint Texture, uint Level, uint pWidth, uint pHeight, uint pFormat);
+        [DllImport("OmsiHookInvoker.dll")]
+        private static extern uint GetTextureLevelCount(uint Texture);
         [DllImport("OmsiHookInvoker.dll")]
         private static extern int IsTexture(uint Texture);
         [DllImport("OmsiHookInvoker.dll")]

@@ -14,13 +14,15 @@ public:
 
 	BOOL HookD3D();
 
-	HRESULT CreateTexture(UINT Width, UINT Height, D3DFORMAT Format, IDirect3DTexture9** ppTexture);
+	HRESULT CreateTexture(UINT Width, UINT Height, D3DFORMAT Format, UINT Levels, IDirect3DTexture9** ppTexture);
 
-	HRESULT UpdateSubresource(IDirect3DTexture9* Texture, UINT8* TextureData, UINT Width, UINT Height, BOOL UseRect, LONG32 Left, LONG32 Top, LONG32 Right, LONG32 Bottom);
+	HRESULT UpdateSubresource(IDirect3DTexture9* Texture, UINT8* TextureData, UINT Width, UINT Height, BOOL UseRect, LONG32 Left, LONG32 Top, LONG32 Right, LONG32 Bottom, UINT Level);
 
 	static HRESULT ReleaseTexture(IDirect3DTexture9* Texture);
 
-	static HRESULT GetTextureDesc(IDirect3DTexture9* Texture, UINT* pWidth, UINT* pHeight, UINT* pFormat);
+	static HRESULT GetTextureDesc(IDirect3DTexture9* Texture, UINT Level, UINT* pWidth, UINT* pHeight, UINT* pFormat);
+
+	static UINT GetTextureLevelCount(IDirect3DTexture9* Texture);
 
 	static HRESULT IsTexture(IUnknown* Texture);
 

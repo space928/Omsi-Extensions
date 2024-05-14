@@ -100,6 +100,16 @@ namespace OmsiHook
             {
                 unsafe
                 {
+                    if (address == 0)
+#if DEBUG && SILENCE_ACCESS_VIOLATION
+                    {
+                        Debug.WriteLine($"Couldn't write {byteSize} bytes of process memory @ 0x{address:X8}!\n{new System.Diagnostics.StackTrace(true)}");
+                        return;
+                    }
+#else
+
+                        throw new MemoryAccessException($"Couldn't write {sizeof(T)} bytes of process memory @ 0x{address:X8}!");
+#endif
                     Unsafe.Copy((void*)address, ref value);
                     return;
                 }
@@ -117,6 +127,17 @@ namespace OmsiHook
             {
                 unsafe
                 {
+                    if (address == 0)
+#if DEBUG && SILENCE_ACCESS_VIOLATION
+                    {
+                        Debug.WriteLine($"Couldn't write {byteSize} bytes of process memory @ 0x{address:X8}!\n{new System.Diagnostics.StackTrace(true)}");
+                        return;
+                    }
+#else
+
+                        throw new MemoryAccessException($"Couldn't write {sizeof(T)} bytes of process memory @ 0x{address:X8}!");
+#endif
+
                     Unsafe.Copy((void*)address, ref value);
                     return;
                 }
@@ -142,10 +163,24 @@ namespace OmsiHook
         /// correct data type to avoid memory corruption</param>
         public void WriteMemory<T>(int address, T[] values) where T : unmanaged
         {
+            if (values == null)
+                return;
+
             if (isLocalPlugin)
             {
                 unsafe
                 {
+                    if (address == 0)
+#if DEBUG && SILENCE_ACCESS_VIOLATION
+                    {
+                        Debug.WriteLine($"Couldn't write {byteSize} bytes of process memory @ 0x{address:X8}!\n{new System.Diagnostics.StackTrace(true)}");
+                        return;
+                    }
+#else
+
+                        throw new MemoryAccessException($"Couldn't write {sizeof(T) * values.Length} bytes of process memory @ 0x{address:X8}!");
+#endif
+
                     if (values is byte[] valuesBytes)
                     {
                         Buffer.MemoryCopy(Unsafe.AsPointer(ref MemoryMarshal.AsRef<byte>(valuesBytes.AsSpan())), (void*)address, valuesBytes.Length, valuesBytes.Length);
@@ -188,10 +223,24 @@ namespace OmsiHook
         /// <inheritdoc cref="WriteMemory{T}(int, T[])"/>
         public void WriteMemory<T>(int address, Memory<T> values) where T : unmanaged
         {
+            if (values.IsEmpty)
+                return;
+
             if (isLocalPlugin)
             {
                 unsafe
-                { 
+                {
+                    if(address == 0)
+#if DEBUG && SILENCE_ACCESS_VIOLATION
+                    {
+                        Debug.WriteLine($"Couldn't write {byteSize} bytes of process memory @ 0x{address:X8}!\n{new System.Diagnostics.StackTrace(true)}");
+                        return;
+                    }
+#else
+
+                    throw new MemoryAccessException($"Couldn't write {sizeof(T) * values.Length} bytes of process memory @ 0x{address:X8}!");
+#endif
+
                     fixed (T* valuesPtr = values.Span)
                     {
                         int size = sizeof(T) * values.Length;
@@ -225,6 +274,9 @@ namespace OmsiHook
             {
                 unsafe
                 {
+                    if (src == 0 || dst == 0)
+                        throw new MemoryAccessException($"Couldn't copy {length} bytes of process memory from 0x{src:X8} to 0x{dst:X8}!");
+
                     Buffer.MemoryCopy((void*)src, (void*)dst, length, length);
                     return;
                 }
@@ -232,9 +284,9 @@ namespace OmsiHook
 
             byte[] buffer = new byte[length];
             if(!Imports.ReadProcessMemory((int)omsiProcessHandle, src, buffer, length, ref length))
-                throw new MemoryAccessException($"Couldn't read {length} bytes of process memory @ {src:X}!");
+                throw new MemoryAccessException($"Couldn't read {length} bytes of process memory @ 0x{src:X8}!");
             if(!Imports.WriteProcessMemory((int)omsiProcessHandle, dst, buffer, length, out _))
-                throw new MemoryAccessException($"Couldn't write {length} bytes to process memory @ {dst:X}!");
+                throw new MemoryAccessException($"Couldn't write {length} bytes to process memory @ 0x{dst:X8}!");
         }
 
         /// <inheritdoc cref="CopyMemory(int, int, int)"/>
@@ -244,6 +296,9 @@ namespace OmsiHook
             {
                 unsafe
                 {
+                    if (src == 0 || dst == 0)
+                        throw new MemoryAccessException($"Couldn't copy {length} bytes of process memory from 0x{src:X8} to 0x{dst:X8}!");
+
                     Buffer.MemoryCopy((void*)src, (void*)dst, length, length);
                     return;
                 }
@@ -251,9 +306,9 @@ namespace OmsiHook
 
             byte[] buffer = new byte[length];
             if (!Imports.ReadProcessMemory((int)omsiProcessHandle, unchecked((int)src), buffer, length, ref length))
-                throw new MemoryAccessException($"Couldn't read {length} bytes of process memory @ {src:X}!");
+                throw new MemoryAccessException($"Couldn't read {length} bytes of process memory @ 0x{src:X8}!");
             if (!Imports.WriteProcessMemory((int)omsiProcessHandle, unchecked((int)dst), buffer, length, out _))
-                throw new MemoryAccessException($"Couldn't write {length} bytes to process memory @ {dst:X}!");
+                throw new MemoryAccessException($"Couldn't write {length} bytes to process memory @ 0x{dst:X8}!");
         }
 
         /// <summary>
@@ -529,6 +584,16 @@ namespace OmsiHook
             {
                 unsafe
                 {
+                    if (address == 0)
+#if DEBUG && SILENCE_ACCESS_VIOLATION
+                    {
+                        Debug.WriteLine($"Couldn't read {byteSize} bytes of process memory @ 0x{address:X8}!\n{new System.Diagnostics.StackTrace(true)}");
+                        return new T();
+                    }
+#else
+
+                        throw new MemoryAccessException($"Couldn't read {sizeof(T)} bytes of process memory @ 0x{address:X8}!");
+#endif
                     return *(T*)address;
                 }
             }
@@ -693,13 +758,16 @@ namespace OmsiHook
                 throw new ArgumentException($"Couldn't read memory for object of type byte[] @ {offset}; it wouldn't fit in the read buffer (tried reading {size} bytes into {buffer.Length})!");
             if (isLocalPlugin)
             {
+                if(offset == 0)
+                    throw new MemoryAccessException($"Couldn't read {size} bytes of process memory @ 0x{offset:X8}!");
+
                 Marshal.Copy((nint)offset, buffer, 0, size);
                 bytesRead = size;
             }
             else
             {
                 if (!Imports.ReadProcessMemory((int)omsiProcessHandle, offset, buffer, size, ref bytesRead))
-                    throw new MemoryAccessException($"Couldn't read {size} bytes of process memory @ {offset:X}!");
+                    throw new MemoryAccessException($"Couldn't read {size} bytes of process memory @ 0x{offset:X8}!");
             }
 
             return new (buffer, 0, bytesRead);

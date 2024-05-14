@@ -291,6 +291,7 @@ namespace OmsiHookRPCPlugin
                         BitConverter.ToUInt32(methodData.args, argInd),
                         BitConverter.ToUInt32(methodData.args, argInd += 4),
                         BitConverter.ToUInt32(methodData.args, argInd += 4),
+                        BitConverter.ToUInt32(methodData.args, argInd += 4),
                         BitConverter.ToUInt32(methodData.args, argInd += 4)
                     );
                     break;
@@ -301,6 +302,7 @@ namespace OmsiHookRPCPlugin
                         BitConverter.ToUInt32(methodData.args, argInd += 4),
                         BitConverter.ToUInt32(methodData.args, argInd += 4),
                         BitConverter.ToInt32(methodData.args, argInd += 4),
+                        BitConverter.ToUInt32(methodData.args, argInd += 4),
                         BitConverter.ToUInt32(methodData.args, argInd += 4),
                         BitConverter.ToUInt32(methodData.args, argInd += 4),
                         BitConverter.ToUInt32(methodData.args, argInd += 4),
@@ -317,8 +319,14 @@ namespace OmsiHookRPCPlugin
                         BitConverter.ToUInt32(methodData.args, argInd),
                         BitConverter.ToUInt32(methodData.args, argInd += 4),
                         BitConverter.ToUInt32(methodData.args, argInd += 4),
+                        BitConverter.ToUInt32(methodData.args, argInd += 4),
                         BitConverter.ToUInt32(methodData.args, argInd += 4)
                         );
+                    break;
+                case RemoteMethod.GetTextureLevelCount:
+                    ret = unchecked((int)NativeImports.GetTextureLevelCount(
+                        BitConverter.ToUInt32(methodData.args, argInd)
+                    ));
                     break;
                 case RemoteMethod.IsTexture:
                     ret = NativeImports.IsTexture(

@@ -35,7 +35,7 @@ BOOL DXHook::HookD3D()
 	return TRUE;
 }
 
-HRESULT DXHook::CreateTexture(UINT Width, UINT Height, D3DFORMAT Format, IDirect3DTexture9** ppTexture)
+HRESULT DXHook::CreateTexture(UINT Width, UINT Height, D3DFORMAT Format, UINT Levels, IDirect3DTexture9** ppTexture)
 {
 	if (!m_device)
 		return OHERR_NOD3DDEVICE; 
@@ -45,17 +45,17 @@ HRESULT DXHook::CreateTexture(UINT Width, UINT Height, D3DFORMAT Format, IDirect
 	// Shared handle is only supported with D3D9Ex sadly:
 	// https://www.gamedev.net/forums/topic/638495-shared-resources-eg-textures-between-devicesthreads/5030524/
 	
-	return m_device->CreateTexture(Width, Height, 1, D3DUSAGE_DYNAMIC, Format, D3DPOOL_DEFAULT, ppTexture, NULL);
+	return m_device->CreateTexture(Width, Height, Levels, D3DUSAGE_DYNAMIC, Format, D3DPOOL_DEFAULT, ppTexture, NULL);
 }
 
-HRESULT DXHook::UpdateSubresource(IDirect3DTexture9* Texture, UINT8* TextureData, UINT Width, UINT Height, BOOL UseRect, LONG32 Left, LONG32 Top, LONG32 Right, LONG32 Bottom)
+HRESULT DXHook::UpdateSubresource(IDirect3DTexture9* Texture, UINT8* TextureData, UINT Width, UINT Height, BOOL UseRect, LONG32 Left, LONG32 Top, LONG32 Right, LONG32 Bottom, UINT Level)
 {
 	// Check the arguments, users can never be trusted and this is annoying to debug...
 	if (Texture == nullptr || TextureData == nullptr)
 		return OHERR_TEXTURENULL;
 
     D3DSURFACE_DESC desc;
-    CHECK_FAILURE_RETURN(Texture->GetLevelDesc(0, &desc));
+    CHECK_FAILURE_RETURN(Texture->GetLevelDesc(Level, &desc));
 	/*IDirect3D9* d3d;
 	CHECK_FAILURE_RETURN(m_device->GetDirect3D(&d3d));
 	D3DDISPLAYMODE displayMode;
@@ -76,7 +76,7 @@ HRESULT DXHook::UpdateSubresource(IDirect3DTexture9* Texture, UINT8* TextureData
 		Bottom
 	};
 	D3DLOCKED_RECT lockedRect;
-	CHECK_FAILURE_RETURN(Texture->LockRect(0, &lockedRect, UseRect ? &rect : NULL, 0));
+	CHECK_FAILURE_RETURN(Texture->LockRect(Level, &lockedRect, UseRect ? &rect : NULL, 0));
 
     int bpp = BitsPerPixel(desc.Format) / 8;
 	for (UINT y = 0; y < Height; y++)
@@ -85,7 +85,7 @@ HRESULT DXHook::UpdateSubresource(IDirect3DTexture9* Texture, UINT8* TextureData
 		memcpy(dst, (TextureData + y * Width * bpp), Width * bpp);
 	}
 
-	CHECK_FAILURE_RETURN(Texture->UnlockRect(0));
+	CHECK_FAILURE_RETURN(Texture->UnlockRect(Level));
 
 	return S_OK;
 }
@@ -97,16 +97,26 @@ HRESULT DXHook::ReleaseTexture(IDirect3DTexture9* Texture)
     return Texture->Release();
 }
 
-HRESULT DXHook::GetTextureDesc(IDirect3DTexture9* Texture, UINT* pWidth, UINT* pHeight, UINT* pFormat)
+HRESULT DXHook::GetTextureDesc(IDirect3DTexture9* Texture, UINT Level, UINT* pWidth, UINT* pHeight, UINT* pFormat)
 {
     if (Texture == nullptr)
         return OHERR_TEXTURENULL;
+    if (Level >= Texture->GetLevelCount())
+        return OHERR_TEXTURENULL;
+
     D3DSURFACE_DESC desc;
-    CHECK_FAILURE_RETURN(Texture->GetLevelDesc(0, &desc));
+    CHECK_FAILURE_RETURN(Texture->GetLevelDesc(Level, &desc));
     *pWidth = desc.Width;
     *pHeight = desc.Height;
     *pFormat = desc.Format;
     return S_OK;
+}
+
+UINT DXHook::GetTextureLevelCount(IDirect3DTexture9* Texture)
+{
+    if (Texture == nullptr)
+        return 0;
+    return Texture->GetLevelCount();
 }
 
 HRESULT DXHook::IsTexture(IUnknown* Texture)

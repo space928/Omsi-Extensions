@@ -204,9 +204,21 @@ namespace OmsiHook
         [Obsolete("This API will be replaced once TMyOMSIList is wrapped!")]
         private int GetListItem(int addr, int index)
         {
+            if (index < 0)
+                return 0;
             try
             {
-                return omsiMemory.ReadMemory<int>(omsiMemory.ReadMemory<int>(omsiMemory.ReadMemory<int>(omsiMemory.ReadMemory<int>(addr) + 0x28) + 0x4) + index * 4);
+                int l = omsiMemory.ReadMemory<int>(addr);
+                if (l == 0)
+                    return 0;
+                int l1 = omsiMemory.ReadMemory<int>(l + 0x28);
+                if (l1 == 0)
+                    return 0;
+                int l2 = omsiMemory.ReadMemory<int>(l1 + 0x4);
+                if (l2 == 0)
+                    return 0;
+                int item = omsiMemory.ReadMemory<int>(l2 + index * 4);
+                return item;
             } catch
             {
                 return 0;
@@ -218,10 +230,10 @@ namespace OmsiHook
         /// </summary>
         private void MonitorStateTask()
         {
-            while(!OmsiProcess.HasExited)
+            while (isLocalPlugin || !OmsiProcess.HasExited)
             {
                 int currentD3DState = omsiMemory.ReadMemory<int>(0x008627d0);
-                if(currentD3DState != lastD3DState)
+                if (currentD3DState != lastD3DState)
                 {
                     if (currentD3DState != 0)
                         OnOmsiGotD3DContext?.Invoke(this, new());
@@ -233,24 +245,26 @@ namespace OmsiHook
                 int currentMapAddr = omsiMemory.ReadMemory<int>(0x861588);
                 if (currentMapAddr != 0)
                 {
-                    if(RemoteMethods.IsInitialised && !isD3DReady) 
+                    if (RemoteMethods.IsInitialised && !isD3DReady) 
                         isD3DReady = RemoteMethods.OmsiHookD3D();
 
                     int currentMapName = omsiMemory.ReadMemory<int>(currentMapAddr + 0x154);
                     bool currentMapLoaded = omsiMemory.ReadMemory<bool>(currentMapAddr + 0x120);
-                    if(lastMapState != currentMapName)
+                    if (lastMapState != currentMapName)
                     {
-                        if(currentMapName != 0)
+                        if (currentMapName != 0)
                             OnMapChange?.Invoke(this, Globals.Map);
                         lastMapState = currentMapName;
                     }
-                    if(lastMapLoaded != currentMapLoaded)
+                    if (lastMapLoaded != currentMapLoaded)
                     {
                         OnMapLoaded?.Invoke(this, currentMapLoaded);
                         lastMapLoaded = currentMapLoaded;
                     }
                 }
+#pragma warning disable CS0618 // Type or member is obsolete
                 var vehPtr = GetListItem(0x00861508, omsiMemory.ReadMemory<int>(0x00861740));
+#pragma warning restore CS0618 // Type or member is obsolete
                 if (vehPtr != lastVehiclePtr)
                 {
                     lastVehiclePtr = vehPtr;
