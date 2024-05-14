@@ -166,10 +166,10 @@ namespace OmsiHook
 
         private void OmsiHook_OnMapChange(object sender, OmsiMap e)
         {
-            /*Task.Run(() => {
-                while(!isD3DReady)
-                    isD3DReady = OmsiRemoteMethods.OmsiHookD3D();
-            });*/
+            Task.Run(() => {
+                while(RemoteMethods.IsInitialised && !isD3DReady)
+                    isD3DReady = RemoteMethods.OmsiHookD3D();
+            });
         }
 
         private void OmsiHook_OnOmsiLostD3DContext(object sender, EventArgs e)
