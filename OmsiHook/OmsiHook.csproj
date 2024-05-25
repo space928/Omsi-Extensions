@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0-windows</TargetFramework>
+		<TargetFramework>net8.0-windows</TargetFramework>
 		<Authors>Thomas Mathieson et al</Authors>
 		<Copyright>Copyright Thomas Mathieson 2022-2024 all rights reserved</Copyright>
 		<PackageProjectUrl>https://github.com/space928/Omsi-Extensions</PackageProjectUrl>
@@ -62,15 +62,10 @@
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
-		<!--<None Include="..\OmsiHook\bin\x86\$(_ConfigurationNormalized)\$(TargetFramework)\OmsiHook.deps.json" Link="OmsiHook.deps.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<Pack>True</Pack>
-			<PackagePath>\lib\net6.0-windows7.0</PackagePath>
-		</None>-->
 		<None Include="..\$(_ConfigurationNormalized)\OmsiHookInvoker.dll" Link="OmsiHookInvoker.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Pack>True</Pack>
-			<PackagePath>\lib\net6.0-windows7.0</PackagePath>
+			<PackagePath>\lib\net8.0</PackagePath>
 		</None>
 		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(_ConfigurationNormalized)\$(TargetFramework)\OmsiHookRPCPlugin.dll" Link="OmsiHookRPCPlugin.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -85,17 +80,17 @@
 		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(_ConfigurationNormalized)\$(TargetFramework)\OmsiHookRPCPlugin.runtimeconfig.json" Link="OmsiHookRPCPlugin.runtimeconfig.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Pack>True</Pack>
-			<PackagePath>\lib\net6.0-windows7.0</PackagePath>
+			<PackagePath>\lib\net8.0</PackagePath>
 		</None>
 		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(_ConfigurationNormalized)\$(TargetFramework)\OmsiHookRPCPluginNE.dll" Link="OmsiHookRPCPluginNE.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Pack>True</Pack>
-			<PackagePath>\lib\net6.0-windows7.0</PackagePath>
+			<PackagePath>\lib\net8.0</PackagePath>
 		</None>
 		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(_ConfigurationNormalized)\$(TargetFramework)\OmsiHookRPCPlugin.opl" Link="OmsiHookRPCPlugin.opl">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Pack>True</Pack>
-			<PackagePath>\lib\net6.0-windows7.0</PackagePath>
+			<PackagePath>\lib\net8.0</PackagePath>
 		</None>
 	</ItemGroup>
 	
@@ -118,6 +113,11 @@
 		  <Private>True</Private>
 		  <CopyLocalSatelliteAssemblies>True</CopyLocalSatelliteAssemblies>
 		</ProjectReference>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<AssemblyVersion>2.5.3.1</AssemblyVersion>
+		<FileVersion>2.5.3.1</FileVersion>
+		<Version>2.5.3</Version>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 	</ItemGroup>
 
 	<!--Hack to fix docfx build bug... For some reason sometimes docfx tries to load the wrong version of System.Memory.dll; as 
