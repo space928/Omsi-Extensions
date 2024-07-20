@@ -110,19 +110,97 @@ namespace OmsiHook
             }
         }
 
-        [Obsolete]
-        public int MakeVehicle()
+        private async Task<int> TempRVListCreate(uint classAddr, int capacity)
         {
-            int vehList = TTempRVListCreate(0x0074802C, 1);
-            string path = @"Vehicles\GPM_MAN_LionsCity_M\MAN_A47.bus";
-            int mem = memory.AllocateString(path, false).Result;
+            if (localPlugin)
+            {
+                return TTempRVListCreate(unchecked((int)classAddr), capacity);
+            }
+            else
+            {
+                if (!IsInitialised)
+                    throw new NotInitialisedException("OmsiHook RPC plugin is not connected! Did you make sure to call OmsiRemoteMethods.InitRemoteMethods() before this call?");
 
-            return TProgManMakeVehicle(memory.ReadMemory<int>(0x00862f28), vehList,
-                memory.ReadMemory<int>(0x008615A8), false, false,
-              0, false, false, false, false,
-              -1, true, 0, (byte)3, false,
-              0, 0, 0, 0, 0, false,
-              false, true, true, mem);
+                int argPos = 0;
+                var method = OmsiHookRPCMethods.RemoteMethod.TTempRVListCreate;
+                byte[] writeBuffer = asyncWriteBuff.Value;
+                //Span<byte> readBuffer = stackalloc byte[4];
+                (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
+                BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)method);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], resultPromise);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], classAddr);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], capacity);
+                lock (pipeTX)
+                    pipeTX.Write(writeBuffer);
+                return await promise.Task;
+            }
+        }
+
+        public async Task<int> MakeVehicle(string path, int licensePlateIndex = -1, bool randomLicensePlate = true, 
+            int type = 0, int groupHof = 0, int tour = 0, int line = 0, bool scheduled = false, bool aiRoadVehicle = false, 
+            int farbschema = 0, bool randomFarbschema = true)
+        {
+            var vehList = TempRVListCreate(0x0074802C, 1);
+            //string path = @"Vehicles\GPM_MAN_LionsCity_M\MAN_A47.bus";
+            var pathAddr = memory.AllocateString(path, false);
+            await Task.WhenAll(vehList, pathAddr);
+            int progManAddr = memory.ReadMemory<int>(0x00862f28);
+            int roadVehicleTypes = memory.ReadMemory<int>(0x008615A8);
+
+            if (localPlugin)
+            {
+                return TProgManMakeVehicle(progManAddr, vehList.Result,
+                  roadVehicleTypes, false, false,
+                  0, false, false, false, false,
+                  licensePlateIndex, true, 0, (byte)3, false,
+                  groupHof, type, tour, line, farbschema, scheduled,
+                  aiRoadVehicle, randomLicensePlate, randomFarbschema, pathAddr.Result);
+            }
+            else
+            {
+                if (!IsInitialised)
+                    throw new NotInitialisedException("OmsiHook RPC plugin is not connected! Did you make sure to call OmsiRemoteMethods.InitRemoteMethods() before this call?");
+
+                int argPos = 0;
+                var method = OmsiHookRPCMethods.RemoteMethod.TProgManMakeVehicle;
+                byte[] writeBuffer = asyncWriteBuff.Value;
+                (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
+                BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)method);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], resultPromise);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], progManAddr);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], vehList.Result);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], roadVehicleTypes);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 1)..], false);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 1)..], false);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], 0);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 1)..], false);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 1)..], false);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 1)..], false);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 1)..], false);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], licensePlateIndex);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 1)..], true);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], 0);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 1)..], scheduled);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], 0);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 1)..], 3);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 1)..], false);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], groupHof);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], type);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], tour);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], line);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], farbschema);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 1)..], scheduled);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 1)..], aiRoadVehicle);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 1)..], randomLicensePlate);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 1)..], randomFarbschema);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], pathAddr.Result);
+                lock (pipeTX)
+                    pipeTX.Write(writeBuffer);
+                return promise.Task.Result;
+                //lock (pipeRX)
+                //    pipeRX.Read(readBuffer);
+                //return BitConverter.ToInt32(readBuffer);
+            }
         }
 
         public async Task CloseRPCSession(bool killAllConnections)
@@ -176,6 +254,7 @@ namespace OmsiHook
                 (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
                 BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)method);
                 BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], resultPromise);
+                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], memory.ReadMemory<int>(0x00862f28));
                 BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], aiType);
                 BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], group);
                 BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], 0);
@@ -184,7 +263,6 @@ namespace OmsiHook
                 BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], type);
                 BitConverter.TryWriteBytes(writeBuffer[(argPos += 1)..], scheduled);
                 BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], 0);
-                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], aiType);
                 BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], tour);
                 BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], line);
                 lock (pipeTX)
