@@ -91,7 +91,7 @@ namespace OmsiExtensionsCLI
 
                 OMSIRM.OmsiSetCriticalSectionLock(omsi.Globals.ProgamManager.CS_MakeVehiclePtr).ContinueWith((_) =>
                 {
-                    OMSIRM.MakeVehicle(@"Vehicles\MB_C2_EN_BVG\Kpp_MB_C2_E6_Gn_altesDashboard_main.bus", __copyToMainList: true).ContinueWith((id) =>
+                    OMSIRM.MakeVehicle(@"Vehicles\GPM_MAN_LionsCity_M\MAN_A47.bus", __copyToMainList: true).ContinueWith((id) =>
                     {
                         Console.WriteLine($"Spawned Vehicle ID: {id.Result}");
                         OMSIRM.OmsiReleaseCriticalSectionLock(omsi.Globals.ProgamManager.CS_MakeVehiclePtr).ContinueWith((_)=>Console.WriteLine($"Unlock"));
