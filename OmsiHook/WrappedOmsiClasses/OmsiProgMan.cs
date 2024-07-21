@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OmsiHook.WrappedOmsiClasses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -347,22 +348,18 @@ namespace OmsiHook
         {
             get => Memory.ReadMemoryObject<OmsiObjBlackRect>(Address, 0x1b0, false);
         }
-        // TODO: Write internal structs for these so that they can be marhsalled
-        /*public OmsiCriticalSection CS_MakeVehicle
+        public IntPtr CS_MakeVehiclePtr
         {
-            get => Memory.ReadMemory<OmsiCriticalSection>(Address + 0x1b4);
-            set => Memory.WriteMemory(Address + 0x1b4, value);
+            get => (IntPtr)(Address + 0x1b4);
         }
-        public OmsiCriticalSection CS_TexUse
+        public IntPtr CS_TexUsePtr
         {
-            get => Memory.ReadMemory<OmsiCriticalSection>(Address + 0x1d4);
-            set => Memory.WriteMemory(Address + 0x1d4, value);
+            get => (IntPtr)(Address + 0x1d4);
         }
-        public OmsiCriticalSection CS_ODE
+        public IntPtr CS_ODEPtr
         {
-            get => Memory.ReadMemory<OmsiCriticalSection>(Address + 0x1f4);
-            set => Memory.WriteMemory(Address + 0x1f4, value);
-        }*/
+            get => (IntPtr)(Address + 0x1f4);
+        }
         public bool FPS_ShowedAllReady
         {
             get => Memory.ReadMemory<bool>(Address + 0x214);

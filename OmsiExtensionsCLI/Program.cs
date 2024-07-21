@@ -86,18 +86,23 @@ namespace OmsiExtensionsCLI
 
 
                 var OMSIRM = omsi.RemoteMethods;
-                OMSIRM.PlaceRandomBus();
-                Console.WriteLine("Placed");
-                
-                
-                OMSIRM.MakeVehicle(@"Vehicles\GPM_MAN_LionsCity_M\MAN_A47.bus").ContinueWith((id) =>
+                //OMSIRM.PlaceRandomBus();
+                 Console.WriteLine("Placed");
+
+                OMSIRM.OmsiSetCriticalSectionLock(omsi.Globals.ProgamManager.CS_MakeVehiclePtr).ContinueWith((_) =>
                 {
-                    Console.WriteLine($"Spawned Vehicle ID: {id}");
-                    Debugger.Break();
+                    OMSIRM.MakeVehicle(@"Vehicles\GPM_MAN_LionsCity_M\MAN_A47.bus", __copyToMainList: true).ContinueWith((id) =>
+                    {
+                        Console.WriteLine($"Spawned Vehicle ID: {id.Result}");
+                        OMSIRM.OmsiReleaseCriticalSectionLock(omsi.Globals.ProgamManager.CS_MakeVehiclePtr).ContinueWith((_)=>Console.WriteLine($"Unlock"));
+                    });
                 });
+                break;
+                Debugger.Break();
 
                 Thread.Sleep(20);
             }
+            Console.ReadLine();
         }
 
         private static void CheckClickPos(OmsiProgMan progMan, MemArrayList<OmsiAnimSubMesh> meshes, MemArrayList<OmsiAnimSubMeshInst> meshInsts)
