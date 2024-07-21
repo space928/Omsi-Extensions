@@ -12,6 +12,7 @@ using System.Collections.Concurrent;
 using System.Buffers;
 using System.Threading.Tasks;
 using System.Reflection;
+using System.Linq;
 
 namespace OmsiHookRPCPlugin
 {
@@ -21,7 +22,7 @@ namespace OmsiHookRPCPlugin
         /// <summary>
         /// Forces all RPC to occur in the main thread. Has a slight performance impact but is usually much more stable.
         /// </summary>
-        public const bool SINGLE_THREADED_EXECTION = true;
+        public const bool SINGLE_THREADED_EXECUTION = true;
 
         private static List<Thread> threadPool;
         private static ConcurrentQueue<MethodData> callQueue;
@@ -80,20 +81,22 @@ namespace OmsiHookRPCPlugin
             try
             {
                 File.Delete("omsiHookRPCPluginLog.txt");
-            } catch { }
-            Log("############## Omsi Hook RPC Plugin ##############");
-            Log($"    version: {Assembly.GetExecutingAssembly().GetName().Version}");
-            Log($"    copyright Thomas Mathieson 2023");
+            }
+            catch { }
+            Log($"################################# Omsi Hook RPC Plugin ##################################");
+            Log($"~   version: {Assembly.GetExecutingAssembly().GetName().Version}");
+            Log($"~   copyright Thomas Mathieson 2023-2024");
             Log($"~ Omsi Hook RPC plugin is a simple plugin allowing OMSI mods which use the OmsiHook SDK ~");
             Log($"~ to interact with OMSI from an external process. The source code is available at:      ~");
             Log($"~  https://github.com/space928/Omsi-Extensions                                          ~");
+            Log($"#########################################################################################");
             Log($"");
             Log($@"Starting RPC server on named pipe: \\.\pipe\{PIPE_NAME_RX} and \\.\pipe\{PIPE_NAME_TX} with {MAX_CLIENTS} threads...");
 
-            argumentArrayPool = ArrayPool<byte>.Create(256,8);
+            argumentArrayPool = ArrayPool<byte>.Create(256, 8);
             pipes = new();
 
-            if (SINGLE_THREADED_EXECTION)
+            if (SINGLE_THREADED_EXECUTION)
             {
                 callQueue = new();
                 returnPool = new(MAX_CLIENTS);
@@ -101,11 +104,11 @@ namespace OmsiHookRPCPlugin
 
             // We expect server threads to have a relatively long lifetime so for now, no need to have a complicated thread pool implementation.
             threadPool = new();
-            for(int i = 0; i < MAX_CLIENTS; i++)
+            for (int i = 0; i < MAX_CLIENTS; i++)
             {
-                Thread thread = new(() => ServerThreadStart(i-1));
+                Thread thread = new(() => ServerThreadStart(i - 1));
                 threadPool.Add(thread);
-                lock(returnPool)
+                lock (returnPool)
                     returnPool.Add(new());
                 thread.Start();
             }
@@ -135,12 +138,14 @@ namespace OmsiHookRPCPlugin
 
                     Task.WaitAll(readTask, writeTask);
                     Thread.Sleep(50);
-                } 
+                }
                 catch (AggregateException ex)
                 {
                     // Pipe closed normally, probably...
-                    if (ex.InnerException.GetType() != typeof(EndOfStreamException))
-                        Log(ex.InnerException);
+                    // if (ex.InnerException.GetType() != typeof(EndOfStreamException))
+                    //     Log(ex.InnerException);
+                    if (!ex.InnerExceptions.All(x => x.GetType() == typeof(EndOfStreamException)))
+                        Log(ex);
                 }
                 catch (Exception ex)
                 {
@@ -152,63 +157,91 @@ namespace OmsiHookRPCPlugin
 
         private static void WriteTask(int threadId, NamedPipeServerStream pipeTX)
         {
-            using BinaryWriter writer = new(pipeTX);
-            while (pipeTX.IsConnected)
+            try
             {
-                returnPool[threadId].isReady.Wait();
-                lock (writeMutex)
+                using BinaryWriter writer = new(pipeTX);
+                while (pipeTX.IsConnected)
                 {
-                    if (returnPool[threadId].values.TryDequeue(out ReturnPromise ret))
+                    returnPool[threadId].isReady.Wait();
+                    lock (writeMutex)
                     {
-                        //Log($"[RPC Server {threadId}]    writing: {ret.Val:X} for promise: 0x{ret.Promise:X8}");
-                        writer.Write(ret.Promise);
-                        writer.Write(ret.Val);
+                        if (returnPool[threadId].values.TryDequeue(out ReturnPromise ret))
+                        {
+                            //Log($"[RPC Server {threadId}]    writing: {ret.Val:X} for promise: 0x{ret.Promise:X8}");
+                            writer.Write(ret.Promise);
+                            writer.Write(ret.Val);
+                        }
+                        else
+                            Log($"[RPC Server {threadId}]    tried to return a result, but no result was available!");
                     }
-                    else
-                        Log($"[RPC Server {threadId}]    tried to return a result, but no result was available!");
+                    //Log($"[RPC Server {threadId}]    Done!");
                 }
-                //Log($"[RPC Server {threadId}]    Done!");
+            }
+            catch (Exception ex)
+            {
+                Log($"[RPC Server {threadId}]    Couldn't write to pipe: \n{ex}");
+                throw;
             }
         }
 
         private static void ReadTask(int threadId, NamedPipeServerStream pipeRX, NamedPipeServerStream pipeTX)
         {
-            using BinaryReader reader = new(pipeRX);
-            while (pipeRX.IsConnected)
+            try
             {
-                // Read the message type from the pipe
-                RemoteMethod method = (RemoteMethod)reader.ReadInt32();
-                int returnPromise = reader.ReadInt32();
-
-                int argBytes = RemoteMethodsArgsSizes[method];
-                byte[] args = argumentArrayPool.Rent(argBytes);
-                //Log($"[RPC Server {threadId}] Remote method execute: '{method}' promise: 0x{returnPromise:X8}; reading {argBytes} bytes of arguments...");
-
-                // Read all the arguments into a byte array
-                int read = reader.Read(args, 0, argBytes);
-                if (read < argBytes)
+                using BinaryReader reader = new(pipeRX);
+                while (pipeRX.IsConnected)
                 {
-                    Log($"Only read {read} out of {argBytes} bytes of arguments for {method} call!");
-                    continue;
-                }
+                    // Read the message type from the pipe
+                    RemoteMethod method = (RemoteMethod)reader.ReadInt32();
+                    int returnPromise = reader.ReadInt32();
 
-                if(method == RemoteMethod.CloseRPCConnection)
-                {
-                    if (BitConverter.ToUInt32(args, 0) != 0)
-                    {
-                        foreach(var pipe in pipes)
-                            pipe.Close();
-                    }
-                    else
-                    {
-                        pipeRX.Close();
-                        pipeTX.Close();
-                    }
-                    return;
-                }
+                    int argBytes = RemoteMethodsArgsSizes[method];
+                    byte[] args = argumentArrayPool.Rent(argBytes);
+#if DEBUG
+                    Log($"[RPC Server {threadId}] Remote method execute: '{method}' promise: 0x{returnPromise:X8}; reading {argBytes} bytes of arguments...");
+#endif
 
-                callQueue.Enqueue(new(method, args, threadId, returnPromise));
-                //Log($"[RPC Server {threadId}]    method enqueued...");
+                    // Read all the arguments into a byte array
+                    int read = reader.Read(args, 0, argBytes);
+                    if (read < argBytes)
+                    {
+                        Log($"Only read {read} out of {argBytes} bytes of arguments for {method} call!");
+                        argumentArrayPool.Return(args);
+                        continue;
+                    }
+
+                    if (method == RemoteMethod.None)
+                    {
+                        argumentArrayPool.Return(args);
+                        continue;
+                    }
+
+                    if (method == RemoteMethod.CloseRPCConnection)
+                    {
+                        if (BitConverter.ToUInt32(args, 0) != 0)
+                        {
+                            foreach (var pipe in pipes)
+                                pipe.Close();
+                        }
+                        else
+                        {
+                            pipeRX.Close();
+                            pipeTX.Close();
+                        }
+                        argumentArrayPool.Return(args);
+                        return;
+                    }
+
+                    callQueue.Enqueue(new(method, args, threadId, returnPromise));
+#if DEBUG
+                    Log($"[RPC Server {threadId}]    method enqueued...");
+#endif
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"[RPC Server {threadId}]    Couldn't read from pipe: \n{ex}");
+                throw;
             }
         }
 
@@ -220,67 +253,76 @@ namespace OmsiHookRPCPlugin
         {
             int ret = -1;
             int argInd = 0;
+#if DEBUG
+            Log($"Processing call: {methodData.method} args[{methodData.args.Length}] promise:{methodData.returnPromise}");
+#endif
             switch (methodData.method)
             {
                 case RemoteMethod.TProgManMakeVehicle:
                     ret = NativeImports.TProgManMakeVehicle(
-                        BitConverter.ToInt32(methodData.args, argInd),
-                        BitConverter.ToInt32(methodData.args, argInd+=4),
-                        BitConverter.ToInt32(methodData.args, argInd+=4),
-                        BitConverter.ToBoolean(methodData.args, argInd+=1),
-                        BitConverter.ToBoolean(methodData.args, argInd+=1),
-                        BitConverter.ToSingle(methodData.args, argInd+=4),
-                        BitConverter.ToBoolean(methodData.args, argInd+=1),
-                        BitConverter.ToBoolean(methodData.args, argInd+=1),
-                        BitConverter.ToBoolean(methodData.args, argInd+=1),
-                        BitConverter.ToBoolean(methodData.args, argInd+=1),
-                        BitConverter.ToInt32(methodData.args, argInd+=4),
-                        BitConverter.ToBoolean(methodData.args, argInd+=1),
-                        BitConverter.ToInt32(methodData.args, argInd+=4),
-                        methodData.args[argInd+=1],
-                        BitConverter.ToBoolean(methodData.args, argInd+=1),
-                        BitConverter.ToInt32(methodData.args, argInd+=4),
-                        BitConverter.ToInt32(methodData.args, argInd+=4),
-                        BitConverter.ToInt32(methodData.args, argInd+=4),
-                        BitConverter.ToInt32(methodData.args, argInd+=4),
-                        BitConverter.ToInt32(methodData.args, argInd+=4),
-                        BitConverter.ToBoolean(methodData.args, argInd+=1),
-                        BitConverter.ToBoolean(methodData.args, argInd+=1),
-                        BitConverter.ToBoolean(methodData.args, argInd+=1),
-                        BitConverter.ToBoolean(methodData.args, argInd+=1),
-                        BitConverter.ToInt32(methodData.args, argInd+=4)
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadBool(methodData.args, ref argInd),
+                        FastBinaryReader.ReadBool(methodData.args, ref argInd),
+                        FastBinaryReader.ReadFloat(methodData.args, ref argInd),
+                        FastBinaryReader.ReadBool(methodData.args, ref argInd),
+                        FastBinaryReader.ReadBool(methodData.args, ref argInd),
+                        FastBinaryReader.ReadBool(methodData.args, ref argInd),
+                        FastBinaryReader.ReadBool(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadBool(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadU8(methodData.args, ref argInd),
+                        FastBinaryReader.ReadBool(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadBool(methodData.args, ref argInd),
+                        FastBinaryReader.ReadBool(methodData.args, ref argInd),
+                        FastBinaryReader.ReadBool(methodData.args, ref argInd),
+                        FastBinaryReader.ReadBool(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd)
                     );
                     break;
                 case RemoteMethod.TTempRVListCreate:
                     ret = NativeImports.TTempRVListCreate(
-                        BitConverter.ToInt32(methodData.args, argInd),
-                        BitConverter.ToInt32(methodData.args, argInd += 4)
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd)
+                    );
+                    break;
+                case RemoteMethod.CopyTempListIntoMainList:
+                    ret = NativeImports.CopyTempListIntoMainList(
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd)
                     );
                     break;
                 case RemoteMethod.TProgManPlaceRandomBus:
                     ret = NativeImports.TProgManPlaceRandomBus(
-                        BitConverter.ToInt32(methodData.args, argInd),
-                        BitConverter.ToInt32(methodData.args, argInd += 4),
-                        BitConverter.ToInt32(methodData.args, argInd += 4),
-                        BitConverter.ToSingle(methodData.args, argInd += 4),
-                        BitConverter.ToBoolean(methodData.args, argInd += 1),
-                        BitConverter.ToBoolean(methodData.args, argInd += 1),
-                        BitConverter.ToInt32(methodData.args, argInd += 4),
-                        BitConverter.ToBoolean(methodData.args, argInd += 1),
-                        BitConverter.ToInt32(methodData.args, argInd += 4),
-                        BitConverter.ToInt32(methodData.args, argInd += 4),
-                        BitConverter.ToInt32(methodData.args, argInd += 4)
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadFloat(methodData.args, ref argInd),
+                        FastBinaryReader.ReadBool(methodData.args, ref argInd),
+                        FastBinaryReader.ReadBool(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadBool(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd)
                     );
                     break;
                 case RemoteMethod.GetMem:
                     //Log($"[RPC Main Thread]   Executing GetMem(size={BitConverter.ToInt32(methodData.args, argInd)})");
                     ret = NativeImports.GetMem(
-                        BitConverter.ToInt32(methodData.args, argInd)
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd)
                     );
                     break;
                 case RemoteMethod.FreeMem:
                     ret = NativeImports.FreeMem(
-                        BitConverter.ToInt32(methodData.args, argInd)
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd)
                     );
                     break;
                 case RemoteMethod.HookD3D:
@@ -288,73 +330,88 @@ namespace OmsiHookRPCPlugin
                     break;
                 case RemoteMethod.CreateTexture:
                     ret = NativeImports.CreateTexture(
-                        BitConverter.ToUInt32(methodData.args, argInd),
-                        BitConverter.ToUInt32(methodData.args, argInd += 4),
-                        BitConverter.ToUInt32(methodData.args, argInd += 4),
-                        BitConverter.ToUInt32(methodData.args, argInd += 4),
-                        BitConverter.ToUInt32(methodData.args, argInd += 4)
+                        FastBinaryReader.ReadU32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadU32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadU32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadU32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadU32(methodData.args, ref argInd)
                     );
                     break;
                 case RemoteMethod.UpdateSubresource:
                     ret = NativeImports.UpdateSubresource(
-                        BitConverter.ToUInt32(methodData.args, argInd),
-                        BitConverter.ToUInt32(methodData.args, argInd += 4),
-                        BitConverter.ToUInt32(methodData.args, argInd += 4),
-                        BitConverter.ToUInt32(methodData.args, argInd += 4),
-                        BitConverter.ToInt32(methodData.args, argInd += 4),
-                        BitConverter.ToUInt32(methodData.args, argInd += 4),
-                        BitConverter.ToUInt32(methodData.args, argInd += 4),
-                        BitConverter.ToUInt32(methodData.args, argInd += 4),
-                        BitConverter.ToUInt32(methodData.args, argInd += 4),
-                        BitConverter.ToUInt32(methodData.args, argInd += 4)
-                        );
+                        FastBinaryReader.ReadU32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadU32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadU32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadU32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadU32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadU32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadU32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadU32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadU32(methodData.args, ref argInd)
+                    );
                     break;
                 case RemoteMethod.ReleaseTexture:
                     ret = NativeImports.ReleaseTexture(
-                        BitConverter.ToUInt32(methodData.args, argInd)
+                        FastBinaryReader.ReadU32(methodData.args, ref argInd)
                     );
                     break;
                 case RemoteMethod.GetTextureDesc:
                     ret = NativeImports.GetTextureDesc(
-                        BitConverter.ToUInt32(methodData.args, argInd),
-                        BitConverter.ToUInt32(methodData.args, argInd += 4),
-                        BitConverter.ToUInt32(methodData.args, argInd += 4),
-                        BitConverter.ToUInt32(methodData.args, argInd += 4),
-                        BitConverter.ToUInt32(methodData.args, argInd += 4)
-                        );
+                        FastBinaryReader.ReadU32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadU32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadU32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadU32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadU32(methodData.args, ref argInd)
+                    );
                     break;
                 case RemoteMethod.GetTextureLevelCount:
                     ret = unchecked((int)NativeImports.GetTextureLevelCount(
-                        BitConverter.ToUInt32(methodData.args, argInd)
+                        FastBinaryReader.ReadU32(methodData.args, ref argInd)
                     ));
                     break;
                 case RemoteMethod.IsTexture:
                     ret = NativeImports.IsTexture(
-                        BitConverter.ToUInt32(methodData.args, argInd)
+                        FastBinaryReader.ReadU32(methodData.args, ref argInd)
                     );
                     break;
                 case RemoteMethod.RVTriggerXML:
                     ret = 0;
                     NativeImports.RVTriggerXML(
-                        BitConverter.ToInt32(methodData.args, argInd),
-                        BitConverter.ToInt32(methodData.args, argInd += 4),
-                        BitConverter.ToInt32(methodData.args, argInd += 4)
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd)
                     );
                     break;
                 case RemoteMethod.SoundTrigger:
                     ret = 0;
                     NativeImports.SoundTrigger(
-                        BitConverter.ToInt32(methodData.args, argInd),
-                        BitConverter.ToInt32(methodData.args, argInd += 4),
-                        BitConverter.ToInt32(methodData.args, argInd += 4)
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd),
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd)
+                    );
+                    break;
+                case RemoteMethod.SetCriticalSectionLock:
+                    ret = 0;
+                    NativeImports.SetCriticalSectionLock(
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd)
+                    );
+                    break;
+                case RemoteMethod.ReleaseCriticalSectionLock:
+                    ret = 0;
+                    NativeImports.ReleaseCriticalSectionLock(
+                        FastBinaryReader.ReadI32(methodData.args, ref argInd)
                     );
                     break;
                 default:
                     Log($"Unknown message type: {methodData.method} encountered!");
                     break;
             }
+#if DEBUG
+            Log($"   returning {ret} to {methodData.returnPromise}...");
+#endif
 
-            returnPool[methodData.threadId].values.Enqueue(new (ret, methodData.returnPromise));
+            returnPool[methodData.threadId].values.Enqueue(new(ret, methodData.returnPromise));
             returnPool[methodData.threadId].isReady.Release();
             argumentArrayPool.Return(methodData.args);
         }
@@ -366,17 +423,24 @@ namespace OmsiHookRPCPlugin
             Log("Exiting OmsiHookRPCPlugin...");
         }
 
-        [UnmanagedCallersOnly(CallConvs = new[] {typeof(CallConvCdecl)}, EntryPoint = nameof(AccessVariable))]
+        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) }, EntryPoint = nameof(AccessVariable))]
         public static void AccessVariable(ushort variableIndex, [C99Type("float*")] IntPtr value,
             [C99Type("__crt_bool*")] IntPtr writeValue)
         {
-            if (SINGLE_THREADED_EXECTION)
+            if (SINGLE_THREADED_EXECUTION)
             {
                 while (!callQueue.IsEmpty)
                 {
                     if (callQueue.TryDequeue(out MethodData call))
                     {
-                        ProcessCall(call);
+                        try
+                        {
+                            ProcessCall(call);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log($"Exception while processing call {call.returnPromise} for thread {call.threadId} method={call.method} args={call.args.Length}:\n{ex}");
+                        }
                     }
                 }
             }
