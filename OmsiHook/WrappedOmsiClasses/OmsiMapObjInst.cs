@@ -40,7 +40,15 @@
             get => Memory.ReadMemory<D3DMatrix>(Address + 0x78);
             set => Memory.WriteMemory(Address + 0x78, value);
         }
-        public D3DMatrix AbsPosition_Inv => Memory.ReadMemory<D3DMatrix>(Address + 0xb8);
-        public D3DMatrix AbsPosition_ThreadFree => Memory.ReadMemory<D3DMatrix>(Address + 0xf8);
+        public D3DMatrix AbsPosition_Inv
+        {
+            get => Memory.ReadMemory<D3DMatrix>(Address + 0xb8);
+            set => Memory.WriteMemory(Address + 0xb8, value);
+        }
+        public D3DMatrix AbsPosition_ThreadFree
+        {
+            get => Memory.ReadMemory<D3DMatrix>(Address + 0xf8);
+            set => Memory.WriteMemory(Address + 0xf8, value);
+        }
     }
 }
