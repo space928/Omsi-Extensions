@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Numerics;
 using Telepathy;
+using System.Runtime.CompilerServices;
 
 namespace Multiplayer_Client
 {
@@ -13,7 +15,7 @@ namespace Multiplayer_Client
     {
         public Tuple<int, long, long> LastPing;
         private OmsiHook.OmsiHook omsi;
-        private Dictionary<int, OmsiRoadVehicleInst> Vehciles = new Dictionary<int, OmsiRoadVehicleInst>();
+        private Dictionary<int, OmsiRoadVehicleInst> Vehicles = new Dictionary<int, OmsiRoadVehicleInst>();
         public GameClient() {
             omsi = new OmsiHook.OmsiHook();
             omsi.AttachToOMSI().Wait();
@@ -23,23 +25,44 @@ namespace Multiplayer_Client
                 OMSIRM.MakeVehicle(@"Vehicles\GPM_MAN_LionsCity_M\MAN_A47.bus", __copyToMainList: true).ContinueWith((id) =>
                 {
                     Console.WriteLine($"Spawned Vehicle ID: {id.Result}");
-                    Vehciles[0] = omsi.Globals.RoadVehicles.FList[1];
+                    Vehicles[0] = omsi.Globals.RoadVehicles.FList[1];
                     OMSIRM.OmsiReleaseCriticalSectionLock(omsi.Globals.ProgamManager.CS_MakeVehiclePtr).ContinueWith((_) => Console.WriteLine($"Unlock"));
                 });
             });
         }
 
-        public void updateVehicles(OMSIMPMessages.Vehicle_Position_Update update)
+        int i = 0;
+        public void UpdateVehicles(OMSIMPMessages.Vehicle_Position_Update update)
         {
-            if (Vehciles.TryGetValue(update.ID, out var vehicle))
+            if (Vehicles.TryGetValue(update.ID, out var vehicle))
             {
-                vehicle.AbsPosition = update.abs_position;
-                vehicle.Position = update.position;
+                if (i % 20 == 0)
+                    vehicle.Position = update.position;
                 vehicle.Rotation = update.rotation;
                 vehicle.Velocity = update.velocity;
                 vehicle.MyKachelPnt = update.tile;
-                vehicle.AbsPosition_Inv = update.abs_position_inv;
-            } else
+                vehicle.RelMatrix = update.relmatrix;
+                vehicle.Acc_Local = update.acclocal;
+
+                var posMat = Matrix4x4.CreateFromQuaternion(update.rotation);
+                posMat.Translation = update.position;
+                var absPosMat = Matrix4x4.Multiply(posMat, Matrix4x4.Identity/*update.relmatrix*/);
+                Matrix4x4.Invert(absPosMat, out var absPosMatInv);
+
+                vehicle.Pos_Mat = posMat;
+                vehicle.AbsPosition = absPosMat;
+                vehicle.AbsPosition_Inv = absPosMatInv;
+                vehicle.Used_RelVec = ((Matrix4x4)update.relmatrix).Translation;
+                vehicle.AI_Blinker_L = 1;
+                vehicle.AI_Blinker_R = 1;
+                vehicle.AI_var = 1;
+
+
+                //vehicle.AbsPosition = update.abs_position;
+                //vehicle.AbsPosition_Inv = update.abs_position_inv;
+                i++;
+            }
+            else
             {
                 
             }
@@ -51,20 +74,21 @@ namespace Multiplayer_Client
                 return;
 
             var vehicle = omsi.Globals.PlayerVehicle;
-            Console.WriteLine($"\x1b[8;0HP:{vehicle.Position}/{vehicle.MyKachelPnt}\x1b[9;0HR:{vehicle.Rotation}\x1b[10;0HV:{vehicle.Velocity}");
-            byte[] buff = new byte[180];
+            Console.WriteLine($"\x1b[8;0HP:{vehicle.Position}/{vehicle.MyKachelPnt}\x1b[9;0HR:{vehicle.Rotation}\x1b[10;0HV:{vehicle.Velocity}\x1b[11;0HB:{vehicle.Acc_Local} / {((Vehicles.ContainsKey(0)) ? (Vehicles[0].Acc_Local.ToString()):"-")}");
+            byte[] buff = new byte[Unsafe.SizeOf<OMSIMPMessages.Player_Position_Update>() + 4];
             int out_pos = 0;
             FastBinaryWriter.Write(buff, ref out_pos, OMSIMPMessages.Messages.UPDATE_PLAYER_POSITION);
             FastBinaryWriter.Write(buff, ref out_pos, new OMSIMPMessages.Player_Position_Update()
             {
                 position = vehicle.Position,
-                abs_position = vehicle.AbsPosition,
-                abs_position_inv = vehicle.AbsPosition_Inv,
-                tile     = vehicle.MyKachelPnt,
+                tile = vehicle.MyKachelPnt,
                 rotation = vehicle.Rotation,
                 velocity = vehicle.Velocity,
+                relmatrix = vehicle.RelMatrix,
+                acclocal = vehicle.Acc_Local
+                //vehicle = vehicle.RoadVehicle.MyPath
 
-            });
+            }); ;
             client.Send(buff);
         }
     }

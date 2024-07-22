@@ -1,6 +1,8 @@
-﻿using System;
+﻿using OmsiHook;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,7 +33,7 @@ namespace Multiplayer_Server
                         var position = FastBinaryReader.Read<OMSIMPMessages.Player_Position_Update>(message, ref parse_pos);
                         Console.WriteLine($"\u001b[8;0HP:{position.position}/{position.tile}\u001b[9;0HR:{position.rotation}\u001b[10;0HV:{position.velocity}");
 
-                        byte[] buff = new byte[184];
+                        byte[] buff = new byte[Unsafe.SizeOf<OMSIMPMessages.Vehicle_Position_Update>() + 4];
                         int out_pos = 0;
                         FastBinaryWriter.Write(buff, ref out_pos, OMSIMPMessages.Messages.UPDATE_VEHICLE_POSITION);
                         FastBinaryWriter.Write(buff, ref out_pos, new OMSIMPMessages.Vehicle_Position_Update() { 
@@ -39,9 +41,10 @@ namespace Multiplayer_Server
                             rotation = position.rotation,
                             tile = position.tile,
                             velocity = position.velocity,
-                            abs_position = (position.abs_position),
-                            abs_position_inv = (position.abs_position_inv),
-                            position = position.position });
+                            position = (new D3DVector(position.position.x + 4, position.position.y, position.position.z)),
+                            relmatrix = position.relmatrix,
+                            acclocal = position.acclocal,
+                        });
                         server.Send(client.ClientId, buff);
 
                     }

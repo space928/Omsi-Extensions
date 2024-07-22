@@ -18,9 +18,9 @@
             get => Memory.ReadMemory<D3DMatrix>(Address + 0x10);
             set => Memory.WriteMemory(Address + 0x10, value);
         }
-        public D3DXQuaternion Rotation
+        public D3DQuaternion Rotation
         {
-            get => Memory.ReadMemory<D3DXQuaternion>(Address + 0x50);
+            get => Memory.ReadMemory<D3DQuaternion>(Address + 0x50);
             set => Memory.WriteMemory(Address + 0x50, value);
         }
         public float Scale
@@ -28,8 +28,16 @@
             get => Memory.ReadMemory<float>(Address + 0x60);
             set => Memory.WriteMemory(Address + 0x60, value);
         }
-        public D3DMatrix RelMatrix => Memory.ReadMemory<D3DMatrix>(Address + 0x64);
-        public D3DMatrix Used_RelVec => Memory.ReadMemory<D3DMatrix>(Address + 0x68);
+        public D3DMatrix RelMatrix
+        {
+            get => Memory.ReadMemory<D3DMatrix>(Memory.ReadMemory<int>(Address + 0x64));
+            set => Memory.WriteMemory(Memory.ReadMemory<int>(Address + 0x64), value);
+        } 
+        public D3DVector Used_RelVec
+        {
+            get => Memory.ReadMemory<D3DVector>(Address + 0x68);
+            set => Memory.WriteMemory(Address + 0x68, value);
+        }
         public int Kachel
         {
             get => Memory.ReadMemory<int>(Address + 0x74); 

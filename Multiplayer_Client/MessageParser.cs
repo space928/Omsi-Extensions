@@ -41,7 +41,7 @@ namespace Multiplayer_Client
                     break;
                 case OMSIMPMessages.Messages.UPDATE_VEHICLE_POSITION:
                     {
-                        gameClient.updateVehicles(FastBinaryReader.Read<OMSIMPMessages.Vehicle_Position_Update>(message, ref parse_pos));
+                        gameClient.UpdateVehicles(FastBinaryReader.Read<OMSIMPMessages.Vehicle_Position_Update>(message, ref parse_pos));
                     }
                     break;
                 default:

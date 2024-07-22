@@ -43,7 +43,7 @@ class OMSIClient
                 }
             }
             gameClient.Tick(client);
-            System.Threading.Thread.Sleep(10);
+            System.Threading.Thread.Sleep(33);
         }
         client.Disconnect();
     }

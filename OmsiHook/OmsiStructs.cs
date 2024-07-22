@@ -29,11 +29,15 @@ namespace OmsiHook
         public static implicit operator Vector3(D3DVector v) => new(v.x, v.y, v.z);
         public static implicit operator D3DVector(Vector3 v) => new() { x = v.X, y = v.Y, z = v.Z };
     }
-    public struct D3DXVector2
+
+    public struct D3DVector2
     {
         public float x, y;
 
         public override readonly string ToString() => $"[{x,8:F3}, {y,8:F3}]";
+
+        public static implicit operator Vector2(D3DVector2 v) => new(v.x, v.y);
+        public static implicit operator D3DVector2(Vector2 v) => new() { x = v.X, y = v.Y };
     }
 
     /// <summary>
@@ -102,11 +106,14 @@ namespace OmsiHook
     /// <summary>
     /// Defines a 4 dimensional float vector.
     /// </summary>
-    public struct D3DXQuaternion
+    public struct D3DQuaternion
     {
         public float x, y, z, w;
 
         public override readonly string ToString() => $"[{x,8:F3}, {y,8:F3}, {z,8:F3}, {w,8:F3}]";
+
+        public static implicit operator Quaternion(D3DQuaternion v) => new (v.x, v.y, v.z, v.w);
+        public static implicit operator D3DQuaternion(Quaternion v) => new() { x=v.X, y=v.Y, z=v.Z, w=v.W };
     }
 
     /// <summary>
@@ -478,7 +485,7 @@ namespace OmsiHook
     public struct OmsiSeat
     {
         public D3DVector position;
-        public D3DXQuaternion rotation;
+        public D3DQuaternion rotation;
         public byte flag;
         public float height;
         public int getInteriorLights; // TODO: Check Data Type
@@ -2040,8 +2047,8 @@ namespace OmsiHook
         [OmsiStruct(typeof(OmsiPathInfo), typeof(OmsiPathInfoInternal))]
         [FieldOffset(0x0)] internal OmsiPathInfoInternal pathInfo;
         [FieldOffset(0x110)] internal D3DVector pos;
-        [FieldOffset(0x11c)] internal D3DXVector2 y_soll;
-        [FieldOffset(0x124)] internal D3DXVector2 y_harmon;
+        [FieldOffset(0x11c)] internal D3DVector2 y_soll;
+        [FieldOffset(0x124)] internal D3DVector2 y_harmon;
         [FieldOffset(0x12c)] internal float y_gleisfehler;
         [FieldOffset(0x130)] internal float z_gleisfehler;
     }
@@ -2050,8 +2057,8 @@ namespace OmsiHook
     {
         public OmsiPathInfo pathInfo;
         public D3DVector pos;
-        public D3DXVector2 y_soll;
-        public D3DXVector2 y_harmon;
+        public D3DVector2 y_soll;
+        public D3DVector2 y_harmon;
         public float y_gleisfehler;
         public float z_gleisfehler;
     }
