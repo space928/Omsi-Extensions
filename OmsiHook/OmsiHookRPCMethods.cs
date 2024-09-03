@@ -12,9 +12,11 @@ namespace OmsiHookRPCPlugin
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         internal enum RemoteMethod : int
         {
+            None,
             CloseRPCConnection,
             TProgManMakeVehicle,
             TTempRVListCreate,
+            CopyTempListIntoMainList,
             TProgManPlaceRandomBus,
             GetMem,
             FreeMem,
@@ -26,14 +28,18 @@ namespace OmsiHookRPCPlugin
             GetTextureLevelCount,
             IsTexture,
             RVTriggerXML,
-            SoundTrigger
+            SoundTrigger,
+            SetCriticalSectionLock,
+            ReleaseCriticalSectionLock
         }
 
         internal static readonly ReadOnlyDictionary<RemoteMethod, int> RemoteMethodsArgsSizes = new(new Dictionary<RemoteMethod, int>()
         {
+            { RemoteMethod.None,                        0 },
             { RemoteMethod.CloseRPCConnection,          4 },
             { RemoteMethod.TProgManMakeVehicle,         61 },
             { RemoteMethod.TTempRVListCreate,           8 },
+            { RemoteMethod.CopyTempListIntoMainList,    8 },
             { RemoteMethod.TProgManPlaceRandomBus,      35 },
             { RemoteMethod.GetMem,                      4 },
             { RemoteMethod.FreeMem,                     4 },
@@ -46,6 +52,8 @@ namespace OmsiHookRPCPlugin
             { RemoteMethod.IsTexture,                   4 },
             { RemoteMethod.RVTriggerXML,                12 },
             { RemoteMethod.SoundTrigger,                12 },
+            { RemoteMethod.SetCriticalSectionLock,      4 },
+            { RemoteMethod.ReleaseCriticalSectionLock,  4 },
         });
     }
 }

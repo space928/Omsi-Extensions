@@ -154,6 +154,12 @@ extern "C" __declspec(dllexport) int TTempRVListCreate(int classAddr, int capaci
         classAddr, capacity);
 }
 
+extern "C" __declspec(dllexport) int CopyTempListIntoMainList(int rvList, int tmpList)
+{
+    return BorlandFastCall(0x0074a240, 2, 2,
+        rvList, tmpList);
+}
+
 extern "C" __declspec(dllexport) int TProgManPlaceRandomBus(int progMan, int aityp, 
     int group, int TTtime, bool thread, bool instantCopy, int _typ,
     bool scheduled, int startDay, int tour, int line)
@@ -185,6 +191,18 @@ extern "C" __declspec(dllexport) void SoundTrigger(int complMapObj, int trigger,
 {
     BorlandFastCall(0x007bb1a8, 3, 3,
         complMapObj, trigger, filename);
+}
+
+extern "C" __declspec(dllexport) void SetCriticalSectionLock(int addr)
+{
+    BorlandFastCall(0x00562af8, 1, 1,
+        addr);
+}
+
+extern "C" __declspec(dllexport) void ReleaseCriticalSectionLock(int addr)
+{
+    BorlandFastCall(0x00562B30, 1, 1,
+        addr);
 }
 
 extern "C" __declspec(dllexport) BOOL HookD3D()

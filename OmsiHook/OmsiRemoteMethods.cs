@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using OmsiHook.WrappedOmsiClasses;
 using OmsiHookRPCPlugin;
 
 namespace OmsiHook
@@ -110,19 +111,135 @@ namespace OmsiHook
             }
         }
 
-        [Obsolete]
-        public int MakeVehicle()
+        private async Task<int> TempRVListCreate(uint classAddr, int capacity)
         {
-            int vehList = TTempRVListCreate(0x0074802C, 1);
-            string path = @"Vehicles\GPM_MAN_LionsCity_M\MAN_A47.bus";
-            int mem = memory.AllocateString(path, false).Result;
+            if (localPlugin)
+            {
+                return TTempRVListCreate(unchecked((int)classAddr), capacity);
+            }
+            else
+            {
+                if (!IsInitialised)
+                    throw new NotInitialisedException("OmsiHook RPC plugin is not connected! Did you make sure to call OmsiRemoteMethods.InitRemoteMethods() before this call?");
 
-            return TProgManMakeVehicle(memory.ReadMemory<int>(0x00862f28), vehList,
-                memory.ReadMemory<int>(0x008615A8), false, false,
-              0, false, false, false, false,
-              -1, true, 0, (byte)3, false,
-              0, 0, 0, 0, 0, false,
-              false, true, true, mem);
+                int argPos = 0;
+                var method = OmsiHookRPCMethods.RemoteMethod.TTempRVListCreate;
+                byte[] writeBuffer = asyncWriteBuff.Value;
+                //Span<byte> readBuffer = stackalloc byte[4];
+                (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
+                FastBinaryWriter.Write(writeBuffer, ref argPos, (int)method);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, classAddr);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, capacity);
+                int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
+                lock (pipeTX)
+                    pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                return await promise.Task;
+            }
+        }
+
+        private async Task<int> CopyTempListIntoMainList_(uint rvList, uint tmpList)
+        {
+            if (localPlugin)
+            {
+                return CopyTempListIntoMainList(unchecked((int)rvList), unchecked((int)tmpList));
+            }
+            else
+            {
+                if (!IsInitialised)
+                    throw new NotInitialisedException("OmsiHook RPC plugin is not connected! Did you make sure to call OmsiRemoteMethods.InitRemoteMethods() before this call?");
+
+                int argPos = 0;
+                var method = OmsiHookRPCMethods.RemoteMethod.CopyTempListIntoMainList;
+                byte[] writeBuffer = asyncWriteBuff.Value;
+                //Span<byte> readBuffer = stackalloc byte[4];
+                (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
+                FastBinaryWriter.Write(writeBuffer, ref argPos, (int)method);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, rvList);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, tmpList);
+                int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
+                lock (pipeTX)
+                    pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                return await promise.Task;
+            }
+        }
+
+        public async Task<int> MakeVehicle(string path, int licensePlateIndex = -1, bool randomLicensePlate = false, 
+            int type = 0, int groupHof = 0, int tour = 0, int line = 0, bool scheduled = false, bool aiRoadVehicle = false, 
+            int farbschema = -1, bool randomFarbschema = false,
+            bool __copyToMainList = true)
+        {
+            var vehListTask = __copyToMainList ? TempRVListCreate(0x0074802C, 1) : Task.FromResult(0);
+            //string path = @"Vehicles\GPM_MAN_LionsCity_M\MAN_A47.bus";
+            var pathAddrTask = memory.AllocateString(path, false);
+            await Task.WhenAll(vehListTask, pathAddrTask);
+
+            var vehList = vehListTask.Result;
+            var pathAddr = pathAddrTask.Result;
+            if (!__copyToMainList)
+                vehList = memory.ReadMemory<int>(0x0086171c);
+            int progManAddr = memory.ReadMemory<int>(0x00862f28);
+            int roadVehicleTypes = memory.ReadMemory<int>(0x008615A8);
+
+            if (localPlugin)
+            {
+                var ret = TProgManMakeVehicle(progManAddr, vehList,
+                  roadVehicleTypes, false, false,
+                  0, false, false, false/*true*/, false,
+                  licensePlateIndex, true, 0, (byte)2/*3*/, false,
+                  groupHof, type, tour, line, farbschema, scheduled,
+                  aiRoadVehicle, randomLicensePlate, randomFarbschema, pathAddr);
+
+                if (__copyToMainList)
+                    await CopyTempListIntoMainList_(memory.ReadMemory<uint>(0x00861508), unchecked((uint)vehList));
+                return ret;
+            }
+            else
+            {
+                if (!IsInitialised)
+                    throw new NotInitialisedException("OmsiHook RPC plugin is not connected! Did you make sure to call OmsiRemoteMethods.InitRemoteMethods() before this call?");
+
+                int argPos = 0;
+                var method = OmsiHookRPCMethods.RemoteMethod.TProgManMakeVehicle;
+                byte[] writeBuffer = asyncWriteBuff.Value;
+                (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
+                FastBinaryWriter.Write(writeBuffer, ref argPos, (int)method);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, progManAddr);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, vehList);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, roadVehicleTypes);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, false);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, false);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, 0f);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, false);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, false);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, false);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, false);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, licensePlateIndex);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, true);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, 0);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, 3, 1);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, false);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, groupHof);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, type);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, tour);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, line);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, farbschema);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, scheduled);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, aiRoadVehicle);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, randomLicensePlate);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, randomFarbschema);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, pathAddr);
+                int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
+                lock (pipeTX)
+                    pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                var ret = await promise.Task;
+
+                if (__copyToMainList)
+                    await CopyTempListIntoMainList_(memory.ReadMemory<uint>(0x00861508), unchecked((uint)vehList));
+                return ret;
+            }
         }
 
         public async Task CloseRPCSession(bool killAllConnections)
@@ -138,9 +255,9 @@ namespace OmsiHook
             int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
             byte[] writeBuffer = asyncWriteBuff.Value;
             (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
-            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos)..], (int)method);
-            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], 0);
-            BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], killAllConnections ? 1 : 0);
+            FastBinaryWriter.Write(writeBuffer, ref argPos, (int)method);
+            FastBinaryWriter.Write(writeBuffer, ref argPos, 0);
+            FastBinaryWriter.Write(writeBuffer, ref argPos, killAllConnections ? 1 : 0);
             lock (pipeTX)
                 pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
             await promise.Task;
@@ -174,19 +291,19 @@ namespace OmsiHook
                 Span<byte> writeBuffer = stackalloc byte[OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8];
                 //Span<byte> readBuffer = stackalloc byte[4];
                 (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
-                BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)method);
-                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], resultPromise);
-                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], aiType);
-                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], group);
-                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], 0);
-                BitConverter.TryWriteBytes(writeBuffer[(argPos += 1)..], false);
-                BitConverter.TryWriteBytes(writeBuffer[(argPos += 1)..], true);
-                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], type);
-                BitConverter.TryWriteBytes(writeBuffer[(argPos += 1)..], scheduled);
-                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], 0);
-                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], aiType);
-                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], tour);
-                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], line);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, (int)method);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, memory.ReadMemory<int>(0x00862f28));
+                FastBinaryWriter.Write(writeBuffer, ref argPos, aiType);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, group);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, 0);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, false);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, true);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, type);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, scheduled);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, 0);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, tour);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, line);
                 lock (pipeTX)
                     pipeTX.Write(writeBuffer);
                 return promise.Task.Result;
@@ -218,9 +335,9 @@ namespace OmsiHook
                 // This should be thread safe as the asyncWriteBuff is thread local
                 byte[] writeBuffer = asyncWriteBuff.Value;
                 (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos)..], (int)method);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], resultPromise);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], length);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, (int)method);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, length);
                 lock (pipeTX)
                     pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
                 return (uint)await promise.Task;
@@ -248,9 +365,9 @@ namespace OmsiHook
                 var method = OmsiHookRPCMethods.RemoteMethod.FreeMem;
                 Span<byte> writeBuffer = stackalloc byte[OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8];
                 (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
-                BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)method);
-                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], resultPromise);
-                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], addr);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, (int)method);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, addr);
                 lock (pipeTX)
                     pipeTX.Write(writeBuffer);
                 //promise.AsTask().Wait();
@@ -272,8 +389,8 @@ namespace OmsiHook
                 int argPos = 0;
                 Span<byte> writeBuffer = stackalloc byte[8];
                 (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
-                BitConverter.TryWriteBytes(writeBuffer[(argPos)..], (int)OmsiHookRPCMethods.RemoteMethod.HookD3D);
-                BitConverter.TryWriteBytes(writeBuffer[(argPos += 4)..], resultPromise);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, (int)OmsiHookRPCMethods.RemoteMethod.HookD3D);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
                 lock (pipeTX)
                     pipeTX.Write(writeBuffer);
                 var res = promise.Task.Result;
@@ -307,13 +424,13 @@ namespace OmsiHook
                 int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
                 byte[] writeBuffer = asyncWriteBuff.Value;
                 (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos)..], (int)method);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], resultPromise);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], width);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], height);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], (uint)format);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], levels);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], ppTexture);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, (int)method);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, width);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, height);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, (uint)format);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, levels);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, ppTexture);
                 lock (pipeTX)
                     pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
                 HRESULT result = (HRESULT)await promise.Task;
@@ -352,18 +469,18 @@ namespace OmsiHook
                 int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
                 byte[] writeBuffer = asyncWriteBuff.Value;
                 (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos)..], (int)method);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], resultPromise);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], texturePtr);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], textureDataPtr);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], width);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], height);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], updateRect.HasValue ? 1 : 0);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], updateRect?.left ?? 0);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], updateRect?.top ?? 0);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], updateRect?.right ?? 0);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], updateRect?.bottom ?? 0);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], level);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, (int)method);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, texturePtr);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, textureDataPtr);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, width);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, height);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, updateRect.HasValue ? 1 : 0);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, updateRect?.left ?? 0);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, updateRect?.top ?? 0);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, updateRect?.right ?? 0);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, updateRect?.bottom ?? 0);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, level);
                 lock (pipeTX)
                     pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
                 return (HRESULT)await promise.Task;
@@ -391,9 +508,9 @@ namespace OmsiHook
                 int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
                 byte[] writeBuffer = asyncWriteBuff.Value;
                 (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos)..], (int)method);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], resultPromise);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], texturePtr);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, (int)method);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, texturePtr);
                 lock (pipeTX)
                     pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
                 return (HRESULT)await promise.Task;
@@ -432,13 +549,13 @@ namespace OmsiHook
                 int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
                 byte[] writeBuffer = asyncWriteBuff.Value;
                 (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos)..], (int)method);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], resultPromise);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], texturePtr);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], level);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], descPtr);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], descPtr + 4);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], descPtr + 8);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, (int)method);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, texturePtr);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, level);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, descPtr);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, descPtr + 4);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, descPtr + 8);
                 lock (pipeTX)
                     pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
 
@@ -473,9 +590,9 @@ namespace OmsiHook
                 int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
                 byte[] writeBuffer = asyncWriteBuff.Value;
                 (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos)..], (int)method);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], resultPromise);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], texturePtr);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, (int)method);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, texturePtr);
                 lock (pipeTX)
                     pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
                 return unchecked((uint)await promise.Task);
@@ -505,9 +622,9 @@ namespace OmsiHook
                 int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
                 byte[] writeBuffer = asyncWriteBuff.Value;
                 (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos)..], (int)method);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], resultPromise);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], texturePtr);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, (int)method);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, texturePtr);
                 lock (pipeTX)
                     pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
                 return !HRESULTFailed((HRESULT)await promise.Task);
@@ -550,11 +667,11 @@ namespace OmsiHook
                 // This should be thread safe as the asyncWriteBuff is thread local
                 byte[] writeBuffer = asyncWriteBuff.Value;
                 (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos)..], (int)method);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], resultPromise);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], roadVehicle.Address);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], triggerPtr);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], enabled ? 1 : 0);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, (int)method);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, roadVehicle.Address);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, triggerPtr);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, enabled ? 1 : 0);
                 lock (pipeTX)
                     pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
                 await promise.Task;
@@ -599,11 +716,67 @@ namespace OmsiHook
                 // This should be thread safe as the asyncWriteBuff is thread local
                 byte[] writeBuffer = asyncWriteBuff.Value;
                 (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos)..], (int)method);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], resultPromise);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], mapObj.Address);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], triggerPtr);
-                BitConverter.TryWriteBytes(writeBuffer.AsSpan()[(argPos += 4)..], filenamePtr);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, (int)method);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, mapObj.Address);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, triggerPtr);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, filenamePtr);
+                lock (pipeTX)
+                    pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                await promise.Task;
+            }
+        }
+
+
+        public async Task OmsiSetCriticalSectionLock(IntPtr CS)
+        {
+            if (localPlugin)
+            {
+                SetCriticalSectionLock((int)CS);
+                return;
+            }
+            else
+            {
+                if (!IsInitialised)
+                    throw new NotInitialisedException("OmsiHook RPC plugin is not connected! Did you make sure to call OmsiRemoteMethods.InitRemoteMethods() before this call?");
+
+                int argPos = 0;
+                var method = OmsiHookRPCMethods.RemoteMethod.SetCriticalSectionLock;
+                int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
+                // This should be thread safe as the asyncWriteBuff is thread local
+                byte[] writeBuffer = asyncWriteBuff.Value;
+                (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
+                FastBinaryWriter.Write(writeBuffer, ref argPos, (int)method);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, (int)CS);
+                lock (pipeTX)
+                    pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                await promise.Task;
+            }
+        }
+
+
+        public async Task OmsiReleaseCriticalSectionLock(IntPtr CS)
+        {
+            if (localPlugin)
+            {
+                ReleaseCriticalSectionLock((int)CS);
+                return;
+            }
+            else
+            {
+                if (!IsInitialised)
+                    throw new NotInitialisedException("OmsiHook RPC plugin is not connected! Did you make sure to call OmsiRemoteMethods.InitRemoteMethods() before this call?");
+
+                int argPos = 0;
+                var method = OmsiHookRPCMethods.RemoteMethod.ReleaseCriticalSectionLock;
+                int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
+                // This should be thread safe as the asyncWriteBuff is thread local
+                byte[] writeBuffer = asyncWriteBuff.Value;
+                (int resultPromise, TaskCompletionSource<int> promise) = CreateResultPromise();
+                FastBinaryWriter.Write(writeBuffer, ref argPos, (int)method);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
+                FastBinaryWriter.Write(writeBuffer, ref argPos, (int)CS);
                 lock (pipeTX)
                     pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
                 await promise.Task;
@@ -618,6 +791,8 @@ namespace OmsiHook
             bool AIRoadVehicle, bool kennzeichen_random, bool farbschema_random, int filename);
         [DllImport("OmsiHookInvoker.dll")]
         private static extern int TTempRVListCreate(int classAddr, int capacity);
+        [DllImport("OmsiHookInvoker.dll")]
+        private static extern int CopyTempListIntoMainList(int rvList, int tmpList);
         [DllImport("OmsiHookInvoker.dll")]
         private static extern int TProgManPlaceRandomBus(int progMan, int aityp,
             int group, float TTtime, bool thread, bool instantCopy, int _typ,
@@ -644,6 +819,10 @@ namespace OmsiHook
         private static extern void RVTriggerXML(int roadVehicle, int trigger, int value);
         [DllImport("OmsiHookInvoker.dll")]
         internal static extern void SoundTrigger(int complMapObj, int trigger, int filename);
+        [DllImport("OmsiHookInvoker.dll")]
+        internal static extern void SetCriticalSectionLock(int CS);
+        [DllImport("OmsiHookInvoker.dll")]
+        internal static extern void ReleaseCriticalSectionLock(int CS);
 
         public enum D3DFORMAT : uint
         {
