@@ -206,7 +206,7 @@ namespace OmsiHook
 
         public string StandardAIGroup
         {
-            get => Memory.ReadMemoryString(Address + 0x160);
+            get => Memory.ReadMemoryString(Address + 0x160, true);
             set => Memory.WriteMemory(Address + 0x160, value);
         }
 

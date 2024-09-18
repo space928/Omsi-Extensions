@@ -180,7 +180,8 @@ namespace OmsiHook
                 throw new NotInitialisedException("D3DTexture object must be initialised for write before it can be updated! ");
             if((textureData.Length * Unsafe.SizeOf<T>()) > stagingBufferSize)
                 throw new ArgumentOutOfRangeException(nameof(textureData));
-            Memory.WriteMemory(remoteStagingBufferPtr, textureData);
+
+            Memory.WriteMemory(remoteStagingBufferPtr, textureData.Span);
 
             uint dataWidth = (updateArea?.right - updateArea?.left) ?? width;
             uint dataHeight = (updateArea?.bottom - updateArea?.top) ?? height;
