@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
@@ -54,37 +55,55 @@ namespace OmsiExtensionsCLI
                 Console.WriteLine($"Read data: map:{map?.Name}   path:{map?.Filename}   friendly:{map?.FriendlyName}".PadRight(Console.WindowWidth - 1));
                 Console.WriteLine($"Time: {omsi.Globals.Time.Day}/{omsi.Globals.Time.Month}/{omsi.Globals.Time.Year} - {omsi.Globals.Time.Hour}:{omsi.Globals.Time.Minute}:{omsi.Globals.Time.Second:F2}     ");
                 Console.WriteLine($"Camera pos: {cam.Pos}      ".PadRight(Console.WindowWidth - 1));
-                Console.WriteLine($"{omsi.Globals.Drivers}".PadRight(Console.WindowWidth - 1));
+                //Console.WriteLine($"{playerVehicle.ComplObjInst.ComplObj.OFTTex.Count}      ".PadRight(Console.WindowWidth - 1));
+                //Console.WriteLine($"{omsi.Globals.Drivers}".PadRight(Console.WindowWidth - 1));
 
-                /*if(!dXTests.IsReady)
-                    dXTests.CreateTexture();
-                if(dXTests.IsReady)
-                    dXTests.UpdateTexture();*/
+                ///*if(!dXTests.IsReady)
+                //    dXTests.CreateTexture();
+                //if(dXTests.IsReady)
+                //    dXTests.UpdateTexture();*/
 
-                Console.WriteLine($"[MOUSE] pos: {progMan.MausPos}".PadRight(Console.WindowWidth - 1));
-                Console.WriteLine($"[MOUSE] ray_pos: {progMan.MausLine3DPos} ray_dir: {progMan.MausLine3DDir}".PadRight(Console.WindowWidth - 1));
-                Console.WriteLine($"[MOUSE] mouse_mesh_event: {progMan.Maus_MeshEvent}".PadRight(Console.WindowWidth - 1));
-                CheckClickPos(progMan, meshes, meshInsts);
+                //Console.WriteLine($"[MOUSE] pos: {progMan.MausPos}".PadRight(Console.WindowWidth - 1));
+                //Console.WriteLine($"[MOUSE] ray_pos: {progMan.MausLine3DPos} ray_dir: {progMan.MausLine3DDir}".PadRight(Console.WindowWidth - 1));
+                //Console.WriteLine($"[MOUSE] mouse_mesh_event: {progMan.Maus_MeshEvent}".PadRight(Console.WindowWidth - 1));
+                //CheckClickPos(progMan, meshes, meshInsts);
 
-                Console.WriteLine($"Loaded textures: {textures.Count}");
-                Console.WriteLine($"Path id: {playerVehicle.PathInfo.path.path}");
+                //Console.WriteLine($"Loaded textures: {textures.Count}");
+                //Console.WriteLine($"Path id: {playerVehicle.PathInfo.path.path}");
 
-                /*Console.WriteLine("".PadRight(Console.WindowWidth-1));
-                try
+                ///*Console.WriteLine("".PadRight(Console.WindowWidth-1));
+                //try
+                //{
+                //    if (omsi.Globals.PlayerVehicle != null)
+                //    {
+                //        Console.WriteLine($"INEO_PS_Matricule: {omsi.Globals.PlayerVehicle.GetStringVariable("INEO_Login")}".PadRight(Console.WindowWidth - 1));
+
+
+                //        omsi.Globals.PlayerVehicle.SetStringVariable("INEO_Login", toggle ? "thomas" : "01234");
+                //        toggle = !toggle;
+                //    }
+                //}
+                //catch (Exception e) { Console.WriteLine(e.Message); }*/
+
+
+                /*var OMSIRM = omsi.RemoteMethods;
+                //OMSIRM.PlaceRandomBus();
+                 Console.WriteLine("Placed");
+
+                OMSIRM.OmsiSetCriticalSectionLock(omsi.Globals.ProgamManager.CS_MakeVehiclePtr).ContinueWith((_) =>
                 {
-                    if (omsi.Globals.PlayerVehicle != null)
+                    OMSIRM.MakeVehicle(@"Vehicles\GPM_MAN_LionsCity_M\MAN_A47.bus", __copyToMainList: true).ContinueWith((id) =>
                     {
-                        Console.WriteLine($"INEO_PS_Matricule: {omsi.Globals.PlayerVehicle.GetStringVariable("INEO_Login")}".PadRight(Console.WindowWidth - 1));
-
-
-                        omsi.Globals.PlayerVehicle.SetStringVariable("INEO_Login", toggle ? "thomas" : "01234");
-                        toggle = !toggle;
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e.Message); }*/
+                        Console.WriteLine($"Spawned Vehicle ID: {id.Result}");
+                        OMSIRM.OmsiReleaseCriticalSectionLock(omsi.Globals.ProgamManager.CS_MakeVehiclePtr).ContinueWith((_)=>Console.WriteLine($"Unlock"));
+                    });
+                });
+                break;
+                Debugger.Break();*/
 
                 Thread.Sleep(20);
             }
+            Console.ReadLine();
         }
 
         private static void CheckClickPos(OmsiProgMan progMan, MemArrayList<OmsiAnimSubMesh> meshes, MemArrayList<OmsiAnimSubMeshInst> meshInsts)

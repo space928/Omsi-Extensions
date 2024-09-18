@@ -154,6 +154,12 @@ extern "C" __declspec(dllexport) int TTempRVListCreate(int classAddr, int capaci
         classAddr, capacity);
 }
 
+extern "C" __declspec(dllexport) int CopyTempListIntoMainList(int rvList, int tmpList)
+{
+    return BorlandFastCall(0x0074a240, 2, 2,
+        rvList, tmpList);
+}
+
 extern "C" __declspec(dllexport) int TProgManPlaceRandomBus(int progMan, int aityp, 
     int group, int TTtime, bool thread, bool instantCopy, int _typ,
     bool scheduled, int startDay, int tour, int line)
@@ -187,6 +193,18 @@ extern "C" __declspec(dllexport) void SoundTrigger(int complMapObj, int trigger,
         complMapObj, trigger, filename);
 }
 
+extern "C" __declspec(dllexport) void SetCriticalSectionLock(int addr)
+{
+    BorlandFastCall(0x00562af8, 1, 1,
+        addr);
+}
+
+extern "C" __declspec(dllexport) void ReleaseCriticalSectionLock(int addr)
+{
+    BorlandFastCall(0x00562B30, 1, 1,
+        addr);
+}
+
 extern "C" __declspec(dllexport) BOOL HookD3D()
 {
     if (!m_dxHook)
@@ -195,18 +213,18 @@ extern "C" __declspec(dllexport) BOOL HookD3D()
     return m_dxHook->HookD3D();
 }
 
-extern "C" __declspec(dllexport) HRESULT CreateTexture(UINT Width, UINT Height, D3DFORMAT Format, IDirect3DTexture9** ppTexture)
+extern "C" __declspec(dllexport) HRESULT CreateTexture(UINT Width, UINT Height, D3DFORMAT Format, UINT Levels, IDirect3DTexture9** ppTexture)
 {
     if (!m_dxHook)
         return E_FAIL;
-    return m_dxHook->CreateTexture(Width, Height, Format, ppTexture);
+    return m_dxHook->CreateTexture(Width, Height, Format, Levels, ppTexture);
 }
 
-extern "C" __declspec(dllexport) HRESULT UpdateSubresource(IDirect3DTexture9* Texture, UINT8* TextureData, UINT Width, UINT Height, BOOL UseRect, LONG32 Left, LONG32 Top, LONG32 Right, LONG32 Bottom)
+extern "C" __declspec(dllexport) HRESULT UpdateSubresource(IDirect3DTexture9* Texture, UINT8* TextureData, UINT Width, UINT Height, BOOL UseRect, LONG32 Left, LONG32 Top, LONG32 Right, LONG32 Bottom, LONG32 Level)
 {
     if (!m_dxHook)
         return E_FAIL;
-    return m_dxHook->UpdateSubresource(Texture, TextureData, Width, Height, UseRect, Left, Top, Right, Bottom);
+    return m_dxHook->UpdateSubresource(Texture, TextureData, Width, Height, UseRect, Left, Top, Right, Bottom, Level);
 }
 
 extern "C" __declspec(dllexport) HRESULT ReleaseTexture(IDirect3DTexture9* Texture)
@@ -214,9 +232,14 @@ extern "C" __declspec(dllexport) HRESULT ReleaseTexture(IDirect3DTexture9* Textu
     return DXHook::ReleaseTexture(Texture);
 }
 
-extern "C" __declspec(dllexport) HRESULT GetTextureDesc(IDirect3DTexture9 * Texture, UINT * pWidth, UINT * pHeight, UINT * pFormat)
+extern "C" __declspec(dllexport) HRESULT GetTextureDesc(IDirect3DTexture9* Texture, UINT Level, UINT* pWidth, UINT* pHeight, UINT* pFormat)
 {
-    return DXHook::GetTextureDesc(Texture, pWidth, pHeight, pFormat);
+    return DXHook::GetTextureDesc(Texture, Level, pWidth, pHeight, pFormat);
+}
+
+extern "C" __declspec(dllexport) UINT GetTextureLevelCount(IDirect3DTexture9 * Texture)
+{
+    return DXHook::GetTextureLevelCount(Texture);
 }
 
 extern "C" __declspec(dllexport) HRESULT IsTexture(IUnknown* Texture)
