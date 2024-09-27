@@ -141,6 +141,7 @@ namespace OmsiHook
     public struct D3DOBB
     {
         // TODO: Check Axis Data Type
+        // https://github.com/space928/Omsi-Extensions/issues/114
         public int Axis;
         public D3DVector Depth;
         public D3DVector Center;
@@ -450,7 +451,6 @@ namespace OmsiHook
     [StructLayout(LayoutKind.Explicit, Size = 0x2c)]
     internal struct OmsiTicketInternal
     {
-        //TODO: I don't think these are decoding correctly (I saw nothing when I looked), check this actually works.
         [FieldOffset(0x0)][OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int name;
         [FieldOffset(0x4)][OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int name_english;
         [FieldOffset(0x8)][OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int name_display;
@@ -482,6 +482,7 @@ namespace OmsiHook
         public byte flag;
         public float height;
         public int getInteriorLights; // TODO: Check Data Type
+        // https://github.com/space928/Omsi-Extensions/issues/115
     }
     public struct OmsiEntryProp
     {
@@ -554,11 +555,12 @@ namespace OmsiHook
     public struct OmsiAchseInstance
     {
         //TODO: Translate field names
-        public double phi; //TODO: Verify all double types
+        // https://github.com/space928/Omsi-Extensions/issues/116
+        public double phi; //TODO: Verify all double types // https://github.com/space928/Omsi-Extensions/issues/116
         public float alpha;
         public double drehzahl;
         public double federung;
-        public OmsiVector3Double anpress; //TODO: Verify type
+        public OmsiVector3Double anpress; //TODO: Verify type // https://github.com/space928/Omsi-Extensions/issues/116
         public float contact;
         public float antrieb;
         public double brems;
@@ -716,6 +718,7 @@ namespace OmsiHook
     }
 
     //TODO: Bug when dereferencing this
+    // https://github.com/space928/Omsi-Extensions/issues/117
     [StructLayout(LayoutKind.Explicit, Size = 0x110)]
     internal struct OmsiPathInfoInternal
     {
@@ -878,6 +881,7 @@ namespace OmsiHook
 
     /// <summary>
     /// Temporary struct to store unknown data type in OmsiPathInfo.nextPathSeg
+    /// https://github.com/space928/Omsi-Extensions/issues/118
     /// </summary>
     public struct OmsiNextPathSegment
     {
@@ -886,6 +890,7 @@ namespace OmsiHook
 
     /// <summary>
     /// Temporary struct to store unkown data type in OmsiPathInfo.nextPathID
+    /// https://github.com/space928/Omsi-Extensions/issues/118
     /// </summary>
     public struct OmsiNextPathID
     {
@@ -1873,6 +1878,7 @@ namespace OmsiHook
         [OmsiStruct(typeof(OmsiRVTypesLine), typeof(OmsiRVTypesLineInternal))] public int list_types_line;
     }
     /* TODO: Parse the pointers better to get the variables */
+    // https://github.com/space928/Omsi-Extensions/issues/119
     public struct OmsiBoolClassCondiBool
     {
         /// <summary>
