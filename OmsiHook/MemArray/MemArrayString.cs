@@ -119,6 +119,7 @@ namespace OmsiHook
         public override void CopyTo(string[] array, int arrayIndex) => WrappedArray.CopyTo(array, arrayIndex);
 
         //TODO: Implement efficient enumerator for non-cached arrays.
+        // https://github.com/space928/Omsi-Extensions/issues/110
         public override IEnumerator<string> GetEnumerator() => (IEnumerator<string>)WrappedArray.GetEnumerator();
 
         public override int IndexOf(string item) => Array.IndexOf(WrappedArray, item);

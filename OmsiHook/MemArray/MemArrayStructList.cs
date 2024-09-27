@@ -92,6 +92,7 @@ public class MemArrayList<InternalStruct, Struct> : MemArrayBase<Struct>
 
     /// <summary>
     /// TODO: Implement efficient enumerator for non-cached arrays.
+    /// https://github.com/space928/Omsi-Extensions/issues/110
     /// </summary>
     /// <returns></returns>
     public override IEnumerator<Struct> GetEnumerator() => ((IEnumerable<Struct>)WrappedArray).GetEnumerator();
@@ -206,6 +207,7 @@ public class MemArrayOList<InternalStruct, Struct> : MemArrayBase<Struct>
 
     /// <summary>
     /// TODO: Implement efficient enumerator for non-cached arrays.
+    /// https://github.com/space928/Omsi-Extensions/issues/110
     /// </summary>
     /// <returns></returns>
     public override IEnumerator<Struct> GetEnumerator() => ((IEnumerable<Struct>)WrappedArray).GetEnumerator();

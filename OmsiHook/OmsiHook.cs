@@ -209,6 +209,7 @@ namespace OmsiHook
         public OmsiRoadVehicleInst GetRoadVehicleInst(int index)
         {
             // TODO: A More permanant fix should be done at some point.
+            //https://github.com/space928/Omsi-Extensions/issues/112
             var vehPtr = GetListItem(0x00861508, index);
             return vehPtr < 1000 ? null : new OmsiRoadVehicleInst(omsiMemory, vehPtr);
         }

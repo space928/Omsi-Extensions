@@ -104,9 +104,10 @@ namespace OmsiHook
                 }
             } catch
             {
-                // TODO: This shouldn't really fail silently if it isn't meant to
+                // TODO: This shouldn't really fail silently if it isn't meant to 
                 //       but closing the RPC session results in ReadInt32 throwing
                 //       an exception, so we should catch that...
+                // https://github.com/space928/Omsi-Extensions/issues/113
             }
         }
 
