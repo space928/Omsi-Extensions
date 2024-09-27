@@ -15,7 +15,7 @@ namespace OmsiHook
         private MemArrayStringDict funcsStrings;
         private OmsiFuncClass[] funcs;
         private float[] consts;
-        private MemArray<OmsiWStringInternal, OmsiWString> stringVars;
+        private MemArrayString stringVars;
 
         internal OmsiComplMapObjInst(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
         public OmsiComplMapObjInst() : base() { }
@@ -196,7 +196,7 @@ namespace OmsiHook
             if (index >= stringVars.Count || index < 0)
                 throw new KeyNotFoundException($"String Variable '{varName}' not found in object. - Index Out Of Bounds");
             stringVars.UpdateFromHook(index);
-            return stringVars[index].String;
+            return stringVars[index];
         }
 
         /// <summary>

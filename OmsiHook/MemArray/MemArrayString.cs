@@ -24,7 +24,7 @@ namespace OmsiHook
             {
                 if (cached)
                     arrayCache[index] = value;
-                Memory.WriteMemoryArrayItemSafe(Address, Memory.AllocateString(value).Result, index);
+                Memory.WriteMemoryArrayItemSafe(Address, Memory.AllocateString(value, wide).Result, index);
             }
         }
 
