@@ -25,9 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TriggersSample", "_OmsiHook
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoDemo", "_OmsiHookExamples\VideoDemo\VideoDemo.csproj", "{D94FF6D3-08AA-41CB-B9B9-F82E860E6E96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Multiplayer_Server", "Multiplayer_Server\Multiplayer_Server.csproj", "{2D4DDEF6-2C5D-4348-8DCE-33201BFF046C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Multiplayer_Server", "Multiplayer_Server\Multiplayer_Server.csproj", "{2D4DDEF6-2C5D-4348-8DCE-33201BFF046C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Multiplayer_Client", "Multiplayer_Client\Multiplayer_Client.csproj", "{33EBE989-3BB8-4773-96E6-A7D68E5655CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Multiplayer_Client", "Multiplayer_Client\Multiplayer_Client.csproj", "{33EBE989-3BB8-4773-96E6-A7D68E5655CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -192,6 +192,8 @@ Global
 		{47659503-9923-4E74-AD26-103C1F9FF2B0} = {3F0BF441-D76C-4E0D-A5A8-B20895438EA5}
 		{1DF326AE-4D10-4545-B36A-5622B76987EC} = {3F0BF441-D76C-4E0D-A5A8-B20895438EA5}
 		{D94FF6D3-08AA-41CB-B9B9-F82E860E6E96} = {3F0BF441-D76C-4E0D-A5A8-B20895438EA5}
+		{2D4DDEF6-2C5D-4348-8DCE-33201BFF046C} = {3F0BF441-D76C-4E0D-A5A8-B20895438EA5}
+		{33EBE989-3BB8-4773-96E6-A7D68E5655CD} = {3F0BF441-D76C-4E0D-A5A8-B20895438EA5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5F55305-C8FF-444C-9B98-FD487ADC583A}
