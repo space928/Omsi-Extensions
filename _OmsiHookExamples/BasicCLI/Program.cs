@@ -7,6 +7,8 @@ namespace BasicCLI
     // Most basic example of reading various values exposed by OMSIHook
     class Program
     {
+        static OmsiRoadVehicleInst? playerVehicle;
+        
         static void Main(string[] args)
         {
             Console.WriteLine("#=#=#=#=#=# OMSIHook Basic CLI Sample #=#=#=#=#=#");
@@ -16,14 +18,15 @@ namespace BasicCLI
             // complete by either using the await operator or calling it's Wait() method.
             OmsiHook.OmsiHook omsi = new();
             omsi.AttachToOMSI().Wait();
+            omsi.OnActiveVehicleChanged += (_, inst) => playerVehicle = inst;
 
             // Set the console output encoding to support emoji
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            var playerVehicle = omsi.Globals.PlayerVehicle;
             var time = omsi.Globals.Time;
             var map = omsi.Globals.Map;
             var weather = omsi.Globals.Weather;
+            playerVehicle = omsi.Globals.PlayerVehicle;
             while (true)
             {
                 // These variables will return null until they have a valid value (they will become null if Omsi is in
@@ -33,7 +36,6 @@ namespace BasicCLI
                 map ??= omsi.Globals.Map;
                 time ??= omsi.Globals.Time;
                 weather ??= omsi.Globals.Weather;
-                playerVehicle ??= omsi.Globals.PlayerVehicle;
                 var pos = playerVehicle?.Position ?? default;
                 var rot = playerVehicle?.Rotation ?? default;
 
@@ -49,7 +51,7 @@ namespace BasicCLI
         }
 
         // Pick an emoji to show for the weather
-        static string WeatherEmoji(OmsiWeather weather)
+        static string WeatherEmoji(OmsiWeather? weather)
         {
             if (weather == null)
                 return "N/A";
