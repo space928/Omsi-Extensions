@@ -53,9 +53,9 @@
             get => Memory.ReadMemory<D3DVector>(Address + 0x26e);
             set => Memory.WriteMemory(Address + 0x26e, value);
         }
-        public D3DQuaternion Last_Rotation
+        public D3DXQuaternion Last_Rotation
         {
-            get => Memory.ReadMemory<D3DQuaternion>(Address + 0x27a);
+            get => Memory.ReadMemory<D3DXQuaternion>(Address + 0x27a);
             set => Memory.WriteMemory(Address + 0x27a, value);
         }
         public D3DMatrix RelMatrixVar

@@ -394,19 +394,19 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x8bc, value);
         }
         public OmsiRoadVehicleInst ScriptParent => Memory.ReadMemoryObject<OmsiRoadVehicleInst>(Address, 0x8c0, false);
-        public D3DVector2 Wagenkasten_RotZPhys
+        public D3DXVector2 Wagenkasten_RotZPhys
         {
-            get => Memory.ReadMemory<D3DVector2>(Address + 0x8c4);
+            get => Memory.ReadMemory<D3DXVector2>(Address + 0x8c4);
             set => Memory.WriteMemory(Address + 0x8c4, value);
         }
-        public D3DVector2 Wagenkasten_RotXPhys
+        public D3DXVector2 Wagenkasten_RotXPhys
         {
-            get => Memory.ReadMemory<D3DVector2>(Address + 0x8cc);
+            get => Memory.ReadMemory<D3DXVector2>(Address + 0x8cc);
             set => Memory.WriteMemory(Address + 0x8cc, value);
         }
-        public D3DVector2 Wagenkasten_TransZPhys
+        public D3DXVector2 Wagenkasten_TransZPhys
         {
-            get => Memory.ReadMemory<D3DVector2>(Address + 0x8d4);
+            get => Memory.ReadMemory<D3DXVector2>(Address + 0x8d4);
             set => Memory.WriteMemory(Address + 0x8d4, value);
         }
         public D3DVector Euler

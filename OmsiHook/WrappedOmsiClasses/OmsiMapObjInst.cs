@@ -18,9 +18,9 @@
             get => Memory.ReadMemory<D3DMatrix>(Address + 0x10);
             set => Memory.WriteMemory(Address + 0x10, value);
         }
-        public D3DQuaternion Rotation
+        public D3DXQuaternion Rotation
         {
-            get => Memory.ReadMemory<D3DQuaternion>(Address + 0x50);
+            get => Memory.ReadMemory<D3DXQuaternion>(Address + 0x50);
             set => Memory.WriteMemory(Address + 0x50, value);
         }
         public float Scale

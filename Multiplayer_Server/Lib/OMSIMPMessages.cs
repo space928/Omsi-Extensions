@@ -26,7 +26,7 @@ public static class OMSIMPMessages
     public struct Player_Position_Update
     {
         public OmsiPoint tile;
-        public D3DQuaternion rotation;
+        public D3DXQuaternion rotation;
         public D3DVector velocity;
         public D3DVector position;
         public D3DMatrix relmatrix;
@@ -38,7 +38,7 @@ public static class OMSIMPMessages
     {
         public int ID;
         public OmsiPoint tile;
-        public D3DQuaternion rotation;
+        public D3DXQuaternion rotation;
         public D3DVector velocity;
         public D3DVector position;
         public D3DMatrix relmatrix;
