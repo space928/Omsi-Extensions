@@ -74,36 +74,35 @@ namespace OmsiHook
         {
             get => Memory.ReadMemoryObjArray<OmsiMatlChangeMaster>(Address + 0x40);
         }*/
-        public OmsiFreeTex[] FreeTexs
+        public MemArrayOList<OmsiFreeTex, OmsiFreeTex> FreeTexs
         {
-            get => Memory.ReadMemoryStructArray<OmsiFreeTex>(Address + 0x44);
+            get => new(Memory, Address + 0x44);
         }
-
         public int Refls
         {
             get => Memory.ReadMemory<int>(Address + 0x48);
             set => Memory.WriteMemory(Address + 0x48, value);
         }
-        public OmsiLOD[] LODs
+        public MemArrayOList<OmsiLOD, OmsiLOD> LODs
         {
-            get => Memory.ReadMemoryStructArray<OmsiLOD>(Address + 0x4c);
+            get => new(Memory, Address + 0x4c);
         }
-        public OmsiSpot[] Spots
+        public MemArrayOList<OmsiSpot, OmsiSpot> Spots
         {
-            get => Memory.ReadMemoryStructArray<OmsiSpot>(Address + 0x50);
+            get => new(Memory, Address + 0x50);
         }
         /* TODO:
-        public OmsiCTCSet[] TexChangeMasters
+        public MemArrayList<OmsiCTCSet, OmsiCTCSet> CTCs
         {
-            get => Memory.ReadMemoryObjArray<OmsiCTCSet>(Address + 0x54);
+            get => new(Memory, Address + 0x54);
         }*/
-        public OmsiOFTTex[] OFTTex
+        public MemArrayOList<OmsiOFTTexInternal, OmsiOFTTex> OFTTex
         {
-            get => Memory.MarshalStructs<OmsiOFTTex, OmsiOFTTexInternal>(Memory.ReadMemoryStructArray<OmsiOFTTexInternal>(Address + 0x58));
+            get => new(Memory, Address + 0x58);
         }
-        public OmsiScriptTex[] ScriptTex
+        public MemArrayOList<OmsiScriptTex, OmsiScriptTex> ScriptTex
         {
-            get => Memory.ReadMemoryStructArray<OmsiScriptTex>(Address + 0x5c);
+            get => new(Memory, Address + 0x5c);
         }
         public int LabelCount
         {

@@ -10,9 +10,9 @@
 		<Description>OmsiHook is a simple library for hooking into Omsi's memory for modding.</Description>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<AssemblyVersion>2.5.2.1</AssemblyVersion>
-		<FileVersion>2.5.2.1</FileVersion>
-		<Version>2.5.2</Version>
+		<AssemblyVersion>2.5.3.1</AssemblyVersion>
+		<FileVersion>2.5.3.1</FileVersion>
+		<Version>2.5.3</Version>
 		<PackageLicenseExpression>LGPL-3.0-only</PackageLicenseExpression>
 		<SignAssembly>False</SignAssembly>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -62,25 +62,40 @@
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
+		<!--<None Include="..\OmsiHook\bin\x86\$(_ConfigurationNormalized)\$(TargetFramework)\OmsiHook.deps.json" Link="OmsiHook.deps.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Pack>True</Pack>
+			<PackagePath>\lib\net6.0-windows7.0</PackagePath>
+		</None>-->
 		<None Include="..\$(_ConfigurationNormalized)\OmsiHookInvoker.dll" Link="OmsiHookInvoker.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Pack>True</Pack>
-			<PackagePath>\lib\net6.0</PackagePath>
+			<PackagePath>\lib\net6.0-windows7.0</PackagePath>
 		</None>
 		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(_ConfigurationNormalized)\$(TargetFramework)\OmsiHookRPCPlugin.dll" Link="OmsiHookRPCPlugin.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Pack>True</Pack>
-			<PackagePath>\lib\net6.0</PackagePath>
+			<PackagePath>\lib\net6.0-windows7.0</PackagePath>
+		</None>
+		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(_ConfigurationNormalized)\$(TargetFramework)\OmsiHookRPCPlugin.deps.json" Link="OmsiHookRPCPlugin.deps.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Pack>True</Pack>
+			<PackagePath>\lib\net6.0-windows7.0</PackagePath>
+		</None>
+		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(_ConfigurationNormalized)\$(TargetFramework)\OmsiHookRPCPlugin.runtimeconfig.json" Link="OmsiHookRPCPlugin.runtimeconfig.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Pack>True</Pack>
+			<PackagePath>\lib\net6.0-windows7.0</PackagePath>
 		</None>
 		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(_ConfigurationNormalized)\$(TargetFramework)\OmsiHookRPCPluginNE.dll" Link="OmsiHookRPCPluginNE.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Pack>True</Pack>
-			<PackagePath>\lib\net6.0</PackagePath>
+			<PackagePath>\lib\net6.0-windows7.0</PackagePath>
 		</None>
 		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(_ConfigurationNormalized)\$(TargetFramework)\OmsiHookRPCPlugin.opl" Link="OmsiHookRPCPlugin.opl">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Pack>True</Pack>
-			<PackagePath>\lib\net6.0</PackagePath>
+			<PackagePath>\lib\net6.0-windows7.0</PackagePath>
 		</None>
 	</ItemGroup>
 	
@@ -96,8 +111,13 @@
 	<ItemGroup>
 		<ProjectReference Include="..\OmsiHookInvoker\OmsiHookInvoker.vcxproj">
 			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+			<Private>True</Private>
+			<CopyLocalSatelliteAssemblies>True</CopyLocalSatelliteAssemblies>
 		</ProjectReference>
-		<ProjectReference Include="..\OmsiHookRPCPlugin\OmsiHookRPCPlugin.csproj" />
+		<ProjectReference Include="..\OmsiHookRPCPlugin\OmsiHookRPCPlugin.csproj">
+		  <Private>True</Private>
+		  <CopyLocalSatelliteAssemblies>True</CopyLocalSatelliteAssemblies>
+		</ProjectReference>
 	</ItemGroup>
 
 	<!--Hack to fix docfx build bug... For some reason sometimes docfx tries to load the wrong version of System.Memory.dll; as 

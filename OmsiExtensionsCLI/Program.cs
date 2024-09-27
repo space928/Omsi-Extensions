@@ -55,6 +55,7 @@ namespace OmsiExtensionsCLI
                 Console.WriteLine($"Read data: map:{map?.Name}   path:{map?.Filename}   friendly:{map?.FriendlyName}".PadRight(Console.WindowWidth - 1));
                 Console.WriteLine($"Time: {omsi.Globals.Time.Day}/{omsi.Globals.Time.Month}/{omsi.Globals.Time.Year} - {omsi.Globals.Time.Hour}:{omsi.Globals.Time.Minute}:{omsi.Globals.Time.Second:F2}     ");
                 Console.WriteLine($"Camera pos: {cam.Pos}      ".PadRight(Console.WindowWidth - 1));
+                //Console.WriteLine($"{playerVehicle.ComplObjInst.ComplObj.OFTTex.Count}      ".PadRight(Console.WindowWidth - 1));
                 //Console.WriteLine($"{omsi.Globals.Drivers}".PadRight(Console.WindowWidth - 1));
 
                 ///*if(!dXTests.IsReady)
@@ -85,7 +86,7 @@ namespace OmsiExtensionsCLI
                 //catch (Exception e) { Console.WriteLine(e.Message); }*/
 
 
-                var OMSIRM = omsi.RemoteMethods;
+                /*var OMSIRM = omsi.RemoteMethods;
                 //OMSIRM.PlaceRandomBus();
                  Console.WriteLine("Placed");
 
@@ -98,7 +99,7 @@ namespace OmsiExtensionsCLI
                     });
                 });
                 break;
-                Debugger.Break();
+                Debugger.Break();*/
 
                 Thread.Sleep(20);
             }

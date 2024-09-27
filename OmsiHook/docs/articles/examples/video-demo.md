@@ -3,7 +3,7 @@
 This article provides a basic understanding to a basic C# .NET example leveraging the OMSIHook library. This demo is a more advanced 
 demo using FFmpeg's library to decode video files then pipe the frame data into OMSI's ScriptTextures.
 
-_This article is in direct relation to the Sample Project available [here](https://github.com/space928/Omsi-Extensions/tree/main/_OmsiHookExamples/Video_Demo)._
+_This article is in direct relation to the Sample Project available [here](https://github.com/space928/Omsi-Extensions/tree/main/_OmsiHookExamples/VideoDemo)._
 
 ![youtube.com/embed 1](https://www.youtube.com/embed/61sMzpSCn0M)
 

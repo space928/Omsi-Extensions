@@ -28,7 +28,6 @@ namespace OmsiHook
 
         public bool IsInitialised => localPlugin || (pipeRX?.IsConnected ?? false) && (pipeTX?.IsConnected ?? false);
 
-        // TODO: Okay maybe this shouldn't be static... Singleton?
         internal async Task InitRemoteMethods(Memory omsiMemory, bool inifiniteTimeout = false, bool isLocalPlugin = false)
         {
             memory = omsiMemory;
@@ -46,9 +45,9 @@ namespace OmsiHook
             try
             {
                 await pipeTX.ConnectAsync(inifiniteTimeout ? Timeout.Infinite : 20000);
-                Console.WriteLine("pipeTX Connected!");
+                //Console.WriteLine("pipeTX Connected!");
                 await pipeRX.ConnectAsync(inifiniteTimeout ? Timeout.Infinite : 20000);
-                Console.WriteLine("pipeRX Connected!");
+                //Console.WriteLine("pipeRX Connected!");
             }
             catch (TimeoutException)
             {

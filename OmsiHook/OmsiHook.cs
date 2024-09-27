@@ -114,13 +114,15 @@ namespace OmsiHook
             try
             {
                 cursorLine = Console.CursorTop;
-            } catch { }
+            }
+            catch { }
             DateTime startTime = DateTime.Now;
             var found = false;
             while (!found)
             {
                 found = omsiMemory.Attach("omsi");
-                if (!found) {
+                if (!found)
+                {
                     if (cursorLine != int.MinValue)
                     {
                         Console.WriteLine($"Waiting for OMSI.exe (waited for {(DateTime.Now - startTime).TotalSeconds:0} seconds)...");
@@ -135,8 +137,18 @@ namespace OmsiHook
             if (initialiseRemoteMethods)
             {
                 var remoteMethods = new OmsiRemoteMethods();
+                if (cursorLine != int.MinValue)
+                {
+                    Console.WriteLine($"Initialising remote methods...");
+                    Console.SetCursorPosition(0, cursorLine);
+                }
                 await remoteMethods.InitRemoteMethods(omsiMemory, isLocalPlugin: isLocalPlugin);
                 omsiMemory.RemoteMethods = remoteMethods;
+                if (cursorLine != int.MinValue)
+                {
+                    Console.WriteLine($"Hooking D3D methods...");
+                    Console.SetCursorPosition(0, cursorLine);
+                }
                 isD3DReady = remoteMethods.OmsiHookD3D();
             }
 
@@ -146,6 +158,12 @@ namespace OmsiHook
             OnOmsiGotD3DContext += OmsiHook_OnOmsiGotD3DContext;
             OnOmsiLostD3DContext += OmsiHook_OnOmsiLostD3DContext;
             OnMapChange += OmsiHook_OnMapChange;
+
+            if (cursorLine != int.MinValue)
+            {
+                Console.WriteLine($"Connected to OMSI!");
+                Console.SetCursorPosition(0, cursorLine);
+            }
         }
 
         /// <summary>
@@ -166,8 +184,9 @@ namespace OmsiHook
 
         private void OmsiHook_OnMapChange(object sender, OmsiMap e)
         {
-            Task.Run(() => {
-                while(RemoteMethods.IsInitialised && !isD3DReady)
+            Task.Run(() =>
+            {
+                while (RemoteMethods.IsInitialised && !isD3DReady)
                     isD3DReady = RemoteMethods.OmsiHookD3D();
             });
         }
@@ -179,7 +198,8 @@ namespace OmsiHook
 
         private void OmsiHook_OnOmsiGotD3DContext(object sender, EventArgs e)
         {
-            Task.Run(() => {
+            Task.Run(() =>
+            {
                 while (RemoteMethods.IsInitialised && !isD3DReady)
                     isD3DReady = RemoteMethods.OmsiHookD3D();
             });
@@ -219,7 +239,8 @@ namespace OmsiHook
                     return 0;
                 int item = omsiMemory.ReadMemory<int>(l2 + index * 4);
                 return item;
-            } catch
+            }
+            catch
             {
                 return 0;
             }
@@ -245,7 +266,7 @@ namespace OmsiHook
                 int currentMapAddr = omsiMemory.ReadMemory<int>(0x861588);
                 if (currentMapAddr != 0)
                 {
-                    if (RemoteMethods.IsInitialised && !isD3DReady) 
+                    if (RemoteMethods.IsInitialised && !isD3DReady)
                         isD3DReady = RemoteMethods.OmsiHookD3D();
 
                     int currentMapName = omsiMemory.ReadMemory<int>(currentMapAddr + 0x154);
@@ -281,7 +302,7 @@ namespace OmsiHook
     /// <summary>
     /// Indicates that OmsiHook was not connected to the remote application when the method was called.
     /// </summary>
-    public class NotInitialisedException : Exception 
+    public class NotInitialisedException : Exception
     {
         public NotInitialisedException() : base() { }
         public NotInitialisedException(string message) : base(message) { }

@@ -106,11 +106,11 @@ namespace OmsiHookRPCPlugin
             threadPool = new();
             for (int i = 0; i < MAX_CLIENTS; i++)
             {
-                Thread thread = new(() => ServerThreadStart(i - 1));
+                Thread thread = new((id) => ServerThreadStart((int)id));
                 threadPool.Add(thread);
                 lock (returnPool)
                     returnPool.Add(new());
-                thread.Start();
+                thread.Start(i);
             }
         }
 
@@ -120,7 +120,9 @@ namespace OmsiHookRPCPlugin
             {
                 try
                 {
-                    // Log($"[RPC Server {threadId}] Init.");
+#if DEBUG
+                    Log($"[RPC Server {threadId}] Init.");
+#endif
                     using NamedPipeServerStream pipeRX = new(PIPE_NAME_RX, PipeDirection.In, MAX_CLIENTS, PipeTransmissionMode.Byte);
                     pipeRX.WaitForConnection();
                     Log($"[RPC Server {threadId}] Client has connected to rx.");
@@ -136,16 +138,30 @@ namespace OmsiHookRPCPlugin
                     readTask.Start();
                     writeTask.Start();
 
-                    Task.WaitAll(readTask, writeTask);
-                    Thread.Sleep(50);
+                    Task.WaitAny(readTask, writeTask);
+                    try
+                    {
+                        pipeRX.Disconnect();
+                    }
+                    catch { }
+                    try
+                    {
+                        pipeTX.Disconnect();
+                    }
+                    catch { }
+                    readTask.Dispose();
+                    writeTask.Dispose();
+                    pipeRX.Dispose();
+                    pipeTX.Dispose();
+                    Thread.Sleep(500);
                 }
                 catch (AggregateException ex)
                 {
                     // Pipe closed normally, probably...
                     // if (ex.InnerException.GetType() != typeof(EndOfStreamException))
                     //     Log(ex.InnerException);
-                    if (!ex.InnerExceptions.All(x => x.GetType() == typeof(EndOfStreamException)))
-                        Log(ex);
+                    //if (!ex.InnerExceptions.All(x => x.GetType() == typeof(EndOfStreamException)))
+                    Log(ex);
                 }
                 catch (Exception ex)
                 {
@@ -162,7 +178,7 @@ namespace OmsiHookRPCPlugin
                 using BinaryWriter writer = new(pipeTX);
                 while (pipeTX.IsConnected)
                 {
-                    returnPool[threadId].isReady.Wait();
+                    returnPool[threadId].isReady.Wait(200);
                     lock (writeMutex)
                     {
                         if (returnPool[threadId].values.TryDequeue(out ReturnPromise ret))
@@ -171,11 +187,15 @@ namespace OmsiHookRPCPlugin
                             writer.Write(ret.Promise);
                             writer.Write(ret.Val);
                         }
-                        else
-                            Log($"[RPC Server {threadId}]    tried to return a result, but no result was available!");
+                        //else
+                        //    Log($"[RPC Server {threadId}]    tried to return a result, but no result was available!");
                     }
                     //Log($"[RPC Server {threadId}]    Done!");
                 }
+            }
+            catch(ObjectDisposedException)
+            {
+                Log($"[RPC Server {threadId}]    Couldn't write to pipe: Pipe was disposed!");
             }
             catch (Exception ex)
             {
@@ -237,6 +257,10 @@ namespace OmsiHookRPCPlugin
                     Log($"[RPC Server {threadId}]    method enqueued...");
 #endif
                 }
+            }
+            catch (EndOfStreamException)
+            {
+                //throw;
             }
             catch (Exception ex)
             {

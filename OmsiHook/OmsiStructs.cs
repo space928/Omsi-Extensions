@@ -920,7 +920,7 @@ namespace OmsiHook
 
     internal struct OmsiAmpelGroupInternal
     {
-        [OmsiStructArrayPtr(typeof(OmsiAmpel))]
+        [OmsiStructArrayPtr(typeof(OmsiAmpel), typeof(OmsiAmpelInternal))]
         public int ampeln;
         [OmsiStructArrayPtr(typeof(OmsiAmpelStop))]
         public int stops;
@@ -1940,10 +1940,10 @@ namespace OmsiHook
         public byte orientation;
         public char grid;
     }
-    internal struct OmsiOFTTexInternal
+    public struct OmsiOFTTexInternal
     {
         public int source;
-        [OmsiStrPtr] public int font;
+        [OmsiStrPtr(StrPtrType.RawDelphiAnsiString)] public int font;
         public OmsiPoint size;
         public byte fullColor;
         public uint color;
