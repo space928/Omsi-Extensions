@@ -12,8 +12,4 @@
     <PackageReference Include="Telepathy" Version="1.0.341" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\OmsiHook\OmsiHook.csproj" />
-  </ItemGroup>
-
 </Project>

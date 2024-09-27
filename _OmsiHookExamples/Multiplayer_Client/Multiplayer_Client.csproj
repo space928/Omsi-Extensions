@@ -10,11 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="OmsiHook" Version="2.5.3" />
     <PackageReference Include="Telepathy" Version="1.0.341" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\OmsiHook\OmsiHook.csproj" />
   </ItemGroup>
   
   <ItemGroup>

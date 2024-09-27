@@ -25,11 +25,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TriggersSample", "_OmsiHook
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VideoDemo", "_OmsiHookExamples\VideoDemo\VideoDemo.csproj", "{D94FF6D3-08AA-41CB-B9B9-F82E860E6E96}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Multiplayer_Server", "Multiplayer_Server\Multiplayer_Server.csproj", "{2D4DDEF6-2C5D-4348-8DCE-33201BFF046C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Multiplayer_Server", "_OmsiHookExamples\Multiplayer_Server\Multiplayer_Server.csproj", "{2D4DDEF6-2C5D-4348-8DCE-33201BFF046C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Multiplayer_Client", "Multiplayer_Client\Multiplayer_Client.csproj", "{33EBE989-3BB8-4773-96E6-A7D68E5655CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Multiplayer_Client", "_OmsiHookExamples\Multiplayer_Client\Multiplayer_Client.csproj", "{33EBE989-3BB8-4773-96E6-A7D68E5655CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClickablePlaneDemo", "_OmsiHookExamples\ClickablePlaneDemo\ClickablePlaneDemo.csproj", "{49428923-732C-4541-8C97-C6D9C004D726}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClickablePlaneDemo", "_OmsiHookExamples\ClickablePlaneDemo\ClickablePlaneDemo.csproj", "{49428923-732C-4541-8C97-C6D9C004D726}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -185,7 +185,7 @@ Global
 		{33EBE989-3BB8-4773-96E6-A7D68E5655CD}.ReleaseAndDocs|Any CPU.Build.0 = Release|Any CPU
 		{33EBE989-3BB8-4773-96E6-A7D68E5655CD}.ReleaseAndDocs|x86.ActiveCfg = Release|Any CPU
 		{33EBE989-3BB8-4773-96E6-A7D68E5655CD}.ReleaseAndDocs|x86.Build.0 = Release|Any CPU
-    {49428923-732C-4541-8C97-C6D9C004D726}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49428923-732C-4541-8C97-C6D9C004D726}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{49428923-732C-4541-8C97-C6D9C004D726}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49428923-732C-4541-8C97-C6D9C004D726}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{49428923-732C-4541-8C97-C6D9C004D726}.Debug|x86.Build.0 = Debug|Any CPU
