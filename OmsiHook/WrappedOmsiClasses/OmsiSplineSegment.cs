@@ -10,5 +10,6 @@ namespace OmsiHook
 
         internal OmsiSplineSegment(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
         //TODO: OmsiSplineSegment
+        //https://github.com/space928/Omsi-Extensions/issues/142
     }
 }

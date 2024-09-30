@@ -21,6 +21,7 @@
         {
             get => new OmsiPathPoint(Memory, Memory.ReadMemory<int>(Address + 0xc));
         }*/
+        //https://github.com/space928/Omsi-Extensions/issues/136
         public int LinkCounter
         {
             get => Memory.ReadMemory<int>(Address + 0x10);

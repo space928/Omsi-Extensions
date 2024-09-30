@@ -165,12 +165,14 @@
 
 
         // TODO: VFDPlane_Render - struct D3DXPlane[6] @ 0x229
+        //https://github.com/space928/Omsi-Extensions/issues/125
         /*public D3DXPlane[] VFDPlane_Render
         {
             get => omsiMemory.ReadMemory<D3DXPlane[6]>(baseAddress + 0x229);
             set => omsiMemory.WriteMemory(baseAddress + 0x229, value);
         }*/
         // TODO: VFDPlane_Calc - struct D3DXPlane[6] @ 0x289
+        //https://github.com/space928/Omsi-Extensions/issues/125
         /*public D3DXPlane[] VFDPlane_Calc
         {
             get => omsiMemory.ReadMemory<D3DXPlane[6]>(baseAddress + 0x289);

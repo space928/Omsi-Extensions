@@ -20,6 +20,7 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x4, value);
         }
         // TODO: Check this data type, should be a TStringList
+        // https://github.com/space928/Omsi-Extensions/issues/129
         /*public string[] FileText
         {
             get => Memory.ReadMemoryStringArray(Address + 0x8);
@@ -65,11 +66,13 @@ namespace OmsiHook
             get => new(Memory, Address + 0x38);
         }
         /* TODO:
+         * https://github.com/space928/Omsi-Extensions/issues/129
         public OmsiTexChangeMaster[] TexChangeMasters
         {
             get => Memory.ReadMemoryObjArray<OmsiTexChangeMaster>(Address + 0x3c);
         }*/
         /* TODO:
+         * https://github.com/space928/Omsi-Extensions/issues/129
         public OmsiMatlChangeMaster[] TexChangeMasters
         {
             get => Memory.ReadMemoryObjArray<OmsiMatlChangeMaster>(Address + 0x40);
@@ -92,6 +95,7 @@ namespace OmsiHook
             get => new(Memory, Address + 0x50);
         }
         /* TODO:
+         * https://github.com/space928/Omsi-Extensions/issues/129
         public MemArrayList<OmsiCTCSet, OmsiCTCSet> CTCs
         {
             get => new(Memory, Address + 0x54);
@@ -155,6 +159,7 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0xb4, value);
         }
         /* TODO:
+         * https://github.com/space928/Omsi-Extensions/issues/129
         public OmsiTessPolygon[] TerrainHoles
         {
             get => Memory.ReadMemoryStructArray<OmsiTessPolygon>(Address + 0xb8);

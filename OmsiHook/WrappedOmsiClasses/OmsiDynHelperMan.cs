@@ -22,6 +22,7 @@ namespace OmsiHook
             get => Memory.ReadMemoryObjArray<OmsiComplMapSceneObjInst>(Address + 0x8);
         }
         // TODO: Implement OmsiCriticalSectionInternal
+        //https://github.com/space928/Omsi-Extensions/issues/131
         /*public OmsiCriticalSection CriticalSection
         {
             get => Memory.ReadMemory<OmsiCriticalSection>(Address + 0xc);

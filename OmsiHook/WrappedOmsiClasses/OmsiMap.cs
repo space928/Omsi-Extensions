@@ -102,6 +102,7 @@ namespace OmsiHook
             get => Memory.MarshalStruct<OmsiMaterialProp, OmsiMaterialPropInternal>(
                 Memory.ReadMemory<OmsiMaterialPropInternal>(Address + 0x3c));
             //TODO: set => Memory.WriteMemory(Address + 0x3c, value);
+            //https://github.com/space928/Omsi-Extensions/issues/134
         }
 
         public int LoadedKacheln
@@ -149,6 +150,7 @@ namespace OmsiHook
 
         /*TODO: public OmsiThreadTileLoadAndRefresh ThreadTileLoadAndRefresh 
             => omsiMemory.ReadMemory<OmsiThreadTileLoadAndRefresh>(baseAddress + 0x114);*/
+        //https://github.com/space928/Omsi-Extensions/issues/134
 
         public OmsiMapKachel[] Kacheln => Memory.ReadMemoryObjArray<OmsiMapKachel>(Address + 0x118);
 
@@ -278,6 +280,7 @@ namespace OmsiHook
 
         //TODO: This is meant to be an array of pointers to floats, which can't be marshalled yet
         //public float[] WellenAnimation_P => Memory.ReadMemoryStructArray<float>(Address + 0x190);
+        //https://github.com/space928/Omsi-Extensions/issues/134
 
         public OmsiStringList Registers => Memory.ReadMemoryObject<OmsiStringList>(Address, 0x194, false);
 
@@ -294,6 +297,7 @@ namespace OmsiHook
                 Memory.ReadMemory<OmsiAIListInternal>(Address + 0x1a4));
             //TODO: set => Memory.WriteMemory(Address + 0x1a4, value);
         }*/
+        //https://github.com/space928/Omsi-Extensions/issues/134
 
         public float MaxSpeed
         {
@@ -356,5 +360,6 @@ namespace OmsiHook
             get => Memory.ReadMemory<D3DMatrix>(Address + 0x254);
             set => Memory.WriteMemory(Address + 0x254, value);
         }*/
+        //https://github.com/space928/Omsi-Extensions/issues/134
     }
 }

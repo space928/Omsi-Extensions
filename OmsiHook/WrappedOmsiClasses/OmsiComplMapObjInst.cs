@@ -49,31 +49,37 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x1ec, value);
         }
         public float Debug // TODO: Check Data Type
+                           //https://github.com/space928/Omsi-Extensions/issues/128
         {
             get => Memory.ReadMemory<float>(Address + 0x1f0);
             set => Memory.WriteMemory(Address + 0x1f0, value);
         }
         public float Unknown_OCMOI_A // TODO: Check Data Name
+                                     //https://github.com/space928/Omsi-Extensions/issues/128
         {
             get => Memory.ReadMemory<float>(Address + 0x1f4);
             set => Memory.WriteMemory(Address + 0x1f4, value);
         }
         public float Unknown_OCMOI_B // TODO: Check Data Name
+                                     //https://github.com/space928/Omsi-Extensions/issues/128
         {
             get => Memory.ReadMemory<float>(Address + 0x1f8);
             set => Memory.WriteMemory(Address + 0x1f8, value);
         }
         public float Unknown_OCMOI_C // TODO: Check Data Name
+                                     //https://github.com/space928/Omsi-Extensions/issues/128
         {
             get => Memory.ReadMemory<float>(Address + 0x1fc);
             set => Memory.WriteMemory(Address + 0x1fc, value);
         }
-        public float UUnknown_OCMOI_D // TODO: Check Data Name
+        public float Unknown_OCMOI_D // TODO: Check Data Name
+                                      //https://github.com/space928/Omsi-Extensions/issues/128
         {
             get => Memory.ReadMemory<float>(Address + 0x200);
             set => Memory.WriteMemory(Address + 0x200, value);
         }
         public float Unknown_OCMOI_E // TODO: Check Data Name
+                                     //https://github.com/space928/Omsi-Extensions/issues/128
         {
             get => Memory.ReadMemory<float>(Address + 0x204);
             set => Memory.WriteMemory(Address + 0x204, value);

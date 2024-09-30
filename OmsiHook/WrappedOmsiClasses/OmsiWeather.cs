@@ -11,6 +11,7 @@ namespace OmsiHook
         public OmsiWeather() : base() { }
 
         //Todo: WeatherSchemes - OmsiWeatherProp[] @ 0x4
+        //https://github.com/space928/Omsi-Extensions/issues/143
 
         public OmsiWeatherProp ActWeather
         {
@@ -112,6 +113,7 @@ namespace OmsiHook
         }
 
         /*TODO:
+         * https://github.com/space928/Omsi-Extensions/issues/143
          * public OmsiPartikelemitter PercipSystem
         {
             get => omsiMemory.ReadMemory<OmsiPartikelemitter>(baseAddress + 0xd4);
@@ -161,6 +163,7 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x148, value);
         }
         /* TODO:
+         * https://github.com/space928/Omsi-Extensions/issues/143
         public OmsiSound PercipSound
         {
             get => omsiMemory.ReadMemory<OmsiSound>(baseAddress + 0x14c);
