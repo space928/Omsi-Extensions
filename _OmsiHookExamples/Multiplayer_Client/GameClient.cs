@@ -1,23 +1,18 @@
-﻿using Microsoft.VisualBasic;
-using OmsiHook;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using OmsiHook;
 using System.Numerics;
-using Telepathy;
 using System.Runtime.CompilerServices;
 
-namespace Multiplayer_Client
+namespace OmsiHook.Examples.Multiplayer_Client
 {
     internal class GameClient
     {
         public Tuple<int, long, long> LastPing;
-        private OmsiHook.OmsiHook omsi;
+        private OmsiHook omsi;
         private Dictionary<int, OmsiRoadVehicleInst> Vehicles = new Dictionary<int, OmsiRoadVehicleInst>();
-        public GameClient() {
-            omsi = new OmsiHook.OmsiHook();
+        private int frameCounter = 0;
+        public GameClient()
+        {
+            omsi = new OmsiHook();
             omsi.AttachToOMSI().Wait();
             var OMSIRM = omsi.RemoteMethods;
             OMSIRM.OmsiSetCriticalSectionLock(omsi.Globals.ProgamManager.CS_MakeVehiclePtr).ContinueWith((_) =>
@@ -31,12 +26,11 @@ namespace Multiplayer_Client
             });
         }
 
-        int i = 0;
         public void UpdateVehicles(OMSIMPMessages.Vehicle_Position_Update update)
         {
             if (Vehicles.TryGetValue(update.ID, out var vehicle))
             {
-                if (i % 20 == 0)
+                if (frameCounter % 20 == 0)
                     vehicle.Position = update.position;
                 vehicle.Rotation = update.rotation;
                 vehicle.Velocity = update.velocity;
@@ -56,15 +50,11 @@ namespace Multiplayer_Client
                 vehicle.AI_Blinker_L = 1;
                 vehicle.AI_Blinker_R = 1;
                 vehicle.AI_var = 1;
-
-
-                //vehicle.AbsPosition = update.abs_position;
-                //vehicle.AbsPosition_Inv = update.abs_position_inv;
-                i++;
+                frameCounter++;
             }
             else
             {
-                
+
             }
         }
 
@@ -74,7 +64,7 @@ namespace Multiplayer_Client
                 return;
 
             var vehicle = omsi.Globals.PlayerVehicle;
-            Console.WriteLine($"\x1b[8;0HP:{vehicle.Position}/{vehicle.MyKachelPnt}\x1b[9;0HR:{vehicle.Rotation}\x1b[10;0HV:{vehicle.Velocity}\x1b[11;0HB:{vehicle.Acc_Local} / {((Vehicles.ContainsKey(0)) ? (Vehicles[0].Acc_Local.ToString()):"-")}");
+            Console.WriteLine($"\x1b[8;0HP:{vehicle.Position}/{vehicle.MyKachelPnt}\x1b[9;0HR:{vehicle.Rotation}\x1b[10;0HV:{vehicle.Velocity}\x1b[11;0HB:{vehicle.Acc_Local} / {((Vehicles.ContainsKey(0)) ? (Vehicles[0].Acc_Local.ToString()) : "-")}");
             byte[] buff = new byte[Unsafe.SizeOf<OMSIMPMessages.Player_Position_Update>() + 4];
             int out_pos = 0;
             FastBinaryWriter.Write(buff, ref out_pos, OMSIMPMessages.Messages.UPDATE_PLAYER_POSITION);

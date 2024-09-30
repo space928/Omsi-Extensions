@@ -1,8 +1,6 @@
-﻿using Multiplayer_Server;
-using System;
-using System.Linq;
+﻿using OmsiHook.Examples.Multiplayer_Server;
 using Telepathy;
-using Client = Multiplayer_Server.Client;
+using Client = OmsiHook.Examples.Multiplayer_Server.Client;
 
 internal class OMSIServer
 {
@@ -10,14 +8,14 @@ internal class OMSIServer
     static void Main(string[] args)
     {
         Dictionary<int, Client>? Clients = new Dictionary<int, Client>();
-        Telepathy.Server server = new Telepathy.Server();
+        Server server = new Server();
         server.Start(1337);
 
         Console.WriteLine("Server started. Press Ctrl+C to stop...");
 
         while (true)
         {
-            Telepathy.Message msg;
+            Message msg;
             while (server.GetNextMessage(out msg))
             {
                 switch (msg.eventType)

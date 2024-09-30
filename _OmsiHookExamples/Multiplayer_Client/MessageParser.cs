@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Multiplayer_Client
+﻿namespace OmsiHook.Examples.Multiplayer_Client
 {
     internal class MessageParser
     {

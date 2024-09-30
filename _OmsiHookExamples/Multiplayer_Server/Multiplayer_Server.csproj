@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="OmsiHook" Version="2.5.4" />
     <PackageReference Include="Telepathy" Version="1.0.341" />
   </ItemGroup>
 

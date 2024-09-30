@@ -1,6 +1,4 @@
-﻿using Multiplayer_Client;
-using System;
-using System.Text;
+﻿using OmsiHook.Examples.Multiplayer_Client;
 using Telepathy;
 
 class OMSIClient
