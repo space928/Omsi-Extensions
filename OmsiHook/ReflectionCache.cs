@@ -70,6 +70,7 @@ internal class ReflectionCache
     /// <returns></returns>
     /// <exception cref="FieldAccessException"></exception>
     // TODO: Rewrite this to use IL generation to avoid unnecessary boxing...
+    // https://github.com/space928/Omsi-Extensions/issues/120
     public static ReflectionCache BuildReflectionCache(Memory mem, Type nativeType, Type localType)
     {
         var ret = new ReflectionCache(nativeType, localType);
@@ -207,6 +208,7 @@ internal class ReflectionCache
                             map.toNative = val =>
                             {
                                 // TODO: I might add a dedicated method for allocating string arrays
+                                // https://github.com/space928/Omsi-Extensions/issues/121
                                 var stringTasks = ((string[])val).Select(x => mem.AllocateString(x, a.Wide, 1, a.Raw));
                                 var strings = Task.WhenAll(stringTasks);
                                 return mem.AllocateAndInitStructArray(strings.Result).Result;
@@ -421,6 +423,7 @@ internal static class ReflectionCacheIL<NativeStruct, LocalStruct> where NativeS
                             map.toNative = val =>
                             {
                                 // TODO: I might add a dedicated method for allocating string arrays
+                                // https://github.com/space928/Omsi-Extensions/issues/121
                                 var stringTasks = ((string[])val).Select(x => mem.AllocateString(x, a.Wide, 1, a.Raw));
                                 var strings = Task.WhenAll(stringTasks);
                                 return mem.AllocateAndInitStructArray(strings.Result).Result;
@@ -730,6 +733,7 @@ internal static class ReflectionCacheExpression<NativeStruct, LocalStruct> where
     private static int AllocateStrings(Memory mem, string[] val, bool wide, bool raw)
     {
         // TODO: I might add a dedicated method for allocating string arrays
+        // https://github.com/space928/Omsi-Extensions/issues/121
         var stringTasks = val.Select(x => mem.AllocateString(x, wide, 1, raw));
         var strings = Task.WhenAll(stringTasks);
         return mem.AllocateAndInitStructArray(strings.Result).Result;

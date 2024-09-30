@@ -77,7 +77,7 @@ namespace OmsiHook
             get => Memory.ReadMemory<float>(Memory.ReadMemory<int>(Address + 0x1b8));
             set => Memory.WriteMemory(Memory.ReadMemory<int>(Address + 0x1b8), value);
         }
-        public byte Complexity // Byte maybe?
+        public byte Complexity
         {
             get => Memory.ReadMemory<byte>(Address + 0x1bc);
             set => Memory.WriteMemory(Address + 0x1bc, value);
@@ -114,6 +114,7 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x1d0, value);
         }
         // TODO: Implement internal struct for OmsiTreeInfo
+        //https://github.com/space928/Omsi-Extensions/issues/127
         /*public OmsiTreeInfo TreeInfo
         {
             get => Memory.ReadMemory<OmsiTreeInfo>(Address + 0x1d4);
@@ -185,6 +186,7 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x204, value);
         }
         /* TODO:
+         * https://github.com/space928/Omsi-Extensions/issues/127
         public OmsiXPC_CreateReturn Script_Return
         {
             get => Memory.ReadMemory<OmsiXPC_CreateReturn>(Address + 0x208);
@@ -224,6 +226,7 @@ namespace OmsiHook
                 Memory.ReadMemory<OmsiAmpelGroupInternal>(Address + 0x230));
             //TODO:
             //set => Memory.WriteMemory(Address + 0x230, value);
+            // https://github.com/space928/Omsi-Extensions/issues/127
         }
         public int CTC_FarbSchema
         {
@@ -232,13 +235,11 @@ namespace OmsiHook
         }
         public OmsiTriggerBox[] TriggerBoxes => Memory.ReadMemoryStructArray<OmsiTriggerBox>(Address + 0x248);
         
-        /* TODO:
-        public OmsiComplObjPtr ComplObj
+        public OmsiComplObj ComplObj
         {
-            get => Memory.ReadMemory<OmsiComplObjPtr>(Address + 0x24c);
-            set => Memory.WriteMemory(Address + 0x24c, value);
-        }*/
-        public OmsiPathManager ComplObj
+            get => Memory.ReadMemoryObject<OmsiComplObj>(Address + 0x24c);
+        }
+        public OmsiPathManager PathManager
         {
             get => Memory.ReadMemoryObject<OmsiPathManager>(Address, 0x250, false);
         }

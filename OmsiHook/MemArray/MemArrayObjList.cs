@@ -90,6 +90,7 @@ public class MemArrayList<T> : MemArrayBase<T> where T : OmsiObject, new()
 
     /// <summary>
     /// TODO: Implement efficient enumerator for non-cached arrays.
+    /// https://github.com/space928/Omsi-Extensions/issues/110
     /// </summary>
     /// <returns></returns>
     public override IEnumerator<T> GetEnumerator() => ((IEnumerable<T>)WrappedArray).GetEnumerator();
@@ -207,6 +208,7 @@ public class MemArrayOList<T> : MemArrayBase<T> where T : OmsiObject, new()
 
     /// <summary>
     /// TODO: Implement efficient enumerator for non-cached arrays.
+    /// https://github.com/space928/Omsi-Extensions/issues/110
     /// </summary>
     /// <returns></returns>
     public override IEnumerator<T> GetEnumerator() => ((IEnumerable<T>)WrappedArray).GetEnumerator();

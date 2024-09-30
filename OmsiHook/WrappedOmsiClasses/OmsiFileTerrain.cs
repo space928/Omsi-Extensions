@@ -11,11 +11,12 @@
 
         /*TODO: This looks like a 61x61 array of floats representing height + an additional float/int
          * It's not correctly defined in IDR so dissassembly is required to work out how to use it.
+         * https://github.com/space928/Omsi-Extensions/issues/132
         public float[] Elevs
         {
             get => Memory.ReadMemoryStruct<float[]>(Address + 0x4);
         }*/
-        /*public ? Inactive
+        /*public ? Inactive // Size = 3600 Bytes ~ 60x60 bytes?
         {
             get => Memory.ReadMemory<?>(Address + 0x3a2c);
             set => Memory.WriteMemory(Address + 0x3a2c, value);

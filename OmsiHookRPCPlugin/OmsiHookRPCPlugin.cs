@@ -127,6 +127,7 @@ namespace OmsiHookRPCPlugin
                     pipeRX.WaitForConnection();
                     Log($"[RPC Server {threadId}] Client has connected to rx.");
                     // TODO: There's still a race condition here for some reason... Sometimes the client connects to the rx of one thread and the tx of another.
+                    // https://github.com/space928/Omsi-Extensions/issues/108
                     using NamedPipeServerStream pipeTX = new(PIPE_NAME_TX, PipeDirection.Out, MAX_CLIENTS, PipeTransmissionMode.Byte);
                     pipeTX.WaitForConnection();
                     Log($"[RPC Server {threadId}] Client has connected to tx.");

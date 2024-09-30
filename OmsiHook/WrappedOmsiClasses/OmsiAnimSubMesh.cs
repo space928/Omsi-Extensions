@@ -32,6 +32,7 @@ namespace OmsiHook
         //public MemArrayList<D3DMatrix> origin
         //public MemArrayList<D3DMatrix> originI
         //public MemArrayList<OmsiAnimation> anim
+        //https://github.com/space928/Omsi-Extensions/issues/123
         public int Visible
         {
             get => Memory.ReadMemory<int>(Address + 0x1a4);
@@ -46,6 +47,7 @@ namespace OmsiHook
         //public MemArrayList<OmsiLampenSetting> LampenSettings
         //public MemArrayList<OmsiInteriorLight> InteriorLights
         //public MemArrayList<OmsiBoneProp> BoneProps
+        //https://github.com/space928/Omsi-Extensions/issues/123
         public bool SmoothSkin
         {
             get => Memory.ReadMemory<bool>(Address + 0x1bc);
@@ -72,6 +74,7 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x1cc, value);
         }
         /* TODO:
+         * https://github.com/space928/Omsi-Extensions/issues/122
         public int GetInteriorLights
         {
             get => Memory.ReadMemory<int>(Address + 0x1cd);

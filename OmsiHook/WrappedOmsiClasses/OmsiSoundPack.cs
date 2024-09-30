@@ -9,6 +9,7 @@
         public OmsiSoundPack() : base() { }
 
         /*public DirectSound8 Device
+         * https://github.com/space928/Omsi-Extensions/issues/141
         {
             get => Memory.ReadMemory<DirectSound8>(Address + 0x4);
             set => Memory.WriteMemory(Address + 0x4, value);
@@ -42,7 +43,8 @@
             get => Memory.ReadMemory<float>(Address + 0x1c);
             set => Memory.WriteMemory(Address + 0x1c, value);
         }
-        /* TODO:
+        /* TODO: // Ptr->ptr[]->float
+         * https://github.com/space928/Omsi-Extensions/issues/141
         public floatptr[] Vars
         {
             get => Memory.ReadMemoryStructArray<floatptr>(Address + 0x20);

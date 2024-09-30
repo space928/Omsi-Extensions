@@ -15,6 +15,7 @@ namespace OmsiHook
         public OmsiAnimSubMeshInst() : base() { }
 
         public D3DTransformObject ShadowObject // TODO: Should be a D3DShadowObject
+                                               // https://github.com/space928/Omsi-Extensions/issues/124
         {
             get => Memory.ReadMemoryObject<D3DTransformObject>(Address, 0x4);
         }
@@ -37,6 +38,7 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x88, value);
         }
         /* TODO:
+         * https://github.com/space928/Omsi-Extensions/issues/123
         public MemArrayList<OmsiMaterialProp> Matl
         {
             get => new(Memory, Address + 0xc8);
@@ -54,6 +56,7 @@ namespace OmsiHook
         // TODO: MemArrayList<OmsiLampe> Lampen @ 0xd4
         // TODO: MemArrayList<OmsiInteriorLight> InteriorLights @ 0xd8
         // TODO: MemArrayList<float> Anim_LastValue @ 0xdc
+        // https://github.com/space928/Omsi-Extensions/issues/123
         public IntPtr SkinMesh // ID3DXMesh
         {
             get => Memory.ReadMemory<IntPtr>(Address + 0xe0);

@@ -15,7 +15,7 @@ namespace OmsiHook
         private MemArrayStringDict funcsStrings;
         private OmsiFuncClass[] funcs;
         private float[] consts;
-        private MemArray<OmsiWStringInternal, OmsiWString> stringVars;
+        private MemArrayString stringVars;
 
         internal OmsiComplMapObjInst(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
         public OmsiComplMapObjInst() : base() { }
@@ -49,31 +49,37 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x1ec, value);
         }
         public float Debug // TODO: Check Data Type
+                           //https://github.com/space928/Omsi-Extensions/issues/128
         {
             get => Memory.ReadMemory<float>(Address + 0x1f0);
             set => Memory.WriteMemory(Address + 0x1f0, value);
         }
         public float Unknown_OCMOI_A // TODO: Check Data Name
+                                     //https://github.com/space928/Omsi-Extensions/issues/128
         {
             get => Memory.ReadMemory<float>(Address + 0x1f4);
             set => Memory.WriteMemory(Address + 0x1f4, value);
         }
         public float Unknown_OCMOI_B // TODO: Check Data Name
+                                     //https://github.com/space928/Omsi-Extensions/issues/128
         {
             get => Memory.ReadMemory<float>(Address + 0x1f8);
             set => Memory.WriteMemory(Address + 0x1f8, value);
         }
         public float Unknown_OCMOI_C // TODO: Check Data Name
+                                     //https://github.com/space928/Omsi-Extensions/issues/128
         {
             get => Memory.ReadMemory<float>(Address + 0x1fc);
             set => Memory.WriteMemory(Address + 0x1fc, value);
         }
-        public float UUnknown_OCMOI_D // TODO: Check Data Name
+        public float Unknown_OCMOI_D // TODO: Check Data Name
+                                      //https://github.com/space928/Omsi-Extensions/issues/128
         {
             get => Memory.ReadMemory<float>(Address + 0x200);
             set => Memory.WriteMemory(Address + 0x200, value);
         }
         public float Unknown_OCMOI_E // TODO: Check Data Name
+                                     //https://github.com/space928/Omsi-Extensions/issues/128
         {
             get => Memory.ReadMemory<float>(Address + 0x204);
             set => Memory.WriteMemory(Address + 0x204, value);
@@ -196,7 +202,7 @@ namespace OmsiHook
             if (index >= stringVars.Count || index < 0)
                 throw new KeyNotFoundException($"String Variable '{varName}' not found in object. - Index Out Of Bounds");
             stringVars.UpdateFromHook(index);
-            return stringVars[index].String;
+            return stringVars[index];
         }
 
         /// <summary>

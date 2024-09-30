@@ -77,11 +77,12 @@ namespace OmsiHook
         {
             get => new(Memory, Memory.ReadMemory<int>(Address + 0x28));
         }
-        public MemArray<OmsiWStringInternal, OmsiWString> StringVars
+        public MemArrayString StringVars
         {
-            get => new(Memory, Address + 0x2c, false);
+            get => new(Memory, Address + 0x2c, true, false);
         }
         /* TODO:
+         * https://github.com/space928/Omsi-Extensions/issues/130
         public OmsiChangeTex[] ChangeTexs
         {
             get => Memory.ReadMemoryObjArray<OmsiChangeTex>(Address + 0x30);
@@ -95,6 +96,7 @@ namespace OmsiHook
             get => Memory.ReadMemoryObjArray<OmsiFreeTexInst>(Address + 0x38);
         }*/
         /* TODO:
+         * https://github.com/space928/Omsi-Extensions/issues/130
         /// <summary>
         /// Array of Smoke Instances
         /// </summary>
@@ -115,6 +117,7 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x44, value);
         }
         /* TODO:
+         * https://github.com/space928/Omsi-Extensions/issues/130
         public iDirect3DTexture9[] OFTTextures
         {
             get => Memory.ReadMemoryObjArray<iDirect3DTexture9>(Address + 0x48);
@@ -156,6 +159,7 @@ namespace OmsiHook
             get => new(Memory, Address + 0xe0);
         }
         /* TODO:
+         * https://github.com/space928/Omsi-Extensions/issues/130
         public OmsiInteriorLightInst[] AnimSubMeshInsts
         {
             get => Memory.ReadMemoryObjArray<OmsiInteriorLightInst>(Address + 0xe4);
@@ -166,6 +170,7 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0xe8, value);
         }
         /* TODO:
+         * https://github.com/space928/Omsi-Extensions/issues/130
         public D3DMatrix[] AnimMatrixes
         {
             get => Memory.ReadMemoryStructArray<D3DMatrix>(Address + 0xec);

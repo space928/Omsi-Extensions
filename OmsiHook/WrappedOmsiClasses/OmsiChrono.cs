@@ -9,7 +9,8 @@
         public OmsiChrono() : base() { }
 
         /*
-        TODO: public Array? Timeline
+        TODO: public MemArray<TTimeLineEntry> Timeline
+        //https://github.com/space928/Omsi-Extensions/issues/126
         {
             get => omsiMemory.ReadMemory<Array?>(baseAddress + 0x4);
             set => omsiMemory.WriteMemory(baseAddress + 0x4, value);
@@ -28,7 +29,8 @@
         }
 
         /*
-        TODO: public Array? Scenarios
+        TODO: public MemArray<TChronoScenario> Scenarios
+        //https://github.com/space928/Omsi-Extensions/issues/126
         {
             get => omsiMemory.ReadMemory<Array?>(baseAddress + 0x10);
             set => omsiMemory.WriteMemory(baseAddress + 0x10, value);

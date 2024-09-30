@@ -37,11 +37,13 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x7, value);
         }
         /* TODO:
+         * https://github.com/space928/Omsi-Extensions/issues/139
         public OmsiAudioMixer AudioMixer
         {
             get => new(Memory, Memory.ReadMemory<int>(Address + 0x8));
         }*/
         /* TODO:
+         * https://github.com/space928/Omsi-Extensions/issues/139
         public D3DText Text2D_Hinweise_V
         {
             get => new(Memory, Memory.ReadMemory<int>(Address + 0xc));
@@ -60,6 +62,7 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x18, value);
         }
         /* TODO:
+         * https://github.com/space928/Omsi-Extensions/issues/139
         public OmsiThreadCheckMissingScheduledAIVehicles ThreadCheckMissingScheduledAIVehicles
         {
             get => new(Memory, Memory.ReadMemory<int>(0x24));
@@ -300,6 +303,7 @@ namespace OmsiHook
             get => Memory.ReadMemoryObject<OmsiDynHelperMan>(Address, 0x174, false);
         }
         /* TODO:
+         * https://github.com/space928/Omsi-Extensions/issues/139
         public OmsiSplineObject PathHelperSplines
         {
             get => new(Memory, Memory.ReadMemory<int>(0x178));

@@ -9,6 +9,7 @@
         public OmsiVehicleInst() : base() { }
 
         //TODO:
+        //https://github.com/space928/Omsi-Extensions/issues/131
         /*public OmsiCriticalSection CS_AI_BusStopData
         {
             get => Memory.ReadMemory<int>(Address + 0x4f0);

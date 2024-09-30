@@ -20,6 +20,7 @@
         {
             get => new(Memory, Memory.ReadMemory<int>(Address + 0xc));
         }
+        https://github.com/space928/Omsi-Extensions/issues/135
          */
         public string Filename
         {
@@ -148,5 +149,6 @@
         public OmsiKachelForest MyForest => Memory.ReadMemoryObject<OmsiKachelForest>(Address, 0x84, false);
         public OmsiKachelForest MyScrubs => Memory.ReadMemoryObject<OmsiKachelForest>(Address, 0x88, false);
         //TODO: Many more...
+        // https://github.com/space928/Omsi-Extensions/issues/135
     }
 }

@@ -723,6 +723,7 @@ namespace OmsiHook
                     var readBuff = readBuffer.Value;
                     //int readSize = 16;
                     // TODO: Rewrite this to read chunks of memory all at once instead of one char at a time...
+                    // https://github.com/space928/Omsi-Extensions/issues/111
                     while (true)
                     {
                         var bytes = ReadMemory(i, wide ? 2 : 1, readBuff);

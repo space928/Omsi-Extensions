@@ -82,6 +82,7 @@ namespace OmsiHook
             // TODO: Free the old array
             //Memory.Free(Memory.ReadMemory<int>(Address));
             // Remove references from current array. TODO: Does this work? Is this safe?
+            // https://github.com/space928/Omsi-Extensions/issues/109
             Memory.WriteMemory(Memory.ReadMemory<int>(Address) - 8, 0);
             Memory.WriteMemory(Address, Memory.AllocateStructArray<int>(0, 0).Result);
 

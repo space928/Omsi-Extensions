@@ -83,7 +83,7 @@
          *  █▀▄▀█ █ █▀ █▀ █ █▄░█ █▀▀   █▀▄ ▄▀█ ▀█▀ ▄▀█
          *  █░▀░█ █ ▄█ ▄█ █ █░▀█ █▄█   █▄▀ █▀█ ░█░ █▀█ 
          * 0xF4 - 0x153 UNKNOWN DATA
-         * 
+         * https://github.com/space928/Omsi-Extensions/issues/137
          */
 
         public bool Fest
@@ -131,18 +131,16 @@
             get => Memory.ReadMemoryString(Address + 0x168); // ANSI STRING
             set => Memory.WriteMemory(Address + 0x168, value);
         }
-        /* TODO:
-        public DVector3Ptr CollMesh_Vertices
+        public D3DVector CollMesh_Vertices
         {
-            get => Memory.ReadMemory<int>(Address + 0x16c);
-            set => Memory.WriteMemory(Address + 0x16c, value);
-        }*/
-        /* TODO:
-        public IntPtr CollMesh_Indices
+            get => Memory.ReadMemory<D3DVector>(Memory.ReadMemory<int>(Address + 0x16c));
+            set => Memory.WriteMemory(Memory.ReadMemory<int>(Address + 0x16c), value);
+        }
+        public int CollMesh_Indices
         {
-            get => Memory.ReadMemory<IntPtr>(Address + 0x170);
-            set => Memory.WriteMemory(Address + 0x170, value);
-        }*/
+            get => Memory.ReadMemory<int>(Memory.ReadMemory<int>(Address + 0x170));
+            set => Memory.WriteMemory(Memory.ReadMemory<int>(Address + 0x170), value);
+        }
         public short CollMesh_Vertex_Cnt
         {
             get => Memory.ReadMemory<short>(Address + 0x174);

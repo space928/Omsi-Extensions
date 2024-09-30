@@ -10,6 +10,7 @@ namespace OmsiHook
         internal OmsiRoadVehicleInst(Memory omsiMemory, int baseAddress) : base(omsiMemory, baseAddress) { }
         public OmsiRoadVehicleInst() : base() { }
         /* TODO:
+         * https://github.com/space928/Omsi-Extensions/issues/140
         public OmsiCriticalSection CS_Ticket_Items
         {
             get => Memory.ReadMemory<OmsiCriticalSection>(Address + 0x6f0);
@@ -324,41 +325,49 @@ namespace OmsiHook
             set => Memory.WriteMemory(Address + 0x884, value);
         }
         public float CoupleForce // TODO: Check DataType
+                                 //https://github.com/space928/Omsi-Extensions/issues/140
         {
             get => Memory.ReadMemory<float>(Address + 0x888);
             set => Memory.WriteMemory(Address + 0x888, value);
         }
         public int Unknown_A // TODO: Check Value
+                             //https://github.com/space928/Omsi-Extensions/issues/140
         {
             get => Memory.ReadMemory<int>(Address + 0x88c);
             set => Memory.WriteMemory(Address + 0x88c, value);
         }
         public int Unknown_B // TODO: Check Value
+                             //https://github.com/space928/Omsi-Extensions/issues/140
         {
             get => Memory.ReadMemory<int>(Address + 0x890);
             set => Memory.WriteMemory(Address + 0x890, value);
         }
         public int Unknown_C // TODO: Check Value
+                             //https://github.com/space928/Omsi-Extensions/issues/140
         {
             get => Memory.ReadMemory<int>(Address + 0x894);
             set => Memory.WriteMemory(Address + 0x894, value);
         }
         public int Unknown_D // TODO: Check Value
+                             //https://github.com/space928/Omsi-Extensions/issues/140
         {
             get => Memory.ReadMemory<int>(Address + 0x898);
             set => Memory.WriteMemory(Address + 0x898, value);
         }
         public int Unknown_E // TODO: Check Value
+                             //https://github.com/space928/Omsi-Extensions/issues/140
         {
             get => Memory.ReadMemory<int>(Address + 0x89c);
             set => Memory.WriteMemory(Address + 0x89c, value);
         }
         public float CoupleMomentTorsion // TODO: Check DataType
+                                         //https://github.com/space928/Omsi-Extensions/issues/140
         {
             get => Memory.ReadMemory<float>(Address + 0x8a0);
             set => Memory.WriteMemory(Address + 0x8a0, value);
         }
         public float Unknown_F // TODO: Check Value
+                               //https://github.com/space928/Omsi-Extensions/issues/140
         {
             get => Memory.ReadMemory<float>(Address + 0x8a4);
             set => Memory.WriteMemory(Address + 0x8a4, value);

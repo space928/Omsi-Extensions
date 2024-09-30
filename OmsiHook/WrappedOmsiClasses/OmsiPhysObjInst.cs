@@ -14,6 +14,7 @@ namespace OmsiHook
          * PdxGeom PH_MainGeomTrafo; 0x13c
          * PdxGeom PH_MainGeom; 0x140
          * Cardinal mast_joint; 0x144
+         * https://github.com/space928/Omsi-Extensions/issues/138
          */
 
         public D3DVector Mast_BasePoint
@@ -68,6 +69,7 @@ namespace OmsiHook
         {
             get => omsiMemory.ReadMemory<OmsiPhysObj>(omsiMemory.ReadMemory<int>(baseAddress + 0x170));
             set => omsiMemory.WriteMemory(baseAddress + 0x170, value);
+        https://github.com/space928/Omsi-Extensions/issues/138
         }*/
 
         public D3DVector Velocity
