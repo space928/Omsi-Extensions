@@ -28,8 +28,16 @@
             get => Memory.ReadMemory<float>(Address + 0x60);
             set => Memory.WriteMemory(Address + 0x60, value);
         }
-        public D3DMatrix RelMatrix => Memory.ReadMemory<D3DMatrix>(Address + 0x64);
-        public D3DMatrix Used_RelVec => Memory.ReadMemory<D3DMatrix>(Address + 0x68);
+        public D3DMatrix RelMatrix
+        {
+            get => Memory.ReadMemory<D3DMatrix>(Memory.ReadMemory<int>(Address + 0x64));
+            set => Memory.WriteMemory(Memory.ReadMemory<int>(Address + 0x64), value);
+        } 
+        public D3DVector Used_RelVec
+        {
+            get => Memory.ReadMemory<D3DVector>(Address + 0x68);
+            set => Memory.WriteMemory(Address + 0x68, value);
+        }
         public int Kachel
         {
             get => Memory.ReadMemory<int>(Address + 0x74); 
@@ -40,7 +48,15 @@
             get => Memory.ReadMemory<D3DMatrix>(Address + 0x78);
             set => Memory.WriteMemory(Address + 0x78, value);
         }
-        public D3DMatrix AbsPosition_Inv => Memory.ReadMemory<D3DMatrix>(Address + 0xb8);
-        public D3DMatrix AbsPosition_ThreadFree => Memory.ReadMemory<D3DMatrix>(Address + 0xf8);
+        public D3DMatrix AbsPosition_Inv
+        {
+            get => Memory.ReadMemory<D3DMatrix>(Address + 0xb8);
+            set => Memory.WriteMemory(Address + 0xb8, value);
+        }
+        public D3DMatrix AbsPosition_ThreadFree
+        {
+            get => Memory.ReadMemory<D3DMatrix>(Address + 0xf8);
+            set => Memory.WriteMemory(Address + 0xf8, value);
+        }
     }
 }

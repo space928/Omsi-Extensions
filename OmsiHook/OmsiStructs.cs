@@ -29,11 +29,15 @@ namespace OmsiHook
         public static implicit operator Vector3(D3DVector v) => new(v.x, v.y, v.z);
         public static implicit operator D3DVector(Vector3 v) => new() { x = v.X, y = v.Y, z = v.Z };
     }
+
     public struct D3DXVector2
     {
         public float x, y;
 
         public override readonly string ToString() => $"[{x,8:F3}, {y,8:F3}]";
+
+        public static implicit operator Vector2(D3DXVector2 v) => new(v.x, v.y);
+        public static implicit operator D3DXVector2(Vector2 v) => new() { x = v.X, y = v.Y };
     }
 
     /// <summary>
@@ -107,6 +111,9 @@ namespace OmsiHook
         public float x, y, z, w;
 
         public override readonly string ToString() => $"[{x,8:F3}, {y,8:F3}, {z,8:F3}, {w,8:F3}]";
+
+        public static implicit operator Quaternion(D3DXQuaternion v) => new (v.x, v.y, v.z, v.w);
+        public static implicit operator D3DXQuaternion(Quaternion v) => new() { x=v.X, y=v.Y, z=v.Z, w=v.W };
     }
 
     /// <summary>
