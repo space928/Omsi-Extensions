@@ -207,7 +207,7 @@ internal class ReflectionCache
                             map.toNative = val =>
                             {
                                 // TODO: I might add a dedicated method for allocating string arrays
-                                var stringTasks = ((string[])val).Select(x => mem.AllocateString(x, a.Wide, 1, a.Raw));
+                                var stringTasks = ((string[])val).Select(x => mem.AllocateString(x, a.Wide, 1, false/*a.Raw*/));
                                 var strings = Task.WhenAll(stringTasks);
                                 return mem.AllocateAndInitStructArray(strings.Result).Result;
                             };
@@ -560,7 +560,7 @@ internal static class ReflectionCacheExpression<NativeStruct, LocalStruct> where
                                 var toNative = typeof(Memory).GetMethod(nameof(Memory.AllocateString), new[] { typeof(string), typeof(bool), typeof(int), typeof(bool) });
 
                                 mvalSrc = Expression.Call(memInst, toLocal, mvalSrc, Expression.Constant(a.Wide), Expression.Constant(a.Raw), Expression.Constant(a.Pascal));
-                                uvalSrc = Expression.Call(memInst, toNative, uvalSrc, Expression.Constant(a.Wide), Expression.Constant(1), Expression.Constant(a.Raw));
+                                uvalSrc = Expression.Call(memInst, toNative, uvalSrc, Expression.Constant(a.Wide), Expression.Constant(1), Expression.Constant(false/*a.Raw*/));
                                 uvalSrc = Expression.Property(uvalSrc, nameof(Task<int>.Result));
                                 break;
                             }
@@ -730,7 +730,7 @@ internal static class ReflectionCacheExpression<NativeStruct, LocalStruct> where
     private static int AllocateStrings(Memory mem, string[] val, bool wide, bool raw)
     {
         // TODO: I might add a dedicated method for allocating string arrays
-        var stringTasks = val.Select(x => mem.AllocateString(x, wide, 1, raw));
+        var stringTasks = val.Select(x => mem.AllocateString(x, wide, 1, false/*raw*/));
         var strings = Task.WhenAll(stringTasks);
         return mem.AllocateAndInitStructArray(strings.Result).Result;
     }

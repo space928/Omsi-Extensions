@@ -469,6 +469,10 @@ namespace OmsiHook
         /// <exception cref="NotImplementedException">Writing to raw strings is not yet supported.</exception>
         public async Task<int> AllocateString(string value, bool wide = false, int references = 1, bool raw = false)
         {
+            // TODO: What does "raw" actually mean in this context, should it return a pointer to (string + 0xc)?
+            //       Previously the raw paramter was completely ignored and nothing needed it so we need to do some
+            //       research to find out if it's actually needed.
+            //       Once raw string allocation is implemented, remember to update callers of this method to use it.
             /*
              * AnsiString/UnicodeString struct layout:
              * 0 - / Code page (short)
