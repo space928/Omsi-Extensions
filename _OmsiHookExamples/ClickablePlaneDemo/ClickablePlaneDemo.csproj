@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OmsiHook" Version="2.4.4" />
+    <PackageReference Include="OmsiHook" Version="2.5.4" />
   </ItemGroup>
 
 </Project>
