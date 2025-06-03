@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace OmsiHook;
 
+#pragma warning disable CS9191
+
 internal static class FastBinaryWriter
 {
     public static void Write(Span<byte> buffer, ref int pos, int data)

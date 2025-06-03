@@ -19,14 +19,21 @@ namespace OmsiHook
     {
         private NamedPipeClientStream pipeRX;
         private NamedPipeClientStream pipeTX;
-        private ConcurrentDictionary<int, TaskCompletionSource<int>> resultPromises;
+        private readonly ConcurrentDictionary<int, TaskCompletionSource<int>> resultPromises;
         private Task resultReaderThread;
         private Memory memory;
         private bool localPlugin;
+        private readonly Random random;
 
         private readonly ThreadLocal<byte[]> asyncWriteBuff = new(() => new byte[256]);
 
         public bool IsInitialised => localPlugin || (pipeRX?.IsConnected ?? false) && (pipeTX?.IsConnected ?? false);
+
+        public OmsiRemoteMethods()
+        {
+            random = new();
+            resultPromises = [];
+        }
 
         internal async Task InitRemoteMethods(Memory omsiMemory, bool inifiniteTimeout = false, bool isLocalPlugin = false)
         {
@@ -36,7 +43,7 @@ namespace OmsiHook
             if (localPlugin)
                 return;
 
-            resultPromises = new();
+            resultPromises.Clear();
 
             // We swap rx and tx here so that it makes semantic sense (since the tx of the client goes to the rx of the server)
             pipeTX = new(".", OmsiHookRPCMethods.PIPE_NAME_RX, PipeDirection.Out);
@@ -84,7 +91,7 @@ namespace OmsiHook
             int resultHash;
             do
             {
-                resultHash = Random.Shared.Next();
+                resultHash = random.Next();
             } while (!resultPromises.TryAdd(resultHash, resultPromise));
             return (resultHash, resultPromise);
         }
@@ -132,7 +139,7 @@ namespace OmsiHook
                 FastBinaryWriter.Write(writeBuffer, ref argPos, capacity);
                 int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
                 lock (pipeTX)
-                    pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                    pipeTX.Write(writeBuffer);
                 return await promise.Task;
             }
         }
@@ -159,7 +166,7 @@ namespace OmsiHook
                 FastBinaryWriter.Write(writeBuffer, ref argPos, tmpList);
                 int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
                 lock (pipeTX)
-                    pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                    pipeTX.Write(writeBuffer, 0, writeBufferSize);
                 return await promise.Task;
             }
         }
@@ -232,7 +239,7 @@ namespace OmsiHook
                 FastBinaryWriter.Write(writeBuffer, ref argPos, pathAddr);
                 int writeBufferSize = OmsiHookRPCMethods.RemoteMethodsArgsSizes[method] + 8;
                 lock (pipeTX)
-                    pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                    pipeTX.Write(writeBuffer, 0, writeBufferSize);
                 var ret = await promise.Task;
 
                 if (__copyToMainList)
@@ -258,7 +265,7 @@ namespace OmsiHook
             FastBinaryWriter.Write(writeBuffer, ref argPos, 0);
             FastBinaryWriter.Write(writeBuffer, ref argPos, killAllConnections ? 1 : 0);
             lock (pipeTX)
-                pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                pipeTX.Write(writeBuffer, 0, writeBufferSize);
             await promise.Task;
             // promise.Task.Wait();
         }
@@ -338,7 +345,7 @@ namespace OmsiHook
                 FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
                 FastBinaryWriter.Write(writeBuffer, ref argPos, length);
                 lock (pipeTX)
-                    pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                    pipeTX.Write(writeBuffer, 0, writeBufferSize);
                 return (uint)await promise.Task;
                 /*lock (pipeRX)
                     pipeRX.Read(readBuffer);
@@ -431,7 +438,7 @@ namespace OmsiHook
                 FastBinaryWriter.Write(writeBuffer, ref argPos, levels);
                 FastBinaryWriter.Write(writeBuffer, ref argPos, ppTexture);
                 lock (pipeTX)
-                    pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                    pipeTX.Write(writeBuffer, 0, writeBufferSize);
                 HRESULT result = (HRESULT)await promise.Task;
                 uint pTexture = memory.ReadMemory<uint>(ppTexture);
                 return (result, pTexture);
@@ -481,7 +488,7 @@ namespace OmsiHook
                 FastBinaryWriter.Write(writeBuffer, ref argPos, updateRect?.bottom ?? 0);
                 FastBinaryWriter.Write(writeBuffer, ref argPos, level);
                 lock (pipeTX)
-                    pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                    pipeTX.Write(writeBuffer, 0, writeBufferSize);
                 return (HRESULT)await promise.Task;
             }
         }
@@ -511,7 +518,7 @@ namespace OmsiHook
                 FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
                 FastBinaryWriter.Write(writeBuffer, ref argPos, texturePtr);
                 lock (pipeTX)
-                    pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                    pipeTX.Write(writeBuffer, 0, writeBufferSize);
                 return (HRESULT)await promise.Task;
             }
         }
@@ -556,7 +563,7 @@ namespace OmsiHook
                 FastBinaryWriter.Write(writeBuffer, ref argPos, descPtr + 4);
                 FastBinaryWriter.Write(writeBuffer, ref argPos, descPtr + 8);
                 lock (pipeTX)
-                    pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                    pipeTX.Write(writeBuffer, 0, writeBufferSize);
 
                 HRESULT res = (HRESULT)await promise.Task;
                 uint width = memory.ReadMemory<uint>(descPtr);
@@ -593,7 +600,7 @@ namespace OmsiHook
                 FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
                 FastBinaryWriter.Write(writeBuffer, ref argPos, texturePtr);
                 lock (pipeTX)
-                    pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                    pipeTX.Write(writeBuffer, 0, writeBufferSize);
                 return unchecked((uint)await promise.Task);
             }
         }
@@ -625,7 +632,7 @@ namespace OmsiHook
                 FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
                 FastBinaryWriter.Write(writeBuffer, ref argPos, texturePtr);
                 lock (pipeTX)
-                    pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                    pipeTX.Write(writeBuffer, 0, writeBufferSize);
                 return !HRESULTFailed((HRESULT)await promise.Task);
             }
         }
@@ -672,7 +679,7 @@ namespace OmsiHook
                 FastBinaryWriter.Write(writeBuffer, ref argPos, triggerPtr);
                 FastBinaryWriter.Write(writeBuffer, ref argPos, enabled ? 1 : 0);
                 lock (pipeTX)
-                    pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                    pipeTX.Write(writeBuffer, 0, writeBufferSize);
                 await promise.Task;
             }
         }
@@ -721,7 +728,7 @@ namespace OmsiHook
                 FastBinaryWriter.Write(writeBuffer, ref argPos, triggerPtr);
                 FastBinaryWriter.Write(writeBuffer, ref argPos, filenamePtr);
                 lock (pipeTX)
-                    pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                    pipeTX.Write(writeBuffer, 0, writeBufferSize);
                 await promise.Task;
             }
         }
@@ -749,7 +756,7 @@ namespace OmsiHook
                 FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
                 FastBinaryWriter.Write(writeBuffer, ref argPos, (int)CS);
                 lock (pipeTX)
-                    pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                    pipeTX.Write(writeBuffer, 0, writeBufferSize);
                 await promise.Task;
             }
         }
@@ -777,7 +784,7 @@ namespace OmsiHook
                 FastBinaryWriter.Write(writeBuffer, ref argPos, resultPromise);
                 FastBinaryWriter.Write(writeBuffer, ref argPos, (int)CS);
                 lock (pipeTX)
-                    pipeTX.Write(writeBuffer.AsSpan()[..writeBufferSize]);
+                    pipeTX.Write(writeBuffer, 0, writeBufferSize);
                 await promise.Task;
             }
         }

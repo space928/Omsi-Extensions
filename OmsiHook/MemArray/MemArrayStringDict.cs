@@ -14,7 +14,7 @@ namespace OmsiHook
     /// </remarks>
     public class MemArrayStringDict : MemArrayString
     {
-        private Dictionary<string, int> indexDictionary = new();
+        private readonly Dictionary<string, int> indexDictionary = [];
 
         public Dictionary<string, int> IndexDictionary => indexDictionary;
 
@@ -58,8 +58,8 @@ namespace OmsiHook
         public override int IndexOf(string item) => indexDictionary[item];
         public override bool Remove(string item)
         {
-            if (indexDictionary.ContainsKey(item))
-                base.RemoveAt(indexDictionary[item]);
+            if (indexDictionary.TryGetValue(item, out var ind))
+                base.RemoveAt(ind);
             else
                 return false;
             return true;

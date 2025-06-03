@@ -98,11 +98,11 @@ internal class ReflectionCache
                                 if (a.InternalType == nativeType)
                                     throw new ArgumentException($"Struct of type {nativeType.Name} tried to marshal one of it's fields as {nativeType.Name}, recursive data types are not allowed!");
 
-                                map.toLocal = typeof(Memory).GetMethod(nameof(Memory.MarshalStruct), BindingFlags.NonPublic | BindingFlags.Instance, new[] { typeof(object) })
+                                map.toLocal = typeof(Memory).GetMethod(nameof(Memory.MarshalStruct), BindingFlags.NonPublic | BindingFlags.Instance, [typeof(object)])
                                     .MakeGenericMethod(a.ObjType, a.InternalType)
                                     .CreateDelegate<Func<object, object>>(mem);
 
-                                map.toNative = typeof(Memory).GetMethod(nameof(Memory.UnMarshalStruct), BindingFlags.NonPublic | BindingFlags.Instance, new[] { typeof(object) })
+                                map.toNative = typeof(Memory).GetMethod(nameof(Memory.UnMarshalStruct), BindingFlags.NonPublic | BindingFlags.Instance, [typeof(object)])
                                     .MakeGenericMethod(a.ObjType, a.InternalType)
                                     .CreateDelegate<Func<object, object>>(mem);
                             }
@@ -119,10 +119,10 @@ internal class ReflectionCache
                             break;
 
                         case OmsiStructPtrAttribute a:
-                            var readStructFunc = typeof(Memory).GetMethod(nameof(Memory.ReadMemory), new Type[] { typeof(int) })
+                            var readStructFunc = typeof(Memory).GetMethod(nameof(Memory.ReadMemory), [typeof(int)])
                                 .MakeGenericMethod(a.InternalType)
                                 .CreateDelegate<Func<object, object>>(mem);
-                            var writeStructFunc = typeof(Memory).GetMethod(nameof(Memory.AllocateStruct), BindingFlags.NonPublic | BindingFlags.Instance, new[] { typeof(object) })
+                            var writeStructFunc = typeof(Memory).GetMethod(nameof(Memory.AllocateStruct), BindingFlags.NonPublic | BindingFlags.Instance, [typeof(object)])
                                 .MakeGenericMethod(a.InternalType)
                                 .CreateDelegate<Func<object, object>>(mem);
 
@@ -132,11 +132,11 @@ internal class ReflectionCache
                                 if (a.InternalType == nativeType)
                                     throw new ArgumentException($"Struct of type {nativeType.Name} tried to marshal one of it's fields as {nativeType.Name}, recursive data types are not allowed!");
 
-                                var marshalFunc = typeof(Memory).GetMethod(nameof(Memory.MarshalStruct), BindingFlags.NonPublic | BindingFlags.Instance, new[] { typeof(object) })
+                                var marshalFunc = typeof(Memory).GetMethod(nameof(Memory.MarshalStruct), BindingFlags.NonPublic | BindingFlags.Instance, [typeof(object)])
                                 .MakeGenericMethod(a.ObjType, a.InternalType)
                                 .CreateDelegate<Func<object, object>>(mem);
 
-                                var unMarshalFunc = typeof(Memory).GetMethod(nameof(Memory.UnMarshalStruct), BindingFlags.NonPublic | BindingFlags.Instance, new[] { typeof(object) })
+                                var unMarshalFunc = typeof(Memory).GetMethod(nameof(Memory.UnMarshalStruct), BindingFlags.NonPublic | BindingFlags.Instance, [typeof(object)])
                                 .MakeGenericMethod(a.ObjType, a.InternalType)
                                 .CreateDelegate<Func<object, object>>(mem);
 
@@ -165,7 +165,7 @@ internal class ReflectionCache
                             var readStructsFunc = typeof(Memory).GetMethod(nameof(Memory.ReadMemoryStructArray))
                                 .MakeGenericMethod(a.InternalType)
                                 .CreateDelegate<Func<int, bool, object>>(mem);
-                            var writeStructsFunc = typeof(Memory).GetMethod(nameof(Memory.AllocateAndInitStructArray), BindingFlags.NonPublic | BindingFlags.Instance, new[] { typeof(object), typeof(int), typeof(bool) })
+                            var writeStructsFunc = typeof(Memory).GetMethod(nameof(Memory.AllocateAndInitStructArray), BindingFlags.NonPublic | BindingFlags.Instance, [typeof(object), typeof(int), typeof(bool)])
                                 .MakeGenericMethod(a.InternalType)
                                 .CreateDelegate<Func<object, int, bool, int>>(mem);
 
@@ -175,11 +175,11 @@ internal class ReflectionCache
                                 if (a.InternalType == nativeType)
                                     throw new ArgumentException($"Struct of type {nativeType.Name} tried to marshal one of it's fields as {nativeType.Name}[], recursive data types are not allowed!");
 
-                                var marshalFunc = typeof(Memory).GetMethod(nameof(Memory.MarshalStructs), BindingFlags.NonPublic | BindingFlags.Instance, new[] { typeof(object) })
+                                var marshalFunc = typeof(Memory).GetMethod(nameof(Memory.MarshalStructs), BindingFlags.NonPublic | BindingFlags.Instance, [typeof(object)])
                                 .MakeGenericMethod(a.ObjType, a.InternalType)
                                 .CreateDelegate<Func<object, object>>(mem);
 
-                                var unMarshalFunc = typeof(Memory).GetMethod(nameof(Memory.UnMarshalStructs), BindingFlags.NonPublic | BindingFlags.Instance, new[] { typeof(object) })
+                                var unMarshalFunc = typeof(Memory).GetMethod(nameof(Memory.UnMarshalStructs), BindingFlags.NonPublic | BindingFlags.Instance, [typeof(object)])
                                 .MakeGenericMethod(a.InternalType, a.ObjType)
                                 .CreateDelegate<Func<object, object>>(mem);
 
@@ -266,8 +266,8 @@ internal static class ReflectionCacheIL<NativeStruct, LocalStruct> where NativeS
         var localType = typeof(LocalStruct);
         var nativeType = typeof(NativeStruct);
 
-        DynamicMethod marshalFunc = new($"Marshal{localType.Name}", localType, new Type[] { nativeType.MakeByRefType() }, localType, true);
-        DynamicMethod unmarshalFunc = new($"UnMarshal{localType.Name}", nativeType, new Type[] { localType.MakeByRefType() }, localType, true);
+        DynamicMethod marshalFunc = new($"Marshal{localType.Name}", localType, [nativeType.MakeByRefType()], localType, true);
+        DynamicMethod unmarshalFunc = new($"UnMarshal{localType.Name}", nativeType, [localType.MakeByRefType()], localType, true);
         var mil = marshalFunc.GetILGenerator();
         var uil = unmarshalFunc.GetILGenerator();
         mil.DeclareLocal(localType);
@@ -556,8 +556,8 @@ internal static class ReflectionCacheExpression<NativeStruct, LocalStruct> where
                             {
                                 //Expression<Func<int, string>> toLocal = val => mem.ReadMemoryString(val, a.Wide, a.Raw, a.Pascal);
                                 //Expression<Func<string, int>> toNative = val => mem.AllocateString(val, a.Wide, 1, a.Raw).Result;
-                                var toLocal = typeof(Memory).GetMethod(nameof(Memory.ReadMemoryString), new[] { typeof(int), typeof(bool), typeof(bool), typeof(bool) });
-                                var toNative = typeof(Memory).GetMethod(nameof(Memory.AllocateString), new[] { typeof(string), typeof(bool), typeof(int), typeof(bool) });
+                                var toLocal = typeof(Memory).GetMethod(nameof(Memory.ReadMemoryString), [typeof(int), typeof(bool), typeof(bool), typeof(bool)]);
+                                var toNative = typeof(Memory).GetMethod(nameof(Memory.AllocateString), [typeof(string), typeof(bool), typeof(int), typeof(bool)]);
 
                                 mvalSrc = Expression.Call(memInst, toLocal, mvalSrc, Expression.Constant(a.Wide), Expression.Constant(a.Raw), Expression.Constant(a.Pascal));
                                 uvalSrc = Expression.Call(memInst, toNative, uvalSrc, Expression.Constant(a.Wide), Expression.Constant(1), Expression.Constant(false/*a.Raw*/));
@@ -566,14 +566,14 @@ internal static class ReflectionCacheExpression<NativeStruct, LocalStruct> where
                             }
                         case OmsiPtrAttribute:
                             {
-                                mvalSrc = Expression.New(typeof(IntPtr).GetConstructor(new[] { typeof(int) }), mvalSrc);
+                                mvalSrc = Expression.New(typeof(IntPtr).GetConstructor([typeof(int)]), mvalSrc);
                                 uvalSrc = Expression.Call(uvalSrc, typeof(IntPtr).GetMethod(nameof(IntPtr.ToInt32)));
 
                                 break;
                             }
                         case OmsiStructPtrAttribute a:
                             {
-                                var readStructFunc = typeof(Memory).GetMethod(nameof(Memory.ReadMemory), new Type[] { typeof(int) })
+                                var readStructFunc = typeof(Memory).GetMethod(nameof(Memory.ReadMemory), [typeof(int)])
                                     .MakeGenericMethod(a.InternalType);
                                 var writeStructFunc = typeof(Memory).GetMethod(nameof(Memory.AllocateStruct))
                                     .MakeGenericMethod(a.InternalType);
@@ -607,7 +607,7 @@ internal static class ReflectionCacheExpression<NativeStruct, LocalStruct> where
                             }
                         case OmsiObjPtrAttribute a:
                             {
-                                var ctor = a.ObjType.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, new[] { typeof(Memory), typeof(int) });
+                                var ctor = a.ObjType.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, [typeof(Memory), typeof(int)]);
                                 mvalSrc = Expression.New(ctor, memInst, mvalSrc);
                                 uvalSrc = Expression.Property(uvalSrc, nameof(OmsiObject.Address));
                                 break;
@@ -705,8 +705,8 @@ internal static class ReflectionCacheExpression<NativeStruct, LocalStruct> where
         //mblocks.Add(Expression.Call(null, typeof(Debugger).GetMethod(nameof(Debugger.Break))));
         mblocks.Add(mret);
         ublocks.Add(uret);
-        var mblock = Expression.Block(localType, new[] { mret }, mblocks);
-        var ublock = Expression.Block(nativeType, new[] { uret }, ublocks);
+        var mblock = Expression.Block(localType, [mret], mblocks);
+        var ublock = Expression.Block(nativeType, [uret], ublocks);
 
         var mfunc = Expression.Lambda<MarshalStruct>(mblock, mobj);
         var ufunc = Expression.Lambda<UnMarshalStruct>(ublock, uobj);

@@ -10,6 +10,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+#pragma warning disable CS9191
+
 namespace OmsiHook
 {
     /// <summary>
@@ -118,7 +120,7 @@ namespace OmsiHook
 
             var size = StructureToByteArray(value, writeBuffer.Value, 0);
 
-            if (!Imports.WriteProcessMemory((int)omsiProcessHandle, address, writeBuffer.Value, size, out _))
+            if (!Imports.WriteProcessMemory(unchecked((int)omsiProcessHandle), address, writeBuffer.Value, size, out _))
                 throw new MemoryAccessException($"Couldn't write {Unsafe.SizeOf<T>()} bytes of process memory @ 0x{address:X8}!", address);
         }
 
@@ -716,18 +718,55 @@ namespace OmsiHook
                 if (wide)
                     strLen *= 2;
                 var bytes = ReadMemory(i, (int)strLen, readBuffer.Value);
-                ret = wide ? new string(MemoryMarshal.Cast<byte, char>(bytes)) : Encoding.ASCII.GetString(bytes);
+                ret = wide ? new(MemoryMarshal.Cast<byte, char>(bytes)) : Encoding.ASCII.GetString(bytes.Array, bytes.Offset, bytes.Count);
             }
             else
             {
-                var sb = new StringBuilder();
+                using var sb = new PooledStringBuilder();
                 try
                 {
                     // Cache the read buffer to save a few checks (that the compiler would probably have hoisted out anyway)
                     var readBuff = readBuffer.Value;
-                    //int readSize = 16;
-                    // TODO: Rewrite this to read chunks of memory all at once instead of one char at a time...
+                    int readSize = 16;
+                    int endPos = i | readSize;
                     while (true)
+                    {
+                        // Read aligned chunks of bytes, we're unlikely to cause an illegal access if we align our reads
+                        int len = Math.Max(i - endPos + 1, wide ? 2 : 1);
+                        var bytes = ReadMemory(i, len, readBuff).AsSpan();
+                        if (bytes.IsEmpty)
+                            break;
+                        int nullPos = len;
+                        if (wide)
+                        {
+                            // Wide strings are blittable to c# strings
+                            var chars = MemoryMarshal.Cast<byte, char>(bytes);
+                            // Check if we've reached the end of the string
+                            int p = chars.IndexOf((char)0);
+                            if (p > 0)
+                                nullPos = p;
+
+                            sb.Append(chars[0..p]);
+                        } 
+                        else
+                        {
+                            int p = bytes.IndexOf((byte)0);
+                            if (p > 0)
+                                nullPos = p;
+
+                            // Expand each ascii char into a utf16 char (this is not necessarily a correct conversion)
+                            for (int j = 0; j < nullPos; j++)
+                                sb.Append((char)bytes[j]);
+                        }
+                        if (nullPos != len)
+                            break;
+
+                        i += len;
+                        endPos = i | readSize;
+                    }
+
+                    // TODO: Rewrite this to read chunks of memory all at once instead of one char at a time...
+                    /*while (true)
                     {
                         var bytes = ReadMemory(i, wide ? 2 : 1, readBuff);
                         if (bytes.Count == 0 || (wide ? (bytes[0] | bytes[1]) : bytes[0]) == 0)
@@ -738,7 +777,7 @@ namespace OmsiHook
                         i++;
                         if (wide)
                             i++;
-                    }
+                    }*/
                 }
                 catch (MemoryAccessException) { return null; }
                 ret = sb.ToString();
@@ -1103,11 +1142,11 @@ namespace OmsiHook
                     try
                     {
 #endif
-                        var native = f.native.GetValueDirect(objRef);
-                        if (f.toLocal != null)
-                            f.local.SetValueDirect(retRef, f.toLocal(native));
-                        else
-                            f.local.SetValueDirect(retRef, native);
+                    var native = f.native.GetValueDirect(objRef);
+                    if (f.toLocal != null)
+                        f.local.SetValueDirect(retRef, f.toLocal(native));
+                    else
+                        f.local.SetValueDirect(retRef, native);
 #if DEBUG
                     }
                     catch (Exception ex)
@@ -1166,11 +1205,11 @@ namespace OmsiHook
                     try
                     {
 #endif
-                        var local = f.local.GetValueDirect(objRef);
-                        if (f.toLocal != null)
-                            f.native.SetValueDirect(retRef, f.toNative(local));
-                        else
-                            f.native.SetValueDirect(retRef, local);
+                    var local = f.local.GetValueDirect(objRef);
+                    if (f.toLocal != null)
+                        f.native.SetValueDirect(retRef, f.toNative(local));
+                    else
+                        f.native.SetValueDirect(retRef, local);
 #if DEBUG
                     }
                     catch (Exception ex)
@@ -1304,10 +1343,38 @@ namespace OmsiHook
         #endregion
     }
 
-    internal static class Imports
+    internal static partial class Imports
     {
         #region DllImports
 
+#if NET7_0_OR_GREATER
+        [LibraryImport("kernel32.dll")]
+        public static partial IntPtr OpenProcess(int dwDesiredAccess, [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle, int dwProcessId);
+        [LibraryImport("kernel32.dll")]
+        public static partial IntPtr CloseHandle(IntPtr handle);
+
+        [LibraryImport("kernel32.dll")]
+        [return:MarshalAs(UnmanagedType.Bool)] public static partial bool ReadProcessMemory(int hProcess, int lpBaseAddress, byte[] buffer, int size, ref int lpNumberOfBytesRead);
+
+        [LibraryImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)] public static partial bool WriteProcessMemory(int hProcess, int lpBaseAddress, byte[] buffer, int size, out int lpNumberOfBytesWritten);
+        [LibraryImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)] public static partial bool WriteProcessMemory(int hProcess, int lpBaseAddress, ref byte buffer, int size, out int lpNumberOfBytesWritten);
+
+        /// <summary>
+        /// Allocates memory in a remote process's memory space.
+        /// </summary>
+        /// <param name="hProcess">The pointer to the process to allocate memory in</param>
+        /// <param name="lpAddress">The desired starting address to allocate memory at (leave at 0 for default)</param>
+        /// <param name="dwSize">How many bytes of memory to allocate</param>
+        /// <param name="flAllocationType">The type of allocation</param>
+        /// <param name="flProtect">The type of memory protection for the regions to be allocated</param>
+        /// <returns>The address of the allocated memory. Returns 0 if the allocation failed.</returns>
+        [LibraryImport("kernel32.dll")]
+        public static partial int VirtualAllocEx(int hProcess, int lpAddress, int dwSize, AllocationType flAllocationType, MemoryProtectionType flProtect);
+        [LibraryImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)] public static partial bool VirtualFreeEx(int hProcess, int lpAddress, int dwSize, FreeType dwFreeType);
+#else
         [DllImport("kernel32.dll")]
         public static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
         [DllImport("kernel32.dll")]
@@ -1334,7 +1401,8 @@ namespace OmsiHook
         public static extern int VirtualAllocEx(int hProcess, int lpAddress, int dwSize, AllocationType flAllocationType, MemoryProtectionType flProtect);
         [DllImport("kernel32.dll")]
         public static extern bool VirtualFreeEx(int hProcess, int lpAddress, int dwSize, FreeType dwFreeType);
-        #endregion
+#endif
+#endregion
 
         [Flags]
         internal enum AllocationType : int

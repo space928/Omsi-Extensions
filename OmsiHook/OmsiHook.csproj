@@ -1,7 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0-windows</TargetFramework>
+		<!--<TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows;net9.0-windows;net10.0-windows</TargetFrameworks>-->
+		<TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
+		<RuntimeIdentifier>win-x86</RuntimeIdentifier>
 		<Authors>Thomas Mathieson et al</Authors>
 		<Copyright>Copyright Thomas Mathieson 2022-2024 all rights reserved</Copyright>
 		<PackageProjectUrl>https://github.com/space928/Omsi-Extensions</PackageProjectUrl>
@@ -19,6 +21,7 @@
 		<PackageIcon>Logo.png</PackageIcon>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<LangVersion>12</LangVersion>
 		<Nullable>disable</Nullable>
 		<Platforms>x86</Platforms>
 		<GenerateDocumentationFile>False</GenerateDocumentationFile>
@@ -70,32 +73,32 @@
 		<None Include="..\$(_ConfigurationNormalized)\OmsiHookInvoker.dll" Link="OmsiHookInvoker.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Pack>True</Pack>
-			<PackagePath>\lib\net6.0-windows7.0</PackagePath>
+			<PackagePath>\lib\$(TargetFramework)</PackagePath>
 		</None>
-		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(_ConfigurationNormalized)\$(TargetFramework)\OmsiHookRPCPlugin.dll" Link="OmsiHookRPCPlugin.dll">
+		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(_ConfigurationNormalized)\netstandard2.0\win-x86\OmsiHookRPCPlugin.dll" Link="OmsiHookRPCPlugin.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Pack>True</Pack>
-			<PackagePath>\lib\net6.0-windows7.0</PackagePath>
+			<PackagePath>\lib\$(TargetFramework)</PackagePath>
 		</None>
-		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(_ConfigurationNormalized)\$(TargetFramework)\OmsiHookRPCPlugin.deps.json" Link="OmsiHookRPCPlugin.deps.json">
+		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(_ConfigurationNormalized)\netstandard2.0\win-x86\OmsiHookRPCPlugin.deps.json" Link="OmsiHookRPCPlugin.deps.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Pack>True</Pack>
-			<PackagePath>\lib\net6.0-windows7.0</PackagePath>
+			<PackagePath>\lib\$(TargetFramework)</PackagePath>
 		</None>
-		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(_ConfigurationNormalized)\$(TargetFramework)\OmsiHookRPCPlugin.runtimeconfig.json" Link="OmsiHookRPCPlugin.runtimeconfig.json">
+		<!--<None Include="..\OmsiHookRPCPlugin\bin\x86\$(_ConfigurationNormalized)\netstandard2.0\win-x86\OmsiHookRPCPlugin.runtimeconfig.json" Link="OmsiHookRPCPlugin.runtimeconfig.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Pack>True</Pack>
-			<PackagePath>\lib\net6.0-windows7.0</PackagePath>
-		</None>
-		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(_ConfigurationNormalized)\$(TargetFramework)\OmsiHookRPCPluginNE.dll" Link="OmsiHookRPCPluginNE.dll">
+			<PackagePath>\lib\$(TargetFramework)</PackagePath>
+		</None>-->
+		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(_ConfigurationNormalized)\netstandard2.0\win-x86\OmsiHookRPCPluginNE.dll" Link="OmsiHookRPCPluginNE.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Pack>True</Pack>
-			<PackagePath>\lib\net6.0-windows7.0</PackagePath>
+			<PackagePath>\lib\$(TargetFramework)</PackagePath>
 		</None>
-		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(_ConfigurationNormalized)\$(TargetFramework)\OmsiHookRPCPlugin.opl" Link="OmsiHookRPCPlugin.opl">
+		<None Include="..\OmsiHookRPCPlugin\bin\x86\$(_ConfigurationNormalized)\netstandard2.0\win-x86\OmsiHookRPCPlugin.opl" Link="OmsiHookRPCPlugin.opl">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Pack>True</Pack>
-			<PackagePath>\lib\net6.0-windows7.0</PackagePath>
+			<PackagePath>\lib\$(TargetFramework)</PackagePath>
 		</None>
 	</ItemGroup>
 	
@@ -106,6 +109,8 @@
 			<GeneratePathProperty>True</GeneratePathProperty>
 		</PackageReference>
 		<PackageReference Include="memberpage" Version="2.59.4" />
+		<PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
+		<PackageReference Include="System.Runtime.Numerics" Version="4.3.0" />
 	</ItemGroup>
 
 	<ItemGroup>
