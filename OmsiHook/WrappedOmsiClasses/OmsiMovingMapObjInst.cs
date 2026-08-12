@@ -31,8 +31,19 @@
             set => Memory.WriteMemory(Address + 0x264, value);
         }
         /// <summary>
-        /// Steering arm
+        /// Steering arm.
         /// </summary>
+        /// <remarks>
+        /// This offset does not appear to hold a steering value on OMSI 2.3 road vehicles.
+        /// Disassembling <c>Omsi.exe</c> 2.3 shows every real access to
+        /// <c>TRoadVehicle</c>/<c>TRoadVehicleInst</c>+0x268 as an array-typed field, not a
+        /// float; writing here has no visible effect on steering. For road vehicles, the value
+        /// that actually drives steering (read by <c>TRoadVehicleInst_CalcFree</c>'s per-axle
+        /// Ackermann geometry and written by the keyboard steering-left/steering-right key
+        /// handlers) is <see cref="OmsiRoadVehicleInst.Inv_LenkRadius"/> instead. Left as-is
+        /// rather than changed/removed in case something else already depends on this offset for
+        /// a different, non-vehicle <see cref="OmsiMovingMapObjInst"/> subtype.
+        /// </remarks>
         public float Lenkhebel
         {
             get => Memory.ReadMemory<float>(Address + 0x268);
