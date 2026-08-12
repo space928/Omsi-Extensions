@@ -65,6 +65,16 @@ namespace OmsiHook
             get => Memory.ReadMemory<D3DVector>(Address + 0x72d);
             set => Memory.WriteMemory(Address + 0x72d, value);
         }
+        /// <summary>
+        /// Inverse turning radius (Delphi field name <c>inv_lenkradius</c>) - the value that
+        /// actually drives a road vehicle's steering, not <see cref="OmsiMovingMapObjInst.Lenkhebel"/>
+        /// (see that property's remarks). Signed, bounded to the vehicle's own
+        /// <c>+-RoadVehicle.inv_min_radius</c>: 0 is straight ahead, positive/negative is left/right
+        /// lock depending on sign convention. Confirmed by disassembling <c>Omsi.exe</c> 2.3:
+        /// read every tick by <c>TRoadVehicleInst_CalcFree</c>'s per-axle Ackermann steering-angle
+        /// calculation, and directly ramped by the keyboard steering-left/steering-right key
+        /// handlers via add/subtract-then-clamp each frame the key is held.
+        /// </summary>
         public float Inv_LenkRadius
         {
             get => Memory.ReadMemory<float>(Address + 0x73c);
